@@ -91,6 +91,14 @@ delegate.set_panel(panel.to_owned());
 panel.set_delegate(delegate);
 ```
 
+# Related
+
+The following are projects related to this plugin:
+
+- [tauri-plugin-spotlight](https://github.com/zzzze/tauri-plugin-spotlight)
+- [tauri-nspanel-example](https://github.com/ahkohd/tauri-nspanel/tree/main/examples/vanilla)
+- [tauri-macos-spotlight-example](https://github.com/ahkohd/tauri-macos-spotlight-example)
+
 # Contributing
 
 PRs accepted. Please make sure to read the Contributing Guide before making a pull request.
