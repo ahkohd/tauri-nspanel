@@ -1,5 +1,5 @@
 use cocoa::{
-    appkit::{NSWindowCollectionBehavior, NSWindowStyleMask},
+    appkit::NSWindowCollectionBehavior,
     base::{id, nil, BOOL, YES},
 };
 use objc::{
