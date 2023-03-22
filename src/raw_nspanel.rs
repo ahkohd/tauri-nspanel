@@ -99,6 +99,11 @@ impl RawNSPanel {
         let _: () = unsafe { msg_send![self, setDelegate: delegate] };
     }
 
+    pub fn close(&self) {
+        self.order_out(None);
+        let _: () = unsafe { msg_send![self, release] };
+    }
+
     /// Create an NSPanel from a Tauri window
     pub fn from<R: Runtime>(window: &Window<R>) -> Id<Self> {
         let ns_window: id = window.ns_window().unwrap() as _;
