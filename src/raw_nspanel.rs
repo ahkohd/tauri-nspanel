@@ -107,6 +107,10 @@ impl RawNSPanel {
         let _: () = unsafe { msg_send![self, close] };
     }
 
+    pub fn handle(&mut self) -> Id<RawNSPanel> {
+        unsafe { Id::from_retained_ptr(self) }
+    }
+
     /// Create an NSPanel from a Tauri window
     pub fn from<R: Runtime>(window: &Window<R>) -> Id<Self> {
         let ns_window: id = window.ns_window().unwrap() as _;
