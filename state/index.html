@@ -1,0 +1,177 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Safe, Effortless `state` Management"><meta name="keywords" content="rust, rustlang, rust-lang, state"><title>state - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="logo-container" href="../state/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2></h2></nav><nav class="sidebar"><a class="logo-container" href="../state/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2 class="location"><a href="#">Crate state</a></h2><div class="sidebar-elems"><ul class="block"><li class="version">Version 0.5.3</li><li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#macros">Macros</a></li><li><a href="#structs">Structs</a></li></ul></section></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">state</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="srclink" href="../src/state/lib.rs.html#1-270">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="safe-effortless-state-management"><a href="#safe-effortless-state-management">Safe, Effortless <code>state</code> Management</a></h2>
+<p>This crate allows you to safely and effortlessly manage global and/or
+thread-local state. Three primitives are provided for state management:</p>
+<ul>
+<li><strong><a href="struct.Container.html" title="Container"><code>Container</code></a>:</strong> Type-based storage for many values.</li>
+<li><strong><a href="struct.Storage.html" title="Storage"><code>Storage</code></a>:</strong> Lazy storage for a single value.</li>
+<li><strong>[<code>LocalStorage</code>]:</strong> Lazy thread-local storage for a single value.</li>
+</ul>
+<h3 id="usage"><a href="#usage">Usage</a></h3>
+<p>Include <code>state</code> in your <code>Cargo.toml</code> <code>[dependencies]</code>:</p>
+<div class="example-wrap"><pre class="language-toml"><code>[dependencies]
+state = &quot;0.5&quot;
+</code></pre></div>
+<p>Thread-local state management is not enabled by default. You can enable it
+via the <code>tls</code> feature:</p>
+<div class="example-wrap"><pre class="language-toml"><code>[dependencies]
+state = { version = &quot;0.5&quot;, features = [&quot;tls&quot;] }
+</code></pre></div><h3 id="use-cases"><a href="#use-cases">Use Cases</a></h3><h4 id="memoizing-expensive-operations"><a href="#memoizing-expensive-operations">Memoizing Expensive Operations</a></h4>
+<p>The <a href="struct.Storage.html" title="Storage"><code>Storage</code></a> type can be used to conveniently memoize expensive
+read-based operations without needing to mutably borrow. Consider a <code>struct</code>
+with a field <code>value</code> and method <code>compute()</code> that performs an expensive
+operation on <code>value</code> to produce a derived value. We can use <code>Storage</code> to
+memoize <code>compute()</code>:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>state::Storage;
+
+<span class="kw">struct </span>Value;
+<span class="kw">struct </span>DerivedValue;
+
+<span class="kw">struct </span>Foo {
+    value: Value,
+    cached: Storage&lt;DerivedValue&gt;
+}
+
+<span class="kw">impl </span>Foo {
+    <span class="kw">fn </span>set_value(<span class="kw-2">&amp;mut </span><span class="self">self</span>, v: Value) {
+        <span class="self">self</span>.value = v;
+        <span class="self">self</span>.cached = Storage::new();
+    }
+
+    <span class="kw">fn </span>compute(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>DerivedValue {
+        <span class="self">self</span>.cached.get_or_set(|| {
+            <span class="kw">let </span>_value = <span class="kw-2">&amp;</span><span class="self">self</span>.value;
+            <span class="macro">unimplemented!</span>(<span class="string">&quot;expensive computation with `self.value`&quot;</span>)
+        })
+    }
+}</code></pre></div>
+<h4 id="read-only-singleton"><a href="#read-only-singleton">Read-Only Singleton</a></h4>
+<p>Suppose you have the following structure which is initialized in <code>main</code>
+after receiving input from the user:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">struct </span>Configuration {
+    name: String,
+    number: isize,
+    verbose: bool
+}
+
+<span class="kw">fn </span>main() {
+    <span class="kw">let </span>config = Configuration {
+        <span class="comment">/* fill in structure at run-time from user input */
+    </span>};
+}</code></pre></div>
+<p>You’d like to access this structure later, at any point in the program,
+without any synchronization overhead. Prior to <code>state</code>, assuming you needed
+to setup the structure after program start, your options were:</p>
+<ol>
+<li>Use <code>static mut</code> and <code>unsafe</code> to set an <code>Option&lt;Configuration&gt;</code> to
+<code>Some</code>. Retrieve by checking for <code>Some</code>.</li>
+<li>Use <code>lazy_static</code> with a <code>RwLock</code> to set an
+<code>RwLock&lt;Option&lt;Configuration&gt;&gt;</code> to <code>Some</code>. Retrieve by <code>lock</code>ing and
+checking for <code>Some</code>, paying the cost of synchronization.</li>
+</ol>
+<p>With <code>state</code>, you can use [<code>LocalStorage</code>] as follows:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">static </span>CONFIG: LocalStorage&lt;Configuration&gt; = LocalStorage::new();
+
+<span class="kw">fn </span>main() {
+    CONFIG.set(|| Configuration {
+        <span class="comment">/* fill in structure at run-time from user input */
+    </span>});
+
+    <span class="comment">/* at any point later in the program, in any thread */
+    </span><span class="kw">let </span>config = CONFIG.get();
+}</code></pre></div>
+<p>Note that you can <em>also</em> use <a href="struct.Storage.html" title="Storage"><code>Storage</code></a> to the same effect.</p>
+<h4 id="readwrite-singleton"><a href="#readwrite-singleton">Read/Write Singleton</a></h4>
+<p>Following from the previous example, let’s now say that we want to be able
+to modify our singleton <code>Configuration</code> structure as the program evolves. We
+have two options:</p>
+<ol>
+<li>If we want to maintain the <em>same</em> state in any thread, we can use a
+<code>Storage</code> structure and wrap our <code>Configuration</code> structure in a
+synchronization primitive.</li>
+<li>If we want to maintain <em>different</em> state in any thread, we can continue
+to use a <code>LocalStorage</code> structure and wrap our <code>LocalStorage</code> type in a
+<code>Cell</code> structure for internal mutability.</li>
+</ol>
+<p>In this example, we’ll choose <strong>1</strong>. The next example illustrates an
+instance of <strong>2</strong>.</p>
+<p>The following implements <strong>1</strong> by using a <code>Storage</code> structure and wrapping
+the <code>Configuration</code> type with a <code>RwLock</code>:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">static </span>CONFIG: Storage&lt;RwLock&lt;Configuration&gt;&gt; = Storage::new();
+
+<span class="kw">fn </span>main() {
+    <span class="kw">let </span>config = Configuration {
+        <span class="comment">/* fill in structure at run-time from user input */
+    </span>};
+
+    <span class="comment">// Make the config avaiable globally.
+    </span>CONFIG.set(RwLock::new(config));
+
+    <span class="comment">/* at any point later in the program, in any thread */
+    </span><span class="kw">let </span>mut_config = CONFIG.get().write();
+}</code></pre></div>
+<h4 id="mutable-thread-local-data"><a href="#mutable-thread-local-data">Mutable, thread-local data</a></h4>
+<p>Imagine you want to count the number of invocations to a function per
+thread. You’d like to store the count in a <code>Cell&lt;usize&gt;</code> and use
+<code>count.set(count.get() + 1)</code> to increment the count. Prior to <code>state</code>, your
+only option was to use the <code>thread_local!</code> macro. <code>state</code> provides a more
+flexible, and arguably simpler solution via <code>LocalStorage</code>. This scanario
+is implemented in the folloiwng:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">static </span>COUNT: LocalStorage&lt;Cell&lt;usize&gt;&gt; = LocalStorage::new();
+
+<span class="kw">fn </span>function_to_measure() {
+    <span class="kw">let </span>count = COUNT.get();
+    count.set(count.get() + <span class="number">1</span>);
+}
+
+<span class="kw">fn </span>main() {
+    <span class="comment">// setup the initializer for thread-local state
+    </span>COUNT.set(|| Cell::new(<span class="number">0</span>));
+
+    <span class="comment">// spin up many threads that call `function_to_measure`.
+    </span><span class="kw">let </span><span class="kw-2">mut </span>threads = <span class="macro">vec!</span>[];
+    <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="number">10 </span>{
+        threads.push(thread::spawn(|| {
+            <span class="comment">// Thread IDs may be reusued, so we reset the state.
+            </span>COUNT.get().set(<span class="number">0</span>);
+            function_to_measure();
+            COUNT.get().get()
+        }));
+    }
+
+    <span class="comment">// retrieve the total
+    </span><span class="kw">let </span>total: usize = threads.into_iter()
+        .map(|t| t.join().unwrap())
+        .sum();
+
+    <span class="macro">assert_eq!</span>(total, <span class="number">10</span>);
+}</code></pre></div>
+<h3 id="correctness"><a href="#correctness">Correctness</a></h3>
+<p><code>state</code> has been extensively vetted, manually and automatically, for soundness
+and correctness. <em>All</em> unsafe code, including in internal concurrency
+primitives, <code>Container</code>, and <code>Storage</code> are exhaustively verified for pairwise
+concurrency correctness and internal aliasing exclusion with <code>loom</code>.
+Multithreading invariants, aliasing invariants, and other soundness properties
+are verified with <code>miri</code>. Verification is run by the CI on every commit.</p>
+<h3 id="performance"><a href="#performance">Performance</a></h3>
+<p><code>state</code> is heavily tuned to perform optimally. <code>get{_local}</code> and
+<code>set{_local}</code> calls to a <code>Container</code> incur overhead due to type lookup.
+<code>Storage</code>, on the other hand, is optimal for global storage retrieval; it is
+<em>slightly faster</em> than accessing global state initialized through
+<code>lazy_static!</code>, more so across many threads. <code>LocalStorage</code> incurs slight
+overhead due to thread lookup. However, <code>LocalStorage</code> has no
+synchronization overhead, so retrieval from <code>LocalStorage</code> is faster than
+through <code>Storage</code> across many threads.</p>
+<p>Bear in mind that <code>state</code> allows global initialization at <em>any</em> point in the
+program. Other solutions, such as <code>lazy_static!</code> and <code>thread_local!</code> allow
+initialization <em>only</em> a priori. In other words, <code>state</code>’s abilities are a
+superset of those provided by <code>lazy_static!</code> and <code>thread_local!</code> while being
+more performant.</p>
+<h3 id="when-to-use"><a href="#when-to-use">When To Use</a></h3>
+<p>You should avoid using global <code>state</code> as much as possible. Instead, thread
+state manually throughout your program when feasible.</p>
+</div></details><h2 id="macros" class="small-section-header"><a href="#macros">Macros</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="macro" href="macro.Container.html" title="state::Container macro">Container</a></div><div class="item-right docblock-short">Type constructor for <a href="struct.Container.html"><code>Container</code></a> variants.</div></div></div><h2 id="structs" class="small-section-header"><a href="#structs">Structs</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.Container.html" title="state::Container struct">Container</a></div><div class="item-right docblock-short">A container for global type-based state.</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.Storage.html" title="state::Storage struct">Storage</a></div><div class="item-right docblock-short">A single storage location for global access to a value.</div></div></div></section></div></main><div id="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="state" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0 (2c8cc3432 2023-03-06)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-c3c521c753752a1a.js" data-settings-css="settings-08ddfdda51b8ee2e.css" ></div></body></html>

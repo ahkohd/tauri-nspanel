@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["Decoder","Decoder of byte slices into strings."]]};

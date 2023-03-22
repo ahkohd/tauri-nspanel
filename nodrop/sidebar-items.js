@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["NoDrop","A type holding T that will not call its destructor on drop"]]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["crlf","Windows-style line ending."],["lf","Unix-style line ending."],["line_wrap","Insert line endings into the input."]],"struct":[["ByteLineEnding","A single byte line ending."],["SliceLineEnding","A byte slice line ending."],["TwoByteLineEnding","A double byte line ending."]],"trait":[["LineEnding","Writes line endings."]]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["current_exe","Retrieves the currently running binary’s path, taking into account security considerations."],["resource_dir","Computes the resource directory of the current environment."],["target_triple","Try to determine the current target triple."]]};

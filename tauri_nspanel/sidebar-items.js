@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["Error",""]],"externcrate":[["cocoa",""],["objc",""],["objc_foundation",""],["objc_id",""]],"fn":[["init","Initializes the plugin."]],"macro":[["panel_delegate",""]],"mod":[["raw_nspanel",""]],"struct":[["PanelConfig",""],["PanelManager",""],["Store",""]],"trait":[["ManagerExt",""],["WindowExt",""]],"type":[["Panel",""]]};

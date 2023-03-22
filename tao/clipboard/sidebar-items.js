@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["Clipboard","Object that allows you to access the `Clipboard` instance."]]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["is_odp","Returns whether a buffer is OpenDocument Presentation"],["is_ods","Returns whether a buffer is OpenDocument Spreadsheet"],["is_odt","Returns whether a buffer is OpenDocument Text"]]};

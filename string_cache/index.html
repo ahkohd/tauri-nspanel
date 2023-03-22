@@ -1,0 +1,73 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="A library for interning things that are `AsRef&lt;str&gt;`."><meta name="keywords" content="rust, rustlang, rust-lang, string_cache"><title>string_cache - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="logo-container" href="../string_cache/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2></h2></nav><nav class="sidebar"><a class="logo-container" href="../string_cache/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2 class="location"><a href="#">Crate string_cache</a></h2><div class="sidebar-elems"><ul class="block"><li class="version">Version 0.8.7</li><li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#structs">Structs</a></li><li><a href="#traits">Traits</a></li><li><a href="#types">Type Definitions</a></li></ul></section></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">string_cache</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="srclink" href="../src/string_cache/lib.rs.html#10-139">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>A library for interning things that are <code>AsRef&lt;str&gt;</code>.</p>
+<p>Some strings may be interned at compile time using the <code>string-cache-codegen</code> crate, or the
+<code>EmptyStaticAtomSet</code> may be used that has no compile-time interned strings. An <code>Atom</code> is an
+interned string for a given set (either <code>EmptyStaticAtomSet</code> or a generated <code>StaticAtomSet</code>).</p>
+<p>Generated <code>Atom</code>s will have assocated macros to intern static strings at compile-time.</p>
+<h2 id="examples"><a href="#examples">Examples</a></h2>
+<p>Here are two examples, one with compile-time <code>Atom</code>s, and one without.</p>
+<h3 id="with-compile-time-atoms"><a href="#with-compile-time-atoms">With compile-time atoms</a></h3>
+<p>In <code>Cargo.toml</code>:</p>
+<div class="example-wrap"><pre class="language-toml"><code>[dependencies]
+string_cache = &quot;0.8&quot;
+
+[dev-dependencies]
+string_cache_codegen = &quot;0.5&quot;
+</code></pre></div>
+<p>In <code>build.rs</code>:</p>
+
+<div class="example-wrap ignore"><div class='tooltip'>ⓘ</div><pre class="rust rust-example-rendered"><code><span class="kw">extern crate </span>string_cache_codegen;
+
+<span class="kw">use </span>std::env;
+<span class="kw">use </span>std::path::Path;
+
+<span class="kw">fn </span>main() {
+    string_cache_codegen::AtomType::new(<span class="string">&quot;foo::FooAtom&quot;</span>, <span class="string">&quot;foo_atom!&quot;</span>)
+        .atoms(<span class="kw-2">&amp;</span>[<span class="string">&quot;foo&quot;</span>, <span class="string">&quot;bar&quot;</span>])
+        .write_to_file(<span class="kw-2">&amp;</span>Path::new(<span class="kw-2">&amp;</span>env::var(<span class="string">&quot;OUT_DIR&quot;</span>).unwrap()).join(<span class="string">&quot;foo_atom.rs&quot;</span>))
+        .unwrap()
+}</code></pre></div>
+<p>In <code>lib.rs</code>:</p>
+
+<div class="example-wrap ignore"><div class='tooltip'>ⓘ</div><pre class="rust rust-example-rendered"><code><span class="kw">extern crate </span>string_cache;
+
+<span class="kw">mod </span>foo {
+    <span class="macro">include!</span>(<span class="macro">concat!</span>(<span class="macro">env!</span>(<span class="string">&quot;OUT_DIR&quot;</span>), <span class="string">&quot;/foo_atom.rs&quot;</span>));
+}
+
+<span class="kw">fn </span>use_the_atom(t: <span class="kw-2">&amp;</span>str) {
+    <span class="kw">match </span><span class="kw-2">*</span>t {
+        <span class="macro">foo_atom!</span>(<span class="string">&quot;foo&quot;</span>) =&gt; <span class="macro">println!</span>(<span class="string">&quot;Found foo!&quot;</span>),
+        <span class="macro">foo_atom!</span>(<span class="string">&quot;bar&quot;</span>) =&gt; <span class="macro">println!</span>(<span class="string">&quot;Found bar!&quot;</span>),
+        <span class="comment">// foo_atom!(&quot;baz&quot;) =&gt; println!(&quot;Found baz!&quot;), - would be a compile time error
+        </span><span class="kw">_ </span>=&gt; {
+            <span class="macro">println!</span>(<span class="string">&quot;String not interned&quot;</span>);
+            <span class="comment">// We can intern strings at runtime as well
+            </span>foo::FooAtom::from(t)
+        }
+    }
+}</code></pre></div>
+<h3 id="no-compile-time-atoms"><a href="#no-compile-time-atoms">No compile-time atoms</a></h3>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>string_cache::DefaultAtom;
+
+<span class="kw">let </span><span class="kw-2">mut </span>interned_stuff = Vec::new();
+<span class="kw">let </span>text = <span class="string">&quot;here is a sentence of text that will be tokenised and
+            interned and some repeated tokens is of text and&quot;</span>;
+<span class="kw">for </span>word <span class="kw">in </span>text.split_whitespace() {
+    <span class="kw">let </span>seen_before = interned_stuff.iter()
+        <span class="comment">// We can use impl PartialEq&lt;T&gt; where T is anything string-like
+        // to compare to interned strings to either other interned strings,
+        // or actual strings  Comparing two interned strings is very fast
+        // (normally a single cpu operation).
+        </span>.filter(|interned_word| interned_word == <span class="kw-2">&amp;</span>word)
+        .count();
+    <span class="kw">if </span>seen_before &gt; <span class="number">0 </span>{
+        <span class="macro">println!</span>(<span class="string">r#&quot;Seen the word &quot;{}&quot; {} times&quot;#</span>, word, seen_before);
+    } <span class="kw">else </span>{
+        <span class="macro">println!</span>(<span class="string">r#&quot;Not seen the word &quot;{}&quot; before&quot;#</span>, word);
+    }
+    <span class="comment">// We use the impl From&lt;(Cow&lt;&#39;a, str&gt;, or &amp;&#39;a str, or String)&gt; for
+    // Atom&lt;Static&gt; to intern a new string.
+    </span>interned_stuff.push(DefaultAtom::from(word));
+}</code></pre></div>
+</div></details><h2 id="structs" class="small-section-header"><a href="#structs">Structs</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.Atom.html" title="string_cache::Atom struct">Atom</a></div><div class="item-right docblock-short">Represents a string that has been interned.</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.EmptyStaticAtomSet.html" title="string_cache::EmptyStaticAtomSet struct">EmptyStaticAtomSet</a></div><div class="item-right docblock-short">An empty static atom set for when only dynamic strings will be added</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.PhfStrSet.html" title="string_cache::PhfStrSet struct">PhfStrSet</a></div><div class="item-right docblock-short">A string set created using a <a href="https://en.wikipedia.org/wiki/Perfect_hash_function">perfect hash function</a>, specifically
+<a href="http://cmph.sourceforge.net/papers/esa09.pdf">Hash, Displace and Compress</a>.</div></div></div><h2 id="traits" class="small-section-header"><a href="#traits">Traits</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.StaticAtomSet.html" title="string_cache::StaticAtomSet trait">StaticAtomSet</a></div><div class="item-right docblock-short">A static <code>PhfStrSet</code></div></div></div><h2 id="types" class="small-section-header"><a href="#types">Type Definitions</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="type" href="type.DefaultAtom.html" title="string_cache::DefaultAtom type">DefaultAtom</a></div><div class="item-right docblock-short">Use this if you don’t care about static atoms.</div></div></div></section></div></main><div id="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="string_cache" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0 (2c8cc3432 2023-03-06)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-c3c521c753752a1a.js" data-settings-css="settings-08ddfdda51b8ee2e.css" ></div></body></html>

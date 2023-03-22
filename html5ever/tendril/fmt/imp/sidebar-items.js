@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["Fixup","Describes how to fix up encodings when concatenating."],["SingleByteCharIndices",""]]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["Exception","An opaque type representing any Objective-C object thrown as an exception."]],"fn":[["throw","Throws an Objective-C exception. The argument must be a pointer to an Objective-C object."],["try","Tries to execute the given closure and catches an Objective-C exception if one is thrown."]]};

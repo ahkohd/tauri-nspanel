@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["RawMods","Represents the active modifier keys."],["SysMods","Represents the platform-agnostic keyboard modifiers, for command handling."]],"struct":[["Accelerator","Base `Accelerator` functions."],["AcceleratorId","Identifier of an Accelerator."],["AcceleratorParseError",""]]};

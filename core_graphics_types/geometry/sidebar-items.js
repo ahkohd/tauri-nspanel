@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CG_AFFINE_TRANSFORM_IDENTITY",""],["CG_ZERO_POINT",""],["CG_ZERO_RECT",""],["CG_ZERO_SIZE",""]],"struct":[["CGAffineTransform",""],["CGPoint",""],["CGRect",""],["CGSize",""]]};

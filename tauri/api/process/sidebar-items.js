@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["current_binary","Finds the current running binary’s path."],["restart","Restarts the currently running binary."]]};

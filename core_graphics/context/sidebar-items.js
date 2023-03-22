@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["CGBlendMode",""],["CGInterpolationQuality",""],["CGLineCap",""],["CGLineJoin",""],["CGPathDrawingMode",""],["CGTextDrawingMode",""]],"struct":[["CGContext",""],["CGContextRef",""]]};
