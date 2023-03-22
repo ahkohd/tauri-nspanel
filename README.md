@@ -103,6 +103,8 @@ panel.released_when_closed(true);
 panel.close();
 ```
 
+6. For more information on panel methods, please refer to the [documentation page](https://ahkohd.github.io/tauri-nspanel/tauri_nspanel/raw_nspanel/struct.RawNSPanel.html).
+
 # Related
 
 The following are projects related to this plugin:
