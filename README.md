@@ -12,7 +12,7 @@ Install the plugin by adding the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-tauri-nspanel = { git = "https://github.com/ahkohd/ns-panel" }
+tauri-nspanel = { git = "https://github.com/ahkohd/tauri-nspanel" }
 ```
 
 # Usage
