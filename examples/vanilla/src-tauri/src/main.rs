@@ -9,7 +9,11 @@ use tauri_nspanel::{objc_id::Id, panel_delegate, ManagerExt, Panel, WindowExt};
 fn main() {
   tauri::Builder::default()
     .plugin(tauri_nspanel::init())
-    .invoke_handler(tauri::generate_handler![show_panel, hide_panel])
+    .invoke_handler(tauri::generate_handler![
+      show_panel,
+      hide_panel,
+      close_panel
+    ])
     .setup(|app| {
       let window = app.handle().get_window("main").unwrap();
       init(window);
@@ -49,4 +53,11 @@ fn show_panel(handle: AppHandle<Wry>) {
 fn hide_panel(handle: AppHandle<Wry>) {
   let panel = handle.get_panel("main").unwrap();
   panel.order_out(None);
+}
+
+#[tauri::command]
+fn close_panel(handle: AppHandle<Wry>) {
+  let panel = handle.get_panel("main").unwrap();
+  panel.released_when_closed(true);
+  panel.close();
 }

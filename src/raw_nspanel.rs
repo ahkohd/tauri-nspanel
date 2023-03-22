@@ -1,6 +1,6 @@
 use cocoa::{
     appkit::NSWindowCollectionBehavior,
-    base::{id, nil, BOOL, YES},
+    base::{id, nil, BOOL, NO, YES},
 };
 use objc::{
     class,
@@ -99,9 +99,12 @@ impl RawNSPanel {
         let _: () = unsafe { msg_send![self, setDelegate: delegate] };
     }
 
+    pub fn released_when_closed(&self, flag: bool) {
+        let _: () = unsafe { msg_send![self, setReleasedWhenClosed: if flag {YES} else {NO}] };
+    }
+
     pub fn close(&self) {
-        self.order_out(None);
-        let _: () = unsafe { msg_send![self, release] };
+        let _: () = unsafe { msg_send![self, close] };
     }
 
     /// Create an NSPanel from a Tauri window
