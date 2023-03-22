@@ -6,11 +6,11 @@ use objc::{
     class,
     declare::ClassDecl,
     msg_send,
-    runtime::{self, Class, Object, Protocol, Sel},
+    runtime::{self, Class, Object, Sel},
     sel, sel_impl, Message,
 };
 use objc_foundation::INSObject;
-use objc_id::{Id, ShareId};
+use objc_id::Id;
 use tauri::{Runtime, Window};
 
 extern "C" {
@@ -113,77 +113,5 @@ impl RawNSPanel {
 impl INSObject for RawNSPanel {
     fn class() -> &'static runtime::Class {
         RawNSPanel::get_class()
-    }
-}
-
-#[allow(dead_code)]
-const DELEGATE_CLS_NAME: &str = "RawNSPanelDelegate";
-
-#[allow(dead_code)]
-struct RawNSPanelDelegate {}
-
-impl RawNSPanelDelegate {
-    #[allow(dead_code)]
-    fn get_class() -> &'static Class {
-        Class::get(DELEGATE_CLS_NAME).unwrap_or_else(Self::define_class)
-    }
-
-    #[allow(dead_code)]
-    fn define_class() -> &'static Class {
-        let mut cls = ClassDecl::new(DELEGATE_CLS_NAME, class!(NSObject))
-            .unwrap_or_else(|| panic!("Unable to register {} class", DELEGATE_CLS_NAME));
-
-        cls.add_protocol(
-            Protocol::get("NSWindowDelegate").expect("Failed to get NSWindowDelegate protocol"),
-        );
-
-        unsafe {
-            cls.add_ivar::<id>("panel");
-
-            cls.add_method(
-                sel!(setPanel:),
-                Self::setPanel as extern "C" fn(&mut Object, Sel, id),
-            );
-
-            cls.add_method(
-                sel!(windowDidBecomeKey:),
-                Self::window_did_become_key as extern "C" fn(&Object, Sel, id),
-            );
-
-            cls.add_method(
-                sel!(windowDidResignKey:),
-                Self::window_did_resign_key as extern "C" fn(&Object, Sel, id),
-            );
-        }
-
-        cls.register()
-    }
-
-    #[allow(non_snake_case)]
-    extern "C" fn setPanel(this: &mut Object, _: Sel, panel: id) {
-        unsafe { this.set_ivar("panel", panel) };
-    }
-
-    extern "C" fn window_did_become_key(_: &Object, _: Sel, _: id) {}
-
-    /// Hide panel when it's no longer the key window
-    extern "C" fn window_did_resign_key(this: &Object, _: Sel, _: id) {
-        let panel: id = unsafe { *this.get_ivar("panel") };
-        let _: () = unsafe { msg_send![panel, orderOut: nil] };
-    }
-}
-
-unsafe impl Message for RawNSPanelDelegate {}
-
-impl INSObject for RawNSPanelDelegate {
-    fn class() -> &'static runtime::Class {
-        Self::get_class()
-    }
-}
-
-impl RawNSPanelDelegate {
-    #[allow(dead_code)]
-    pub fn set_panel(&self, panel: ShareId<RawNSPanel>) {
-        let _: () = unsafe { msg_send![self, setPanel: panel] };
     }
 }
