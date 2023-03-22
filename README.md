@@ -41,7 +41,7 @@ let panel = window.to_panel().unwrap();
 
 The window will be swizzled to `NSPanel`.
 
-> Only call the `to_panel()` method once a window.
+> Only call the `to_panel()` method once on a window.
 
 3. To access your panels, use the `app_handle.get_panel("label")`:
 
@@ -89,6 +89,18 @@ delegate.set_panel(panel.to_owned());
 
 // Set your panel's delegate
 panel.set_delegate(delegate);
+```
+
+5. Simply calling the `.close()` method on your NSPanel instance may not be sufficient to fully release its resources. This is because, by default,
+   `NSPanels` are not released when they are closed. This is because NSPanels are often lightweight and designed for reuse.
+
+To ensure that your NSPanel is fully released:
+
+```rust
+// ...
+
+panel.released_when_closed(true);
+panel.close();
 ```
 
 # Related
