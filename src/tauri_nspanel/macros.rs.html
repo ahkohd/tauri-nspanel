@@ -110,9 +110,10 @@
 <a href="#110" id="110">110</a>
 <a href="#111" id="111">111</a>
 <a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
 </pre><pre class="rust"><code><span class="attr">#[macro_export]
 </span><span class="macro">macro_rules! </span>panel_delegate {
-    (<span class="macro-nonterminal">$delegate_name</span>:ident { $(<span class="macro-nonterminal">$fn_name</span>:ident),* $(,)* }) =&gt; {{
+    (<span class="macro-nonterminal">$delegate_name</span>:ident&lt;<span class="macro-nonterminal">$generic</span>:ident&gt; { $(<span class="macro-nonterminal">$fn_name</span>:ident),* $(,)* }) =&gt; {{
         <span class="kw">use </span><span class="macro-nonterminal">$crate::objc</span>::{
             class,
             declare::ClassDecl,
@@ -124,6 +125,7 @@
         <span class="kw">use </span><span class="macro-nonterminal">$crate::objc_foundation::INSObject</span>;
         <span class="kw">use </span><span class="macro-nonterminal">$crate::objc_id::ShareId</span>;
         <span class="kw">use </span><span class="macro-nonterminal">$crate::raw_nspanel::RawNSPanel</span>;
+        <span class="kw">use </span><span class="macro-nonterminal">$crate::tauri::Runtime</span>;
 
         <span class="macro">macro_rules! </span>snake_to_camel {
             (<span class="macro-nonterminal">$input</span>:ident) =&gt; {{
@@ -155,9 +157,9 @@
         </span><span class="kw">const </span>DELEGATE_CLS_NAME: <span class="kw-2">&amp;</span>str = <span class="macro">stringify!</span>(<span class="macro-nonterminal">$delegate_name</span>);
 
         <span class="attr">#[allow(dead_code)]
-        </span><span class="kw">struct </span><span class="macro-nonterminal">$delegate_name </span>{}
+        </span><span class="kw">struct </span><span class="macro-nonterminal">$delegate_name</span>&lt;R: Runtime&gt; (std::marker::PhantomData&lt;R&gt;);
 
-        <span class="kw">impl </span><span class="macro-nonterminal">$delegate_name </span>{
+        <span class="kw">impl</span>&lt;R: Runtime&gt; <span class="macro-nonterminal">$delegate_name</span>&lt;R&gt; {
              <span class="attr">#[allow(dead_code)]
             </span><span class="kw">fn </span>get_class() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>Class {
                 Class::get(DELEGATE_CLS_NAME).unwrap_or_else(<span class="self">Self</span>::define_class)
@@ -199,28 +201,28 @@
             $(
                 <span class="kw">extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span><span class="macro-nonterminal">$fn_name</span>(this: <span class="kw-2">&amp;</span>Object, <span class="kw">_</span>: Sel, <span class="kw">_</span>: id) {
                     <span class="kw">let </span>panel: id = <span class="kw">unsafe </span>{ <span class="kw-2">*</span>this.get_ivar(<span class="string">&quot;panel&quot;</span>) };
-                    <span class="macro-nonterminal">$fn_name</span>(<span class="kw">unsafe </span>{Id::from_retained_ptr(panel <span class="kw">as </span><span class="kw-2">*mut </span>RawNSPanel) });
+                    <span class="macro-nonterminal">$fn_name</span>(<span class="kw">unsafe </span>{Id::from_ptr(panel <span class="kw">as </span><span class="kw-2">*mut </span>RawNSPanel&lt;<span class="macro-nonterminal">$generic</span>&gt;) });
                 }
             )*
         }
 
-        <span class="kw">unsafe impl </span>Message <span class="kw">for </span><span class="macro-nonterminal">$delegate_name </span>{}
+        <span class="kw">unsafe impl</span>&lt;R: Runtime&gt; Message <span class="kw">for </span><span class="macro-nonterminal">$delegate_name</span>&lt;R&gt; {}
 
-        <span class="kw">impl </span>INSObject <span class="kw">for </span><span class="macro-nonterminal">$delegate_name </span>{
+        <span class="kw">impl</span>&lt;R: Runtime&gt; INSObject <span class="kw">for </span><span class="macro-nonterminal">$delegate_name</span>&lt;R&gt; {
             <span class="kw">fn </span>class() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>runtime::Class {
                 <span class="self">Self</span>::get_class()
             }
         }
 
-        <span class="kw">impl </span><span class="macro-nonterminal">$delegate_name </span>{
-            <span class="kw">pub fn </span>set_panel(<span class="kw-2">&amp;</span><span class="self">self</span>, panel: ShareId&lt;RawNSPanel&gt;) {
+        <span class="kw">impl</span>&lt;R: Runtime&gt; <span class="macro-nonterminal">$delegate_name</span>&lt;R&gt; {
+            <span class="kw">pub fn </span>set_panel(<span class="kw-2">&amp;</span><span class="self">self</span>, panel: ShareId&lt;RawNSPanel&lt;R&gt;&gt;) {
                 <span class="kw">let _</span>: () = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="self">self</span>, setPanel: panel] };
             }
         }
 
 
-        <span class="macro-nonterminal">$delegate_name::new</span>()
+        <span class="macro-nonterminal">$delegate_name</span>::&lt;<span class="macro-nonterminal">$generic</span>&gt;::new()
     }};
 }
 </code></pre></div>
-</section></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tauri_nspanel" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0 (2c8cc3432 2023-03-06)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-c3c521c753752a1a.js" data-settings-css="settings-08ddfdda51b8ee2e.css" ></div></body></html>
+</section></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tauri_nspanel" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.2 (9eb3afe9e 2023-03-27)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-c3c521c753752a1a.js" data-settings-css="settings-08ddfdda51b8ee2e.css" ></div></body></html>

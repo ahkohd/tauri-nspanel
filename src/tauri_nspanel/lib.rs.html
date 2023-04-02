@@ -82,13 +82,27 @@
 <a href="#82" id="82">82</a>
 <a href="#83" id="83">83</a>
 <a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+<a href="#87" id="87">87</a>
+<a href="#88" id="88">88</a>
+<a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
 </pre><pre class="rust"><code><span class="kw">mod </span>macros;
 <span class="kw">pub mod </span>raw_nspanel;
 
 <span class="kw">use </span>std::{collections::HashMap, sync::Mutex};
 
 <span class="kw">use </span>cocoa::base::id;
-<span class="kw">use </span>objc_id::{Id, ShareId};
+<span class="kw">use </span>objc_id::ShareId;
 <span class="kw">use </span>raw_nspanel::RawNSPanel;
 <span class="kw">use </span>tauri::{
     plugin::{Builder, TauriPlugin},
@@ -99,19 +113,32 @@
 <span class="kw">pub extern crate </span>objc;
 <span class="kw">pub extern crate </span>objc_foundation;
 <span class="kw">pub extern crate </span>objc_id;
+<span class="kw">pub extern crate </span>tauri;
 
-<span class="kw">pub type </span>Panel = Id&lt;RawNSPanel&gt;;
+<span class="kw">pub type </span>Panel&lt;R&gt; = ShareId&lt;RawNSPanel&lt;R&gt;&gt;;
 
-<span class="attr">#[derive(Default)]
-</span><span class="kw">pub struct </span>Store {
-    panels: HashMap&lt;String, ShareId&lt;RawNSPanel&gt;&gt;,
+<span class="kw">pub struct </span>Store&lt;R: Runtime&gt; {
+    panels: HashMap&lt;String, ShareId&lt;RawNSPanel&lt;R&gt;&gt;&gt;,
 }
 
-<span class="attr">#[derive(Default)]
-</span><span class="kw">pub struct </span>PanelManager(<span class="kw">pub </span>Mutex&lt;Store&gt;);
+<span class="kw">impl</span>&lt;R: Runtime&gt; Default <span class="kw">for </span>Store&lt;R&gt; {
+    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            panels: HashMap::new(),
+        }
+    }
+}
+
+<span class="kw">pub struct </span>PanelManager&lt;R: Runtime&gt;(<span class="kw">pub </span>Mutex&lt;Store&lt;R&gt;&gt;);
+
+<span class="kw">impl</span>&lt;R: Runtime&gt; Default <span class="kw">for </span>PanelManager&lt;R&gt; {
+    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>(Mutex::new(Store::&lt;R&gt;::default()))
+    }
+}
 
 <span class="kw">pub trait </span>ManagerExt&lt;R: Runtime&gt; {
-    <span class="kw">fn </span>get_panel(<span class="kw-2">&amp;</span><span class="self">self</span>, label: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;ShareId&lt;RawNSPanel&gt;, Error&gt;;
+    <span class="kw">fn </span>get_panel(<span class="kw-2">&amp;</span><span class="self">self</span>, label: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;ShareId&lt;RawNSPanel&lt;R&gt;&gt;, Error&gt;;
 }
 
 <span class="attr">#[derive(Debug)]
@@ -120,8 +147,8 @@
 }
 
 <span class="kw">impl</span>&lt;R: Runtime, T: Manager&lt;R&gt;&gt; ManagerExt&lt;R&gt; <span class="kw">for </span>T {
-    <span class="kw">fn </span>get_panel(<span class="kw-2">&amp;</span><span class="self">self</span>, label: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;ShareId&lt;RawNSPanel&gt;, Error&gt; {
-        <span class="kw">let </span>manager = <span class="self">self</span>.state::&lt;<span class="self">self</span>::PanelManager&gt;();
+    <span class="kw">fn </span>get_panel(<span class="kw-2">&amp;</span><span class="self">self</span>, label: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;ShareId&lt;RawNSPanel&lt;R&gt;&gt;, Error&gt; {
+        <span class="kw">let </span>manager = <span class="self">self</span>.state::&lt;<span class="self">self</span>::PanelManager&lt;R&gt;&gt;();
         <span class="kw">let </span>manager = manager.<span class="number">0</span>.lock().unwrap();
 
         <span class="kw">match </span>manager.panels.get(label) {
@@ -136,16 +163,17 @@
     <span class="kw">pub </span>delegate: <span class="prelude-ty">Option</span>&lt;id&gt;,
 }
 
-<span class="kw">pub trait </span>WindowExt {
-    <span class="kw">fn </span>to_panel(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; tauri::Result&lt;ShareId&lt;RawNSPanel&gt;&gt;;
+<span class="kw">pub trait </span>WindowExt&lt;R: Runtime&gt; {
+    <span class="kw">fn </span>to_panel(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; tauri::Result&lt;ShareId&lt;RawNSPanel&lt;R&gt;&gt;&gt;;
 }
 
-<span class="kw">impl</span>&lt;R: Runtime&gt; WindowExt <span class="kw">for </span>Window&lt;R&gt; {
-    <span class="kw">fn </span>to_panel(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; tauri::Result&lt;ShareId&lt;RawNSPanel&gt;&gt; {
+<span class="kw">impl</span>&lt;R: Runtime&gt; WindowExt&lt;R&gt; <span class="kw">for </span>Window&lt;R&gt; {
+    <span class="kw">fn </span>to_panel(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; tauri::Result&lt;ShareId&lt;RawNSPanel&lt;R&gt;&gt;&gt; {
         <span class="kw">let </span>panel = RawNSPanel::from(<span class="self">self</span>);
         <span class="kw">let </span>panel = panel.share();
+        panel.set_app_handle(<span class="self">self</span>.app_handle());
 
-        <span class="kw">let </span>manager = <span class="self">self</span>.state::&lt;<span class="self">self</span>::PanelManager&gt;();
+        <span class="kw">let </span>manager = <span class="self">self</span>.state::&lt;<span class="self">self</span>::PanelManager&lt;R&gt;&gt;();
         manager
             .<span class="number">0
             </span>.lock()
@@ -161,10 +189,10 @@
 </span><span class="kw">pub fn </span>init&lt;R: Runtime&gt;() -&gt; TauriPlugin&lt;R&gt; {
     Builder::new(<span class="string">&quot;nspanel&quot;</span>)
         .setup(|app| {
-            app.manage(<span class="self">self</span>::PanelManager::default());
+            app.manage(<span class="self">self</span>::PanelManager::&lt;R&gt;::default());
             <span class="prelude-val">Ok</span>(())
         })
         .build()
 }
 </code></pre></div>
-</section></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tauri_nspanel" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0 (2c8cc3432 2023-03-06)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-c3c521c753752a1a.js" data-settings-css="settings-08ddfdda51b8ee2e.css" ></div></body></html>
+</section></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tauri_nspanel" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.2 (9eb3afe9e 2023-03-27)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-c3c521c753752a1a.js" data-settings-css="settings-08ddfdda51b8ee2e.css" ></div></body></html>

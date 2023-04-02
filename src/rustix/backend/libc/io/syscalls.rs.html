@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rustix-0.36.11/src/backend/libc/io/syscalls.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>syscalls.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../rustix/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rustix-0.37.6/src/backend/libc/io/syscalls.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>syscalls.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../rustix/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -553,6 +553,128 @@
 <a href="#553" id="553">553</a>
 <a href="#554" id="554">554</a>
 <a href="#555" id="555">555</a>
+<a href="#556" id="556">556</a>
+<a href="#557" id="557">557</a>
+<a href="#558" id="558">558</a>
+<a href="#559" id="559">559</a>
+<a href="#560" id="560">560</a>
+<a href="#561" id="561">561</a>
+<a href="#562" id="562">562</a>
+<a href="#563" id="563">563</a>
+<a href="#564" id="564">564</a>
+<a href="#565" id="565">565</a>
+<a href="#566" id="566">566</a>
+<a href="#567" id="567">567</a>
+<a href="#568" id="568">568</a>
+<a href="#569" id="569">569</a>
+<a href="#570" id="570">570</a>
+<a href="#571" id="571">571</a>
+<a href="#572" id="572">572</a>
+<a href="#573" id="573">573</a>
+<a href="#574" id="574">574</a>
+<a href="#575" id="575">575</a>
+<a href="#576" id="576">576</a>
+<a href="#577" id="577">577</a>
+<a href="#578" id="578">578</a>
+<a href="#579" id="579">579</a>
+<a href="#580" id="580">580</a>
+<a href="#581" id="581">581</a>
+<a href="#582" id="582">582</a>
+<a href="#583" id="583">583</a>
+<a href="#584" id="584">584</a>
+<a href="#585" id="585">585</a>
+<a href="#586" id="586">586</a>
+<a href="#587" id="587">587</a>
+<a href="#588" id="588">588</a>
+<a href="#589" id="589">589</a>
+<a href="#590" id="590">590</a>
+<a href="#591" id="591">591</a>
+<a href="#592" id="592">592</a>
+<a href="#593" id="593">593</a>
+<a href="#594" id="594">594</a>
+<a href="#595" id="595">595</a>
+<a href="#596" id="596">596</a>
+<a href="#597" id="597">597</a>
+<a href="#598" id="598">598</a>
+<a href="#599" id="599">599</a>
+<a href="#600" id="600">600</a>
+<a href="#601" id="601">601</a>
+<a href="#602" id="602">602</a>
+<a href="#603" id="603">603</a>
+<a href="#604" id="604">604</a>
+<a href="#605" id="605">605</a>
+<a href="#606" id="606">606</a>
+<a href="#607" id="607">607</a>
+<a href="#608" id="608">608</a>
+<a href="#609" id="609">609</a>
+<a href="#610" id="610">610</a>
+<a href="#611" id="611">611</a>
+<a href="#612" id="612">612</a>
+<a href="#613" id="613">613</a>
+<a href="#614" id="614">614</a>
+<a href="#615" id="615">615</a>
+<a href="#616" id="616">616</a>
+<a href="#617" id="617">617</a>
+<a href="#618" id="618">618</a>
+<a href="#619" id="619">619</a>
+<a href="#620" id="620">620</a>
+<a href="#621" id="621">621</a>
+<a href="#622" id="622">622</a>
+<a href="#623" id="623">623</a>
+<a href="#624" id="624">624</a>
+<a href="#625" id="625">625</a>
+<a href="#626" id="626">626</a>
+<a href="#627" id="627">627</a>
+<a href="#628" id="628">628</a>
+<a href="#629" id="629">629</a>
+<a href="#630" id="630">630</a>
+<a href="#631" id="631">631</a>
+<a href="#632" id="632">632</a>
+<a href="#633" id="633">633</a>
+<a href="#634" id="634">634</a>
+<a href="#635" id="635">635</a>
+<a href="#636" id="636">636</a>
+<a href="#637" id="637">637</a>
+<a href="#638" id="638">638</a>
+<a href="#639" id="639">639</a>
+<a href="#640" id="640">640</a>
+<a href="#641" id="641">641</a>
+<a href="#642" id="642">642</a>
+<a href="#643" id="643">643</a>
+<a href="#644" id="644">644</a>
+<a href="#645" id="645">645</a>
+<a href="#646" id="646">646</a>
+<a href="#647" id="647">647</a>
+<a href="#648" id="648">648</a>
+<a href="#649" id="649">649</a>
+<a href="#650" id="650">650</a>
+<a href="#651" id="651">651</a>
+<a href="#652" id="652">652</a>
+<a href="#653" id="653">653</a>
+<a href="#654" id="654">654</a>
+<a href="#655" id="655">655</a>
+<a href="#656" id="656">656</a>
+<a href="#657" id="657">657</a>
+<a href="#658" id="658">658</a>
+<a href="#659" id="659">659</a>
+<a href="#660" id="660">660</a>
+<a href="#661" id="661">661</a>
+<a href="#662" id="662">662</a>
+<a href="#663" id="663">663</a>
+<a href="#664" id="664">664</a>
+<a href="#665" id="665">665</a>
+<a href="#666" id="666">666</a>
+<a href="#667" id="667">667</a>
+<a href="#668" id="668">668</a>
+<a href="#669" id="669">669</a>
+<a href="#670" id="670">670</a>
+<a href="#671" id="671">671</a>
+<a href="#672" id="672">672</a>
+<a href="#673" id="673">673</a>
+<a href="#674" id="674">674</a>
+<a href="#675" id="675">675</a>
+<a href="#676" id="676">676</a>
+<a href="#677" id="677">677</a>
 </pre><pre class="rust"><code><span class="doccomment">//! libc syscalls supporting `rustix::io`.
 
 </span><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::c;
@@ -567,15 +689,13 @@
 <span class="attr">#[cfg(all(target_os = <span class="string">&quot;linux&quot;</span>, target_env = <span class="string">&quot;gnu&quot;</span>))]
 </span><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::offset::{libc_preadv2, libc_pwritev2};
 <span class="kw">use </span><span class="kw">crate</span>::fd::{AsFd, BorrowedFd, OwnedFd, RawFd};
+<span class="attr">#[cfg(bsd)]
+</span><span class="kw">use </span><span class="kw">crate</span>::io::kqueue::Event;
+<span class="attr">#[cfg(solarish)]
+</span><span class="kw">use </span><span class="kw">crate</span>::io::port::Event;
 <span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;aix&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
 </span><span class="kw">use </span><span class="kw">crate</span>::io::DupFlags;
-<span class="attr">#[cfg(not(any(
-    target_os = <span class="string">&quot;aix&quot;</span>,
-    target_os = <span class="string">&quot;haiku&quot;</span>,
-    target_os = <span class="string">&quot;ios&quot;</span>,
-    target_os = <span class="string">&quot;macos&quot;</span>,
-    target_os = <span class="string">&quot;wasi&quot;
-</span>)))]
+<span class="attr">#[cfg(not(any(apple, target_os = <span class="string">&quot;aix&quot;</span>, target_os = <span class="string">&quot;haiku&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
 </span><span class="kw">use </span><span class="kw">crate</span>::io::PipeFlags;
 <span class="kw">use </span><span class="kw">crate</span>::io::{<span class="self">self</span>, FdFlags, IoSlice, IoSliceMut, PollFd};
 <span class="attr">#[cfg(any(target_os = <span class="string">&quot;android&quot;</span>, target_os = <span class="string">&quot;linux&quot;</span>))]
@@ -799,7 +919,7 @@
 }
 
 <span class="comment">// These functions are derived from Rust&#39;s library/std/src/sys/unix/fd.rs at
-// revision a77da2d454e6caa227a85b16410b95f93495e7e0.
+// revision 326ef470a8b379a180d6dc4bbef08990698a737a.
 
 // The maximum read limit on most POSIX-like systems is `SSIZE_MAX`, with the
 // man page quoting that if the count of bytes to read is greater than
@@ -814,33 +934,28 @@
 <span class="attr">#[cfg(not(target_os = <span class="string">&quot;macos&quot;</span>))]
 </span><span class="kw">const </span>READ_LIMIT: usize = c::ssize_t::MAX <span class="kw">as </span>usize;
 
-<span class="attr">#[cfg(any(
-    target_os = <span class="string">&quot;dragonfly&quot;</span>,
-    target_os = <span class="string">&quot;freebsd&quot;</span>,
-    target_os = <span class="string">&quot;ios&quot;</span>,
-    target_os = <span class="string">&quot;macos&quot;</span>,
-    target_os = <span class="string">&quot;netbsd&quot;</span>,
-    target_os = <span class="string">&quot;openbsd&quot;</span>,
-))]
+<span class="attr">#[cfg(bsd)]
 </span><span class="kw">const fn </span>max_iov() -&gt; usize {
     c::IOV_MAX <span class="kw">as </span>usize
 }
 
-<span class="attr">#[cfg(any(target_os = <span class="string">&quot;android&quot;</span>, target_os = <span class="string">&quot;emscripten&quot;</span>, target_os = <span class="string">&quot;linux&quot;</span>))]
+<span class="attr">#[cfg(any(
+    target_os = <span class="string">&quot;android&quot;</span>,
+    target_os = <span class="string">&quot;emscripten&quot;</span>,
+    target_os = <span class="string">&quot;linux&quot;</span>,
+    target_os = <span class="string">&quot;nto&quot;
+</span>))]
 </span><span class="kw">const fn </span>max_iov() -&gt; usize {
     c::UIO_MAXIOV <span class="kw">as </span>usize
 }
 
 <span class="attr">#[cfg(not(any(
+    bsd,
     target_os = <span class="string">&quot;android&quot;</span>,
-    target_os = <span class="string">&quot;dragonfly&quot;</span>,
     target_os = <span class="string">&quot;emscripten&quot;</span>,
-    target_os = <span class="string">&quot;freebsd&quot;</span>,
-    target_os = <span class="string">&quot;ios&quot;</span>,
     target_os = <span class="string">&quot;linux&quot;</span>,
-    target_os = <span class="string">&quot;macos&quot;</span>,
-    target_os = <span class="string">&quot;netbsd&quot;</span>,
-    target_os = <span class="string">&quot;openbsd&quot;</span>,
+    target_os = <span class="string">&quot;nto&quot;</span>,
+    target_os = <span class="string">&quot;horizon&quot;</span>,
 )))]
 </span><span class="kw">const fn </span>max_iov() -&gt; usize {
     <span class="number">16 </span><span class="comment">// The minimum value required by POSIX.
@@ -895,6 +1010,33 @@
     <span class="kw">unsafe </span>{
         <span class="kw">let </span>data = value <span class="kw">as </span>c::c_int;
         ret(c::ioctl(borrowed_fd(fd), c::FIONBIO, <span class="kw-2">&amp;</span>data))
+    }
+}
+
+<span class="attr">#[cfg(any(target_os = <span class="string">&quot;android&quot;</span>, target_os = <span class="string">&quot;linux&quot;</span>))]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>ioctl_ficlone(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, src_fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; io::Result&lt;()&gt; {
+    <span class="comment">// TODO: Enable `ioctl_ficlone` for android when upstream is updated.
+    // TODO: Enable `ioctl_ficlone` for more architectures when upstream is
+    // updated.
+    </span><span class="attr">#[cfg(all(
+        target_os = <span class="string">&quot;linux&quot;</span>,
+        any(target_arch = <span class="string">&quot;x86&quot;</span>, target_arch = <span class="string">&quot;x86_64&quot;</span>, target_arch = <span class="string">&quot;aarch64&quot;</span>)
+    ))]
+    </span><span class="kw">unsafe </span>{
+        ret(c::ioctl(
+            borrowed_fd(fd),
+            c::FICLONE <span class="kw">as _</span>,
+            borrowed_fd(src_fd),
+        ))
+    }
+    <span class="attr">#[cfg(not(all(
+        target_os = <span class="string">&quot;linux&quot;</span>,
+        any(target_arch = <span class="string">&quot;x86&quot;</span>, target_arch = <span class="string">&quot;x86_64&quot;</span>, target_arch = <span class="string">&quot;aarch64&quot;</span>)
+    )))]
+    </span>{
+        <span class="kw">let _ </span>= fd;
+        <span class="kw">let _ </span>= src_fd;
+        <span class="prelude-val">Err</span>(io::Errno::NOSYS)
     }
 }
 
@@ -975,12 +1117,11 @@
 }
 
 <span class="attr">#[cfg(not(any(
+    apple,
     target_os = <span class="string">&quot;aix&quot;</span>,
     target_os = <span class="string">&quot;android&quot;</span>,
     target_os = <span class="string">&quot;dragonfly&quot;</span>,
     target_os = <span class="string">&quot;haiku&quot;</span>,
-    target_os = <span class="string">&quot;ios&quot;</span>,
-    target_os = <span class="string">&quot;macos&quot;</span>,
     target_os = <span class="string">&quot;redox&quot;</span>,
     target_os = <span class="string">&quot;wasi&quot;</span>,
 )))]
@@ -995,11 +1136,10 @@
 }
 
 <span class="attr">#[cfg(any(
+    apple,
     target_os = <span class="string">&quot;android&quot;</span>,
     target_os = <span class="string">&quot;dragonfly&quot;</span>,
     target_os = <span class="string">&quot;haiku&quot;</span>,
-    target_os = <span class="string">&quot;ios&quot;</span>,
-    target_os = <span class="string">&quot;macos&quot;</span>,
     target_os = <span class="string">&quot;redox&quot;</span>,
 ))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>dup3(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, new: <span class="kw-2">&amp;mut </span>OwnedFd, _flags: DupFlags) -&gt; io::Result&lt;()&gt; {
@@ -1010,7 +1150,7 @@
     </span>dup2(fd, new)
 }
 
-<span class="attr">#[cfg(any(target_os = <span class="string">&quot;ios&quot;</span>, target_os = <span class="string">&quot;macos&quot;</span>))]
+<span class="attr">#[cfg(apple)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>ioctl_fioclex(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{ ret(c::ioctl(borrowed_fd(fd), c::FIOCLEX)) }
 }
@@ -1025,6 +1165,34 @@
     <span class="kw">unsafe </span>{ ret(c::ioctl(borrowed_fd(fd), c::TIOCNXCL <span class="kw">as _</span>)) }
 }
 
+<span class="attr">#[cfg(bsd)]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>kqueue() -&gt; io::Result&lt;OwnedFd&gt; {
+    <span class="kw">unsafe </span>{ ret_owned_fd(c::kqueue()) }
+}
+
+<span class="attr">#[cfg(bsd)]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>kevent(
+    kq: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    changelist: <span class="kw-2">&amp;</span>[Event],
+    eventlist: <span class="kw-2">&amp;mut </span>[MaybeUninit&lt;Event&gt;],
+    timeout: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>c::timespec&gt;,
+) -&gt; io::Result&lt;c::c_int&gt; {
+    ret_c_int(c::kevent(
+        borrowed_fd(kq),
+        changelist.as_ptr() <span class="kw">as </span><span class="kw-2">*const </span><span class="kw">_</span>,
+        changelist
+            .len()
+            .try_into()
+            .map_err(|<span class="kw">_</span>| io::Errno::OVERFLOW)<span class="question-mark">?</span>,
+        eventlist.as_mut_ptr() <span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">_</span>,
+        eventlist
+            .len()
+            .try_into()
+            .map_err(|<span class="kw">_</span>| io::Errno::OVERFLOW)<span class="question-mark">?</span>,
+        timeout.map_or(core::ptr::null(), |t| t <span class="kw">as </span><span class="kw-2">*const </span><span class="kw">_</span>),
+    ))
+}
+
 <span class="attr">#[cfg(not(target_os = <span class="string">&quot;wasi&quot;</span>))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>pipe() -&gt; io::Result&lt;(OwnedFd, OwnedFd)&gt; {
     <span class="kw">unsafe </span>{
@@ -1035,13 +1203,7 @@
     }
 }
 
-<span class="attr">#[cfg(not(any(
-    target_os = <span class="string">&quot;aix&quot;</span>,
-    target_os = <span class="string">&quot;haiku&quot;</span>,
-    target_os = <span class="string">&quot;ios&quot;</span>,
-    target_os = <span class="string">&quot;macos&quot;</span>,
-    target_os = <span class="string">&quot;wasi&quot;
-</span>)))]
+<span class="attr">#[cfg(not(any(apple, target_os = <span class="string">&quot;aix&quot;</span>, target_os = <span class="string">&quot;haiku&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>pipe_with(flags: PipeFlags) -&gt; io::Result&lt;(OwnedFd, OwnedFd)&gt; {
     <span class="kw">unsafe </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>result = MaybeUninit::&lt;[OwnedFd; <span class="number">2</span>]&gt;::uninit();
@@ -1108,5 +1270,87 @@
     ))
     .map(|spliced| spliced <span class="kw">as </span>usize)
 }
+
+<span class="attr">#[cfg(solarish)]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>port_create() -&gt; io::Result&lt;OwnedFd&gt; {
+    <span class="kw">unsafe </span>{ ret_owned_fd(c::port_create()) }
+}
+
+<span class="attr">#[cfg(solarish)]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>port_associate(
+    port: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    source: c::c_int,
+    object: c::uintptr_t,
+    events: c::c_int,
+    user: <span class="kw-2">*mut </span>c::c_void,
+) -&gt; io::Result&lt;()&gt; {
+    ret(c::port_associate(
+        borrowed_fd(port),
+        source,
+        object,
+        events,
+        user,
+    ))
+}
+
+<span class="attr">#[cfg(solarish)]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>port_dissociate(
+    port: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    source: c::c_int,
+    object: c::uintptr_t,
+) -&gt; io::Result&lt;()&gt; {
+    ret(c::port_dissociate(borrowed_fd(port), source, object))
+}
+
+<span class="attr">#[cfg(solarish)]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>port_get(
+    port: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    timeout: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>c::timespec&gt;,
+) -&gt; io::Result&lt;Event&gt; {
+    <span class="kw">let </span><span class="kw-2">mut </span>event = MaybeUninit::&lt;c::port_event&gt;::uninit();
+    <span class="kw">let </span>timeout = timeout.map_or(core::ptr::null_mut(), |t| t <span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">_</span>);
+
+    <span class="kw">unsafe </span>{
+        ret(c::port_get(borrowed_fd(port), event.as_mut_ptr(), timeout))<span class="question-mark">?</span>;
+    }
+
+    <span class="comment">// If we&#39;re done, initialize the event and return it.
+    </span><span class="prelude-val">Ok</span>(Event(<span class="kw">unsafe </span>{ event.assume_init() }))
+}
+
+<span class="attr">#[cfg(solarish)]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>port_getn(
+    port: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    timeout: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>c::timespec&gt;,
+    events: <span class="kw-2">&amp;mut </span>Vec&lt;Event&gt;,
+    <span class="kw-2">mut </span>nget: u32,
+) -&gt; io::Result&lt;()&gt; {
+    <span class="kw">let </span>timeout = timeout.map_or(core::ptr::null_mut(), |t| t <span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">_</span>);
+    <span class="kw">unsafe </span>{
+        ret(c::port_getn(
+            borrowed_fd(port),
+            events.as_mut_ptr().cast(),
+            events.len().try_into().unwrap(),
+            <span class="kw-2">&amp;mut </span>nget,
+            timeout,
+        ))<span class="question-mark">?</span>;
+    }
+
+    <span class="comment">// Update the vector length.
+    </span><span class="kw">unsafe </span>{
+        events.set_len(nget.try_into().unwrap());
+    }
+
+    <span class="prelude-val">Ok</span>(())
+}
+
+<span class="attr">#[cfg(solarish)]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>port_send(
+    port: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    events: c::c_int,
+    userdata: <span class="kw-2">*mut </span>c::c_void,
+) -&gt; io::Result&lt;()&gt; {
+    <span class="kw">unsafe </span>{ ret(c::port_send(borrowed_fd(port), events, userdata)) }
+}
 </code></pre></div>
-</section></main><div id="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="rustix" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0 (2c8cc3432 2023-03-06)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-c3c521c753752a1a.js" data-settings-css="settings-08ddfdda51b8ee2e.css" ></div></body></html>
+</section></main><div id="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="rustix" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.2 (9eb3afe9e 2023-03-27)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-c3c521c753752a1a.js" data-settings-css="settings-08ddfdda51b8ee2e.css" ></div></body></html>

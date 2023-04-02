@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rustix-0.36.11/src/backend/libc/time/syscalls.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>syscalls.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../rustix/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rustix-0.37.6/src/backend/libc/time/syscalls.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>syscalls.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../rustix/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -412,6 +412,64 @@
 <a href="#412" id="412">412</a>
 <a href="#413" id="413">413</a>
 <a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
+<a href="#436" id="436">436</a>
+<a href="#437" id="437">437</a>
+<a href="#438" id="438">438</a>
+<a href="#439" id="439">439</a>
+<a href="#440" id="440">440</a>
+<a href="#441" id="441">441</a>
+<a href="#442" id="442">442</a>
+<a href="#443" id="443">443</a>
+<a href="#444" id="444">444</a>
+<a href="#445" id="445">445</a>
+<a href="#446" id="446">446</a>
+<a href="#447" id="447">447</a>
+<a href="#448" id="448">448</a>
+<a href="#449" id="449">449</a>
+<a href="#450" id="450">450</a>
+<a href="#451" id="451">451</a>
+<a href="#452" id="452">452</a>
+<a href="#453" id="453">453</a>
+<a href="#454" id="454">454</a>
+<a href="#455" id="455">455</a>
+<a href="#456" id="456">456</a>
+<a href="#457" id="457">457</a>
+<a href="#458" id="458">458</a>
+<a href="#459" id="459">459</a>
+<a href="#460" id="460">460</a>
+<a href="#461" id="461">461</a>
+<a href="#462" id="462">462</a>
+<a href="#463" id="463">463</a>
+<a href="#464" id="464">464</a>
+<a href="#465" id="465">465</a>
+<a href="#466" id="466">466</a>
+<a href="#467" id="467">467</a>
+<a href="#468" id="468">468</a>
+<a href="#469" id="469">469</a>
+<a href="#470" id="470">470</a>
+<a href="#471" id="471">471</a>
+<a href="#472" id="472">472</a>
 </pre><pre class="rust"><code><span class="doccomment">//! libc syscalls supporting `rustix::time`.
 
 </span><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::c;
@@ -438,6 +496,11 @@
     target_env = <span class="string">&quot;gnu&quot;</span>,
 ))]
 </span><span class="macro">weak!</span>(<span class="kw">fn </span>__clock_gettime64(c::clockid_t, <span class="kw-2">*mut </span>LibcTimespec) -&gt; c::c_int);
+<span class="attr">#[cfg(all(
+    any(target_arch = <span class="string">&quot;arm&quot;</span>, target_arch = <span class="string">&quot;mips&quot;</span>, target_arch = <span class="string">&quot;x86&quot;</span>),
+    target_env = <span class="string">&quot;gnu&quot;</span>,
+))]
+</span><span class="macro">weak!</span>(<span class="kw">fn </span>__clock_settime64(c::clockid_t, <span class="kw-2">*const </span>LibcTimespec) -&gt; c::c_int);
 <span class="attr">#[cfg(all(
     any(target_arch = <span class="string">&quot;arm&quot;</span>, target_arch = <span class="string">&quot;mips&quot;</span>, target_arch = <span class="string">&quot;x86&quot;</span>),
     target_env = <span class="string">&quot;gnu&quot;</span>,
@@ -646,6 +709,59 @@
     })
 }
 
+<span class="attr">#[cfg(not(any(
+    target_os = <span class="string">&quot;redox&quot;</span>,
+    target_os = <span class="string">&quot;wasi&quot;</span>,
+    all(apple, not(target_os = <span class="string">&quot;macos&quot;</span>))
+)))]
+#[inline]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>clock_settime(id: ClockId, timespec: Timespec) -&gt; io::Result&lt;()&gt; {
+    <span class="attr">#[cfg(all(
+        any(target_arch = <span class="string">&quot;arm&quot;</span>, target_arch = <span class="string">&quot;mips&quot;</span>, target_arch = <span class="string">&quot;x86&quot;</span>),
+        target_env = <span class="string">&quot;gnu&quot;</span>,
+    ))]
+    </span><span class="kw">unsafe </span>{
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(libc_clock_settime) = __clock_settime64.get() {
+            <span class="kw">let </span><span class="kw-2">mut </span>new_timespec = core::mem::zeroed::&lt;LibcTimespec&gt;();
+            new_timespec.tv_sec = timespec.tv_sec;
+            new_timespec.tv_nsec = timespec.tv_nsec <span class="kw">as _</span>;
+            ret(libc_clock_settime(id <span class="kw">as </span>c::clockid_t, <span class="kw-2">&amp;</span>new_timespec))
+        } <span class="kw">else </span>{
+            clock_settime_old(id, timespec)
+        }
+    }
+
+    <span class="attr">#[cfg(not(all(
+        any(target_arch = <span class="string">&quot;arm&quot;</span>, target_arch = <span class="string">&quot;mips&quot;</span>, target_arch = <span class="string">&quot;x86&quot;</span>),
+        target_env = <span class="string">&quot;gnu&quot;</span>,
+    )))]
+    </span><span class="kw">unsafe </span>{
+        ret(c::clock_settime(id <span class="kw">as </span>c::clockid_t, <span class="kw-2">&amp;</span>timespec))
+    }
+}
+
+<span class="attr">#[cfg(not(any(
+    target_os = <span class="string">&quot;redox&quot;</span>,
+    target_os = <span class="string">&quot;wasi&quot;</span>,
+    all(apple, not(target_os = <span class="string">&quot;macos&quot;</span>))
+)))]
+#[cfg(all(
+    any(target_arch = <span class="string">&quot;arm&quot;</span>, target_arch = <span class="string">&quot;mips&quot;</span>, target_arch = <span class="string">&quot;x86&quot;</span>),
+    target_env = <span class="string">&quot;gnu&quot;</span>,
+))]
+#[must_use]
+</span><span class="kw">unsafe fn </span>clock_settime_old(id: ClockId, timespec: Timespec) -&gt; io::Result&lt;()&gt; {
+    <span class="kw">use </span>core::convert::TryInto;
+    <span class="kw">let </span>old_timespec = c::timespec {
+        tv_sec: timespec
+            .tv_sec
+            .try_into()
+            .map_err(|<span class="kw">_</span>| io::Errno::OVERFLOW)<span class="question-mark">?</span>,
+        tv_nsec: timespec.tv_nsec <span class="kw">as _</span>,
+    };
+    ret(c::clock_settime(id <span class="kw">as </span>c::clockid_t, <span class="kw-2">&amp;</span>old_timespec))
+}
+
 <span class="attr">#[cfg(any(target_os = <span class="string">&quot;android&quot;</span>, target_os = <span class="string">&quot;fuchsia&quot;</span>, target_os = <span class="string">&quot;linux&quot;</span>))]
 #[cfg(feature = <span class="string">&quot;time&quot;</span>)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>timerfd_create(id: TimerfdClockId, flags: TimerfdFlags) -&gt; io::Result&lt;OwnedFd&gt; {
@@ -827,4 +943,4 @@
     })
 }
 </code></pre></div>
-</section></main><div id="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="rustix" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0 (2c8cc3432 2023-03-06)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-c3c521c753752a1a.js" data-settings-css="settings-08ddfdda51b8ee2e.css" ></div></body></html>
+</section></main><div id="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="rustix" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.2 (9eb3afe9e 2023-03-27)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-c3c521c753752a1a.js" data-settings-css="settings-08ddfdda51b8ee2e.css" ></div></body></html>

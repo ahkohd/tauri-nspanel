@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rustix-0.36.11/src/backend/libc/fs/dir.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>dir.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../rustix/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rustix-0.37.6/src/backend/libc/fs/dir.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>dir.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../rustix/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -403,91 +403,9 @@
 <a href="#403" id="403">403</a>
 <a href="#404" id="404">404</a>
 <a href="#405" id="405">405</a>
-<a href="#406" id="406">406</a>
-<a href="#407" id="407">407</a>
-<a href="#408" id="408">408</a>
-<a href="#409" id="409">409</a>
-<a href="#410" id="410">410</a>
-<a href="#411" id="411">411</a>
-<a href="#412" id="412">412</a>
-<a href="#413" id="413">413</a>
-<a href="#414" id="414">414</a>
-<a href="#415" id="415">415</a>
-<a href="#416" id="416">416</a>
-<a href="#417" id="417">417</a>
-<a href="#418" id="418">418</a>
-<a href="#419" id="419">419</a>
-<a href="#420" id="420">420</a>
-<a href="#421" id="421">421</a>
-<a href="#422" id="422">422</a>
-<a href="#423" id="423">423</a>
-<a href="#424" id="424">424</a>
-<a href="#425" id="425">425</a>
-<a href="#426" id="426">426</a>
-<a href="#427" id="427">427</a>
-<a href="#428" id="428">428</a>
-<a href="#429" id="429">429</a>
-<a href="#430" id="430">430</a>
-<a href="#431" id="431">431</a>
-<a href="#432" id="432">432</a>
-<a href="#433" id="433">433</a>
-<a href="#434" id="434">434</a>
-<a href="#435" id="435">435</a>
-<a href="#436" id="436">436</a>
-<a href="#437" id="437">437</a>
-<a href="#438" id="438">438</a>
-<a href="#439" id="439">439</a>
-<a href="#440" id="440">440</a>
-<a href="#441" id="441">441</a>
-<a href="#442" id="442">442</a>
-<a href="#443" id="443">443</a>
-<a href="#444" id="444">444</a>
-<a href="#445" id="445">445</a>
-<a href="#446" id="446">446</a>
-<a href="#447" id="447">447</a>
-<a href="#448" id="448">448</a>
-<a href="#449" id="449">449</a>
-<a href="#450" id="450">450</a>
-<a href="#451" id="451">451</a>
-<a href="#452" id="452">452</a>
-<a href="#453" id="453">453</a>
-<a href="#454" id="454">454</a>
-<a href="#455" id="455">455</a>
-<a href="#456" id="456">456</a>
-<a href="#457" id="457">457</a>
-<a href="#458" id="458">458</a>
-<a href="#459" id="459">459</a>
-<a href="#460" id="460">460</a>
-<a href="#461" id="461">461</a>
-<a href="#462" id="462">462</a>
-<a href="#463" id="463">463</a>
-<a href="#464" id="464">464</a>
-<a href="#465" id="465">465</a>
-<a href="#466" id="466">466</a>
-<a href="#467" id="467">467</a>
-<a href="#468" id="468">468</a>
-<a href="#469" id="469">469</a>
-<a href="#470" id="470">470</a>
-<a href="#471" id="471">471</a>
-<a href="#472" id="472">472</a>
-<a href="#473" id="473">473</a>
-<a href="#474" id="474">474</a>
-<a href="#475" id="475">475</a>
-<a href="#476" id="476">476</a>
-<a href="#477" id="477">477</a>
-<a href="#478" id="478">478</a>
-<a href="#479" id="479">479</a>
-<a href="#480" id="480">480</a>
-<a href="#481" id="481">481</a>
-<a href="#482" id="482">482</a>
-<a href="#483" id="483">483</a>
-<a href="#484" id="484">484</a>
-<a href="#485" id="485">485</a>
-<a href="#486" id="486">486</a>
-<a href="#487" id="487">487</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::c;
 <span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::conv::owned_fd;
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;haiku&quot;</span>, target_os = <span class="string">&quot;illumos&quot;</span>, target_os = <span class="string">&quot;solaris&quot;</span>)))]
+<span class="attr">#[cfg(not(any(solarish, target_os = <span class="string">&quot;haiku&quot;</span>)))]
 </span><span class="kw">use </span><span class="kw">super</span>::types::FileType;
 <span class="kw">use </span><span class="kw">crate</span>::fd::{AsFd, BorrowedFd};
 <span class="kw">use </span><span class="kw">crate</span>::ffi::CStr;
@@ -495,48 +413,25 @@
 </span><span class="kw">use </span><span class="kw">crate</span>::ffi::CString;
 <span class="kw">use </span><span class="kw">crate</span>::fs::{fcntl_getfl, fstat, openat, Mode, OFlags, Stat};
 <span class="attr">#[cfg(not(any(
+    solarish,
     target_os = <span class="string">&quot;haiku&quot;</span>,
-    target_os = <span class="string">&quot;illumos&quot;</span>,
     target_os = <span class="string">&quot;netbsd&quot;</span>,
     target_os = <span class="string">&quot;redox&quot;</span>,
-    target_os = <span class="string">&quot;solaris&quot;</span>,
     target_os = <span class="string">&quot;wasi&quot;</span>,
 )))]
 </span><span class="kw">use </span><span class="kw">crate</span>::fs::{fstatfs, StatFs};
-<span class="attr">#[cfg(not(any(
-    target_os = <span class="string">&quot;haiku&quot;</span>,
-    target_os = <span class="string">&quot;illumos&quot;</span>,
-    target_os = <span class="string">&quot;redox&quot;</span>,
-    target_os = <span class="string">&quot;solaris&quot;</span>,
-    target_os = <span class="string">&quot;wasi&quot;</span>,
-)))]
+<span class="attr">#[cfg(not(any(solarish, target_os = <span class="string">&quot;haiku&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
 </span><span class="kw">use </span><span class="kw">crate</span>::fs::{fstatvfs, StatVfs};
 <span class="kw">use </span><span class="kw">crate</span>::io;
 <span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;fuchsia&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
 </span><span class="kw">use </span><span class="kw">crate</span>::process::fchdir;
 <span class="attr">#[cfg(target_os = <span class="string">&quot;wasi&quot;</span>)]
 </span><span class="kw">use </span>alloc::borrow::ToOwned;
-<span class="attr">#[cfg(not(any(
-    target_os = <span class="string">&quot;android&quot;</span>,
-    target_os = <span class="string">&quot;emscripten&quot;</span>,
-    target_os = <span class="string">&quot;l4re&quot;</span>,
-    target_os = <span class="string">&quot;linux&quot;</span>,
-    target_os = <span class="string">&quot;openbsd&quot;</span>,
-)))]
+<span class="attr">#[cfg(not(any(linux_like, target_os = <span class="string">&quot;openbsd&quot;</span>)))]
 </span><span class="kw">use </span>c::dirent <span class="kw">as </span>libc_dirent;
-<span class="attr">#[cfg(not(any(
-    target_os = <span class="string">&quot;android&quot;</span>,
-    target_os = <span class="string">&quot;emscripten&quot;</span>,
-    target_os = <span class="string">&quot;l4re&quot;</span>,
-    target_os = <span class="string">&quot;linux&quot;</span>,
-)))]
+<span class="attr">#[cfg(not(linux_like))]
 </span><span class="kw">use </span>c::readdir <span class="kw">as </span>libc_readdir;
-<span class="attr">#[cfg(any(
-    target_os = <span class="string">&quot;android&quot;</span>,
-    target_os = <span class="string">&quot;emscripten&quot;</span>,
-    target_os = <span class="string">&quot;l4re&quot;</span>,
-    target_os = <span class="string">&quot;linux&quot;</span>,
-))]
+<span class="attr">#[cfg(linux_like)]
 </span><span class="kw">use </span>c::{dirent64 <span class="kw">as </span>libc_dirent, readdir64 <span class="kw">as </span>libc_readdir};
 <span class="kw">use </span>core::fmt;
 <span class="kw">use </span>core::mem::zeroed;
@@ -626,11 +521,10 @@
 
     <span class="doccomment">/// `fstatfs(self)`
     </span><span class="attr">#[cfg(not(any(
+        solarish,
         target_os = <span class="string">&quot;haiku&quot;</span>,
-        target_os = <span class="string">&quot;illumos&quot;</span>,
         target_os = <span class="string">&quot;netbsd&quot;</span>,
         target_os = <span class="string">&quot;redox&quot;</span>,
-        target_os = <span class="string">&quot;solaris&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
     )))]
     #[inline]
@@ -639,13 +533,7 @@
     }
 
     <span class="doccomment">/// `fstatvfs(self)`
-    </span><span class="attr">#[cfg(not(any(
-        target_os = <span class="string">&quot;haiku&quot;</span>,
-        target_os = <span class="string">&quot;illumos&quot;</span>,
-        target_os = <span class="string">&quot;redox&quot;</span>,
-        target_os = <span class="string">&quot;solaris&quot;</span>,
-        target_os = <span class="string">&quot;wasi&quot;</span>,
-    )))]
+    </span><span class="attr">#[cfg(not(any(solarish, target_os = <span class="string">&quot;haiku&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
     #[inline]
     </span><span class="kw">pub fn </span>statvfs(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; io::Result&lt;StatVfs&gt; {
         fstatvfs(<span class="kw">unsafe </span>{ BorrowedFd::borrow_raw(c::dirfd(<span class="self">self</span>.<span class="number">0</span>.as_ptr())) })
@@ -663,21 +551,14 @@
 // struct, as the name is NUL-terminated and memory may not be allocated for
 // the full extent of the struct. Copy the fields one at a time.
 </span><span class="kw">unsafe fn </span>read_dirent(input: <span class="kw-2">&amp;</span>libc_dirent) -&gt; libc_dirent {
-    <span class="attr">#[cfg(not(any(
-        target_os = <span class="string">&quot;aix&quot;</span>,
-        target_os = <span class="string">&quot;haiku&quot;</span>,
-        target_os = <span class="string">&quot;illumos&quot;</span>,
-        target_os = <span class="string">&quot;solaris&quot;
-    </span>)))]
+    <span class="attr">#[cfg(not(any(solarish, target_os = <span class="string">&quot;aix&quot;</span>, target_os = <span class="string">&quot;haiku&quot;</span>)))]
     </span><span class="kw">let </span>d_type = input.d_type;
 
     <span class="attr">#[cfg(not(any(
+        apple,
+        freebsdlike,
         target_os = <span class="string">&quot;aix&quot;</span>,
-        target_os = <span class="string">&quot;dragonfly&quot;</span>,
-        target_os = <span class="string">&quot;freebsd&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
-        target_os = <span class="string">&quot;ios&quot;</span>,
-        target_os = <span class="string">&quot;macos&quot;</span>,
         target_os = <span class="string">&quot;netbsd&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
     )))]
@@ -686,36 +567,19 @@
     <span class="attr">#[cfg(target_os = <span class="string">&quot;aix&quot;</span>)]
     </span><span class="kw">let </span>d_offset = input.d_offset;
 
-    <span class="attr">#[cfg(not(any(
-        target_os = <span class="string">&quot;dragonfly&quot;</span>,
-        target_os = <span class="string">&quot;freebsd&quot;</span>,
-        target_os = <span class="string">&quot;netbsd&quot;</span>,
-        target_os = <span class="string">&quot;openbsd&quot;</span>,
-    )))]
+    <span class="attr">#[cfg(not(any(freebsdlike, netbsdlike)))]
     </span><span class="kw">let </span>d_ino = input.d_ino;
 
-    <span class="attr">#[cfg(any(
-        target_os = <span class="string">&quot;dragonfly&quot;</span>,
-        target_os = <span class="string">&quot;freebsd&quot;</span>,
-        target_os = <span class="string">&quot;netbsd&quot;</span>,
-        target_os = <span class="string">&quot;openbsd&quot;
-    </span>))]
+    <span class="attr">#[cfg(any(freebsdlike, netbsdlike))]
     </span><span class="kw">let </span>d_fileno = input.d_fileno;
 
     <span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;dragonfly&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
     </span><span class="kw">let </span>d_reclen = input.d_reclen;
 
-    <span class="attr">#[cfg(any(
-        target_os = <span class="string">&quot;dragonfly&quot;</span>,
-        target_os = <span class="string">&quot;freebsd&quot;</span>,
-        target_os = <span class="string">&quot;netbsd&quot;</span>,
-        target_os = <span class="string">&quot;openbsd&quot;</span>,
-        target_os = <span class="string">&quot;ios&quot;</span>,
-        target_os = <span class="string">&quot;macos&quot;</span>,
-    ))]
+    <span class="attr">#[cfg(any(bsd, target_os = <span class="string">&quot;aix&quot;</span>))]
     </span><span class="kw">let </span>d_namlen = input.d_namlen;
 
-    <span class="attr">#[cfg(any(target_os = <span class="string">&quot;ios&quot;</span>, target_os = <span class="string">&quot;macos&quot;</span>))]
+    <span class="attr">#[cfg(apple)]
     </span><span class="kw">let </span>d_seekoff = input.d_seekoff;
 
     <span class="attr">#[cfg(target_os = <span class="string">&quot;haiku&quot;</span>)]
@@ -729,43 +593,30 @@
     // with a field that we missed here. And we can avoid blindly copying the
     // whole `d_name` field, which may not be entirely allocated.
     </span><span class="attr">#[cfg_attr(target_os = <span class="string">&quot;wasi&quot;</span>, allow(unused_mut))]
-    #[cfg(not(any(target_os = <span class="string">&quot;freebsd&quot;</span>, target_os = <span class="string">&quot;dragonfly&quot;</span>)))]
+    #[cfg(not(freebsdlike))]
     </span><span class="kw">let </span><span class="kw-2">mut </span>dirent = libc_dirent {
-        <span class="attr">#[cfg(not(any(
-            target_os = <span class="string">&quot;aix&quot;</span>,
-            target_os = <span class="string">&quot;haiku&quot;</span>,
-            target_os = <span class="string">&quot;illumos&quot;</span>,
-            target_os = <span class="string">&quot;solaris&quot;
-        </span>)))]
+        <span class="attr">#[cfg(not(any(solarish, target_os = <span class="string">&quot;aix&quot;</span>, target_os = <span class="string">&quot;haiku&quot;</span>)))]
         </span>d_type,
         <span class="attr">#[cfg(not(any(
+            apple,
             target_os = <span class="string">&quot;aix&quot;</span>,
             target_os = <span class="string">&quot;freebsd&quot;</span>,  <span class="comment">// Until FreeBSD 12
             </span>target_os = <span class="string">&quot;haiku&quot;</span>,
-            target_os = <span class="string">&quot;ios&quot;</span>,
-            target_os = <span class="string">&quot;macos&quot;</span>,
             target_os = <span class="string">&quot;netbsd&quot;</span>,
             target_os = <span class="string">&quot;wasi&quot;</span>,
         )))]
         </span>d_off,
         <span class="attr">#[cfg(target_os = <span class="string">&quot;aix&quot;</span>)]
         </span>d_offset,
-        <span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;freebsd&quot;</span>, target_os = <span class="string">&quot;netbsd&quot;</span>, target_os = <span class="string">&quot;openbsd&quot;</span>)))]
+        <span class="attr">#[cfg(not(any(netbsdlike, target_os = <span class="string">&quot;freebsd&quot;</span>)))]
         </span>d_ino,
-        <span class="attr">#[cfg(any(target_os = <span class="string">&quot;freebsd&quot;</span>, target_os = <span class="string">&quot;netbsd&quot;</span>, target_os = <span class="string">&quot;openbsd&quot;</span>))]
+        <span class="attr">#[cfg(any(netbsdlike, target_os = <span class="string">&quot;freebsd&quot;</span>))]
         </span>d_fileno,
         <span class="attr">#[cfg(not(target_os = <span class="string">&quot;wasi&quot;</span>))]
         </span>d_reclen,
-        <span class="attr">#[cfg(any(
-            target_os = <span class="string">&quot;aix&quot;</span>,
-            target_os = <span class="string">&quot;freebsd&quot;</span>,
-            target_os = <span class="string">&quot;ios&quot;</span>,
-            target_os = <span class="string">&quot;macos&quot;</span>,
-            target_os = <span class="string">&quot;netbsd&quot;</span>,
-            target_os = <span class="string">&quot;openbsd&quot;</span>,
-        ))]
+        <span class="attr">#[cfg(any(apple, netbsdlike, target_os = <span class="string">&quot;aix&quot;</span>, target_os = <span class="string">&quot;freebsd&quot;</span>))]
         </span>d_namlen,
-        <span class="attr">#[cfg(any(target_os = <span class="string">&quot;ios&quot;</span>, target_os = <span class="string">&quot;macos&quot;</span>))]
+        <span class="attr">#[cfg(apple)]
         </span>d_seekoff,
         <span class="comment">// The `d_name` field is NUL-terminated, and we need to be careful not
         // to read bytes past the NUL, even though they&#39;re within the nominal
@@ -791,11 +642,11 @@
     pub d_pino: i64,
     pub d_reclen: ::c_ushort,
     pub d_name: [::c_char; 1024], // Max length is _POSIX_PATH_MAX
-                                  // */
+    */
 
     // On dragonfly and FreeBSD 12, `dirent` has some non-public padding fields
     // so we can&#39;t directly initialize it.
-    </span><span class="attr">#[cfg(any(target_os = <span class="string">&quot;freebsd&quot;</span>, target_os = <span class="string">&quot;dragonfly&quot;</span>))]
+    </span><span class="attr">#[cfg(freebsdlike)]
     </span><span class="kw">let </span><span class="kw-2">mut </span>dirent = {
         <span class="kw">let </span><span class="kw-2">mut </span>dirent: libc_dirent = zeroed();
         dirent.d_fileno = d_fileno;
@@ -873,36 +724,21 @@
     }
 
     <span class="doccomment">/// Returns the type of this directory entry.
-    </span><span class="attr">#[cfg(not(any(
-        target_os = <span class="string">&quot;aix&quot;</span>,
-        target_os = <span class="string">&quot;haiku&quot;</span>,
-        target_os = <span class="string">&quot;illumos&quot;</span>,
-        target_os = <span class="string">&quot;solaris&quot;
-    </span>)))]
+    </span><span class="attr">#[cfg(not(any(solarish, target_os = <span class="string">&quot;aix&quot;</span>, target_os = <span class="string">&quot;haiku&quot;</span>)))]
     #[inline]
     </span><span class="kw">pub fn </span>file_type(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; FileType {
         FileType::from_dirent_d_type(<span class="self">self</span>.dirent.d_type)
     }
 
     <span class="doccomment">/// Return the inode number of this directory entry.
-    </span><span class="attr">#[cfg(not(any(
-        target_os = <span class="string">&quot;dragonfly&quot;</span>,
-        target_os = <span class="string">&quot;freebsd&quot;</span>,
-        target_os = <span class="string">&quot;netbsd&quot;</span>,
-        target_os = <span class="string">&quot;openbsd&quot;</span>,
-    )))]
+    </span><span class="attr">#[cfg(not(any(freebsdlike, netbsdlike)))]
     #[inline]
     </span><span class="kw">pub fn </span>ino(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u64 {
         <span class="self">self</span>.dirent.d_ino <span class="kw">as </span>u64
     }
 
     <span class="doccomment">/// Return the inode number of this directory entry.
-    </span><span class="attr">#[cfg(any(
-        target_os = <span class="string">&quot;dragonfly&quot;</span>,
-        target_os = <span class="string">&quot;freebsd&quot;</span>,
-        target_os = <span class="string">&quot;netbsd&quot;</span>,
-        target_os = <span class="string">&quot;openbsd&quot;</span>,
-    ))]
+    </span><span class="attr">#[cfg(any(freebsdlike, netbsdlike))]
     #[inline]
     </span><span class="kw">pub fn </span>ino(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u64 {
         <span class="attr">#[allow(clippy::useless_conversion)]
@@ -973,4 +809,4 @@
     );
 }
 </code></pre></div>
-</section></main><div id="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="rustix" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0 (2c8cc3432 2023-03-06)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-c3c521c753752a1a.js" data-settings-css="settings-08ddfdda51b8ee2e.css" ></div></body></html>
+</section></main><div id="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="rustix" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.2 (9eb3afe9e 2023-03-27)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-c3c521c753752a1a.js" data-settings-css="settings-08ddfdda51b8ee2e.css" ></div></body></html>
