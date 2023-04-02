@@ -58,6 +58,7 @@ let my_panel = app_handle.get_panel("main");
 Use the `panel_delegate!()` macro to do this:
 
 ```rust
+use tauri::Wry;
 use tauri_nspanel::{objc_id::Id, panel_delegate, ManagerExt, Panel, WindowExt};
 
 // ...
@@ -68,18 +69,19 @@ use tauri_nspanel::{objc_id::Id, panel_delegate, ManagerExt, Panel, WindowExt};
 //
 // Example: to respond to windowWillBeginSheet:
 // declare the function in snake case:
-// fn window_will_begin_sheet(_: Panel) { }
+// fn window_will_begin_sheet(_: Panel<Wry>) { }
 
-fn window_did_become_key(_: Panel) {
-  println!("[info]: panel becomes key window!");
+fn window_did_become_key(panel: Panel<Wry>) {
+  let app_name = panel.app_handle().unwrap().package_info().name.to_owned();
+  println!("[info]: {:?} panel becomes key window!", app_name);
 }
 
-fn window_did_resign_key(_: Panel) {
+fn window_did_resign_key(_: Panel<Wry>) {
   println!("[info]: panel resigned from key window!");
 }
 
 // Use the `panel_delegate!()` macro to create your custom delegate
-let delegate = panel_delegate!(MyPanelDelegate {
+let delegate = panel_delegate!(MyPanelDelegate<Wry> {
   window_did_become_key,
   window_did_resign_key
 });

@@ -1,6 +1,6 @@
 #[macro_export]
 macro_rules! panel_delegate {
-    ($delegate_name:ident { $($fn_name:ident),* $(,)* }) => {{
+    ($delegate_name:ident<$generic:ident> { $($fn_name:ident),* $(,)* }) => {{
         use $crate::objc::{
             class,
             declare::ClassDecl,
@@ -12,6 +12,7 @@ macro_rules! panel_delegate {
         use $crate::objc_foundation::INSObject;
         use $crate::objc_id::ShareId;
         use $crate::raw_nspanel::RawNSPanel;
+        use $crate::tauri::Runtime;
 
         macro_rules! snake_to_camel {
             ($input:ident) => {{
@@ -43,9 +44,9 @@ macro_rules! panel_delegate {
         const DELEGATE_CLS_NAME: &str = stringify!($delegate_name);
 
         #[allow(dead_code)]
-        struct $delegate_name {}
+        struct $delegate_name<R: Runtime> (std::marker::PhantomData<R>);
 
-        impl $delegate_name {
+        impl<R: Runtime> $delegate_name<R> {
              #[allow(dead_code)]
             fn get_class() -> &'static Class {
                 Class::get(DELEGATE_CLS_NAME).unwrap_or_else(Self::define_class)
@@ -87,26 +88,26 @@ macro_rules! panel_delegate {
             $(
                 extern "C" fn $fn_name(this: &Object, _: Sel, _: id) {
                     let panel: id = unsafe { *this.get_ivar("panel") };
-                    $fn_name(unsafe {Id::from_retained_ptr(panel as *mut RawNSPanel) });
+                    $fn_name(unsafe {Id::from_ptr(panel as *mut RawNSPanel<$generic>) });
                 }
             )*
         }
 
-        unsafe impl Message for $delegate_name {}
+        unsafe impl<R: Runtime> Message for $delegate_name<R> {}
 
-        impl INSObject for $delegate_name {
+        impl<R: Runtime> INSObject for $delegate_name<R> {
             fn class() -> &'static runtime::Class {
                 Self::get_class()
             }
         }
 
-        impl $delegate_name {
-            pub fn set_panel(&self, panel: ShareId<RawNSPanel>) {
+        impl<R: Runtime> $delegate_name<R> {
+            pub fn set_panel(&self, panel: ShareId<RawNSPanel<R>>) {
                 let _: () = unsafe { msg_send![self, setPanel: panel] };
             }
         }
 
 
-        $delegate_name::new()
+        $delegate_name::<$generic>::new()
     }};
 }

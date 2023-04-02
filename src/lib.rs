@@ -4,7 +4,7 @@ pub mod raw_nspanel;
 use std::{collections::HashMap, sync::Mutex};
 
 use cocoa::base::id;
-use objc_id::{Id, ShareId};
+use objc_id::ShareId;
 use raw_nspanel::RawNSPanel;
 use tauri::{
     plugin::{Builder, TauriPlugin},
@@ -15,19 +15,32 @@ pub extern crate cocoa;
 pub extern crate objc;
 pub extern crate objc_foundation;
 pub extern crate objc_id;
+pub extern crate tauri;
 
-pub type Panel = Id<RawNSPanel>;
+pub type Panel<R> = ShareId<RawNSPanel<R>>;
 
-#[derive(Default)]
-pub struct Store {
-    panels: HashMap<String, ShareId<RawNSPanel>>,
+pub struct Store<R: Runtime> {
+    panels: HashMap<String, ShareId<RawNSPanel<R>>>,
 }
 
-#[derive(Default)]
-pub struct PanelManager(pub Mutex<Store>);
+impl<R: Runtime> Default for Store<R> {
+    fn default() -> Self {
+        Self {
+            panels: HashMap::new(),
+        }
+    }
+}
+
+pub struct PanelManager<R: Runtime>(pub Mutex<Store<R>>);
+
+impl<R: Runtime> Default for PanelManager<R> {
+    fn default() -> Self {
+        Self(Mutex::new(Store::<R>::default()))
+    }
+}
 
 pub trait ManagerExt<R: Runtime> {
-    fn get_panel(&self, label: &str) -> Result<ShareId<RawNSPanel>, Error>;
+    fn get_panel(&self, label: &str) -> Result<ShareId<RawNSPanel<R>>, Error>;
 }
 
 #[derive(Debug)]
@@ -36,8 +49,8 @@ pub enum Error {
 }
 
 impl<R: Runtime, T: Manager<R>> ManagerExt<R> for T {
-    fn get_panel(&self, label: &str) -> Result<ShareId<RawNSPanel>, Error> {
-        let manager = self.state::<self::PanelManager>();
+    fn get_panel(&self, label: &str) -> Result<ShareId<RawNSPanel<R>>, Error> {
+        let manager = self.state::<self::PanelManager<R>>();
         let manager = manager.0.lock().unwrap();
 
         match manager.panels.get(label) {
@@ -52,16 +65,15 @@ pub struct PanelConfig {
     pub delegate: Option<id>,
 }
 
-pub trait WindowExt {
-    fn to_panel(&self) -> tauri::Result<ShareId<RawNSPanel>>;
+pub trait WindowExt<R: Runtime> {
+    fn to_panel(&self) -> tauri::Result<ShareId<RawNSPanel<R>>>;
 }
 
-impl<R: Runtime> WindowExt for Window<R> {
-    fn to_panel(&self) -> tauri::Result<ShareId<RawNSPanel>> {
-        let panel = RawNSPanel::from(self);
-        let panel = panel.share();
+impl<R: Runtime> WindowExt<R> for Window<R> {
+    fn to_panel(&self) -> tauri::Result<ShareId<RawNSPanel<R>>> {
+        let panel = RawNSPanel::from(self).share();
 
-        let manager = self.state::<self::PanelManager>();
+        let manager = self.state::<self::PanelManager<R>>();
         manager
             .0
             .lock()
@@ -77,7 +89,7 @@ impl<R: Runtime> WindowExt for Window<R> {
 pub fn init<R: Runtime>() -> TauriPlugin<R> {
     Builder::new("nspanel")
         .setup(|app| {
-            app.manage(self::PanelManager::default());
+            app.manage(self::PanelManager::<R>::default());
             Ok(())
         })
         .build()
