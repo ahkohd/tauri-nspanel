@@ -205,6 +205,14 @@
 <a href="#205" id="205">205</a>
 <a href="#206" id="206">206</a>
 <a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
 </pre><pre class="rust"><code><span class="kw">use </span>std::{ffi::c_void, marker::PhantomData};
 
 <span class="kw">use </span>cocoa::{
@@ -220,7 +228,7 @@
 };
 <span class="kw">use </span>objc_foundation::INSObject;
 <span class="kw">use </span>objc_id::Id;
-<span class="kw">use </span>tauri::{AppHandle, Runtime, Window};
+<span class="kw">use </span>tauri::{AppHandle, Manager, Runtime, Window};
 
 <span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
     <span class="kw">pub fn </span>object_setClass(obj: id, cls: id) -&gt; id;
@@ -228,7 +236,8 @@
 
 <span class="kw">const </span>CLS_NAME: <span class="kw-2">&amp;</span>str = <span class="string">&quot;RawNSPanel&quot;</span>;
 
-<span class="kw">pub struct </span>RawNSPanel&lt;R: Runtime&gt;(PhantomData&lt;R&gt;);
+<span class="attr">#[repr(C)]
+</span><span class="kw">pub struct </span>RawNSPanel&lt;R: Runtime&gt;(PhantomData&lt;R&gt;);
 
 <span class="kw">unsafe impl</span>&lt;R: Runtime&gt; Sync <span class="kw">for </span>RawNSPanel&lt;R&gt; {}
 
@@ -242,16 +251,16 @@
             .unwrap_or_else(|| <span class="macro">panic!</span>(<span class="string">&quot;Unable to register {} class&quot;</span>, CLS_NAME));
 
         <span class="kw">unsafe </span>{
-            cls.add_ivar::&lt;id&gt;(<span class="string">&quot;app_handle&quot;</span>);
+            cls.add_ivar::&lt;<span class="kw-2">*mut </span>c_void&gt;(<span class="string">&quot;_app_handle&quot;</span>);
 
             cls.add_method(
                 <span class="macro">sel!</span>(setAppHandle:),
-                <span class="self">Self</span>::setAppHandle <span class="kw">as extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn</span>(<span class="kw-2">&amp;mut </span>Object, Sel, id),
+                <span class="self">Self</span>::_set_app_handle <span class="kw">as extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn</span>(<span class="kw-2">&amp;mut </span>Object, Sel, <span class="kw-2">*mut </span>c_void),
             );
 
             cls.add_method(
                 <span class="macro">sel!</span>(appHandle),
-                <span class="self">Self</span>::appHandle <span class="kw">as extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn</span>(<span class="kw-2">&amp;</span>Object, Sel) -&gt; id,
+                <span class="self">Self</span>::_app_handle <span class="kw">as extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn</span>(<span class="kw-2">&amp;</span>Object, Sel) -&gt; <span class="kw-2">*mut </span>c_void,
             );
 
             cls.add_method(
@@ -268,14 +277,12 @@
         cls.register()
     }
 
-    <span class="attr">#[allow(non_snake_case)]
-    </span><span class="kw">extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span>setAppHandle(this: <span class="kw-2">&amp;mut </span>Object, <span class="kw">_</span>: Sel, app_handle: id) {
-        <span class="kw">unsafe </span>{ this.set_ivar(<span class="string">&quot;app_handle&quot;</span>, app_handle) };
+    <span class="kw">extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span>_set_app_handle(this: <span class="kw-2">&amp;mut </span>Object, <span class="kw">_</span>: Sel, app_handle: <span class="kw-2">*mut </span>c_void) {
+        <span class="kw">unsafe </span>{ this.set_ivar(<span class="string">&quot;_app_handle&quot;</span>, app_handle) };
     }
 
-    <span class="attr">#[allow(non_snake_case)]
-    </span><span class="kw">extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span>appHandle(this: <span class="kw-2">&amp;</span>Object, <span class="kw">_</span>: Sel) -&gt; id {
-        <span class="kw">unsafe </span>{ <span class="kw-2">*</span>this.get_ivar(<span class="string">&quot;app_handle&quot;</span>) }
+    <span class="kw">extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span>_app_handle(this: <span class="kw-2">&amp;</span>Object, <span class="kw">_</span>: Sel) -&gt; <span class="kw-2">*mut </span>c_void {
+        <span class="kw">unsafe </span>{ <span class="kw-2">*</span>this.get_ivar(<span class="string">&quot;_app_handle&quot;</span>) }
     }
 
     <span class="doccomment">/// Returns YES to ensure that RawNSPanel can become a key window
@@ -284,12 +291,12 @@
     }
 
     <span class="kw">extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span>dealloc(this: <span class="kw-2">&amp;mut </span>Object, _cmd: Sel) {
-        <span class="kw">let </span>app_handle_wrapper_ptr: id = <span class="kw">unsafe </span>{ <span class="kw-2">*</span>this.get_ivar(<span class="string">&quot;app_handle&quot;</span>) };
+        <span class="kw">let </span>app_handle_wrapper_ptr: <span class="kw-2">*mut </span>c_void = <span class="kw">unsafe </span>{ <span class="kw-2">*</span>this.get_ivar(<span class="string">&quot;_app_handle&quot;</span>) };
 
         <span class="kw">if </span>!app_handle_wrapper_ptr.is_null() {
-            <span class="kw">let </span>wrapper: Box&lt;AppHandleWrapper&lt;R&gt;&gt; =
-                <span class="kw">unsafe </span>{ Box::from_raw(app_handle_wrapper_ptr <span class="kw">as </span><span class="kw-2">*mut </span>AppHandleWrapper&lt;R&gt;) };
-            drop(wrapper);
+            <span class="kw">let </span>app_handle_wrapper =
+                <span class="kw">unsafe </span>{ AppHandleWrapper::&lt;R&gt;::from_raw(app_handle_wrapper_ptr) };
+            drop(app_handle_wrapper);
         }
 
         <span class="kw">unsafe </span>{
@@ -367,10 +374,9 @@
         <span class="kw">unsafe </span>{ Id::from_retained_ptr(<span class="self">self</span>) }
     }
 
-    <span class="kw">pub fn </span>set_app_handle(<span class="kw-2">&amp;</span><span class="self">self</span>, app_handle: AppHandle&lt;R&gt;) {
-        <span class="kw">let </span>wrapper = Box::new(AppHandleWrapper::new(app_handle));
-        <span class="kw">let </span>wrapper_ptr = Box::into_raw(wrapper) <span class="kw">as </span><span class="kw-2">*mut </span>AppHandleWrapper&lt;R&gt;;
-        <span class="kw">let _</span>: () = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="self">self</span>, setAppHandle: wrapper_ptr] };
+    <span class="kw">fn </span>set_app_handle(<span class="kw-2">&amp;</span><span class="self">self</span>, app_handle: AppHandle&lt;R&gt;) {
+        <span class="kw">let </span>app_handle_wrapper = AppHandleWrapper::new(app_handle);
+        <span class="kw">let _</span>: () = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="self">self</span>, setAppHandle: app_handle_wrapper.into_raw()] };
     }
 
     <span class="kw">pub fn </span>app_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;AppHandle&lt;R&gt;&gt; {
@@ -381,17 +387,20 @@
         }
 
         <span class="kw">let </span>wrapper = <span class="kw">unsafe </span>{ <span class="kw-2">&amp;*</span>(wrapper_ptr <span class="kw">as </span><span class="kw-2">*const </span>AppHandleWrapper&lt;R&gt;) };
-        <span class="prelude-val">Some</span>(<span class="kw-2">*</span>wrapper.app_handle.clone())
+        <span class="prelude-val">Some</span>(wrapper.app_handle.clone())
     }
 
     <span class="doccomment">/// Create an NSPanel from a Tauri window
     </span><span class="kw">pub fn </span>from(window: <span class="kw-2">&amp;</span>Window&lt;R&gt;) -&gt; Id&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">let </span>app_handle = window.app_handle();
         <span class="kw">let </span>ns_window: id = window.ns_window().unwrap() <span class="kw">as _</span>;
         <span class="kw">let </span>ns_panel: id = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="self">Self</span>::class(), class] };
-        <span class="kw">unsafe </span>{
+        <span class="kw">let </span>panel = <span class="kw">unsafe </span>{
             object_setClass(ns_window, ns_panel);
             Id::from_ptr(ns_window <span class="kw">as </span><span class="kw-2">*mut </span><span class="self">Self</span>)
-        }
+        };
+        panel.set_app_handle(app_handle);
+        panel
     }
 }
 
@@ -401,15 +410,22 @@
     }
 }
 
-<span class="kw">pub struct </span>AppHandleWrapper&lt;R: Runtime&gt; {
-    app_handle: Box&lt;AppHandle&lt;R&gt;&gt;,
+<span class="attr">#[repr(C)]
+</span><span class="kw">pub struct </span>AppHandleWrapper&lt;R: Runtime&gt; {
+    app_handle: AppHandle&lt;R&gt;,
 }
 
 <span class="kw">impl</span>&lt;R: Runtime&gt; AppHandleWrapper&lt;R&gt; {
     <span class="kw">pub fn </span>new(app_handle: AppHandle&lt;R&gt;) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            app_handle: Box::new(app_handle),
-        }
+        <span class="self">Self </span>{ app_handle }
+    }
+
+    <span class="kw">pub fn </span>into_raw(<span class="self">self</span>) -&gt; <span class="kw-2">*mut </span>c_void {
+        Box::into_raw(Box::new(<span class="self">self</span>)) <span class="kw">as </span><span class="kw-2">*mut </span>c_void
+    }
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>from_raw(raw: <span class="kw-2">*mut </span>c_void) -&gt; Box&lt;<span class="self">Self</span>&gt; {
+        Box::from_raw(raw <span class="kw">as </span><span class="kw-2">*mut </span>AppHandleWrapper&lt;R&gt;)
     }
 }
 </code></pre></div>
