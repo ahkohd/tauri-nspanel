@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/decoder/zlib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>zlib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../png/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.8/src/decoder/zlib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>zlib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../png/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -202,15 +202,22 @@
 <a href="#202" id="202">202</a>
 <a href="#203" id="203">203</a>
 <a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
 </pre><pre class="rust"><code><span class="kw">use super</span>::{stream::FormatErrorInner, DecodingError, CHUNCK_BUFFER_SIZE};
 
-<span class="kw">use </span>miniz_oxide::inflate::core::{decompress, inflate_flags, DecompressorOxide};
-<span class="kw">use </span>miniz_oxide::inflate::TINFLStatus;
+<span class="kw">use </span>fdeflate::Decompressor;
 
 <span class="doccomment">/// Ergonomics wrapper around `miniz_oxide::inflate::stream` for zlib compressed data.
 </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">struct </span>ZlibStream {
     <span class="doccomment">/// Current decoding state.
-    </span>state: Box&lt;DecompressorOxide&gt;,
+    </span>state: Box&lt;fdeflate::Decompressor&gt;,
     <span class="doccomment">/// If there has been a call to decompress already.
     </span>started: bool,
     <span class="doccomment">/// A buffer of compressed data.
@@ -234,26 +241,55 @@
     </span>out_buffer: Vec&lt;u8&gt;,
     <span class="doccomment">/// The cursor position in the output stream as a buffer index.
     </span>out_pos: usize,
+    <span class="doccomment">/// Ignore and do not calculate the Adler-32 checksum. Defaults to `true`.
+    ///
+    /// This flag overrides `TINFL_FLAG_COMPUTE_ADLER32`.
+    ///
+    /// This flag should not be modified after decompression has started.
+    </span>ignore_adler32: bool,
 }
 
 <span class="kw">impl </span>ZlibStream {
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new() -&gt; <span class="self">Self </span>{
         ZlibStream {
-            state: Box::default(),
+            state: Box::new(Decompressor::new()),
             started: <span class="bool-val">false</span>,
             in_buffer: Vec::with_capacity(CHUNCK_BUFFER_SIZE),
             in_pos: <span class="number">0</span>,
             out_buffer: <span class="macro">vec!</span>[<span class="number">0</span>; <span class="number">2 </span>* CHUNCK_BUFFER_SIZE],
             out_pos: <span class="number">0</span>,
+            ignore_adler32: <span class="bool-val">true</span>,
         }
     }
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>reset(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="self">self</span>.started = <span class="bool-val">false</span>;
         <span class="self">self</span>.in_buffer.clear();
+        <span class="self">self</span>.in_pos = <span class="number">0</span>;
         <span class="self">self</span>.out_buffer.clear();
         <span class="self">self</span>.out_pos = <span class="number">0</span>;
-        <span class="kw-2">*</span><span class="self">self</span>.state = DecompressorOxide::default();
+        <span class="kw-2">*</span><span class="self">self</span>.state = Decompressor::new();
+    }
+
+    <span class="doccomment">/// Set the `ignore_adler32` flag and return `true` if the flag was
+    /// successfully set.
+    ///
+    /// The default is `true`.
+    ///
+    /// This flag cannot be modified after decompression has started until the
+    /// [ZlibStream] is reset.
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>set_ignore_adler32(<span class="kw-2">&amp;mut </span><span class="self">self</span>, flag: bool) -&gt; bool {
+        <span class="kw">if </span>!<span class="self">self</span>.started {
+            <span class="self">self</span>.ignore_adler32 = flag;
+            <span class="bool-val">true
+        </span>} <span class="kw">else </span>{
+            <span class="bool-val">false
+        </span>}
+    }
+
+    <span class="doccomment">/// Return the `ignore_adler32` flag.
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>ignore_adler32(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.ignore_adler32
     }
 
     <span class="doccomment">/// Fill the decoded buffer as far as possible from `data`.
@@ -263,29 +299,28 @@
         data: <span class="kw-2">&amp;</span>[u8],
         image_data: <span class="kw-2">&amp;mut </span>Vec&lt;u8&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;usize, DecodingError&gt; {
-        <span class="kw">const </span>BASE_FLAGS: u32 = inflate_flags::TINFL_FLAG_PARSE_ZLIB_HEADER
-            | inflate_flags::TINFL_FLAG_USING_NON_WRAPPING_OUTPUT_BUF
-            | inflate_flags::TINFL_FLAG_HAS_MORE_INPUT;
-
         <span class="self">self</span>.prepare_vec_for_appending();
 
-        <span class="kw">let </span>(status, <span class="kw-2">mut </span>in_consumed, out_consumed) = {
-            <span class="kw">let </span>in_data = <span class="kw">if </span><span class="self">self</span>.in_buffer.is_empty() {
-                data
-            } <span class="kw">else </span>{
-                <span class="kw-2">&amp;</span><span class="self">self</span>.in_buffer[<span class="self">self</span>.in_pos..]
-            };
-            decompress(
-                <span class="kw-2">&amp;mut </span><span class="self">self</span>.state,
-                in_data,
-                <span class="self">self</span>.out_buffer.as_mut_slice(),
-                <span class="self">self</span>.out_pos,
-                BASE_FLAGS,
-            )
+        <span class="kw">if </span>!<span class="self">self</span>.started &amp;&amp; <span class="self">self</span>.ignore_adler32 {
+            <span class="self">self</span>.state.ignore_adler32();
+        }
+
+        <span class="kw">let </span>in_data = <span class="kw">if </span><span class="self">self</span>.in_buffer.is_empty() {
+            data
+        } <span class="kw">else </span>{
+            <span class="kw-2">&amp;</span><span class="self">self</span>.in_buffer[<span class="self">self</span>.in_pos..]
         };
+
+        <span class="kw">let </span>(<span class="kw-2">mut </span>in_consumed, out_consumed) = <span class="self">self
+            </span>.state
+            .read(in_data, <span class="self">self</span>.out_buffer.as_mut_slice(), <span class="self">self</span>.out_pos, <span class="bool-val">false</span>)
+            .map_err(|err| {
+                DecodingError::Format(FormatErrorInner::CorruptFlateStream { err }.into())
+            })<span class="question-mark">?</span>;
 
         <span class="kw">if </span>!<span class="self">self</span>.in_buffer.is_empty() {
             <span class="self">self</span>.in_pos += in_consumed;
+            in_consumed = <span class="number">0</span>;
         }
 
         <span class="kw">if </span><span class="self">self</span>.in_buffer.len() == <span class="self">self</span>.in_pos {
@@ -302,14 +337,7 @@
         <span class="self">self</span>.out_pos += out_consumed;
         <span class="self">self</span>.transfer_finished_data(image_data);
 
-        <span class="kw">match </span>status {
-            TINFLStatus::Done | TINFLStatus::HasMoreOutput | TINFLStatus::NeedsMoreInput =&gt; {
-                <span class="prelude-val">Ok</span>(in_consumed)
-            }
-            err =&gt; <span class="prelude-val">Err</span>(DecodingError::Format(
-                FormatErrorInner::CorruptFlateStream { err }.into(),
-            )),
-        }
+        <span class="prelude-val">Ok</span>(in_consumed)
     }
 
     <span class="doccomment">/// Called after all consecutive IDAT chunks were handled.
@@ -321,9 +349,6 @@
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         image_data: <span class="kw-2">&amp;mut </span>Vec&lt;u8&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), DecodingError&gt; {
-        <span class="kw">const </span>BASE_FLAGS: u32 = inflate_flags::TINFL_FLAG_PARSE_ZLIB_HEADER
-            | inflate_flags::TINFL_FLAG_USING_NON_WRAPPING_OUTPUT_BUF;
-
         <span class="kw">if </span>!<span class="self">self</span>.started {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(());
         }
@@ -335,40 +360,31 @@
         <span class="kw">loop </span>{
             <span class="self">self</span>.prepare_vec_for_appending();
 
-            <span class="kw">let </span>(status, in_consumed, out_consumed) = {
-                <span class="comment">// TODO: we may be able to avoid the indirection through the buffer here.
-                // First append all buffered data and then create a cursor on the image_data
-                // instead.
-                </span>decompress(
-                    <span class="kw-2">&amp;mut </span><span class="self">self</span>.state,
+            <span class="kw">let </span>(in_consumed, out_consumed) = <span class="self">self
+                </span>.state
+                .read(
                     <span class="kw-2">&amp;</span>tail[start..],
                     <span class="self">self</span>.out_buffer.as_mut_slice(),
                     <span class="self">self</span>.out_pos,
-                    BASE_FLAGS,
+                    <span class="bool-val">true</span>,
                 )
-            };
+                .map_err(|err| {
+                    DecodingError::Format(FormatErrorInner::CorruptFlateStream { err }.into())
+                })<span class="question-mark">?</span>;
 
             start += in_consumed;
             <span class="self">self</span>.out_pos += out_consumed;
 
-            <span class="kw">match </span>status {
-                TINFLStatus::Done =&gt; {
-                    <span class="self">self</span>.out_buffer.truncate(<span class="self">self</span>.out_pos <span class="kw">as </span>usize);
-                    image_data.append(<span class="kw-2">&amp;mut </span><span class="self">self</span>.out_buffer);
-                    <span class="kw">return </span><span class="prelude-val">Ok</span>(());
-                }
-                TINFLStatus::HasMoreOutput =&gt; {
-                    <span class="kw">let </span>transferred = <span class="self">self</span>.transfer_finished_data(image_data);
-                    <span class="macro">assert!</span>(
-                        transferred &gt; <span class="number">0 </span>|| in_consumed &gt; <span class="number">0 </span>|| out_consumed &gt; <span class="number">0</span>,
-                        <span class="string">&quot;No more forward progress made in stream decoding.&quot;
-                    </span>);
-                }
-                err =&gt; {
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(DecodingError::Format(
-                        FormatErrorInner::CorruptFlateStream { err }.into(),
-                    ));
-                }
+            <span class="kw">if </span><span class="self">self</span>.state.is_done() {
+                <span class="self">self</span>.out_buffer.truncate(<span class="self">self</span>.out_pos);
+                image_data.append(<span class="kw-2">&amp;mut </span><span class="self">self</span>.out_buffer);
+                <span class="kw">return </span><span class="prelude-val">Ok</span>(());
+            } <span class="kw">else </span>{
+                <span class="kw">let </span>transferred = <span class="self">self</span>.transfer_finished_data(image_data);
+                <span class="macro">assert!</span>(
+                    transferred &gt; <span class="number">0 </span>|| in_consumed &gt; <span class="number">0 </span>|| out_consumed &gt; <span class="number">0</span>,
+                    <span class="string">&quot;No more forward progress made in stream decoding.&quot;
+                </span>);
             }
         }
     }

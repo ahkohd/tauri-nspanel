@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/decoder/stream.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>stream.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../png/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.8/src/decoder/stream.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>stream.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../png/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1517,6 +1517,60 @@
 <a href="#1517" id="1517">1517</a>
 <a href="#1518" id="1518">1518</a>
 <a href="#1519" id="1519">1519</a>
+<a href="#1520" id="1520">1520</a>
+<a href="#1521" id="1521">1521</a>
+<a href="#1522" id="1522">1522</a>
+<a href="#1523" id="1523">1523</a>
+<a href="#1524" id="1524">1524</a>
+<a href="#1525" id="1525">1525</a>
+<a href="#1526" id="1526">1526</a>
+<a href="#1527" id="1527">1527</a>
+<a href="#1528" id="1528">1528</a>
+<a href="#1529" id="1529">1529</a>
+<a href="#1530" id="1530">1530</a>
+<a href="#1531" id="1531">1531</a>
+<a href="#1532" id="1532">1532</a>
+<a href="#1533" id="1533">1533</a>
+<a href="#1534" id="1534">1534</a>
+<a href="#1535" id="1535">1535</a>
+<a href="#1536" id="1536">1536</a>
+<a href="#1537" id="1537">1537</a>
+<a href="#1538" id="1538">1538</a>
+<a href="#1539" id="1539">1539</a>
+<a href="#1540" id="1540">1540</a>
+<a href="#1541" id="1541">1541</a>
+<a href="#1542" id="1542">1542</a>
+<a href="#1543" id="1543">1543</a>
+<a href="#1544" id="1544">1544</a>
+<a href="#1545" id="1545">1545</a>
+<a href="#1546" id="1546">1546</a>
+<a href="#1547" id="1547">1547</a>
+<a href="#1548" id="1548">1548</a>
+<a href="#1549" id="1549">1549</a>
+<a href="#1550" id="1550">1550</a>
+<a href="#1551" id="1551">1551</a>
+<a href="#1552" id="1552">1552</a>
+<a href="#1553" id="1553">1553</a>
+<a href="#1554" id="1554">1554</a>
+<a href="#1555" id="1555">1555</a>
+<a href="#1556" id="1556">1556</a>
+<a href="#1557" id="1557">1557</a>
+<a href="#1558" id="1558">1558</a>
+<a href="#1559" id="1559">1559</a>
+<a href="#1560" id="1560">1560</a>
+<a href="#1561" id="1561">1561</a>
+<a href="#1562" id="1562">1562</a>
+<a href="#1563" id="1563">1563</a>
+<a href="#1564" id="1564">1564</a>
+<a href="#1565" id="1565">1565</a>
+<a href="#1566" id="1566">1566</a>
+<a href="#1567" id="1567">1567</a>
+<a href="#1568" id="1568">1568</a>
+<a href="#1569" id="1569">1569</a>
+<a href="#1570" id="1570">1570</a>
+<a href="#1571" id="1571">1571</a>
+<a href="#1572" id="1572">1572</a>
+<a href="#1573" id="1573">1573</a>
 </pre><pre class="rust"><code><span class="kw">extern crate </span>crc32fast;
 
 <span class="kw">use </span>std::convert::From;
@@ -1638,8 +1692,6 @@
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">enum </span>FormatErrorInner {
     <span class="doccomment">/// Bad framing.
     </span>CrcMismatch {
-        <span class="doccomment">/// bytes to skip to try to recover from this error
-        </span>recover: usize,
         <span class="doccomment">/// Stored CRC32 value
         </span>crc_val: u32,
         <span class="doccomment">/// Calculated CRC32 sum
@@ -1717,13 +1769,10 @@
     <span class="comment">// Errors specific to the IDAT/fDAT chunks.
     </span><span class="doccomment">/// The compression of the data stream was faulty.
     </span>CorruptFlateStream {
-        err: miniz_oxide::inflate::TINFLStatus,
+        err: fdeflate::DecompressionError,
     },
     <span class="doccomment">/// The image data chunk was too short for the expected pixel count.
     </span>NoMoreImageData,
-    <span class="comment">// TODO: strictly type this.
-    </span><span class="doccomment">/// Filtering of a row has failed.
-    </span>BadFilter(<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str),
     <span class="doccomment">/// Bad text encoding
     </span>BadTextEncoding(TextDecodingError),
 }
@@ -1815,24 +1864,8 @@
             NoMoreImageData =&gt; <span class="macro">write!</span>(fmt, <span class="string">&quot;IDAT or fDAT chunk is has not enough data for image.&quot;</span>),
             CorruptFlateStream { err } =&gt; {
                 <span class="macro">write!</span>(fmt, <span class="string">&quot;Corrupt deflate stream. &quot;</span>)<span class="question-mark">?</span>;
-                <span class="kw">use </span>miniz_oxide::inflate::TINFLStatus;
-                <span class="kw">match </span>err {
-                    TINFLStatus::Adler32Mismatch =&gt; <span class="macro">write!</span>(fmt, <span class="string">&quot;Adler32 checksum failed.&quot;</span>),
-                    TINFLStatus::BadParam =&gt; <span class="macro">write!</span>(fmt, <span class="string">&quot;Invalid input parameters.&quot;</span>),
-                    <span class="comment">// The Done status should already have been handled.
-                    </span>TINFLStatus::Done =&gt; <span class="macro">write!</span>(fmt, <span class="string">&quot;Unexpected done status.&quot;</span>),
-                    TINFLStatus::FailedCannotMakeProgress =&gt; {
-                        <span class="macro">write!</span>(fmt, <span class="string">&quot;Unexpected end of data.&quot;</span>)
-                    }
-                    <span class="comment">// The HasMoreOutput status should already have been handled.
-                    </span>TINFLStatus::HasMoreOutput =&gt; <span class="macro">write!</span>(fmt, <span class="string">&quot;Has more output.&quot;</span>),
-                    <span class="comment">// The HasMoreInput status should already have been handled.
-                    </span>TINFLStatus::NeedsMoreInput =&gt; <span class="macro">write!</span>(fmt, <span class="string">&quot;Needs more input.&quot;</span>),
-                    <span class="comment">// Write out the error number in case a new has been added.
-                    </span><span class="kw">_ </span>=&gt; <span class="macro">write!</span>(fmt, <span class="string">&quot;Error number {:?}.&quot;</span>, err),
-                }
+                <span class="macro">write!</span>(fmt, <span class="string">&quot;{:?}&quot;</span>, err)
             }
-            BadFilter(message) =&gt; <span class="macro">write!</span>(fmt, <span class="string">&quot;{}.&quot;</span>, message),
             <span class="comment">// TODO: Wrap more info in the enum variant
             </span>BadTextEncoding(tde) =&gt; {
                 <span class="kw">match </span>tde {
@@ -1901,19 +1934,59 @@
     }
 }
 
-<span class="doccomment">/// Decode config
-</span><span class="attr">#[derive(Default)]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>DecodeConfig {
+<span class="doccomment">/// Decoder configuration options
+</span><span class="attr">#[derive(Clone)]
+</span><span class="kw">pub struct </span>DecodeOptions {
+    ignore_adler32: bool,
+    ignore_crc: bool,
     ignore_text_chunk: bool,
 }
 
-<span class="kw">impl </span>DecodeConfig {
-    <span class="kw">pub fn </span>set_ignore_text_chunk(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ignore_text_chunk: bool) {
+<span class="kw">impl </span>Default <span class="kw">for </span>DecodeOptions {
+    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            ignore_adler32: <span class="bool-val">true</span>,
+            ignore_crc: <span class="bool-val">false</span>,
+            ignore_text_chunk: <span class="bool-val">false</span>,
+        }
+    }
+}
+
+<span class="kw">impl </span>DecodeOptions {
+    <span class="doccomment">/// When set, the decoder will not compute and verify the Adler-32 checksum.
+    ///
+    /// Defaults to `true`.
+    </span><span class="kw">pub fn </span>set_ignore_adler32(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ignore_adler32: bool) {
+        <span class="self">self</span>.ignore_adler32 = ignore_adler32;
+    }
+
+    <span class="doccomment">/// When set, the decoder will not compute and verify the CRC code.
+    ///
+    /// Defaults to `false`.
+    </span><span class="kw">pub fn </span>set_ignore_crc(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ignore_crc: bool) {
+        <span class="self">self</span>.ignore_crc = ignore_crc;
+    }
+
+    <span class="doccomment">/// Flag to ignore computing and verifying the Adler-32 checksum and CRC
+    /// code.
+    </span><span class="kw">pub fn </span>set_ignore_checksums(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ignore_checksums: bool) {
+        <span class="self">self</span>.ignore_adler32 = ignore_checksums;
+        <span class="self">self</span>.ignore_crc = ignore_checksums;
+    }
+
+    <span class="doccomment">/// Ignore text chunks while decoding.
+    ///
+    /// Defaults to `false`.
+    </span><span class="kw">pub fn </span>set_ignore_text_chunk(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ignore_text_chunk: bool) {
         <span class="self">self</span>.ignore_text_chunk = ignore_text_chunk;
     }
 }
 
 <span class="doccomment">/// PNG StreamingDecoder (low-level interface)
+///
+/// By default, the decoder does not verify Adler-32 checksum computation. To
+/// enable checksum verification, set it with [`StreamingDecoder::set_ignore_adler32`]
+/// before starting decompression.
 </span><span class="kw">pub struct </span>StreamingDecoder {
     state: <span class="prelude-ty">Option</span>&lt;State&gt;,
     current_chunk: ChunkState,
@@ -1926,7 +1999,7 @@
     <span class="doccomment">/// Stores where in decoding an `fdAT` chunk we are.
     </span>apng_seq_handled: bool,
     have_idat: bool,
-    decode_config: DecodeConfig,
+    decode_options: DecodeOptions,
 }
 
 <span class="kw">struct </span>ChunkState {
@@ -1949,15 +2022,22 @@
     ///
     /// Allocates the internal buffers.
     </span><span class="kw">pub fn </span>new() -&gt; StreamingDecoder {
+        StreamingDecoder::new_with_options(DecodeOptions::default())
+    }
+
+    <span class="kw">pub fn </span>new_with_options(decode_options: DecodeOptions) -&gt; StreamingDecoder {
+        <span class="kw">let </span><span class="kw-2">mut </span>inflater = ZlibStream::new();
+        inflater.set_ignore_adler32(decode_options.ignore_adler32);
+
         StreamingDecoder {
             state: <span class="prelude-val">Some</span>(State::Signature(<span class="number">0</span>, [<span class="number">0</span>; <span class="number">7</span>])),
             current_chunk: ChunkState::default(),
-            inflater: ZlibStream::new(),
+            inflater,
             info: <span class="prelude-val">None</span>,
             current_seq_no: <span class="prelude-val">None</span>,
             apng_seq_handled: <span class="bool-val">false</span>,
             have_idat: <span class="bool-val">false</span>,
-            decode_config: DecodeConfig::default(),
+            decode_options,
         }
     }
 
@@ -1967,7 +2047,7 @@
         <span class="self">self</span>.current_chunk.crc = Crc32::new();
         <span class="self">self</span>.current_chunk.remaining = <span class="number">0</span>;
         <span class="self">self</span>.current_chunk.raw_bytes.clear();
-        <span class="self">self</span>.inflater = ZlibStream::new();
+        <span class="self">self</span>.inflater.reset();
         <span class="self">self</span>.info = <span class="prelude-val">None</span>;
         <span class="self">self</span>.current_seq_no = <span class="prelude-val">None</span>;
         <span class="self">self</span>.apng_seq_handled = <span class="bool-val">false</span>;
@@ -1979,13 +2059,32 @@
         <span class="self">self</span>.info.as_ref()
     }
 
-    <span class="doccomment">/// Set decode config
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>set_decode_config(<span class="kw-2">&amp;mut </span><span class="self">self</span>, decode_config: DecodeConfig) {
-        <span class="self">self</span>.decode_config = decode_config;
+    <span class="kw">pub fn </span>set_ignore_text_chunk(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ignore_text_chunk: bool) {
+        <span class="self">self</span>.decode_options.set_ignore_text_chunk(ignore_text_chunk);
     }
 
-    <span class="kw">pub fn </span>set_ignore_text_chunk(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ignore_text_chunk: bool) {
-        <span class="self">self</span>.decode_config.set_ignore_text_chunk(ignore_text_chunk);
+    <span class="doccomment">/// Return whether the decoder is set to ignore the Adler-32 checksum.
+    </span><span class="kw">pub fn </span>ignore_adler32(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.inflater.ignore_adler32()
+    }
+
+    <span class="doccomment">/// Set whether to compute and verify the Adler-32 checksum during
+    /// decompression. Return `true` if the flag was successfully set.
+    ///
+    /// The decoder defaults to `true`.
+    ///
+    /// This flag cannot be modified after decompression has started until the
+    /// [`StreamingDecoder`] is reset.
+    </span><span class="kw">pub fn </span>set_ignore_adler32(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ignore_adler32: bool) -&gt; bool {
+        <span class="self">self</span>.inflater.set_ignore_adler32(ignore_adler32)
+    }
+
+    <span class="doccomment">/// Set whether to compute and verify the Adler-32 checksum during
+    /// decompression. Return `true` if the flag was successfully set.
+    ///
+    /// The decoder defaults to `false`.
+    </span><span class="kw">pub fn </span>set_ignore_crc(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ignore_crc: bool) {
+        <span class="self">self</span>.decode_options.set_ignore_crc(ignore_crc)
     }
 
     <span class="doccomment">/// Low level StreamingDecoder interface.
@@ -2065,8 +2164,10 @@
                             <span class="kw">return </span><span class="prelude-val">Ok</span>((<span class="number">0</span>, Decoded::ImageDataFlushed));
                         }
                         <span class="self">self</span>.current_chunk.type_ = type_str;
-                        <span class="self">self</span>.current_chunk.crc.reset();
-                        <span class="self">self</span>.current_chunk.crc.update(<span class="kw-2">&amp;</span>type_str.<span class="number">0</span>);
+                        <span class="kw">if </span>!<span class="self">self</span>.decode_options.ignore_crc {
+                            <span class="self">self</span>.current_chunk.crc.reset();
+                            <span class="self">self</span>.current_chunk.crc.update(<span class="kw-2">&amp;</span>type_str.<span class="number">0</span>);
+                        }
                         <span class="self">self</span>.current_chunk.remaining = length;
                         <span class="self">self</span>.apng_seq_handled = <span class="bool-val">false</span>;
                         <span class="self">self</span>.current_chunk.raw_bytes.clear();
@@ -2074,8 +2175,16 @@
                         <span class="prelude-val">Ok</span>((<span class="number">1</span>, Decoded::ChunkBegin(length, type_str)))
                     }
                     Crc(type_str) =&gt; {
-                        <span class="kw">let </span>sum = <span class="self">self</span>.current_chunk.crc.clone().finalize();
-                        <span class="kw">if </span>CHECKSUM_DISABLED || val == sum {
+                        <span class="comment">// If ignore_crc is set, do not calculate CRC. We set
+                        // sum=val so that it short-circuits to true in the next
+                        // if-statement block
+                        </span><span class="kw">let </span>sum = <span class="kw">if </span><span class="self">self</span>.decode_options.ignore_crc {
+                            val
+                        } <span class="kw">else </span>{
+                            <span class="self">self</span>.current_chunk.crc.clone().finalize()
+                        };
+
+                        <span class="kw">if </span>val == sum || CHECKSUM_DISABLED {
                             <span class="self">self</span>.state = <span class="prelude-val">Some</span>(State::U32(U32Value::Length));
                             <span class="kw">if </span>type_str == IEND {
                                 <span class="prelude-val">Ok</span>((<span class="number">1</span>, Decoded::ImageEnd))
@@ -2085,7 +2194,6 @@
                         } <span class="kw">else </span>{
                             <span class="prelude-val">Err</span>(DecodingError::Format(
                                 FormatErrorInner::CrcMismatch {
-                                    recover: <span class="number">1</span>,
                                     crc_val: val,
                                     crc_sum: sum,
                                     chunk: type_str,
@@ -2215,7 +2323,7 @@
     <span class="kw">fn </span>reserve_current_chunk(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), DecodingError&gt; {
         <span class="comment">// FIXME: use limits, also do so in iccp/zlib decompression.
         </span><span class="kw">const </span>MAX: usize = <span class="number">0x10_0000</span>;
-        <span class="kw">let </span><span class="kw-2">ref mut </span>buffer = <span class="self">self</span>.current_chunk.raw_bytes;
+        <span class="kw">let </span>buffer = <span class="kw-2">&amp;mut </span><span class="self">self</span>.current_chunk.raw_bytes;
 
         <span class="comment">// Double if necessary, but no more than until the limit is reached.
         </span><span class="kw">let </span>reserve_size = MAX.saturating_sub(buffer.capacity()).min(buffer.len());
@@ -2246,9 +2354,9 @@
             chunk::cHRM =&gt; <span class="self">self</span>.parse_chrm(),
             chunk::sRGB =&gt; <span class="self">self</span>.parse_srgb(),
             chunk::iCCP =&gt; <span class="self">self</span>.parse_iccp(),
-            chunk::tEXt <span class="kw">if </span>!<span class="self">self</span>.decode_config.ignore_text_chunk =&gt; <span class="self">self</span>.parse_text(),
-            chunk::zTXt <span class="kw">if </span>!<span class="self">self</span>.decode_config.ignore_text_chunk =&gt; <span class="self">self</span>.parse_ztxt(),
-            chunk::iTXt <span class="kw">if </span>!<span class="self">self</span>.decode_config.ignore_text_chunk =&gt; <span class="self">self</span>.parse_itxt(),
+            chunk::tEXt <span class="kw">if </span>!<span class="self">self</span>.decode_options.ignore_text_chunk =&gt; <span class="self">self</span>.parse_text(),
+            chunk::zTXt <span class="kw">if </span>!<span class="self">self</span>.decode_options.ignore_text_chunk =&gt; <span class="self">self</span>.parse_ztxt(),
+            chunk::iTXt <span class="kw">if </span>!<span class="self">self</span>.decode_options.ignore_text_chunk =&gt; <span class="self">self</span>.parse_itxt(),
             <span class="kw">_ </span>=&gt; <span class="prelude-val">Ok</span>(Decoded::PartialChunk(type_str)),
         } {
             <span class="prelude-val">Err</span>(err) =&gt; {
@@ -2288,7 +2396,7 @@
             }
             <span class="number">0
         </span>});
-        <span class="self">self</span>.inflater = ZlibStream::new();
+        <span class="self">self</span>.inflater.reset();
         <span class="kw">let </span>fc = FrameControl {
             sequence_number: next_seq_no,
             width: buf.read_be()<span class="question-mark">?</span>,
@@ -2345,9 +2453,9 @@
         <span class="kw">let </span>info = <span class="self">self</span>.info.as_mut().unwrap();
         <span class="kw">if </span>info.palette.is_some() {
             <span class="comment">// Only one palette is allowed
-            </span><span class="kw">return </span><span class="prelude-val">Err</span>(DecodingError::Format(
+            </span><span class="prelude-val">Err</span>(DecodingError::Format(
                 FormatErrorInner::DuplicateChunk { kind: chunk::PLTE }.into(),
-            ));
+            ))
         } <span class="kw">else </span>{
             info.palette = <span class="prelude-val">Some</span>(Cow::Owned(<span class="self">self</span>.current_chunk.raw_bytes.clone()));
             <span class="prelude-val">Ok</span>(Decoded::Nothing)
@@ -2422,9 +2530,9 @@
                 FormatErrorInner::AfterIdat { kind: chunk::pHYs }.into(),
             ))
         } <span class="kw">else if </span>info.pixel_dims.is_some() {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(DecodingError::Format(
+            <span class="prelude-val">Err</span>(DecodingError::Format(
                 FormatErrorInner::DuplicateChunk { kind: chunk::pHYs }.into(),
-            ));
+            ))
         } <span class="kw">else </span>{
             <span class="kw">let </span><span class="kw-2">mut </span>buf = <span class="kw-2">&amp;</span><span class="self">self</span>.current_chunk.raw_bytes[..];
             <span class="kw">let </span>xppu = buf.read_be()<span class="question-mark">?</span>;
@@ -2451,9 +2559,9 @@
                 FormatErrorInner::AfterIdat { kind: chunk::cHRM }.into(),
             ))
         } <span class="kw">else if </span>info.chrm_chunk.is_some() {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(DecodingError::Format(
+            <span class="prelude-val">Err</span>(DecodingError::Format(
                 FormatErrorInner::DuplicateChunk { kind: chunk::cHRM }.into(),
-            ));
+            ))
         } <span class="kw">else </span>{
             <span class="kw">let </span><span class="kw-2">mut </span>buf = <span class="kw-2">&amp;</span><span class="self">self</span>.current_chunk.raw_bytes[..];
             <span class="kw">let </span>white_x: u32 = buf.read_be()<span class="question-mark">?</span>;
@@ -2501,9 +2609,9 @@
                 FormatErrorInner::AfterIdat { kind: chunk::gAMA }.into(),
             ))
         } <span class="kw">else if </span>info.gama_chunk.is_some() {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(DecodingError::Format(
+            <span class="prelude-val">Err</span>(DecodingError::Format(
                 FormatErrorInner::DuplicateChunk { kind: chunk::gAMA }.into(),
-            ));
+            ))
         } <span class="kw">else </span>{
             <span class="kw">let </span><span class="kw-2">mut </span>buf = <span class="kw-2">&amp;</span><span class="self">self</span>.current_chunk.raw_bytes[..];
             <span class="kw">let </span>source_gamma: u32 = buf.read_be()<span class="question-mark">?</span>;
@@ -2526,9 +2634,9 @@
                 FormatErrorInner::AfterIdat { kind: chunk::acTL }.into(),
             ))
         } <span class="kw">else if </span>info.srgb.is_some() {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(DecodingError::Format(
+            <span class="prelude-val">Err</span>(DecodingError::Format(
                 FormatErrorInner::DuplicateChunk { kind: chunk::sRGB }.into(),
-            ));
+            ))
         } <span class="kw">else </span>{
             <span class="kw">let </span><span class="kw-2">mut </span>buf = <span class="kw-2">&amp;</span><span class="self">self</span>.current_chunk.raw_bytes[..];
             <span class="kw">let </span>raw: u8 = buf.read_be()<span class="question-mark">?</span>; <span class="comment">// BE is is nonsense for single bytes, but this way the size is checked.
@@ -2551,9 +2659,9 @@
                 FormatErrorInner::AfterIdat { kind: chunk::iCCP }.into(),
             ))
         } <span class="kw">else if </span>info.icc_profile.is_some() {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(DecodingError::Format(
+            <span class="prelude-val">Err</span>(DecodingError::Format(
                 FormatErrorInner::DuplicateChunk { kind: chunk::iCCP }.into(),
-            ));
+            ))
         } <span class="kw">else </span>{
             <span class="kw">let </span><span class="kw-2">mut </span>buf = <span class="kw-2">&amp;</span><span class="self">self</span>.current_chunk.raw_bytes[..];
 
@@ -2706,7 +2814,7 @@
         <span class="kw">let </span>(keyword_slice, value_slice) = <span class="self">Self</span>::split_keyword(buf)<span class="question-mark">?</span>;
 
         <span class="kw">let </span>compression_method = <span class="kw-2">*</span>value_slice
-            .get(<span class="number">0</span>)
+            .first()
             .ok_or_else(|| DecodingError::from(TextDecodingError::InvalidCompressionMethod))<span class="question-mark">?</span>;
 
         <span class="kw">let </span>text_slice = <span class="kw-2">&amp;</span>value_slice[<span class="number">1</span>..];
@@ -2725,7 +2833,7 @@
         <span class="kw">let </span>(keyword_slice, value_slice) = <span class="self">Self</span>::split_keyword(buf)<span class="question-mark">?</span>;
 
         <span class="kw">let </span>compression_flag = <span class="kw-2">*</span>value_slice
-            .get(<span class="number">0</span>)
+            .first()
             .ok_or_else(|| DecodingError::from(TextDecodingError::MissingCompressionFlag))<span class="question-mark">?</span>;
 
         <span class="kw">let </span>compression_method = <span class="kw-2">*</span>value_slice

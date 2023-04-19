@@ -210,10 +210,7 @@
 <a href="#210" id="210">210</a>
 <a href="#211" id="211">211</a>
 <a href="#212" id="212">212</a>
-<a href="#213" id="213">213</a>
-<a href="#214" id="214">214</a>
-<a href="#215" id="215">215</a>
-</pre><pre class="rust"><code><span class="kw">use </span>std::{ffi::c_void, marker::PhantomData};
+</pre><pre class="rust"><code><span class="kw">use </span>std::ffi::c_void;
 
 <span class="kw">use </span>cocoa::{
     appkit::NSWindowCollectionBehavior,
@@ -227,7 +224,7 @@
     sel, sel_impl, Message,
 };
 <span class="kw">use </span>objc_foundation::INSObject;
-<span class="kw">use </span>objc_id::Id;
+<span class="kw">use </span>objc_id::{Id, ShareId};
 <span class="kw">use </span>tauri::{AppHandle, Manager, Runtime, Window};
 
 <span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
@@ -236,12 +233,12 @@
 
 <span class="kw">const </span>CLS_NAME: <span class="kw-2">&amp;</span>str = <span class="string">&quot;RawNSPanel&quot;</span>;
 
-<span class="attr">#[repr(C)]
-</span><span class="kw">pub struct </span>RawNSPanel&lt;R: Runtime&gt;(PhantomData&lt;R&gt;);
+<span class="kw">pub struct </span>RawNSPanel;
 
-<span class="kw">unsafe impl</span>&lt;R: Runtime&gt; Sync <span class="kw">for </span>RawNSPanel&lt;R&gt; {}
+<span class="kw">unsafe impl </span>Sync <span class="kw">for </span>RawNSPanel {}
+<span class="kw">unsafe impl </span>Send <span class="kw">for </span>RawNSPanel {}
 
-<span class="kw">impl</span>&lt;R: Runtime&gt; RawNSPanel&lt;R&gt; {
+<span class="kw">impl </span>RawNSPanel {
     <span class="kw">fn </span>get_class() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>Class {
         Class::get(CLS_NAME).unwrap_or_else(<span class="self">Self</span>::define_class)
     }
@@ -255,12 +252,12 @@
 
             cls.add_method(
                 <span class="macro">sel!</span>(setAppHandle:),
-                <span class="self">Self</span>::_set_app_handle <span class="kw">as extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn</span>(<span class="kw-2">&amp;mut </span>Object, Sel, <span class="kw-2">*mut </span>c_void),
+                <span class="self">Self</span>::handle_set_app_handle <span class="kw">as extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn</span>(<span class="kw-2">&amp;mut </span>Object, Sel, <span class="kw-2">*mut </span>c_void),
             );
 
             cls.add_method(
                 <span class="macro">sel!</span>(appHandle),
-                <span class="self">Self</span>::_app_handle <span class="kw">as extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn</span>(<span class="kw-2">&amp;</span>Object, Sel) -&gt; <span class="kw-2">*mut </span>c_void,
+                <span class="self">Self</span>::handle_get_app_handle <span class="kw">as extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn</span>(<span class="kw-2">&amp;</span>Object, Sel) -&gt; <span class="kw-2">*mut </span>c_void,
             );
 
             cls.add_method(
@@ -277,11 +274,11 @@
         cls.register()
     }
 
-    <span class="kw">extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span>_set_app_handle(this: <span class="kw-2">&amp;mut </span>Object, <span class="kw">_</span>: Sel, app_handle: <span class="kw-2">*mut </span>c_void) {
+    <span class="kw">extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span>handle_set_app_handle(this: <span class="kw-2">&amp;mut </span>Object, <span class="kw">_</span>: Sel, app_handle: <span class="kw-2">*mut </span>c_void) {
         <span class="kw">unsafe </span>{ this.set_ivar(<span class="string">&quot;_app_handle&quot;</span>, app_handle) };
     }
 
-    <span class="kw">extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span>_app_handle(this: <span class="kw-2">&amp;</span>Object, <span class="kw">_</span>: Sel) -&gt; <span class="kw-2">*mut </span>c_void {
+    <span class="kw">extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span>handle_get_app_handle(this: <span class="kw-2">&amp;</span>Object, <span class="kw">_</span>: Sel) -&gt; <span class="kw-2">*mut </span>c_void {
         <span class="kw">unsafe </span>{ <span class="kw-2">*</span>this.get_ivar(<span class="string">&quot;_app_handle&quot;</span>) }
     }
 
@@ -294,8 +291,7 @@
         <span class="kw">let </span>app_handle_wrapper_ptr: <span class="kw-2">*mut </span>c_void = <span class="kw">unsafe </span>{ <span class="kw-2">*</span>this.get_ivar(<span class="string">&quot;_app_handle&quot;</span>) };
 
         <span class="kw">if </span>!app_handle_wrapper_ptr.is_null() {
-            <span class="kw">let </span>app_handle_wrapper =
-                <span class="kw">unsafe </span>{ AppHandleWrapper::&lt;R&gt;::from_raw(app_handle_wrapper_ptr) };
+            <span class="kw">let </span>app_handle_wrapper = <span class="kw">unsafe </span>{ Box::from_raw(app_handle_wrapper_ptr) };
             drop(app_handle_wrapper);
         }
 
@@ -308,10 +304,9 @@
     }
 }
 
-<span class="kw">unsafe impl</span>&lt;R: Runtime&gt; Message <span class="kw">for </span>RawNSPanel&lt;R&gt; {}
-
-<span class="kw">impl</span>&lt;R: Runtime&gt; RawNSPanel&lt;R&gt; {
+<span class="kw">impl </span>RawNSPanel {
     <span class="kw">pub fn </span>show(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+        <span class="macro">println!</span>(<span class="string">&quot;called show&quot;</span>);
         <span class="self">self</span>.make_first_responder(<span class="prelude-val">Some</span>(<span class="self">self</span>.content_view()));
         <span class="self">self</span>.order_front_regardless();
         <span class="self">self</span>.make_key_window();
@@ -331,6 +326,7 @@
     }
 
     <span class="kw">pub fn </span>order_out(<span class="kw-2">&amp;</span><span class="self">self</span>, sender: <span class="prelude-ty">Option</span>&lt;id&gt;) {
+        <span class="macro">println!</span>(<span class="string">&quot;called order out&quot;</span>);
         <span class="kw">let _</span>: () = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="self">self</span>, orderOut: sender.unwrap_or(nil)] };
     }
 
@@ -370,16 +366,17 @@
         <span class="kw">let _</span>: () = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="self">self</span>, close] };
     }
 
-    <span class="kw">pub fn </span>handle(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Id&lt;RawNSPanel&lt;R&gt;&gt; {
-        <span class="kw">unsafe </span>{ Id::from_retained_ptr(<span class="self">self</span>) }
+    <span class="kw">pub fn </span>handle(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; ShareId&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">unsafe </span>{ ShareId::from_ptr(<span class="self">self </span><span class="kw">as </span><span class="kw-2">*mut </span><span class="self">Self</span>) }
     }
 
-    <span class="kw">fn </span>set_app_handle(<span class="kw-2">&amp;</span><span class="self">self</span>, app_handle: AppHandle&lt;R&gt;) {
-        <span class="kw">let </span>app_handle_wrapper = AppHandleWrapper::new(app_handle);
+    <span class="kw">fn </span>set_app_handle&lt;R: Runtime&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, app_handle: AppHandle&lt;R&gt;) {
+        <span class="kw">let </span>handle = app_handle <span class="kw">as _</span>;
+        <span class="kw">let </span>app_handle_wrapper = AppHandleWrapper::new(handle);
         <span class="kw">let _</span>: () = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="self">self</span>, setAppHandle: app_handle_wrapper.into_raw()] };
     }
 
-    <span class="kw">pub fn </span>app_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;AppHandle&lt;R&gt;&gt; {
+    <span class="kw">pub fn </span>app_handle&lt;R: Runtime&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;AppHandle&lt;R&gt;&gt; {
         <span class="kw">let </span>wrapper_ptr: <span class="kw-2">*mut </span>c_void = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="self">self</span>, appHandle] };
 
         <span class="kw">if </span>wrapper_ptr.is_null() {
@@ -391,27 +388,28 @@
     }
 
     <span class="doccomment">/// Create an NSPanel from a Tauri window
-    </span><span class="kw">pub fn </span>from(window: <span class="kw-2">&amp;</span>Window&lt;R&gt;) -&gt; Id&lt;<span class="self">Self</span>&gt; {
+    </span><span class="kw">pub fn </span>from_window&lt;R: Runtime&gt;(window: Window&lt;R&gt;) -&gt; Id&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span>app_handle = window.app_handle();
         <span class="kw">let </span>ns_window: id = window.ns_window().unwrap() <span class="kw">as _</span>;
         <span class="kw">let </span>ns_panel: id = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="self">Self</span>::class(), class] };
-        <span class="kw">let </span>panel = <span class="kw">unsafe </span>{
+        <span class="kw">let </span>raw_panel = <span class="kw">unsafe </span>{
             object_setClass(ns_window, ns_panel);
-            Id::from_ptr(ns_window <span class="kw">as </span><span class="kw-2">*mut </span><span class="self">Self</span>)
+            Id::from_ptr(ns_window <span class="kw">as </span><span class="kw-2">*mut </span>RawNSPanel)
         };
-        panel.set_app_handle(app_handle);
-        panel
+        raw_panel.set_app_handle(app_handle);
+        raw_panel
     }
 }
 
-<span class="kw">impl</span>&lt;R: Runtime&gt; INSObject <span class="kw">for </span>RawNSPanel&lt;R&gt; {
+<span class="kw">unsafe impl </span>Message <span class="kw">for </span>RawNSPanel {}
+
+<span class="kw">impl </span>INSObject <span class="kw">for </span>RawNSPanel {
     <span class="kw">fn </span>class() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>runtime::Class {
-        RawNSPanel::&lt;R&gt;::get_class()
+        RawNSPanel::get_class()
     }
 }
 
-<span class="attr">#[repr(C)]
-</span><span class="kw">pub struct </span>AppHandleWrapper&lt;R: Runtime&gt; {
+<span class="kw">pub struct </span>AppHandleWrapper&lt;R: Runtime&gt; {
     app_handle: AppHandle&lt;R&gt;,
 }
 
@@ -422,10 +420,6 @@
 
     <span class="kw">pub fn </span>into_raw(<span class="self">self</span>) -&gt; <span class="kw-2">*mut </span>c_void {
         Box::into_raw(Box::new(<span class="self">self</span>)) <span class="kw">as </span><span class="kw-2">*mut </span>c_void
-    }
-
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>from_raw(raw: <span class="kw-2">*mut </span>c_void) -&gt; Box&lt;<span class="self">Self</span>&gt; {
-        Box::from_raw(raw <span class="kw">as </span><span class="kw-2">*mut </span>AppHandleWrapper&lt;R&gt;)
     }
 }
 </code></pre></div>

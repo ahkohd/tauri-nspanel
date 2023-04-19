@@ -44,6 +44,7 @@ var sourcesIndex = JSON.parse('{\
 "encoding_rs":["",[],["ascii.rs","big5.rs","data.rs","euc_jp.rs","euc_kr.rs","gb18030.rs","handles.rs","iso_2022_jp.rs","lib.rs","macros.rs","mem.rs","replacement.rs","shift_jis.rs","single_byte.rs","utf_16.rs","utf_8.rs","variant.rs","x_user_defined.rs"]],\
 "errno":["",[],["lib.rs","unix.rs"]],\
 "fastrand":["",[],["lib.rs"]],\
+"fdeflate":["",[],["compress.rs","decompress.rs","lib.rs","tables.rs"]],\
 "filetime":["",[["unix",[],["macos.rs","mod.rs","utimes.rs"]]],["lib.rs"]],\
 "flate2":["",[["deflate",[],["bufread.rs","mod.rs","read.rs","write.rs"]],["ffi",[],["mod.rs","rust.rs"]],["gz",[],["bufread.rs","mod.rs","read.rs","write.rs"]],["zlib",[],["bufread.rs","mod.rs","read.rs","write.rs"]]],["bufreader.rs","crc.rs","lib.rs","mem.rs","zio.rs"]],\
 "fnv":["",[],["lib.rs"]],\
@@ -115,7 +116,7 @@ var sourcesIndex = JSON.parse('{\
 "raw_window_handle":["",[],["android.rs","appkit.rs","borrowed.rs","haiku.rs","lib.rs","redox.rs","uikit.rs","unix.rs","web.rs","windows.rs"]],\
 "regex":["",[["literal",[],["imp.rs","mod.rs"]]],["backtrack.rs","compile.rs","dfa.rs","error.rs","exec.rs","expand.rs","find_byte.rs","input.rs","lib.rs","pikevm.rs","pool.rs","prog.rs","re_builder.rs","re_bytes.rs","re_set.rs","re_trait.rs","re_unicode.rs","sparse.rs","utf8.rs"]],\
 "regex_syntax":["",[["ast",[],["mod.rs","parse.rs","print.rs","visitor.rs"]],["hir",[["literal",[],["mod.rs"]]],["interval.rs","mod.rs","print.rs","translate.rs","visitor.rs"]],["unicode_tables",[],["age.rs","case_folding_simple.rs","general_category.rs","grapheme_cluster_break.rs","mod.rs","perl_word.rs","property_bool.rs","property_names.rs","property_values.rs","script.rs","script_extension.rs","sentence_break.rs","word_break.rs"]]],["either.rs","error.rs","lib.rs","parser.rs","unicode.rs","utf8.rs"]],\
-"rustix":["",[["backend",[["libc",[["fs",[],["dir.rs","makedev.rs","mod.rs","syscalls.rs","types.rs"]],["io",[],["errno.rs","mod.rs","poll_fd.rs","syscalls.rs","types.rs"]],["process",[],["mod.rs","syscalls.rs","types.rs","wait.rs"]],["time",[],["mod.rs","syscalls.rs","types.rs"]]],["c.rs","conv.rs","mod.rs","offset.rs","weak.rs"]]]],["ffi",[],["mod.rs"]],["fs",[],["abs.rs","at.rs","constants.rs","cwd.rs","dir.rs","fcntl.rs","fcntl_apple.rs","fcopyfile.rs","fd.rs","file_type.rs","getpath.rs","makedev.rs","mod.rs","sync.rs"]],["io",[],["close.rs","dup.rs","errno.rs","fcntl.rs","ioctl.rs","is_read_write.rs","kqueue.rs","mod.rs","pipe.rs","poll.rs","read_write.rs","seek_from.rs","stdio.rs"]],["path",[],["arg.rs","mod.rs"]],["process",[],["chdir.rs","exit.rs","id.rs","kill.rs","mod.rs","priority.rs","rlimit.rs","sched_yield.rs","umask.rs","uname.rs","wait.rs"]]],["const_assert.rs","cstr.rs","lib.rs","utils.rs"]],\
+"rustix":["",[["backend",[["libc",[["fs",[],["dir.rs","makedev.rs","mod.rs","syscalls.rs","types.rs"]],["io",[],["errno.rs","mod.rs","poll_fd.rs","syscalls.rs","types.rs"]],["process",[],["mod.rs","syscalls.rs","types.rs","wait.rs"]],["time",[],["mod.rs","syscalls.rs","types.rs"]]],["c.rs","conv.rs","mod.rs","offset.rs","weak.rs"]]]],["ffi",[],["mod.rs"]],["fs",[],["abs.rs","at.rs","constants.rs","cwd.rs","dir.rs","fcntl.rs","fcntl_apple.rs","fcopyfile.rs","fd.rs","file_type.rs","getpath.rs","makedev.rs","mod.rs","sync.rs","xattr.rs"]],["io",[],["close.rs","dup.rs","errno.rs","fcntl.rs","ioctl.rs","is_read_write.rs","kqueue.rs","mod.rs","pipe.rs","poll.rs","read_write.rs","seek_from.rs","stdio.rs"]],["path",[],["arg.rs","mod.rs"]],["process",[],["chdir.rs","exit.rs","id.rs","kill.rs","mod.rs","priority.rs","rlimit.rs","sched_yield.rs","umask.rs","uname.rs","wait.rs"]]],["const_assert.rs","cstr.rs","lib.rs","utils.rs"]],\
 "ryu":["",[["buffer",[],["mod.rs"]],["pretty",[],["exponent.rs","mantissa.rs","mod.rs"]]],["common.rs","d2s.rs","d2s_full_table.rs","d2s_intrinsics.rs","digit_table.rs","f2s.rs","f2s_intrinsics.rs","lib.rs"]],\
 "safemem":["",[],["lib.rs"]],\
 "same_file":["",[],["lib.rs","unix.rs"]],\
@@ -132,6 +133,7 @@ var sourcesIndex = JSON.parse('{\
 "serialize_to_javascript_impl":["",[],["lib.rs"]],\
 "servo_arc":["",[],["lib.rs"]],\
 "sha2":["",[["sha256",[],["soft.rs","x86.rs"]],["sha512",[],["soft.rs","x86.rs"]]],["consts.rs","core_api.rs","lib.rs","sha256.rs","sha512.rs"]],\
+"simd_adler32":["",[["imp",[],["avx2.rs","avx512.rs","mod.rs","scalar.rs","sse2.rs","ssse3.rs","wasm.rs"]]],["hash.rs","lib.rs"]],\
 "siphasher":["",[],["lib.rs","sip.rs","sip128.rs"]],\
 "slab":["",[],["builder.rs","lib.rs"]],\
 "smallvec":["",[],["lib.rs"]],\

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["adler32","Compute Adler-32 hash on reader until EOF."]]};

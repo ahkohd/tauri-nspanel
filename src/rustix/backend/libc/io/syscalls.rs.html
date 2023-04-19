@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rustix-0.37.6/src/backend/libc/io/syscalls.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>syscalls.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../rustix/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rustix-0.37.12/src/backend/libc/io/syscalls.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>syscalls.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../rustix/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -675,14 +675,24 @@
 <a href="#675" id="675">675</a>
 <a href="#676" id="676">676</a>
 <a href="#677" id="677">677</a>
+<a href="#678" id="678">678</a>
+<a href="#679" id="679">679</a>
+<a href="#680" id="680">680</a>
+<a href="#681" id="681">681</a>
+<a href="#682" id="682">682</a>
+<a href="#683" id="683">683</a>
+<a href="#684" id="684">684</a>
 </pre><pre class="rust"><code><span class="doccomment">//! libc syscalls supporting `rustix::io`.
 
 </span><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::c;
 <span class="attr">#[cfg(any(target_os = <span class="string">&quot;android&quot;</span>, target_os = <span class="string">&quot;linux&quot;</span>))]
 </span><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::conv::syscall_ret_owned_fd;
-<span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::conv::{
-    borrowed_fd, ret, ret_c_int, ret_discarded_fd, ret_owned_fd, ret_ssize_t,
-};
+<span class="attr">#[cfg(any(
+    target_os = <span class="string">&quot;android&quot;</span>,
+    all(target_os = <span class="string">&quot;linux&quot;</span>, not(target_env = <span class="string">&quot;gnu&quot;</span>)),
+))]
+</span><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::conv::syscall_ret_usize;
+<span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::conv::{borrowed_fd, ret, ret_c_int, ret_discarded_fd, ret_owned_fd, ret_usize};
 <span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::offset::{libc_pread, libc_pwrite};
 <span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;haiku&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;solaris&quot;</span>)))]
 </span><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::offset::{libc_preadv, libc_pwritev};
@@ -695,11 +705,18 @@
 </span><span class="kw">use </span><span class="kw">crate</span>::io::port::Event;
 <span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;aix&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
 </span><span class="kw">use </span><span class="kw">crate</span>::io::DupFlags;
+<span class="attr">#[cfg(any(
+    target_os = <span class="string">&quot;android&quot;</span>,
+    target_os = <span class="string">&quot;freebsd&quot;</span>,
+    target_os = <span class="string">&quot;illumos&quot;</span>,
+    target_os = <span class="string">&quot;linux&quot;
+</span>))]
+</span><span class="kw">use </span><span class="kw">crate</span>::io::EventfdFlags;
 <span class="attr">#[cfg(not(any(apple, target_os = <span class="string">&quot;aix&quot;</span>, target_os = <span class="string">&quot;haiku&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
 </span><span class="kw">use </span><span class="kw">crate</span>::io::PipeFlags;
 <span class="kw">use </span><span class="kw">crate</span>::io::{<span class="self">self</span>, FdFlags, IoSlice, IoSliceMut, PollFd};
 <span class="attr">#[cfg(any(target_os = <span class="string">&quot;android&quot;</span>, target_os = <span class="string">&quot;linux&quot;</span>))]
-</span><span class="kw">use </span><span class="kw">crate</span>::io::{EventfdFlags, IoSliceRaw, ReadWriteFlags, SpliceFlags};
+</span><span class="kw">use </span><span class="kw">crate</span>::io::{IoSliceRaw, ReadWriteFlags, SpliceFlags};
 <span class="kw">use </span>core::cmp::min;
 <span class="kw">use </span>core::convert::TryInto;
 <span class="kw">use </span>core::mem::MaybeUninit;
@@ -709,25 +726,23 @@
 </span><span class="kw">use </span>libc_errno::errno;
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>read(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, buf: <span class="kw-2">&amp;mut </span>[u8]) -&gt; io::Result&lt;usize&gt; {
-    <span class="kw">let </span>nread = <span class="kw">unsafe </span>{
-        ret_ssize_t(c::read(
+    <span class="kw">unsafe </span>{
+        ret_usize(c::read(
             borrowed_fd(fd),
             buf.as_mut_ptr().cast(),
             min(buf.len(), READ_LIMIT),
-        ))<span class="question-mark">?
-    </span>};
-    <span class="prelude-val">Ok</span>(nread <span class="kw">as </span>usize)
+        ))
+    }
 }
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>write(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, buf: <span class="kw-2">&amp;</span>[u8]) -&gt; io::Result&lt;usize&gt; {
-    <span class="kw">let </span>nwritten = <span class="kw">unsafe </span>{
-        ret_ssize_t(c::write(
+    <span class="kw">unsafe </span>{
+        ret_usize(c::write(
             borrowed_fd(fd),
             buf.as_ptr().cast(),
             min(buf.len(), READ_LIMIT),
-        ))<span class="question-mark">?
-    </span>};
-    <span class="prelude-val">Ok</span>(nwritten <span class="kw">as </span>usize)
+        ))
+    }
 }
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>pread(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, buf: <span class="kw-2">&amp;mut </span>[u8], offset: u64) -&gt; io::Result&lt;usize&gt; {
@@ -736,15 +751,14 @@
     <span class="comment">// Silently cast; we&#39;ll get `EINVAL` if the value is negative.
     </span><span class="kw">let </span>offset = offset <span class="kw">as </span>i64;
 
-    <span class="kw">let </span>nread = <span class="kw">unsafe </span>{
-        ret_ssize_t(libc_pread(
+    <span class="kw">unsafe </span>{
+        ret_usize(libc_pread(
             borrowed_fd(fd),
             buf.as_mut_ptr().cast(),
             len,
             offset,
-        ))<span class="question-mark">?
-    </span>};
-    <span class="prelude-val">Ok</span>(nread <span class="kw">as </span>usize)
+        ))
+    }
 }
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>pwrite(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, buf: <span class="kw-2">&amp;</span>[u8], offset: u64) -&gt; io::Result&lt;usize&gt; {
@@ -753,37 +767,34 @@
     <span class="comment">// Silently cast; we&#39;ll get `EINVAL` if the value is negative.
     </span><span class="kw">let </span>offset = offset <span class="kw">as </span>i64;
 
-    <span class="kw">let </span>nwritten = <span class="kw">unsafe </span>{
-        ret_ssize_t(libc_pwrite(
+    <span class="kw">unsafe </span>{
+        ret_usize(libc_pwrite(
             borrowed_fd(fd),
             buf.as_ptr().cast(),
             len,
             offset,
-        ))<span class="question-mark">?
-    </span>};
-    <span class="prelude-val">Ok</span>(nwritten <span class="kw">as </span>usize)
+        ))
+    }
 }
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>readv(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, bufs: <span class="kw-2">&amp;mut </span>[IoSliceMut]) -&gt; io::Result&lt;usize&gt; {
-    <span class="kw">let </span>nread = <span class="kw">unsafe </span>{
-        ret_ssize_t(c::readv(
+    <span class="kw">unsafe </span>{
+        ret_usize(c::readv(
             borrowed_fd(fd),
             bufs.as_ptr().cast::&lt;c::iovec&gt;(),
             min(bufs.len(), max_iov()) <span class="kw">as </span>c::c_int,
-        ))<span class="question-mark">?
-    </span>};
-    <span class="prelude-val">Ok</span>(nread <span class="kw">as </span>usize)
+        ))
+    }
 }
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>writev(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, bufs: <span class="kw-2">&amp;</span>[IoSlice]) -&gt; io::Result&lt;usize&gt; {
-    <span class="kw">let </span>nwritten = <span class="kw">unsafe </span>{
-        ret_ssize_t(c::writev(
+    <span class="kw">unsafe </span>{
+        ret_usize(c::writev(
             borrowed_fd(fd),
             bufs.as_ptr().cast::&lt;c::iovec&gt;(),
             min(bufs.len(), max_iov()) <span class="kw">as </span>c::c_int,
-        ))<span class="question-mark">?
-    </span>};
-    <span class="prelude-val">Ok</span>(nwritten <span class="kw">as </span>usize)
+        ))
+    }
 }
 
 <span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;haiku&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;solaris&quot;</span>)))]
@@ -794,30 +805,28 @@
 ) -&gt; io::Result&lt;usize&gt; {
     <span class="comment">// Silently cast; we&#39;ll get `EINVAL` if the value is negative.
     </span><span class="kw">let </span>offset = offset <span class="kw">as </span>i64;
-    <span class="kw">let </span>nread = <span class="kw">unsafe </span>{
-        ret_ssize_t(libc_preadv(
+    <span class="kw">unsafe </span>{
+        ret_usize(libc_preadv(
             borrowed_fd(fd),
             bufs.as_ptr().cast::&lt;c::iovec&gt;(),
             min(bufs.len(), max_iov()) <span class="kw">as </span>c::c_int,
             offset,
-        ))<span class="question-mark">?
-    </span>};
-    <span class="prelude-val">Ok</span>(nread <span class="kw">as </span>usize)
+        ))
+    }
 }
 
 <span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;haiku&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;solaris&quot;</span>)))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>pwritev(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, bufs: <span class="kw-2">&amp;</span>[IoSlice], offset: u64) -&gt; io::Result&lt;usize&gt; {
     <span class="comment">// Silently cast; we&#39;ll get `EINVAL` if the value is negative.
     </span><span class="kw">let </span>offset = offset <span class="kw">as </span>i64;
-    <span class="kw">let </span>nwritten = <span class="kw">unsafe </span>{
-        ret_ssize_t(libc_pwritev(
+    <span class="kw">unsafe </span>{
+        ret_usize(libc_pwritev(
             borrowed_fd(fd),
             bufs.as_ptr().cast::&lt;c::iovec&gt;(),
             min(bufs.len(), max_iov()) <span class="kw">as </span>c::c_int,
             offset,
-        ))<span class="question-mark">?
-    </span>};
-    <span class="prelude-val">Ok</span>(nwritten <span class="kw">as </span>usize)
+        ))
+    }
 }
 
 <span class="attr">#[cfg(all(target_os = <span class="string">&quot;linux&quot;</span>, target_env = <span class="string">&quot;gnu&quot;</span>))]
@@ -829,20 +838,19 @@
 ) -&gt; io::Result&lt;usize&gt; {
     <span class="comment">// Silently cast; we&#39;ll get `EINVAL` if the value is negative.
     </span><span class="kw">let </span>offset = offset <span class="kw">as </span>i64;
-    <span class="kw">let </span>nread = <span class="kw">unsafe </span>{
-        ret_ssize_t(libc_preadv2(
+    <span class="kw">unsafe </span>{
+        ret_usize(libc_preadv2(
             borrowed_fd(fd),
             bufs.as_ptr().cast::&lt;c::iovec&gt;(),
             min(bufs.len(), max_iov()) <span class="kw">as </span>c::c_int,
             offset,
             flags.bits(),
-        ))<span class="question-mark">?
-    </span>};
-    <span class="prelude-val">Ok</span>(nread <span class="kw">as </span>usize)
+        ))
+    }
 }
 
 <span class="doccomment">/// At present, `libc` only has `preadv2` defined for glibc. On other
-/// ABIs, use `libc::syscall`.
+/// ABIs, use `c::syscall`.
 </span><span class="attr">#[cfg(any(
     target_os = <span class="string">&quot;android&quot;</span>,
     all(target_os = <span class="string">&quot;linux&quot;</span>, not(target_env = <span class="string">&quot;gnu&quot;</span>)),
@@ -856,17 +864,16 @@
 ) -&gt; io::Result&lt;usize&gt; {
     <span class="comment">// Silently cast; we&#39;ll get `EINVAL` if the value is negative.
     </span><span class="kw">let </span>offset = offset <span class="kw">as </span>i64;
-    <span class="kw">let </span>nread = <span class="kw">unsafe </span>{
-        ret_ssize_t(libc::syscall(
-            libc::SYS_preadv2,
+    <span class="kw">unsafe </span>{
+        syscall_ret_usize(c::syscall(
+            c::SYS_preadv2,
             borrowed_fd(fd),
             bufs.as_ptr().cast::&lt;c::iovec&gt;(),
             min(bufs.len(), max_iov()) <span class="kw">as </span>c::c_int,
             offset,
             flags.bits(),
-        ) <span class="kw">as </span>c::ssize_t)<span class="question-mark">?
-    </span>};
-    <span class="prelude-val">Ok</span>(nread <span class="kw">as </span>usize)
+        ))
+    }
 }
 
 <span class="attr">#[cfg(all(target_os = <span class="string">&quot;linux&quot;</span>, target_env = <span class="string">&quot;gnu&quot;</span>))]
@@ -878,20 +885,19 @@
 ) -&gt; io::Result&lt;usize&gt; {
     <span class="comment">// Silently cast; we&#39;ll get `EINVAL` if the value is negative.
     </span><span class="kw">let </span>offset = offset <span class="kw">as </span>i64;
-    <span class="kw">let </span>nwritten = <span class="kw">unsafe </span>{
-        ret_ssize_t(libc_pwritev2(
+    <span class="kw">unsafe </span>{
+        ret_usize(libc_pwritev2(
             borrowed_fd(fd),
             bufs.as_ptr().cast::&lt;c::iovec&gt;(),
             min(bufs.len(), max_iov()) <span class="kw">as </span>c::c_int,
             offset,
             flags.bits(),
-        ))<span class="question-mark">?
-    </span>};
-    <span class="prelude-val">Ok</span>(nwritten <span class="kw">as </span>usize)
+        ))
+    }
 }
 
 <span class="doccomment">/// At present, `libc` only has `pwritev2` defined for glibc. On other
-/// ABIs, use `libc::syscall`.
+/// ABIs, use `c::syscall`.
 </span><span class="attr">#[cfg(any(
     target_os = <span class="string">&quot;android&quot;</span>,
     all(target_os = <span class="string">&quot;linux&quot;</span>, not(target_env = <span class="string">&quot;gnu&quot;</span>)),
@@ -905,25 +911,24 @@
 ) -&gt; io::Result&lt;usize&gt; {
     <span class="comment">// Silently cast; we&#39;ll get `EINVAL` if the value is negative.
     </span><span class="kw">let </span>offset = offset <span class="kw">as </span>i64;
-    <span class="kw">let </span>nwritten = <span class="kw">unsafe </span>{
-        ret_ssize_t(libc::syscall(
-            libc::SYS_pwritev2,
+    <span class="kw">unsafe </span>{
+        syscall_ret_usize(c::syscall(
+            c::SYS_pwritev2,
             borrowed_fd(fd),
             bufs.as_ptr().cast::&lt;c::iovec&gt;(),
             min(bufs.len(), max_iov()) <span class="kw">as </span>c::c_int,
             offset,
             flags.bits(),
-        ) <span class="kw">as </span>c::ssize_t)<span class="question-mark">?
-    </span>};
-    <span class="prelude-val">Ok</span>(nwritten <span class="kw">as </span>usize)
+        ))
+    }
 }
 
 <span class="comment">// These functions are derived from Rust&#39;s library/std/src/sys/unix/fd.rs at
 // revision 326ef470a8b379a180d6dc4bbef08990698a737a.
 
 // The maximum read limit on most POSIX-like systems is `SSIZE_MAX`, with the
-// man page quoting that if the count of bytes to read is greater than
-// `SSIZE_MAX` the result is &quot;unspecified&quot;.
+// manual page quoting that if the count of bytes to read is greater than
+// `SSIZE_MAX` the result is “unspecified”.
 //
 // On macOS, however, apparently the 64-bit libc is either buggy or
 // intentionally showing odd behavior by rejecting any read with a size larger
@@ -968,6 +973,11 @@
 <span class="attr">#[cfg(any(target_os = <span class="string">&quot;android&quot;</span>, target_os = <span class="string">&quot;linux&quot;</span>))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>eventfd(initval: u32, flags: EventfdFlags) -&gt; io::Result&lt;OwnedFd&gt; {
     <span class="kw">unsafe </span>{ syscall_ret_owned_fd(c::syscall(c::SYS_eventfd2, initval, flags.bits())) }
+}
+
+<span class="attr">#[cfg(any(target_os = <span class="string">&quot;freebsd&quot;</span>, target_os = <span class="string">&quot;illumos&quot;</span>))]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>eventfd(initval: u32, flags: EventfdFlags) -&gt; io::Result&lt;OwnedFd&gt; {
+    <span class="kw">unsafe </span>{ ret_owned_fd(c::eventfd(initval, flags.bits())) }
 }
 
 <span class="attr">#[cfg(any(target_os = <span class="string">&quot;android&quot;</span>, target_os = <span class="string">&quot;linux&quot;</span>))]
@@ -1152,7 +1162,13 @@
 
 <span class="attr">#[cfg(apple)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>ioctl_fioclex(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; io::Result&lt;()&gt; {
-    <span class="kw">unsafe </span>{ ret(c::ioctl(borrowed_fd(fd), c::FIOCLEX)) }
+    <span class="kw">unsafe </span>{
+        ret(c::ioctl(
+            borrowed_fd(fd),
+            c::FIOCLEX,
+            core::ptr::null_mut::&lt;u8&gt;(),
+        ))
+    }
 }
 
 <span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;haiku&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
@@ -1242,17 +1258,16 @@
         .map(|off| (off <span class="kw">as </span><span class="kw-2">*mut </span>u64).cast())
         .unwrap_or(ptr::null_mut());
 
-    ret_ssize_t(<span class="kw">unsafe </span>{
-        c::splice(
+    <span class="kw">unsafe </span>{
+        ret_usize(c::splice(
             borrowed_fd(fd_in),
             off_in,
             borrowed_fd(fd_out),
             off_out,
             len,
             flags.bits(),
-        )
-    })
-    .map(|spliced| spliced <span class="kw">as </span>usize)
+        ))
+    }
 }
 
 <span class="attr">#[cfg(any(target_os = <span class="string">&quot;android&quot;</span>, target_os = <span class="string">&quot;linux&quot;</span>))]
@@ -1262,13 +1277,12 @@
     bufs: <span class="kw-2">&amp;</span>[IoSliceRaw],
     flags: SpliceFlags,
 ) -&gt; io::Result&lt;usize&gt; {
-    ret_ssize_t(c::vmsplice(
+    ret_usize(c::vmsplice(
         borrowed_fd(fd),
         bufs.as_ptr().cast::&lt;c::iovec&gt;(),
         min(bufs.len(), max_iov()),
         flags.bits(),
     ))
-    .map(|spliced| spliced <span class="kw">as </span>usize)
 }
 
 <span class="attr">#[cfg(solarish)]

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/filter.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>filter.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../png/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.8/src/filter.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>filter.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../png/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -409,7 +409,391 @@
 <a href="#409" id="409">409</a>
 <a href="#410" id="410">410</a>
 <a href="#411" id="411">411</a>
-</pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::common::BytesPerPixel;
+<a href="#412" id="412">412</a>
+<a href="#413" id="413">413</a>
+<a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
+<a href="#436" id="436">436</a>
+<a href="#437" id="437">437</a>
+<a href="#438" id="438">438</a>
+<a href="#439" id="439">439</a>
+<a href="#440" id="440">440</a>
+<a href="#441" id="441">441</a>
+<a href="#442" id="442">442</a>
+<a href="#443" id="443">443</a>
+<a href="#444" id="444">444</a>
+<a href="#445" id="445">445</a>
+<a href="#446" id="446">446</a>
+<a href="#447" id="447">447</a>
+<a href="#448" id="448">448</a>
+<a href="#449" id="449">449</a>
+<a href="#450" id="450">450</a>
+<a href="#451" id="451">451</a>
+<a href="#452" id="452">452</a>
+<a href="#453" id="453">453</a>
+<a href="#454" id="454">454</a>
+<a href="#455" id="455">455</a>
+<a href="#456" id="456">456</a>
+<a href="#457" id="457">457</a>
+<a href="#458" id="458">458</a>
+<a href="#459" id="459">459</a>
+<a href="#460" id="460">460</a>
+<a href="#461" id="461">461</a>
+<a href="#462" id="462">462</a>
+<a href="#463" id="463">463</a>
+<a href="#464" id="464">464</a>
+<a href="#465" id="465">465</a>
+<a href="#466" id="466">466</a>
+<a href="#467" id="467">467</a>
+<a href="#468" id="468">468</a>
+<a href="#469" id="469">469</a>
+<a href="#470" id="470">470</a>
+<a href="#471" id="471">471</a>
+<a href="#472" id="472">472</a>
+<a href="#473" id="473">473</a>
+<a href="#474" id="474">474</a>
+<a href="#475" id="475">475</a>
+<a href="#476" id="476">476</a>
+<a href="#477" id="477">477</a>
+<a href="#478" id="478">478</a>
+<a href="#479" id="479">479</a>
+<a href="#480" id="480">480</a>
+<a href="#481" id="481">481</a>
+<a href="#482" id="482">482</a>
+<a href="#483" id="483">483</a>
+<a href="#484" id="484">484</a>
+<a href="#485" id="485">485</a>
+<a href="#486" id="486">486</a>
+<a href="#487" id="487">487</a>
+<a href="#488" id="488">488</a>
+<a href="#489" id="489">489</a>
+<a href="#490" id="490">490</a>
+<a href="#491" id="491">491</a>
+<a href="#492" id="492">492</a>
+<a href="#493" id="493">493</a>
+<a href="#494" id="494">494</a>
+<a href="#495" id="495">495</a>
+<a href="#496" id="496">496</a>
+<a href="#497" id="497">497</a>
+<a href="#498" id="498">498</a>
+<a href="#499" id="499">499</a>
+<a href="#500" id="500">500</a>
+<a href="#501" id="501">501</a>
+<a href="#502" id="502">502</a>
+<a href="#503" id="503">503</a>
+<a href="#504" id="504">504</a>
+<a href="#505" id="505">505</a>
+<a href="#506" id="506">506</a>
+<a href="#507" id="507">507</a>
+<a href="#508" id="508">508</a>
+<a href="#509" id="509">509</a>
+<a href="#510" id="510">510</a>
+<a href="#511" id="511">511</a>
+<a href="#512" id="512">512</a>
+<a href="#513" id="513">513</a>
+<a href="#514" id="514">514</a>
+<a href="#515" id="515">515</a>
+<a href="#516" id="516">516</a>
+<a href="#517" id="517">517</a>
+<a href="#518" id="518">518</a>
+<a href="#519" id="519">519</a>
+<a href="#520" id="520">520</a>
+<a href="#521" id="521">521</a>
+<a href="#522" id="522">522</a>
+<a href="#523" id="523">523</a>
+<a href="#524" id="524">524</a>
+<a href="#525" id="525">525</a>
+<a href="#526" id="526">526</a>
+<a href="#527" id="527">527</a>
+<a href="#528" id="528">528</a>
+<a href="#529" id="529">529</a>
+<a href="#530" id="530">530</a>
+<a href="#531" id="531">531</a>
+<a href="#532" id="532">532</a>
+<a href="#533" id="533">533</a>
+<a href="#534" id="534">534</a>
+<a href="#535" id="535">535</a>
+<a href="#536" id="536">536</a>
+<a href="#537" id="537">537</a>
+<a href="#538" id="538">538</a>
+<a href="#539" id="539">539</a>
+<a href="#540" id="540">540</a>
+<a href="#541" id="541">541</a>
+<a href="#542" id="542">542</a>
+<a href="#543" id="543">543</a>
+<a href="#544" id="544">544</a>
+<a href="#545" id="545">545</a>
+<a href="#546" id="546">546</a>
+<a href="#547" id="547">547</a>
+<a href="#548" id="548">548</a>
+<a href="#549" id="549">549</a>
+<a href="#550" id="550">550</a>
+<a href="#551" id="551">551</a>
+<a href="#552" id="552">552</a>
+<a href="#553" id="553">553</a>
+<a href="#554" id="554">554</a>
+<a href="#555" id="555">555</a>
+<a href="#556" id="556">556</a>
+<a href="#557" id="557">557</a>
+<a href="#558" id="558">558</a>
+<a href="#559" id="559">559</a>
+<a href="#560" id="560">560</a>
+<a href="#561" id="561">561</a>
+<a href="#562" id="562">562</a>
+<a href="#563" id="563">563</a>
+<a href="#564" id="564">564</a>
+<a href="#565" id="565">565</a>
+<a href="#566" id="566">566</a>
+<a href="#567" id="567">567</a>
+<a href="#568" id="568">568</a>
+<a href="#569" id="569">569</a>
+<a href="#570" id="570">570</a>
+<a href="#571" id="571">571</a>
+<a href="#572" id="572">572</a>
+<a href="#573" id="573">573</a>
+<a href="#574" id="574">574</a>
+<a href="#575" id="575">575</a>
+<a href="#576" id="576">576</a>
+<a href="#577" id="577">577</a>
+<a href="#578" id="578">578</a>
+<a href="#579" id="579">579</a>
+<a href="#580" id="580">580</a>
+<a href="#581" id="581">581</a>
+<a href="#582" id="582">582</a>
+<a href="#583" id="583">583</a>
+<a href="#584" id="584">584</a>
+<a href="#585" id="585">585</a>
+<a href="#586" id="586">586</a>
+<a href="#587" id="587">587</a>
+<a href="#588" id="588">588</a>
+<a href="#589" id="589">589</a>
+<a href="#590" id="590">590</a>
+<a href="#591" id="591">591</a>
+<a href="#592" id="592">592</a>
+<a href="#593" id="593">593</a>
+<a href="#594" id="594">594</a>
+<a href="#595" id="595">595</a>
+<a href="#596" id="596">596</a>
+<a href="#597" id="597">597</a>
+<a href="#598" id="598">598</a>
+<a href="#599" id="599">599</a>
+<a href="#600" id="600">600</a>
+<a href="#601" id="601">601</a>
+<a href="#602" id="602">602</a>
+<a href="#603" id="603">603</a>
+<a href="#604" id="604">604</a>
+<a href="#605" id="605">605</a>
+<a href="#606" id="606">606</a>
+<a href="#607" id="607">607</a>
+<a href="#608" id="608">608</a>
+<a href="#609" id="609">609</a>
+<a href="#610" id="610">610</a>
+<a href="#611" id="611">611</a>
+<a href="#612" id="612">612</a>
+<a href="#613" id="613">613</a>
+<a href="#614" id="614">614</a>
+<a href="#615" id="615">615</a>
+<a href="#616" id="616">616</a>
+<a href="#617" id="617">617</a>
+<a href="#618" id="618">618</a>
+<a href="#619" id="619">619</a>
+<a href="#620" id="620">620</a>
+<a href="#621" id="621">621</a>
+<a href="#622" id="622">622</a>
+<a href="#623" id="623">623</a>
+<a href="#624" id="624">624</a>
+<a href="#625" id="625">625</a>
+<a href="#626" id="626">626</a>
+<a href="#627" id="627">627</a>
+<a href="#628" id="628">628</a>
+<a href="#629" id="629">629</a>
+<a href="#630" id="630">630</a>
+<a href="#631" id="631">631</a>
+<a href="#632" id="632">632</a>
+<a href="#633" id="633">633</a>
+<a href="#634" id="634">634</a>
+<a href="#635" id="635">635</a>
+<a href="#636" id="636">636</a>
+<a href="#637" id="637">637</a>
+<a href="#638" id="638">638</a>
+<a href="#639" id="639">639</a>
+<a href="#640" id="640">640</a>
+<a href="#641" id="641">641</a>
+<a href="#642" id="642">642</a>
+<a href="#643" id="643">643</a>
+<a href="#644" id="644">644</a>
+<a href="#645" id="645">645</a>
+<a href="#646" id="646">646</a>
+<a href="#647" id="647">647</a>
+<a href="#648" id="648">648</a>
+<a href="#649" id="649">649</a>
+<a href="#650" id="650">650</a>
+<a href="#651" id="651">651</a>
+<a href="#652" id="652">652</a>
+<a href="#653" id="653">653</a>
+<a href="#654" id="654">654</a>
+<a href="#655" id="655">655</a>
+<a href="#656" id="656">656</a>
+<a href="#657" id="657">657</a>
+<a href="#658" id="658">658</a>
+<a href="#659" id="659">659</a>
+<a href="#660" id="660">660</a>
+<a href="#661" id="661">661</a>
+<a href="#662" id="662">662</a>
+<a href="#663" id="663">663</a>
+<a href="#664" id="664">664</a>
+<a href="#665" id="665">665</a>
+<a href="#666" id="666">666</a>
+<a href="#667" id="667">667</a>
+<a href="#668" id="668">668</a>
+<a href="#669" id="669">669</a>
+<a href="#670" id="670">670</a>
+<a href="#671" id="671">671</a>
+<a href="#672" id="672">672</a>
+<a href="#673" id="673">673</a>
+<a href="#674" id="674">674</a>
+<a href="#675" id="675">675</a>
+<a href="#676" id="676">676</a>
+<a href="#677" id="677">677</a>
+<a href="#678" id="678">678</a>
+<a href="#679" id="679">679</a>
+<a href="#680" id="680">680</a>
+<a href="#681" id="681">681</a>
+<a href="#682" id="682">682</a>
+<a href="#683" id="683">683</a>
+<a href="#684" id="684">684</a>
+<a href="#685" id="685">685</a>
+<a href="#686" id="686">686</a>
+<a href="#687" id="687">687</a>
+<a href="#688" id="688">688</a>
+<a href="#689" id="689">689</a>
+<a href="#690" id="690">690</a>
+<a href="#691" id="691">691</a>
+<a href="#692" id="692">692</a>
+<a href="#693" id="693">693</a>
+<a href="#694" id="694">694</a>
+<a href="#695" id="695">695</a>
+<a href="#696" id="696">696</a>
+<a href="#697" id="697">697</a>
+<a href="#698" id="698">698</a>
+<a href="#699" id="699">699</a>
+<a href="#700" id="700">700</a>
+<a href="#701" id="701">701</a>
+<a href="#702" id="702">702</a>
+<a href="#703" id="703">703</a>
+<a href="#704" id="704">704</a>
+<a href="#705" id="705">705</a>
+<a href="#706" id="706">706</a>
+<a href="#707" id="707">707</a>
+<a href="#708" id="708">708</a>
+<a href="#709" id="709">709</a>
+<a href="#710" id="710">710</a>
+<a href="#711" id="711">711</a>
+<a href="#712" id="712">712</a>
+<a href="#713" id="713">713</a>
+<a href="#714" id="714">714</a>
+<a href="#715" id="715">715</a>
+<a href="#716" id="716">716</a>
+<a href="#717" id="717">717</a>
+<a href="#718" id="718">718</a>
+<a href="#719" id="719">719</a>
+<a href="#720" id="720">720</a>
+<a href="#721" id="721">721</a>
+<a href="#722" id="722">722</a>
+<a href="#723" id="723">723</a>
+<a href="#724" id="724">724</a>
+<a href="#725" id="725">725</a>
+<a href="#726" id="726">726</a>
+<a href="#727" id="727">727</a>
+<a href="#728" id="728">728</a>
+<a href="#729" id="729">729</a>
+<a href="#730" id="730">730</a>
+<a href="#731" id="731">731</a>
+<a href="#732" id="732">732</a>
+<a href="#733" id="733">733</a>
+<a href="#734" id="734">734</a>
+<a href="#735" id="735">735</a>
+<a href="#736" id="736">736</a>
+<a href="#737" id="737">737</a>
+<a href="#738" id="738">738</a>
+<a href="#739" id="739">739</a>
+<a href="#740" id="740">740</a>
+<a href="#741" id="741">741</a>
+<a href="#742" id="742">742</a>
+<a href="#743" id="743">743</a>
+<a href="#744" id="744">744</a>
+<a href="#745" id="745">745</a>
+<a href="#746" id="746">746</a>
+<a href="#747" id="747">747</a>
+<a href="#748" id="748">748</a>
+<a href="#749" id="749">749</a>
+<a href="#750" id="750">750</a>
+<a href="#751" id="751">751</a>
+<a href="#752" id="752">752</a>
+<a href="#753" id="753">753</a>
+<a href="#754" id="754">754</a>
+<a href="#755" id="755">755</a>
+<a href="#756" id="756">756</a>
+<a href="#757" id="757">757</a>
+<a href="#758" id="758">758</a>
+<a href="#759" id="759">759</a>
+<a href="#760" id="760">760</a>
+<a href="#761" id="761">761</a>
+<a href="#762" id="762">762</a>
+<a href="#763" id="763">763</a>
+<a href="#764" id="764">764</a>
+<a href="#765" id="765">765</a>
+<a href="#766" id="766">766</a>
+<a href="#767" id="767">767</a>
+<a href="#768" id="768">768</a>
+<a href="#769" id="769">769</a>
+<a href="#770" id="770">770</a>
+<a href="#771" id="771">771</a>
+<a href="#772" id="772">772</a>
+<a href="#773" id="773">773</a>
+<a href="#774" id="774">774</a>
+<a href="#775" id="775">775</a>
+<a href="#776" id="776">776</a>
+<a href="#777" id="777">777</a>
+<a href="#778" id="778">778</a>
+<a href="#779" id="779">779</a>
+<a href="#780" id="780">780</a>
+<a href="#781" id="781">781</a>
+<a href="#782" id="782">782</a>
+<a href="#783" id="783">783</a>
+<a href="#784" id="784">784</a>
+<a href="#785" id="785">785</a>
+<a href="#786" id="786">786</a>
+<a href="#787" id="787">787</a>
+<a href="#788" id="788">788</a>
+<a href="#789" id="789">789</a>
+<a href="#790" id="790">790</a>
+<a href="#791" id="791">791</a>
+<a href="#792" id="792">792</a>
+<a href="#793" id="793">793</a>
+</pre><pre class="rust"><code><span class="kw">use </span>core::convert::TryInto;
+
+<span class="kw">use </span><span class="kw">crate</span>::common::BytesPerPixel;
 
 <span class="doccomment">/// The byte level filter applied to scanlines to prepare them for compression.
 ///
@@ -465,16 +849,57 @@
     }
 }
 
+<span class="kw">fn </span>filter_paeth_decode(a: u8, b: u8, c: u8) -&gt; u8 {
+    <span class="comment">// Decoding seems to optimize better with this algorithm
+    </span><span class="kw">let </span>pa = (i16::from(b) - i16::from(c)).abs();
+    <span class="kw">let </span>pb = (i16::from(a) - i16::from(c)).abs();
+    <span class="kw">let </span>pc = ((i16::from(a) - i16::from(c)) + (i16::from(b) - i16::from(c))).abs();
+
+    <span class="kw">let </span><span class="kw-2">mut </span>out = a;
+    <span class="kw">let </span><span class="kw-2">mut </span>min = pa;
+
+    <span class="kw">if </span>pb &lt; min {
+        min = pb;
+        out = b;
+    }
+    <span class="kw">if </span>pc &lt; min {
+        out = c;
+    }
+
+    out
+}
+
 <span class="kw">fn </span>filter_paeth(a: u8, b: u8, c: u8) -&gt; u8 {
-    <span class="kw">let </span>ia = i16::from(a);
-    <span class="kw">let </span>ib = i16::from(b);
-    <span class="kw">let </span>ic = i16::from(c);
-
-    <span class="kw">let </span>p = ia + ib - ic;
-
-    <span class="kw">let </span>pa = (p - ia).abs();
-    <span class="kw">let </span>pb = (p - ib).abs();
-    <span class="kw">let </span>pc = (p - ic).abs();
+    <span class="comment">// This is an optimized version of the paeth filter from the PNG specification, proposed by
+    // Luca Versari for [FPNGE](https://www.lucaversari.it/FJXL_and_FPNGE.pdf). It operates
+    // entirely on unsigned 8-bit quantities, making it more conducive to vectorization.
+    //
+    //     p = a + b - c
+    //     pa = |p - a| = |a + b - c - a| = |b - c| = max(b, c) - min(b, c)
+    //     pb = |p - b| = |a + b - c - b| = |a - c| = max(a, c) - min(a, c)
+    //     pc = |p - c| = |a + b - c - c| = |(b - c) + (a - c)| = ...
+    //
+    // Further optimizing the calculation of `pc` a bit tricker. However, notice that:
+    //
+    //        a &gt; c &amp;&amp; b &gt; c
+    //    ==&gt; (a - c) &gt; 0 &amp;&amp; (b - c) &gt; 0
+    //    ==&gt; pc &gt; (a - c) &amp;&amp; pc &gt; (b - c)
+    //    ==&gt; pc &gt; |a - c| &amp;&amp; pc &gt; |b - c|
+    //    ==&gt; pc &gt; pb &amp;&amp; pc &gt; pa
+    //
+    // Meaning that if `c` is smaller than `a` and `b`, the value of `pc` is irrelevant. Similar
+    // reasoning applies if `c` is larger than the other two inputs. Assuming that `c &gt;= b` and
+    // `c &lt;= b` or vice versa:
+    //
+    //     pc = ||b - c| - |a - c|| =  |pa - pb| = max(pa, pb) - min(pa, pb)
+    //
+    </span><span class="kw">let </span>pa = b.max(c) - c.min(b);
+    <span class="kw">let </span>pb = a.max(c) - c.min(a);
+    <span class="kw">let </span>pc = <span class="kw">if </span>(a &lt; c) == (c &lt; b) {
+        pa.max(pb) - pa.min(pb)
+    } <span class="kw">else </span>{
+        <span class="number">255
+    </span>};
 
     <span class="kw">if </span>pa &lt;= pb &amp;&amp; pa &lt;= pc {
         a
@@ -490,127 +915,367 @@
     tbpp: BytesPerPixel,
     previous: <span class="kw-2">&amp;</span>[u8],
     current: <span class="kw-2">&amp;mut </span>[u8],
-) -&gt; std::result::Result&lt;(), <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str&gt; {
+) {
     <span class="kw">use </span><span class="self">self</span>::FilterType::<span class="kw-2">*</span>;
-    <span class="kw">let </span>bpp = tbpp.into_usize();
-    <span class="kw">let </span>len = current.len();
 
-    <span class="kw">fn </span>require_length(slice: <span class="kw-2">&amp;</span>[u8], length: usize) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>[u8], <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str&gt; {
-        <span class="kw">match </span>slice.get(..length) {
-            <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(<span class="string">&quot;Filtering failed: not enough data in previous row&quot;</span>),
-            <span class="prelude-val">Some</span>(slice) =&gt; <span class="prelude-val">Ok</span>(slice),
-        }
-    }
-
-    <span class="kw">match </span>filter {
-        NoFilter =&gt; <span class="prelude-val">Ok</span>(()),
-        Sub =&gt; {
-            <span class="kw">let </span>current = <span class="kw-2">&amp;mut </span>current[..len];
-            <span class="kw">for </span>i <span class="kw">in </span>bpp..len {
-                current[i] = current[i].wrapping_add(current[i - bpp]);
+    <span class="comment">// [2023/01 @okaneco] - Notes on optimizing decoding filters
+    //
+    // Links:
+    // [PR]: https://github.com/image-rs/image-png/pull/382
+    // [SWAR]: http://aggregate.org/SWAR/over.html
+    // [AVG]: http://aggregate.org/MAGIC/#Average%20of%20Integers
+    //
+    // #382 heavily refactored and optimized the following filters making the
+    // implementation nonobvious. These comments function as a summary of that
+    // PR with an explanation of the choices made below.
+    //
+    // #382 originally started with trying to optimize using a technique called
+    // SWAR, SIMD Within a Register. SWAR uses regular integer types like `u32`
+    // and `u64` as SIMD registers to perform vertical operations in parallel,
+    // usually involving bit-twiddling. This allowed each `BytesPerPixel` (bpp)
+    // pixel to be decoded in parallel: 3bpp and 4bpp in a `u32`, 6bpp and 8pp
+    // in a `u64`. The `Sub` filter looked like the following code block, `Avg`
+    // was similar but used a bitwise average method from [AVG]:
+    // ```
+    // // See &quot;Unpartitioned Operations With Correction Code&quot; from [SWAR]
+    // fn swar_add_u32(x: u32, y: u32) -&gt; u32 {
+    //     // 7-bit addition so there&#39;s no carry over the most significant bit
+    //     let n = (x &amp; 0x7f7f7f7f) + (y &amp; 0x7f7f7f7f); // 0x7F = 0b_0111_1111
+    //     // 1-bit parity/XOR addition to fill in the missing MSB
+    //     n ^ (x ^ y) &amp; 0x80808080                     // 0x80 = 0b_1000_0000
+    // }
+    //
+    // let mut prev =
+    //     u32::from_ne_bytes([current[0], current[1], current[2], current[3]]);
+    // for chunk in current[4..].chunks_exact_mut(4) {
+    //     let cur = u32::from_ne_bytes([chunk[0], chunk[1], chunk[2], chunk[3]]);
+    //     let new_chunk = swar_add_u32(cur, prev);
+    //     chunk.copy_from_slice(&amp;new_chunk.to_ne_bytes());
+    //     prev = new_chunk;
+    // }
+    // ```
+    // While this provided a measurable increase, @fintelia found that this idea
+    // could be taken even further by unrolling the chunks component-wise and
+    // avoiding unnecessary byte-shuffling by using byte arrays instead of
+    // `u32::from|to_ne_bytes`. The bitwise operations were no longer necessary
+    // so they were reverted to their obvious arithmetic equivalent. Lastly,
+    // `TryInto` was used instead of `copy_from_slice`. The `Sub` code now
+    // looked like this (with asserts to remove `0..bpp` bounds checks):
+    // ```
+    // assert!(len &gt; 3);
+    // let mut prev = [current[0], current[1], current[2], current[3]];
+    // for chunk in current[4..].chunks_exact_mut(4) {
+    //     let new_chunk = [
+    //         chunk[0].wrapping_add(prev[0]),
+    //         chunk[1].wrapping_add(prev[1]),
+    //         chunk[2].wrapping_add(prev[2]),
+    //         chunk[3].wrapping_add(prev[3]),
+    //     ];
+    //     *TryInto::&lt;&amp;mut [u8; 4]&gt;::try_into(chunk).unwrap() = new_chunk;
+    //     prev = new_chunk;
+    // }
+    // ```
+    // The compiler was able to optimize the code to be even faster and this
+    // method even sped up Paeth filtering! Assertions were experimentally
+    // added within loop bodies which produced better instructions but no
+    // difference in speed. Finally, the code was refactored to remove manual
+    // slicing and start the previous pixel chunks with arrays of `[0; N]`.
+    // ```
+    // let mut prev = [0; 4];
+    // for chunk in current.chunks_exact_mut(4) {
+    //     let new_chunk = [
+    //         chunk[0].wrapping_add(prev[0]),
+    //         chunk[1].wrapping_add(prev[1]),
+    //         chunk[2].wrapping_add(prev[2]),
+    //         chunk[3].wrapping_add(prev[3]),
+    //     ];
+    //     *TryInto::&lt;&amp;mut [u8; 4]&gt;::try_into(chunk).unwrap() = new_chunk;
+    //     prev = new_chunk;
+    // }
+    // ```
+    // While we&#39;re not manually bit-twiddling anymore, a possible takeaway from
+    // this is to &quot;think in SWAR&quot; when dealing with small byte arrays. Unrolling
+    // array operations and performing them component-wise may unlock previously
+    // unavailable optimizations from the compiler, even when using the
+    // `chunks_exact` methods for their potential auto-vectorization benefits.
+    </span><span class="kw">match </span>filter {
+        NoFilter =&gt; {}
+        Sub =&gt; <span class="kw">match </span>tbpp {
+            <span class="comment">// These variants regressed instruction count with no performance
+            // benefit when converted to use `chunks`, leave as an obvious loop
+            </span>BytesPerPixel::One | BytesPerPixel::Two =&gt; {
+                <span class="kw">let </span>bpp = tbpp.into_usize();
+                <span class="kw">for </span>i <span class="kw">in </span>bpp..current.len() {
+                    current[i] = current[i].wrapping_add(current[i - bpp]);
+                }
             }
-            <span class="prelude-val">Ok</span>(())
-        }
+            BytesPerPixel::Three =&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>prev = [<span class="number">0</span>; <span class="number">3</span>];
+                <span class="kw">for </span>chunk <span class="kw">in </span>current.chunks_exact_mut(<span class="number">3</span>) {
+                    <span class="kw">let </span>new_chunk = [
+                        chunk[<span class="number">0</span>].wrapping_add(prev[<span class="number">0</span>]),
+                        chunk[<span class="number">1</span>].wrapping_add(prev[<span class="number">1</span>]),
+                        chunk[<span class="number">2</span>].wrapping_add(prev[<span class="number">2</span>]),
+                    ];
+                    <span class="kw-2">*</span>TryInto::&lt;<span class="kw-2">&amp;mut </span>[u8; <span class="number">3</span>]&gt;::try_into(chunk).unwrap() = new_chunk;
+                    prev = new_chunk;
+                }
+            }
+            BytesPerPixel::Four =&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>prev = [<span class="number">0</span>; <span class="number">4</span>];
+                <span class="kw">for </span>chunk <span class="kw">in </span>current.chunks_exact_mut(<span class="number">4</span>) {
+                    <span class="kw">let </span>new_chunk = [
+                        chunk[<span class="number">0</span>].wrapping_add(prev[<span class="number">0</span>]),
+                        chunk[<span class="number">1</span>].wrapping_add(prev[<span class="number">1</span>]),
+                        chunk[<span class="number">2</span>].wrapping_add(prev[<span class="number">2</span>]),
+                        chunk[<span class="number">3</span>].wrapping_add(prev[<span class="number">3</span>]),
+                    ];
+                    <span class="kw-2">*</span>TryInto::&lt;<span class="kw-2">&amp;mut </span>[u8; <span class="number">4</span>]&gt;::try_into(chunk).unwrap() = new_chunk;
+                    prev = new_chunk;
+                }
+            }
+            BytesPerPixel::Six =&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>prev = [<span class="number">0</span>; <span class="number">6</span>];
+                <span class="kw">for </span>chunk <span class="kw">in </span>current.chunks_exact_mut(<span class="number">6</span>) {
+                    <span class="kw">let </span>new_chunk = [
+                        chunk[<span class="number">0</span>].wrapping_add(prev[<span class="number">0</span>]),
+                        chunk[<span class="number">1</span>].wrapping_add(prev[<span class="number">1</span>]),
+                        chunk[<span class="number">2</span>].wrapping_add(prev[<span class="number">2</span>]),
+                        chunk[<span class="number">3</span>].wrapping_add(prev[<span class="number">3</span>]),
+                        chunk[<span class="number">4</span>].wrapping_add(prev[<span class="number">4</span>]),
+                        chunk[<span class="number">5</span>].wrapping_add(prev[<span class="number">5</span>]),
+                    ];
+                    <span class="kw-2">*</span>TryInto::&lt;<span class="kw-2">&amp;mut </span>[u8; <span class="number">6</span>]&gt;::try_into(chunk).unwrap() = new_chunk;
+                    prev = new_chunk;
+                }
+            }
+            BytesPerPixel::Eight =&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>prev = [<span class="number">0</span>; <span class="number">8</span>];
+                <span class="kw">for </span>chunk <span class="kw">in </span>current.chunks_exact_mut(<span class="number">8</span>) {
+                    <span class="kw">let </span>new_chunk = [
+                        chunk[<span class="number">0</span>].wrapping_add(prev[<span class="number">0</span>]),
+                        chunk[<span class="number">1</span>].wrapping_add(prev[<span class="number">1</span>]),
+                        chunk[<span class="number">2</span>].wrapping_add(prev[<span class="number">2</span>]),
+                        chunk[<span class="number">3</span>].wrapping_add(prev[<span class="number">3</span>]),
+                        chunk[<span class="number">4</span>].wrapping_add(prev[<span class="number">4</span>]),
+                        chunk[<span class="number">5</span>].wrapping_add(prev[<span class="number">5</span>]),
+                        chunk[<span class="number">6</span>].wrapping_add(prev[<span class="number">6</span>]),
+                        chunk[<span class="number">7</span>].wrapping_add(prev[<span class="number">7</span>]),
+                    ];
+                    <span class="kw-2">*</span>TryInto::&lt;<span class="kw-2">&amp;mut </span>[u8; <span class="number">8</span>]&gt;::try_into(chunk).unwrap() = new_chunk;
+                    prev = new_chunk;
+                }
+            }
+        },
         Up =&gt; {
-            <span class="kw">let </span>current = <span class="kw-2">&amp;mut </span>current[..len];
-            <span class="kw">let </span>previous = require_length(previous, len)<span class="question-mark">?</span>;
-            <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..len {
+            <span class="comment">// `chunks_exact[_mut]` won&#39;t help here
+            </span><span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..current.len() {
                 current[i] = current[i].wrapping_add(previous[i]);
             }
-            <span class="prelude-val">Ok</span>(())
         }
-        Avg =&gt; {
-            <span class="kw">let </span>current = <span class="kw-2">&amp;mut </span>current[..len];
-            <span class="kw">let </span>previous = require_length(previous, len)<span class="question-mark">?</span>;
-            <span class="kw">if </span>bpp &gt; len {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">&quot;Filtering failed: bytes per pixel is greater than length of row&quot;</span>);
-            }
-
-            <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..bpp {
-                current[i] = current[i].wrapping_add(previous[i] / <span class="number">2</span>);
-            }
-
-            <span class="macro">macro_rules! </span>avg_tail {
-                (<span class="macro-nonterminal">$name</span>:ident, <span class="macro-nonterminal">$bpp</span>:expr) =&gt; {
-                    <span class="kw">fn </span><span class="macro-nonterminal">$name</span>(current: <span class="kw-2">&amp;mut </span>[u8], previous: <span class="kw-2">&amp;</span>[u8]) {
-                        <span class="kw">let </span>len = current.len();
-                        <span class="kw">let </span>current = <span class="kw-2">&amp;mut </span>current[..len];
-                        <span class="kw">let </span>previous = <span class="kw-2">&amp;</span>previous[..len];
-
-                        <span class="kw">let </span><span class="kw-2">mut </span>current = current.chunks_exact_mut(<span class="macro-nonterminal">$bpp</span>);
-                        <span class="kw">let </span><span class="kw-2">mut </span>previous = previous.chunks_exact(<span class="macro-nonterminal">$bpp</span>);
-
-                        <span class="kw">let </span><span class="kw-2">mut </span>lprevious = current.next().unwrap();
-                        <span class="kw">let _ </span>= previous.next();
-
-                        <span class="kw">while let </span><span class="prelude-val">Some</span>(pprevious) = previous.next() {
-                            <span class="kw">let </span>pcurrent = current.next().unwrap();
-
-                            <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="macro-nonterminal">$bpp </span>{
-                                <span class="kw">let </span>lprev = lprevious[i];
-                                <span class="kw">let </span>pprev = pprevious[i];
-                                pcurrent[i] = pcurrent[i].wrapping_add(
-                                    ((u16::from(lprev) + u16::from(pprev)) / <span class="number">2</span>) <span class="kw">as </span>u8,
-                                );
-                            }
-
-                            lprevious = pcurrent;
-                        }
-                    }
-                };
-            }
-
-            <span class="macro">avg_tail!</span>(avg_tail_8, <span class="number">8</span>);
-            <span class="macro">avg_tail!</span>(avg_tail_6, <span class="number">6</span>);
-            <span class="macro">avg_tail!</span>(avg_tail_4, <span class="number">4</span>);
-            <span class="macro">avg_tail!</span>(avg_tail_3, <span class="number">3</span>);
-            <span class="macro">avg_tail!</span>(avg_tail_2, <span class="number">2</span>);
-            <span class="macro">avg_tail!</span>(avg_tail_1, <span class="number">1</span>);
-
-            <span class="kw">match </span>tbpp {
-                BytesPerPixel::Eight =&gt; avg_tail_8(current, previous),
-                BytesPerPixel::Six =&gt; avg_tail_6(current, previous),
-                BytesPerPixel::Four =&gt; avg_tail_4(current, previous),
-                BytesPerPixel::Three =&gt; avg_tail_3(current, previous),
-                BytesPerPixel::Two =&gt; avg_tail_2(current, previous),
-                BytesPerPixel::One =&gt; avg_tail_1(current, previous),
-            }
-
-            <span class="prelude-val">Ok</span>(())
-        }
-        Paeth =&gt; {
-            <span class="kw">let </span>current = <span class="kw-2">&amp;mut </span>current[..len];
-            <span class="kw">let </span>previous = require_length(previous, len)<span class="question-mark">?</span>;
-            <span class="kw">if </span>bpp &gt; len {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="string">&quot;Filtering failed: bytes per pixel is greater than length of row&quot;</span>);
-            }
-
-            <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..bpp {
-                current[i] = current[i].wrapping_add(filter_paeth(<span class="number">0</span>, previous[i], <span class="number">0</span>));
-            }
-
-            <span class="kw">let </span><span class="kw-2">mut </span>current = current.chunks_exact_mut(bpp);
-            <span class="kw">let </span><span class="kw-2">mut </span>previous = previous.chunks_exact(bpp);
-
-            <span class="kw">let </span><span class="kw-2">mut </span>lprevious = current.next().unwrap();
-            <span class="kw">let </span><span class="kw-2">mut </span>lpprevious = previous.next().unwrap();
-
-            <span class="kw">for </span>pprevious <span class="kw">in </span>previous {
-                <span class="kw">let </span>pcurrent = current.next().unwrap();
-
-                <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..bpp {
-                    pcurrent[i] = pcurrent[i].wrapping_add(filter_paeth(
-                        lprevious[i],
-                        pprevious[i],
-                        lpprevious[i],
-                    ));
+        Avg =&gt; <span class="kw">match </span>tbpp {
+            BytesPerPixel::One =&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>lprev = [<span class="number">0</span>; <span class="number">1</span>];
+                <span class="kw">for </span>(chunk, above) <span class="kw">in </span>current.chunks_exact_mut(<span class="number">1</span>).zip(previous.chunks_exact(<span class="number">1</span>)) {
+                    <span class="kw">let </span>new_chunk =
+                        [chunk[<span class="number">0</span>].wrapping_add(((above[<span class="number">0</span>] <span class="kw">as </span>u16 + lprev[<span class="number">0</span>] <span class="kw">as </span>u16) / <span class="number">2</span>) <span class="kw">as </span>u8)];
+                    <span class="kw-2">*</span>TryInto::&lt;<span class="kw-2">&amp;mut </span>[u8; <span class="number">1</span>]&gt;::try_into(chunk).unwrap() = new_chunk;
+                    lprev = new_chunk;
                 }
-
-                lprevious = pcurrent;
-                lpprevious = pprevious;
             }
-
-            <span class="prelude-val">Ok</span>(())
+            BytesPerPixel::Two =&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>lprev = [<span class="number">0</span>; <span class="number">2</span>];
+                <span class="kw">for </span>(chunk, above) <span class="kw">in </span>current.chunks_exact_mut(<span class="number">2</span>).zip(previous.chunks_exact(<span class="number">2</span>)) {
+                    <span class="kw">let </span>new_chunk = [
+                        chunk[<span class="number">0</span>].wrapping_add(((above[<span class="number">0</span>] <span class="kw">as </span>u16 + lprev[<span class="number">0</span>] <span class="kw">as </span>u16) / <span class="number">2</span>) <span class="kw">as </span>u8),
+                        chunk[<span class="number">1</span>].wrapping_add(((above[<span class="number">1</span>] <span class="kw">as </span>u16 + lprev[<span class="number">1</span>] <span class="kw">as </span>u16) / <span class="number">2</span>) <span class="kw">as </span>u8),
+                    ];
+                    <span class="kw-2">*</span>TryInto::&lt;<span class="kw-2">&amp;mut </span>[u8; <span class="number">2</span>]&gt;::try_into(chunk).unwrap() = new_chunk;
+                    lprev = new_chunk;
+                }
+            }
+            BytesPerPixel::Three =&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>lprev = [<span class="number">0</span>; <span class="number">3</span>];
+                <span class="kw">for </span>(chunk, above) <span class="kw">in </span>current.chunks_exact_mut(<span class="number">3</span>).zip(previous.chunks_exact(<span class="number">3</span>)) {
+                    <span class="kw">let </span>new_chunk = [
+                        chunk[<span class="number">0</span>].wrapping_add(((above[<span class="number">0</span>] <span class="kw">as </span>u16 + lprev[<span class="number">0</span>] <span class="kw">as </span>u16) / <span class="number">2</span>) <span class="kw">as </span>u8),
+                        chunk[<span class="number">1</span>].wrapping_add(((above[<span class="number">1</span>] <span class="kw">as </span>u16 + lprev[<span class="number">1</span>] <span class="kw">as </span>u16) / <span class="number">2</span>) <span class="kw">as </span>u8),
+                        chunk[<span class="number">2</span>].wrapping_add(((above[<span class="number">2</span>] <span class="kw">as </span>u16 + lprev[<span class="number">2</span>] <span class="kw">as </span>u16) / <span class="number">2</span>) <span class="kw">as </span>u8),
+                    ];
+                    <span class="kw-2">*</span>TryInto::&lt;<span class="kw-2">&amp;mut </span>[u8; <span class="number">3</span>]&gt;::try_into(chunk).unwrap() = new_chunk;
+                    lprev = new_chunk;
+                }
+            }
+            BytesPerPixel::Four =&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>lprev = [<span class="number">0</span>; <span class="number">4</span>];
+                <span class="kw">for </span>(chunk, above) <span class="kw">in </span>current.chunks_exact_mut(<span class="number">4</span>).zip(previous.chunks_exact(<span class="number">4</span>)) {
+                    <span class="kw">let </span>new_chunk = [
+                        chunk[<span class="number">0</span>].wrapping_add(((above[<span class="number">0</span>] <span class="kw">as </span>u16 + lprev[<span class="number">0</span>] <span class="kw">as </span>u16) / <span class="number">2</span>) <span class="kw">as </span>u8),
+                        chunk[<span class="number">1</span>].wrapping_add(((above[<span class="number">1</span>] <span class="kw">as </span>u16 + lprev[<span class="number">1</span>] <span class="kw">as </span>u16) / <span class="number">2</span>) <span class="kw">as </span>u8),
+                        chunk[<span class="number">2</span>].wrapping_add(((above[<span class="number">2</span>] <span class="kw">as </span>u16 + lprev[<span class="number">2</span>] <span class="kw">as </span>u16) / <span class="number">2</span>) <span class="kw">as </span>u8),
+                        chunk[<span class="number">3</span>].wrapping_add(((above[<span class="number">3</span>] <span class="kw">as </span>u16 + lprev[<span class="number">3</span>] <span class="kw">as </span>u16) / <span class="number">2</span>) <span class="kw">as </span>u8),
+                    ];
+                    <span class="kw-2">*</span>TryInto::&lt;<span class="kw-2">&amp;mut </span>[u8; <span class="number">4</span>]&gt;::try_into(chunk).unwrap() = new_chunk;
+                    lprev = new_chunk;
+                }
+            }
+            BytesPerPixel::Six =&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>lprev = [<span class="number">0</span>; <span class="number">6</span>];
+                <span class="kw">for </span>(chunk, above) <span class="kw">in </span>current.chunks_exact_mut(<span class="number">6</span>).zip(previous.chunks_exact(<span class="number">6</span>)) {
+                    <span class="kw">let </span>new_chunk = [
+                        chunk[<span class="number">0</span>].wrapping_add(((above[<span class="number">0</span>] <span class="kw">as </span>u16 + lprev[<span class="number">0</span>] <span class="kw">as </span>u16) / <span class="number">2</span>) <span class="kw">as </span>u8),
+                        chunk[<span class="number">1</span>].wrapping_add(((above[<span class="number">1</span>] <span class="kw">as </span>u16 + lprev[<span class="number">1</span>] <span class="kw">as </span>u16) / <span class="number">2</span>) <span class="kw">as </span>u8),
+                        chunk[<span class="number">2</span>].wrapping_add(((above[<span class="number">2</span>] <span class="kw">as </span>u16 + lprev[<span class="number">2</span>] <span class="kw">as </span>u16) / <span class="number">2</span>) <span class="kw">as </span>u8),
+                        chunk[<span class="number">3</span>].wrapping_add(((above[<span class="number">3</span>] <span class="kw">as </span>u16 + lprev[<span class="number">3</span>] <span class="kw">as </span>u16) / <span class="number">2</span>) <span class="kw">as </span>u8),
+                        chunk[<span class="number">4</span>].wrapping_add(((above[<span class="number">4</span>] <span class="kw">as </span>u16 + lprev[<span class="number">4</span>] <span class="kw">as </span>u16) / <span class="number">2</span>) <span class="kw">as </span>u8),
+                        chunk[<span class="number">5</span>].wrapping_add(((above[<span class="number">5</span>] <span class="kw">as </span>u16 + lprev[<span class="number">5</span>] <span class="kw">as </span>u16) / <span class="number">2</span>) <span class="kw">as </span>u8),
+                    ];
+                    <span class="kw-2">*</span>TryInto::&lt;<span class="kw-2">&amp;mut </span>[u8; <span class="number">6</span>]&gt;::try_into(chunk).unwrap() = new_chunk;
+                    lprev = new_chunk;
+                }
+            }
+            BytesPerPixel::Eight =&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>lprev = [<span class="number">0</span>; <span class="number">8</span>];
+                <span class="kw">for </span>(chunk, above) <span class="kw">in </span>current.chunks_exact_mut(<span class="number">8</span>).zip(previous.chunks_exact(<span class="number">8</span>)) {
+                    <span class="kw">let </span>new_chunk = [
+                        chunk[<span class="number">0</span>].wrapping_add(((above[<span class="number">0</span>] <span class="kw">as </span>u16 + lprev[<span class="number">0</span>] <span class="kw">as </span>u16) / <span class="number">2</span>) <span class="kw">as </span>u8),
+                        chunk[<span class="number">1</span>].wrapping_add(((above[<span class="number">1</span>] <span class="kw">as </span>u16 + lprev[<span class="number">1</span>] <span class="kw">as </span>u16) / <span class="number">2</span>) <span class="kw">as </span>u8),
+                        chunk[<span class="number">2</span>].wrapping_add(((above[<span class="number">2</span>] <span class="kw">as </span>u16 + lprev[<span class="number">2</span>] <span class="kw">as </span>u16) / <span class="number">2</span>) <span class="kw">as </span>u8),
+                        chunk[<span class="number">3</span>].wrapping_add(((above[<span class="number">3</span>] <span class="kw">as </span>u16 + lprev[<span class="number">3</span>] <span class="kw">as </span>u16) / <span class="number">2</span>) <span class="kw">as </span>u8),
+                        chunk[<span class="number">4</span>].wrapping_add(((above[<span class="number">4</span>] <span class="kw">as </span>u16 + lprev[<span class="number">4</span>] <span class="kw">as </span>u16) / <span class="number">2</span>) <span class="kw">as </span>u8),
+                        chunk[<span class="number">5</span>].wrapping_add(((above[<span class="number">5</span>] <span class="kw">as </span>u16 + lprev[<span class="number">5</span>] <span class="kw">as </span>u16) / <span class="number">2</span>) <span class="kw">as </span>u8),
+                        chunk[<span class="number">6</span>].wrapping_add(((above[<span class="number">6</span>] <span class="kw">as </span>u16 + lprev[<span class="number">6</span>] <span class="kw">as </span>u16) / <span class="number">2</span>) <span class="kw">as </span>u8),
+                        chunk[<span class="number">7</span>].wrapping_add(((above[<span class="number">7</span>] <span class="kw">as </span>u16 + lprev[<span class="number">7</span>] <span class="kw">as </span>u16) / <span class="number">2</span>) <span class="kw">as </span>u8),
+                    ];
+                    <span class="kw-2">*</span>TryInto::&lt;<span class="kw-2">&amp;mut </span>[u8; <span class="number">8</span>]&gt;::try_into(chunk).unwrap() = new_chunk;
+                    lprev = new_chunk;
+                }
+            }
+        },
+        Paeth =&gt; {
+            <span class="comment">// Paeth filter pixels:
+            // C B D
+            // A X
+            </span><span class="kw">match </span>tbpp {
+                BytesPerPixel::One =&gt; {
+                    <span class="kw">let </span><span class="kw-2">mut </span>a_bpp = [<span class="number">0</span>; <span class="number">1</span>];
+                    <span class="kw">let </span><span class="kw-2">mut </span>c_bpp = [<span class="number">0</span>; <span class="number">1</span>];
+                    <span class="kw">for </span>(chunk, b_bpp) <span class="kw">in </span>current.chunks_exact_mut(<span class="number">1</span>).zip(previous.chunks_exact(<span class="number">1</span>))
+                    {
+                        <span class="kw">let </span>new_chunk = [chunk[<span class="number">0</span>]
+                            .wrapping_add(filter_paeth_decode(a_bpp[<span class="number">0</span>], b_bpp[<span class="number">0</span>], c_bpp[<span class="number">0</span>]))];
+                        <span class="kw-2">*</span>TryInto::&lt;<span class="kw-2">&amp;mut </span>[u8; <span class="number">1</span>]&gt;::try_into(chunk).unwrap() = new_chunk;
+                        a_bpp = new_chunk;
+                        c_bpp = b_bpp.try_into().unwrap();
+                    }
+                }
+                BytesPerPixel::Two =&gt; {
+                    <span class="kw">let </span><span class="kw-2">mut </span>a_bpp = [<span class="number">0</span>; <span class="number">2</span>];
+                    <span class="kw">let </span><span class="kw-2">mut </span>c_bpp = [<span class="number">0</span>; <span class="number">2</span>];
+                    <span class="kw">for </span>(chunk, b_bpp) <span class="kw">in </span>current.chunks_exact_mut(<span class="number">2</span>).zip(previous.chunks_exact(<span class="number">2</span>))
+                    {
+                        <span class="kw">let </span>new_chunk = [
+                            chunk[<span class="number">0</span>]
+                                .wrapping_add(filter_paeth_decode(a_bpp[<span class="number">0</span>], b_bpp[<span class="number">0</span>], c_bpp[<span class="number">0</span>])),
+                            chunk[<span class="number">1</span>]
+                                .wrapping_add(filter_paeth_decode(a_bpp[<span class="number">1</span>], b_bpp[<span class="number">1</span>], c_bpp[<span class="number">1</span>])),
+                        ];
+                        <span class="kw-2">*</span>TryInto::&lt;<span class="kw-2">&amp;mut </span>[u8; <span class="number">2</span>]&gt;::try_into(chunk).unwrap() = new_chunk;
+                        a_bpp = new_chunk;
+                        c_bpp = b_bpp.try_into().unwrap();
+                    }
+                }
+                BytesPerPixel::Three =&gt; {
+                    <span class="kw">let </span><span class="kw-2">mut </span>a_bpp = [<span class="number">0</span>; <span class="number">3</span>];
+                    <span class="kw">let </span><span class="kw-2">mut </span>c_bpp = [<span class="number">0</span>; <span class="number">3</span>];
+                    <span class="kw">for </span>(chunk, b_bpp) <span class="kw">in </span>current.chunks_exact_mut(<span class="number">3</span>).zip(previous.chunks_exact(<span class="number">3</span>))
+                    {
+                        <span class="kw">let </span>new_chunk = [
+                            chunk[<span class="number">0</span>]
+                                .wrapping_add(filter_paeth_decode(a_bpp[<span class="number">0</span>], b_bpp[<span class="number">0</span>], c_bpp[<span class="number">0</span>])),
+                            chunk[<span class="number">1</span>]
+                                .wrapping_add(filter_paeth_decode(a_bpp[<span class="number">1</span>], b_bpp[<span class="number">1</span>], c_bpp[<span class="number">1</span>])),
+                            chunk[<span class="number">2</span>]
+                                .wrapping_add(filter_paeth_decode(a_bpp[<span class="number">2</span>], b_bpp[<span class="number">2</span>], c_bpp[<span class="number">2</span>])),
+                        ];
+                        <span class="kw-2">*</span>TryInto::&lt;<span class="kw-2">&amp;mut </span>[u8; <span class="number">3</span>]&gt;::try_into(chunk).unwrap() = new_chunk;
+                        a_bpp = new_chunk;
+                        c_bpp = b_bpp.try_into().unwrap();
+                    }
+                }
+                BytesPerPixel::Four =&gt; {
+                    <span class="kw">let </span><span class="kw-2">mut </span>a_bpp = [<span class="number">0</span>; <span class="number">4</span>];
+                    <span class="kw">let </span><span class="kw-2">mut </span>c_bpp = [<span class="number">0</span>; <span class="number">4</span>];
+                    <span class="kw">for </span>(chunk, b_bpp) <span class="kw">in </span>current.chunks_exact_mut(<span class="number">4</span>).zip(previous.chunks_exact(<span class="number">4</span>))
+                    {
+                        <span class="kw">let </span>new_chunk = [
+                            chunk[<span class="number">0</span>]
+                                .wrapping_add(filter_paeth_decode(a_bpp[<span class="number">0</span>], b_bpp[<span class="number">0</span>], c_bpp[<span class="number">0</span>])),
+                            chunk[<span class="number">1</span>]
+                                .wrapping_add(filter_paeth_decode(a_bpp[<span class="number">1</span>], b_bpp[<span class="number">1</span>], c_bpp[<span class="number">1</span>])),
+                            chunk[<span class="number">2</span>]
+                                .wrapping_add(filter_paeth_decode(a_bpp[<span class="number">2</span>], b_bpp[<span class="number">2</span>], c_bpp[<span class="number">2</span>])),
+                            chunk[<span class="number">3</span>]
+                                .wrapping_add(filter_paeth_decode(a_bpp[<span class="number">3</span>], b_bpp[<span class="number">3</span>], c_bpp[<span class="number">3</span>])),
+                        ];
+                        <span class="kw-2">*</span>TryInto::&lt;<span class="kw-2">&amp;mut </span>[u8; <span class="number">4</span>]&gt;::try_into(chunk).unwrap() = new_chunk;
+                        a_bpp = new_chunk;
+                        c_bpp = b_bpp.try_into().unwrap();
+                    }
+                }
+                BytesPerPixel::Six =&gt; {
+                    <span class="kw">let </span><span class="kw-2">mut </span>a_bpp = [<span class="number">0</span>; <span class="number">6</span>];
+                    <span class="kw">let </span><span class="kw-2">mut </span>c_bpp = [<span class="number">0</span>; <span class="number">6</span>];
+                    <span class="kw">for </span>(chunk, b_bpp) <span class="kw">in </span>current.chunks_exact_mut(<span class="number">6</span>).zip(previous.chunks_exact(<span class="number">6</span>))
+                    {
+                        <span class="kw">let </span>new_chunk = [
+                            chunk[<span class="number">0</span>]
+                                .wrapping_add(filter_paeth_decode(a_bpp[<span class="number">0</span>], b_bpp[<span class="number">0</span>], c_bpp[<span class="number">0</span>])),
+                            chunk[<span class="number">1</span>]
+                                .wrapping_add(filter_paeth_decode(a_bpp[<span class="number">1</span>], b_bpp[<span class="number">1</span>], c_bpp[<span class="number">1</span>])),
+                            chunk[<span class="number">2</span>]
+                                .wrapping_add(filter_paeth_decode(a_bpp[<span class="number">2</span>], b_bpp[<span class="number">2</span>], c_bpp[<span class="number">2</span>])),
+                            chunk[<span class="number">3</span>]
+                                .wrapping_add(filter_paeth_decode(a_bpp[<span class="number">3</span>], b_bpp[<span class="number">3</span>], c_bpp[<span class="number">3</span>])),
+                            chunk[<span class="number">4</span>]
+                                .wrapping_add(filter_paeth_decode(a_bpp[<span class="number">4</span>], b_bpp[<span class="number">4</span>], c_bpp[<span class="number">4</span>])),
+                            chunk[<span class="number">5</span>]
+                                .wrapping_add(filter_paeth_decode(a_bpp[<span class="number">5</span>], b_bpp[<span class="number">5</span>], c_bpp[<span class="number">5</span>])),
+                        ];
+                        <span class="kw-2">*</span>TryInto::&lt;<span class="kw-2">&amp;mut </span>[u8; <span class="number">6</span>]&gt;::try_into(chunk).unwrap() = new_chunk;
+                        a_bpp = new_chunk;
+                        c_bpp = b_bpp.try_into().unwrap();
+                    }
+                }
+                BytesPerPixel::Eight =&gt; {
+                    <span class="kw">let </span><span class="kw-2">mut </span>a_bpp = [<span class="number">0</span>; <span class="number">8</span>];
+                    <span class="kw">let </span><span class="kw-2">mut </span>c_bpp = [<span class="number">0</span>; <span class="number">8</span>];
+                    <span class="kw">for </span>(chunk, b_bpp) <span class="kw">in </span>current.chunks_exact_mut(<span class="number">8</span>).zip(previous.chunks_exact(<span class="number">8</span>))
+                    {
+                        <span class="kw">let </span>new_chunk = [
+                            chunk[<span class="number">0</span>]
+                                .wrapping_add(filter_paeth_decode(a_bpp[<span class="number">0</span>], b_bpp[<span class="number">0</span>], c_bpp[<span class="number">0</span>])),
+                            chunk[<span class="number">1</span>]
+                                .wrapping_add(filter_paeth_decode(a_bpp[<span class="number">1</span>], b_bpp[<span class="number">1</span>], c_bpp[<span class="number">1</span>])),
+                            chunk[<span class="number">2</span>]
+                                .wrapping_add(filter_paeth_decode(a_bpp[<span class="number">2</span>], b_bpp[<span class="number">2</span>], c_bpp[<span class="number">2</span>])),
+                            chunk[<span class="number">3</span>]
+                                .wrapping_add(filter_paeth_decode(a_bpp[<span class="number">3</span>], b_bpp[<span class="number">3</span>], c_bpp[<span class="number">3</span>])),
+                            chunk[<span class="number">4</span>]
+                                .wrapping_add(filter_paeth_decode(a_bpp[<span class="number">4</span>], b_bpp[<span class="number">4</span>], c_bpp[<span class="number">4</span>])),
+                            chunk[<span class="number">5</span>]
+                                .wrapping_add(filter_paeth_decode(a_bpp[<span class="number">5</span>], b_bpp[<span class="number">5</span>], c_bpp[<span class="number">5</span>])),
+                            chunk[<span class="number">6</span>]
+                                .wrapping_add(filter_paeth_decode(a_bpp[<span class="number">6</span>], b_bpp[<span class="number">6</span>], c_bpp[<span class="number">6</span>])),
+                            chunk[<span class="number">7</span>]
+                                .wrapping_add(filter_paeth_decode(a_bpp[<span class="number">7</span>], b_bpp[<span class="number">7</span>], c_bpp[<span class="number">7</span>])),
+                        ];
+                        <span class="kw-2">*</span>TryInto::&lt;<span class="kw-2">&amp;mut </span>[u8; <span class="number">8</span>]&gt;::try_into(chunk).unwrap() = new_chunk;
+                        a_bpp = new_chunk;
+                        c_bpp = b_bpp.try_into().unwrap();
+                    }
+                }
+            }
         }
     }
 }
@@ -620,47 +1285,134 @@
     bpp: usize,
     len: usize,
     previous: <span class="kw-2">&amp;</span>[u8],
-    current: <span class="kw-2">&amp;mut </span>[u8],
+    current: <span class="kw-2">&amp;</span>[u8],
+    output: <span class="kw-2">&amp;mut </span>[u8],
 ) -&gt; FilterType {
     <span class="kw">use </span><span class="self">self</span>::FilterType::<span class="kw-2">*</span>;
 
+    <span class="comment">// This value was chosen experimentally based on what acheived the best performance. The
+    // Rust compiler does auto-vectorization, and 32-bytes per loop iteration seems to enable
+    // the fastest code when doing so.
+    </span><span class="kw">const </span>CHUNK_SIZE: usize = <span class="number">32</span>;
+
     <span class="kw">match </span>method {
-        NoFilter =&gt; NoFilter,
+        NoFilter =&gt; {
+            output.copy_from_slice(current);
+            NoFilter
+        }
         Sub =&gt; {
-            <span class="kw">for </span>i <span class="kw">in </span>(bpp..len).rev() {
-                current[i] = current[i].wrapping_sub(current[i - bpp]);
+            <span class="kw">let </span><span class="kw-2">mut </span>out_chunks = output[bpp..].chunks_exact_mut(CHUNK_SIZE);
+            <span class="kw">let </span><span class="kw-2">mut </span>cur_chunks = current[bpp..].chunks_exact(CHUNK_SIZE);
+            <span class="kw">let </span><span class="kw-2">mut </span>prev_chunks = current[..len - bpp].chunks_exact(CHUNK_SIZE);
+
+            <span class="kw">for </span>((out, cur), prev) <span class="kw">in </span>(<span class="kw-2">&amp;mut </span>out_chunks).zip(<span class="kw-2">&amp;mut </span>cur_chunks).zip(<span class="kw-2">&amp;mut </span>prev_chunks) {
+                <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..CHUNK_SIZE {
+                    out[i] = cur[i].wrapping_sub(prev[i]);
+                }
             }
+
+            <span class="kw">for </span>((out, cur), <span class="kw-2">&amp;</span>prev) <span class="kw">in </span>out_chunks
+                .into_remainder()
+                .iter_mut()
+                .zip(cur_chunks.remainder())
+                .zip(prev_chunks.remainder())
+            {
+                <span class="kw-2">*</span>out = cur.wrapping_sub(prev);
+            }
+
+            output[..bpp].copy_from_slice(<span class="kw-2">&amp;</span>current[..bpp]);
             Sub
         }
         Up =&gt; {
-            <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..len {
-                current[i] = current[i].wrapping_sub(previous[i]);
+            <span class="kw">let </span><span class="kw-2">mut </span>out_chunks = output.chunks_exact_mut(CHUNK_SIZE);
+            <span class="kw">let </span><span class="kw-2">mut </span>cur_chunks = current.chunks_exact(CHUNK_SIZE);
+            <span class="kw">let </span><span class="kw-2">mut </span>prev_chunks = previous.chunks_exact(CHUNK_SIZE);
+
+            <span class="kw">for </span>((out, cur), prev) <span class="kw">in </span>(<span class="kw-2">&amp;mut </span>out_chunks).zip(<span class="kw-2">&amp;mut </span>cur_chunks).zip(<span class="kw-2">&amp;mut </span>prev_chunks) {
+                <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..CHUNK_SIZE {
+                    out[i] = cur[i].wrapping_sub(prev[i]);
+                }
+            }
+
+            <span class="kw">for </span>((out, cur), <span class="kw-2">&amp;</span>prev) <span class="kw">in </span>out_chunks
+                .into_remainder()
+                .iter_mut()
+                .zip(cur_chunks.remainder())
+                .zip(prev_chunks.remainder())
+            {
+                <span class="kw-2">*</span>out = cur.wrapping_sub(prev);
             }
             Up
         }
         Avg =&gt; {
-            <span class="kw">for </span>i <span class="kw">in </span>(bpp..len).rev() {
-                current[i] = current[i].wrapping_sub(
-                    ((u16::from(current[i - bpp]) + u16::from(previous[i])) / <span class="number">2</span>) <span class="kw">as </span>u8,
-                );
+            <span class="kw">let </span><span class="kw-2">mut </span>out_chunks = output[bpp..].chunks_exact_mut(CHUNK_SIZE);
+            <span class="kw">let </span><span class="kw-2">mut </span>cur_chunks = current[bpp..].chunks_exact(CHUNK_SIZE);
+            <span class="kw">let </span><span class="kw-2">mut </span>cur_minus_bpp_chunks = current[..len - bpp].chunks_exact(CHUNK_SIZE);
+            <span class="kw">let </span><span class="kw-2">mut </span>prev_chunks = previous[bpp..].chunks_exact(CHUNK_SIZE);
+
+            <span class="kw">for </span>(((out, cur), cur_minus_bpp), prev) <span class="kw">in </span>(<span class="kw-2">&amp;mut </span>out_chunks)
+                .zip(<span class="kw-2">&amp;mut </span>cur_chunks)
+                .zip(<span class="kw-2">&amp;mut </span>cur_minus_bpp_chunks)
+                .zip(<span class="kw-2">&amp;mut </span>prev_chunks)
+            {
+                <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..CHUNK_SIZE {
+                    <span class="comment">// Bitwise average of two integers without overflow and
+                    // without converting to a wider bit-width. See:
+                    // http://aggregate.org/MAGIC/#Average%20of%20Integers
+                    // If this is unrolled by component, consider reverting to
+                    // `((cur_minus_bpp[i] as u16 + prev[i] as u16) / 2) as u8`
+                    </span>out[i] = cur[i].wrapping_sub(
+                        (cur_minus_bpp[i] &amp; prev[i]) + ((cur_minus_bpp[i] ^ prev[i]) &gt;&gt; <span class="number">1</span>),
+                    );
+                }
+            }
+
+            <span class="kw">for </span>(((out, cur), <span class="kw-2">&amp;</span>cur_minus_bpp), <span class="kw-2">&amp;</span>prev) <span class="kw">in </span>out_chunks
+                .into_remainder()
+                .iter_mut()
+                .zip(cur_chunks.remainder())
+                .zip(cur_minus_bpp_chunks.remainder())
+                .zip(prev_chunks.remainder())
+            {
+                <span class="kw-2">*</span>out = cur.wrapping_sub((cur_minus_bpp &amp; prev) + ((cur_minus_bpp ^ prev) &gt;&gt; <span class="number">1</span>));
             }
 
             <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..bpp {
-                current[i] = current[i].wrapping_sub(previous[i] / <span class="number">2</span>);
+                output[i] = current[i].wrapping_sub(previous[i] / <span class="number">2</span>);
             }
             Avg
         }
         Paeth =&gt; {
-            <span class="kw">for </span>i <span class="kw">in </span>(bpp..len).rev() {
-                current[i] = current[i].wrapping_sub(filter_paeth(
-                    current[i - bpp],
-                    previous[i],
-                    previous[i - bpp],
-                ));
+            <span class="kw">let </span><span class="kw-2">mut </span>out_chunks = output[bpp..].chunks_exact_mut(CHUNK_SIZE);
+            <span class="kw">let </span><span class="kw-2">mut </span>cur_chunks = current[bpp..].chunks_exact(CHUNK_SIZE);
+            <span class="kw">let </span><span class="kw-2">mut </span>a_chunks = current[..len - bpp].chunks_exact(CHUNK_SIZE);
+            <span class="kw">let </span><span class="kw-2">mut </span>b_chunks = previous[bpp..].chunks_exact(CHUNK_SIZE);
+            <span class="kw">let </span><span class="kw-2">mut </span>c_chunks = previous[..len - bpp].chunks_exact(CHUNK_SIZE);
+
+            <span class="kw">for </span>((((out, cur), a), b), c) <span class="kw">in </span>(<span class="kw-2">&amp;mut </span>out_chunks)
+                .zip(<span class="kw-2">&amp;mut </span>cur_chunks)
+                .zip(<span class="kw-2">&amp;mut </span>a_chunks)
+                .zip(<span class="kw-2">&amp;mut </span>b_chunks)
+                .zip(<span class="kw-2">&amp;mut </span>c_chunks)
+            {
+                <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..CHUNK_SIZE {
+                    out[i] = cur[i].wrapping_sub(filter_paeth(a[i], b[i], c[i]));
+                }
+            }
+
+            <span class="kw">for </span>((((out, cur), <span class="kw-2">&amp;</span>a), <span class="kw-2">&amp;</span>b), <span class="kw-2">&amp;</span>c) <span class="kw">in </span>out_chunks
+                .into_remainder()
+                .iter_mut()
+                .zip(cur_chunks.remainder())
+                .zip(a_chunks.remainder())
+                .zip(b_chunks.remainder())
+                .zip(c_chunks.remainder())
+            {
+                <span class="kw-2">*</span>out = cur.wrapping_sub(filter_paeth(a, b, c));
             }
 
             <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..bpp {
-                current[i] = current[i].wrapping_sub(filter_paeth(<span class="number">0</span>, previous[i], <span class="number">0</span>));
+                output[i] = current[i].wrapping_sub(filter_paeth(<span class="number">0</span>, previous[i], <span class="number">0</span>));
             }
             Paeth
         }
@@ -672,49 +1424,59 @@
     adaptive: AdaptiveFilterType,
     bpp: BytesPerPixel,
     previous: <span class="kw-2">&amp;</span>[u8],
-    current: <span class="kw-2">&amp;mut </span>[u8],
+    current: <span class="kw-2">&amp;</span>[u8],
+    output: <span class="kw-2">&amp;mut </span>[u8],
 ) -&gt; FilterType {
     <span class="kw">use </span>FilterType::<span class="kw-2">*</span>;
     <span class="kw">let </span>bpp = bpp.into_usize();
     <span class="kw">let </span>len = current.len();
 
     <span class="kw">match </span>adaptive {
-        AdaptiveFilterType::NonAdaptive =&gt; filter_internal(method, bpp, len, previous, current),
+        AdaptiveFilterType::NonAdaptive =&gt; {
+            filter_internal(method, bpp, len, previous, current, output)
+        }
         AdaptiveFilterType::Adaptive =&gt; {
-            <span class="comment">// Filter the current buffer with each filter type. Sum the absolute
-            // values of each filtered buffer treating the bytes as signed
-            // integers. Choose the filter with the smallest sum.
-            </span><span class="kw">let </span><span class="kw-2">mut </span>filtered_buffer = <span class="macro">vec!</span>[<span class="number">0</span>; len];
-            filtered_buffer.copy_from_slice(current);
-            <span class="kw">let </span><span class="kw-2">mut </span>scratch = <span class="macro">vec!</span>[<span class="number">0</span>; len];
-
-            <span class="comment">// Initialize min_sum with the NoFilter buffer sum
-            </span><span class="kw">let </span><span class="kw-2">mut </span>min_sum: usize = sum_buffer(<span class="kw-2">&amp;</span>filtered_buffer);
+            <span class="kw">let </span><span class="kw-2">mut </span>min_sum: u64 = u64::MAX;
             <span class="kw">let </span><span class="kw-2">mut </span>filter_choice = FilterType::NoFilter;
-
             <span class="kw">for </span><span class="kw-2">&amp;</span>filter <span class="kw">in </span>[Sub, Up, Avg, Paeth].iter() {
-                scratch.copy_from_slice(current);
-                filter_internal(filter, bpp, len, previous, <span class="kw-2">&amp;mut </span>scratch);
-                <span class="kw">let </span>sum = sum_buffer(<span class="kw-2">&amp;</span>scratch);
-                <span class="kw">if </span>sum &lt; min_sum {
+                filter_internal(filter, bpp, len, previous, current, output);
+                <span class="kw">let </span>sum = sum_buffer(output);
+                <span class="kw">if </span>sum &lt;= min_sum {
                     min_sum = sum;
                     filter_choice = filter;
-                    core::mem::swap(<span class="kw-2">&amp;mut </span>filtered_buffer, <span class="kw-2">&amp;mut </span>scratch);
                 }
             }
 
-            current.copy_from_slice(<span class="kw-2">&amp;</span>filtered_buffer);
-
+            <span class="kw">if </span>filter_choice != Paeth {
+                filter_internal(filter_choice, bpp, len, previous, current, output);
+            }
             filter_choice
         }
     }
 }
 
 <span class="comment">// Helper function for Adaptive filter buffer summation
-</span><span class="kw">fn </span>sum_buffer(buf: <span class="kw-2">&amp;</span>[u8]) -&gt; usize {
-    buf.iter().fold(<span class="number">0</span>, |acc, <span class="kw-2">&amp;</span>x| {
-        acc.saturating_add(i16::from(x <span class="kw">as </span>i8).abs() <span class="kw">as </span>usize)
-    })
+</span><span class="kw">fn </span>sum_buffer(buf: <span class="kw-2">&amp;</span>[u8]) -&gt; u64 {
+    <span class="kw">const </span>CHUNK_SIZE: usize = <span class="number">32</span>;
+
+    <span class="kw">let </span><span class="kw-2">mut </span>buf_chunks = buf.chunks_exact(CHUNK_SIZE);
+    <span class="kw">let </span><span class="kw-2">mut </span>sum = <span class="number">0_u64</span>;
+
+    <span class="kw">for </span>chunk <span class="kw">in </span><span class="kw-2">&amp;mut </span>buf_chunks {
+        <span class="comment">// At most, `acc` can be `32 * (i8::MIN as u8) = 32 * 128 = 4096`.
+        </span><span class="kw">let </span><span class="kw-2">mut </span>acc = <span class="number">0</span>;
+        <span class="kw">for </span><span class="kw-2">&amp;</span>b <span class="kw">in </span>chunk {
+            acc += u64::from((b <span class="kw">as </span>i8).unsigned_abs());
+        }
+        sum = sum.saturating_add(acc);
+    }
+
+    <span class="kw">let </span><span class="kw-2">mut </span>acc = <span class="number">0</span>;
+    <span class="kw">for </span><span class="kw-2">&amp;</span>b <span class="kw">in </span>buf_chunks.remainder() {
+        acc += u64::from((b <span class="kw">as </span>i8).unsigned_abs());
+    }
+
+    sum.saturating_add(acc)
 }
 
 <span class="attr">#[cfg(test)]
@@ -727,15 +1489,16 @@
         <span class="comment">// A multiple of 8, 6, 4, 3, 2, 1
         </span><span class="kw">const </span>LEN: u8 = <span class="number">240</span>;
         <span class="kw">let </span>previous: Vec&lt;<span class="kw">_</span>&gt; = iter::repeat(<span class="number">1</span>).take(LEN.into()).collect();
-        <span class="kw">let </span><span class="kw-2">mut </span>current: Vec&lt;<span class="kw">_</span>&gt; = (<span class="number">0</span>..LEN).collect();
+        <span class="kw">let </span>current: Vec&lt;<span class="kw">_</span>&gt; = (<span class="number">0</span>..LEN).collect();
         <span class="kw">let </span>expected = current.clone();
         <span class="kw">let </span>adaptive = AdaptiveFilterType::NonAdaptive;
 
-        <span class="kw">let </span><span class="kw-2">mut </span>roundtrip = |kind, bpp: BytesPerPixel| {
-            filter(kind, adaptive, bpp, <span class="kw-2">&amp;</span>previous, <span class="kw-2">&amp;mut </span>current);
-            unfilter(kind, bpp, <span class="kw-2">&amp;</span>previous, <span class="kw-2">&amp;mut </span>current).expect(<span class="string">&quot;Unfilter worked&quot;</span>);
+        <span class="kw">let </span>roundtrip = |kind, bpp: BytesPerPixel| {
+            <span class="kw">let </span><span class="kw-2">mut </span>output = <span class="macro">vec!</span>[<span class="number">0</span>; LEN.into()];
+            filter(kind, adaptive, bpp, <span class="kw-2">&amp;</span>previous, <span class="kw-2">&amp;</span>current, <span class="kw-2">&amp;mut </span>output);
+            unfilter(kind, bpp, <span class="kw-2">&amp;</span>previous, <span class="kw-2">&amp;mut </span>output);
             <span class="macro">assert_eq!</span>(
-                current, expected,
+                output, expected,
                 <span class="string">&quot;Filtering {:?} with {:?} does not roundtrip&quot;</span>,
                 bpp, kind
             );
@@ -770,15 +1533,16 @@
         <span class="comment">// A multiple of 8, 6, 4, 3, 2, 1
         </span><span class="kw">const </span>LEN: u8 = <span class="number">240</span>;
         <span class="kw">let </span>previous: Vec&lt;<span class="kw">_</span>&gt; = (<span class="number">0</span>..LEN).collect();
-        <span class="kw">let </span><span class="kw-2">mut </span>current: Vec&lt;<span class="kw">_</span>&gt; = (<span class="number">0</span>..LEN).collect();
+        <span class="kw">let </span>current: Vec&lt;<span class="kw">_</span>&gt; = (<span class="number">0</span>..LEN).collect();
         <span class="kw">let </span>expected = current.clone();
         <span class="kw">let </span>adaptive = AdaptiveFilterType::NonAdaptive;
 
-        <span class="kw">let </span><span class="kw-2">mut </span>roundtrip = |kind, bpp: BytesPerPixel| {
-            filter(kind, adaptive, bpp, <span class="kw-2">&amp;</span>previous, <span class="kw-2">&amp;mut </span>current);
-            unfilter(kind, bpp, <span class="kw-2">&amp;</span>previous, <span class="kw-2">&amp;mut </span>current).expect(<span class="string">&quot;Unfilter worked&quot;</span>);
+        <span class="kw">let </span>roundtrip = |kind, bpp: BytesPerPixel| {
+            <span class="kw">let </span><span class="kw-2">mut </span>output = <span class="macro">vec!</span>[<span class="number">0</span>; LEN.into()];
+            filter(kind, adaptive, bpp, <span class="kw-2">&amp;</span>previous, <span class="kw-2">&amp;</span>current, <span class="kw-2">&amp;mut </span>output);
+            unfilter(kind, bpp, <span class="kw-2">&amp;</span>previous, <span class="kw-2">&amp;mut </span>output);
             <span class="macro">assert_eq!</span>(
-                current, expected,
+                output, expected,
                 <span class="string">&quot;Filtering {:?} with {:?} does not roundtrip&quot;</span>,
                 bpp, kind
             );
@@ -814,7 +1578,7 @@
     // or produce garbage in release mode. The sum of 0..=255u8 should equal the
     // sum of the absolute values of -128_i8..=127, or abs(-128..=0) + 1..=127.
     </span><span class="kw">fn </span>sum_buffer_test() {
-        <span class="kw">let </span>sum = (<span class="number">0</span>..=<span class="number">128</span>).sum::&lt;usize&gt;() + (<span class="number">1</span>..=<span class="number">127</span>).sum::&lt;usize&gt;();
+        <span class="kw">let </span>sum = (<span class="number">0</span>..=<span class="number">128</span>).sum::&lt;u64&gt;() + (<span class="number">1</span>..=<span class="number">127</span>).sum::&lt;u64&gt;();
         <span class="kw">let </span>buf: Vec&lt;u8&gt; = (<span class="number">0_u8</span>..=<span class="number">255</span>).collect();
 
         <span class="macro">assert_eq!</span>(sum, <span class="kw">crate</span>::filter::sum_buffer(<span class="kw-2">&amp;</span>buf));
