@@ -1,4 +1,4 @@
-use std::{ffi::c_void, marker::PhantomData};
+use std::ffi::c_void;
 
 use cocoa::{
     appkit::NSWindowCollectionBehavior,
@@ -12,7 +12,7 @@ use objc::{
     sel, sel_impl, Message,
 };
 use objc_foundation::INSObject;
-use objc_id::Id;
+use objc_id::{Id, ShareId};
 use tauri::{AppHandle, Manager, Runtime, Window};
 
 extern "C" {
@@ -21,12 +21,12 @@ extern "C" {
 
 const CLS_NAME: &str = "RawNSPanel";
 
-#[repr(C)]
-pub struct RawNSPanel<R: Runtime>(PhantomData<R>);
+pub struct RawNSPanel;
 
-unsafe impl<R: Runtime> Sync for RawNSPanel<R> {}
+unsafe impl Sync for RawNSPanel {}
+unsafe impl Send for RawNSPanel {}
 
-impl<R: Runtime> RawNSPanel<R> {
+impl RawNSPanel {
     fn get_class() -> &'static Class {
         Class::get(CLS_NAME).unwrap_or_else(Self::define_class)
     }
@@ -40,12 +40,12 @@ impl<R: Runtime> RawNSPanel<R> {
 
             cls.add_method(
                 sel!(setAppHandle:),
-                Self::_set_app_handle as extern "C" fn(&mut Object, Sel, *mut c_void),
+                Self::handle_set_app_handle as extern "C" fn(&mut Object, Sel, *mut c_void),
             );
 
             cls.add_method(
                 sel!(appHandle),
-                Self::_app_handle as extern "C" fn(&Object, Sel) -> *mut c_void,
+                Self::handle_get_app_handle as extern "C" fn(&Object, Sel) -> *mut c_void,
             );
 
             cls.add_method(
@@ -62,11 +62,11 @@ impl<R: Runtime> RawNSPanel<R> {
         cls.register()
     }
 
-    extern "C" fn _set_app_handle(this: &mut Object, _: Sel, app_handle: *mut c_void) {
+    extern "C" fn handle_set_app_handle(this: &mut Object, _: Sel, app_handle: *mut c_void) {
         unsafe { this.set_ivar("_app_handle", app_handle) };
     }
 
-    extern "C" fn _app_handle(this: &Object, _: Sel) -> *mut c_void {
+    extern "C" fn handle_get_app_handle(this: &Object, _: Sel) -> *mut c_void {
         unsafe { *this.get_ivar("_app_handle") }
     }
 
@@ -79,8 +79,7 @@ impl<R: Runtime> RawNSPanel<R> {
         let app_handle_wrapper_ptr: *mut c_void = unsafe { *this.get_ivar("_app_handle") };
 
         if !app_handle_wrapper_ptr.is_null() {
-            let app_handle_wrapper =
-                unsafe { AppHandleWrapper::<R>::from_raw(app_handle_wrapper_ptr) };
+            let app_handle_wrapper = unsafe { Box::from_raw(app_handle_wrapper_ptr) };
             drop(app_handle_wrapper);
         }
 
@@ -93,9 +92,7 @@ impl<R: Runtime> RawNSPanel<R> {
     }
 }
 
-unsafe impl<R: Runtime> Message for RawNSPanel<R> {}
-
-impl<R: Runtime> RawNSPanel<R> {
+impl RawNSPanel {
     pub fn show(&self) {
         self.make_first_responder(Some(self.content_view()));
         self.order_front_regardless();
@@ -116,6 +113,7 @@ impl<R: Runtime> RawNSPanel<R> {
     }
 
     pub fn order_out(&self, sender: Option<id>) {
+        println!("called order out");
         let _: () = unsafe { msg_send![self, orderOut: sender.unwrap_or(nil)] };
     }
 
@@ -155,16 +153,17 @@ impl<R: Runtime> RawNSPanel<R> {
         let _: () = unsafe { msg_send![self, close] };
     }
 
-    pub fn handle(&mut self) -> Id<RawNSPanel<R>> {
-        unsafe { Id::from_retained_ptr(self) }
+    pub fn handle(&mut self) -> ShareId<Self> {
+        unsafe { ShareId::from_ptr(self as *mut Self) }
     }
 
-    fn set_app_handle(&self, app_handle: AppHandle<R>) {
-        let app_handle_wrapper = AppHandleWrapper::new(app_handle);
+    fn set_app_handle<R: Runtime>(&self, app_handle: AppHandle<R>) {
+        let handle = app_handle as _;
+        let app_handle_wrapper = AppHandleWrapper::new(handle);
         let _: () = unsafe { msg_send![self, setAppHandle: app_handle_wrapper.into_raw()] };
     }
 
-    pub fn app_handle(&self) -> Option<AppHandle<R>> {
+    pub fn app_handle<R: Runtime>(&self) -> Option<AppHandle<R>> {
         let wrapper_ptr: *mut c_void = unsafe { msg_send![self, appHandle] };
 
         if wrapper_ptr.is_null() {
@@ -176,26 +175,27 @@ impl<R: Runtime> RawNSPanel<R> {
     }
 
     /// Create an NSPanel from a Tauri window
-    pub fn from(window: &Window<R>) -> Id<Self> {
+    pub fn from_window<R: Runtime>(window: Window<R>) -> Id<Self> {
         let app_handle = window.app_handle();
         let ns_window: id = window.ns_window().unwrap() as _;
         let ns_panel: id = unsafe { msg_send![Self::class(), class] };
-        let panel = unsafe {
+        let raw_panel = unsafe {
             object_setClass(ns_window, ns_panel);
-            Id::from_ptr(ns_window as *mut Self)
+            Id::from_ptr(ns_window as *mut RawNSPanel)
         };
-        panel.set_app_handle(app_handle);
-        panel
+        raw_panel.set_app_handle(app_handle);
+        raw_panel
     }
 }
 
-impl<R: Runtime> INSObject for RawNSPanel<R> {
+unsafe impl Message for RawNSPanel {}
+
+impl INSObject for RawNSPanel {
     fn class() -> &'static runtime::Class {
-        RawNSPanel::<R>::get_class()
+        RawNSPanel::get_class()
     }
 }
 
-#[repr(C)]
 pub struct AppHandleWrapper<R: Runtime> {
     app_handle: AppHandle<R>,
 }
@@ -207,9 +207,5 @@ impl<R: Runtime> AppHandleWrapper<R> {
 
     pub fn into_raw(self) -> *mut c_void {
         Box::into_raw(Box::new(self)) as *mut c_void
-    }
-
-    pub(crate) unsafe fn from_raw(raw: *mut c_void) -> Box<Self> {
-        Box::from_raw(raw as *mut AppHandleWrapper<R>)
     }
 }

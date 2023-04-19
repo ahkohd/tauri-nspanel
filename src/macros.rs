@@ -1,6 +1,6 @@
 #[macro_export]
 macro_rules! panel_delegate {
-    ($delegate_name:ident<$generic:ident> { $($fn_name:ident),* $(,)* }) => {{
+    ($delegate_name:ident { $($fn_name:ident),* $(,)* }) => {{
         use $crate::objc::{
             class,
             declare::ClassDecl,
@@ -44,9 +44,9 @@ macro_rules! panel_delegate {
         const DELEGATE_CLS_NAME: &str = stringify!($delegate_name);
 
         #[allow(dead_code)]
-        struct $delegate_name<R: Runtime> (std::marker::PhantomData<R>);
+        struct $delegate_name;
 
-        impl<R: Runtime> $delegate_name<R> {
+        impl $delegate_name {
              #[allow(dead_code)]
             fn get_class() -> &'static Class {
                 Class::get(DELEGATE_CLS_NAME).unwrap_or_else(Self::define_class)
@@ -88,26 +88,25 @@ macro_rules! panel_delegate {
             $(
                 extern "C" fn $fn_name(this: &Object, _: Sel, _: id) {
                     let panel: id = unsafe { *this.get_ivar("panel") };
-                    $fn_name(unsafe {Id::from_ptr(panel as *mut RawNSPanel<$generic>) });
+                    $fn_name(unsafe {Id::from_ptr(panel as *mut RawNSPanel) });
                 }
             )*
         }
 
-        unsafe impl<R: Runtime> Message for $delegate_name<R> {}
+        unsafe impl Message for $delegate_name {}
 
-        impl<R: Runtime> INSObject for $delegate_name<R> {
+        impl INSObject for $delegate_name {
             fn class() -> &'static runtime::Class {
                 Self::get_class()
             }
         }
 
-        impl<R: Runtime> $delegate_name<R> {
-            pub fn set_panel(&self, panel: ShareId<RawNSPanel<R>>) {
+        impl $delegate_name {
+            pub fn set_panel(&self, panel: ShareId<RawNSPanel>) {
                 let _: () = unsafe { msg_send![self, setPanel: panel] };
             }
         }
 
-
-        $delegate_name::<$generic>::new()
+        $delegate_name::new()
     }};
 }

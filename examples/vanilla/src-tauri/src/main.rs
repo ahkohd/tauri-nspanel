@@ -26,16 +26,21 @@ fn main() {
 fn init(window: Window<Wry>) {
   let panel = window.to_panel().unwrap();
 
-  fn window_did_become_key(panel: Panel<Wry>) {
-    let app_name = panel.app_handle().unwrap().package_info().name.to_owned();
+  fn window_did_become_key(panel: Panel) {
+    let app_name = panel
+      .app_handle::<Wry>()
+      .unwrap()
+      .package_info()
+      .name
+      .to_owned();
     println!("[info]: {:?} panel becomes key window!", app_name);
   }
 
-  fn window_did_resign_key(_: Panel<Wry>) {
+  fn window_did_resign_key(_: Panel) {
     println!("[info]: panel resigned from key window!");
   }
 
-  let delegate = panel_delegate!(MyPanelDelegate<Wry> {
+  let delegate = panel_delegate!(MyPanelDelegate {
     window_did_become_key,
     window_did_resign_key
   });
