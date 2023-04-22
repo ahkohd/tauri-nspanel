@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["FsScopeEvent","Scope change event."]],"struct":[["FsScope","Scope for filesystem access."],["GlobPattern","A compiled Unix shell style pattern."],["HttpScope","Scope for filesystem access."]]};
+window.SIDEBAR_ITEMS = {"enum":["FsScopeEvent"],"struct":["FsScope","GlobPattern","HttpScope"]};

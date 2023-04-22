@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["CFUUIDCreate",""],["CFUUIDCreateFromUUIDBytes",""],["CFUUIDGetTypeID",""],["CFUUIDGetUUIDBytes",""]],"struct":[["CFUUIDBytes",""],["__CFUUID",""]],"type":[["CFUUIDRef",""]]};
+window.SIDEBAR_ITEMS = {"fn":["CFUUIDCreate","CFUUIDCreateFromUUIDBytes","CFUUIDGetTypeID","CFUUIDGetUUIDBytes"],"struct":["CFUUIDBytes","__CFUUID"],"type":["CFUUIDRef"]};

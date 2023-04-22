@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["is_html","Returns whether a buffer is html data."],["is_shellscript","Returns whether a buffer is a shell script."],["is_xml","Returns whether a buffer is xml data."]]};
+window.SIDEBAR_ITEMS = {"fn":["is_html","is_shellscript","is_xml"]};

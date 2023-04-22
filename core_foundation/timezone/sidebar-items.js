@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["CFTimeZoneCopyDefault",""],["CFTimeZoneCopySystem",""],["CFTimeZoneCreateWithTimeIntervalFromGMT",""],["CFTimeZoneGetName",""],["CFTimeZoneGetSecondsFromGMT",""],["CFTimeZoneGetTypeID",""]],"struct":[["CFTimeZone","A time zone."],["__CFTimeZone",""]],"type":[["CFTimeZoneRef",""]]};
+window.SIDEBAR_ITEMS = {"fn":["CFTimeZoneCopyDefault","CFTimeZoneCopySystem","CFTimeZoneCreateWithTimeIntervalFromGMT","CFTimeZoneGetName","CFTimeZoneGetSecondsFromGMT","CFTimeZoneGetTypeID"],"struct":["CFTimeZone","__CFTimeZone"],"type":["CFTimeZoneRef"]};

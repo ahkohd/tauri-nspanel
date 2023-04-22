@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"trait":[["EventLoopExtRunReturn","Additional methods on `EventLoop` to return control flow to the caller."]]};
+window.SIDEBAR_ITEMS = {"trait":["EventLoopExtRunReturn"]};

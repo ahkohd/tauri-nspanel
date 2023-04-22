@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["AttrValueKind",""],["DoctypeIdKind",""],["RawKind",""],["ScriptEscapeKind",""],["State",""]]};
+window.SIDEBAR_ITEMS = {"enum":["AttrValueKind","DoctypeIdKind","RawKind","ScriptEscapeKind","State"]};

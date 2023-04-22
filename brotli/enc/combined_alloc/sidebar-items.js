@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["CombiningAllocator",""]],"trait":[["Allocator",""],["BrotliAlloc",""]]};
+window.SIDEBAR_ITEMS = {"struct":["CombiningAllocator"],"trait":["Allocator","BrotliAlloc"]};

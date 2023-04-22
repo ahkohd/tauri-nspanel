@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"static":[["kStaticDictionaryHash",""]]};
+window.SIDEBAR_ITEMS = {"static":["kStaticDictionaryHash"]};

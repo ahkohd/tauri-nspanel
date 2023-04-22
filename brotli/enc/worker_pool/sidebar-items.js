@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["compress_worker_pool",""],["new_work_pool",""]],"struct":[["GuardedQueue",""],["WorkerJoinable",""],["WorkerPool",""]]};
+window.SIDEBAR_ITEMS = {"fn":["compress_worker_pool","new_work_pool"],"struct":["GuardedQueue","WorkerJoinable","WorkerPool"]};

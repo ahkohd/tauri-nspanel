@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["BroCatliResult",""]],"struct":[["BroCatli",""]]};
+window.SIDEBAR_ITEMS = {"enum":["BroCatliResult"],"struct":["BroCatli"]};

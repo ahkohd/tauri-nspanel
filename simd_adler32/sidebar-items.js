@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["adler32","Compute Adler-32 hash on `Adler32Hash` type."]],"mod":[["bufread","BufRead-based hashing."],["read","Reader-based hashing."]],"struct":[["Adler32","A rolling hash generator type."]],"trait":[["Adler32Hash","A Adler-32 hash-able type."]]};
+window.SIDEBAR_ITEMS = {"fn":["adler32"],"mod":["bufread","read"],"struct":["Adler32"],"trait":["Adler32Hash"]};

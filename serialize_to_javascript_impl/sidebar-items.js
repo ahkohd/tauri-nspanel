@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"attr":[["default_template","Automatically derive `DefaultTemplate` for a `Template` from the passed path."]],"derive":[["Template","Automatically derive `Template` from a struct with valid input fields."]]};
+window.SIDEBAR_ITEMS = {"attr":["default_template"],"derive":["Template"]};

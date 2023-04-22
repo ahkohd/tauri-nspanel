@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["tree_builder","This module contains functionality for managing the DOM, including adding/removing nodes."]],"struct":[["Attribute","A tag attribute, e.g. `class=\"test\"` in `<div class=\"test\" ...>`."],["ExpandedName","An expanded name, containing the tag and the namespace."],["QualName","A fully qualified name (with a namespace), used to depict names of tags and attributes."]]};
+window.SIDEBAR_ITEMS = {"mod":["tree_builder"],"struct":["Attribute","ExpandedName","QualName"]};

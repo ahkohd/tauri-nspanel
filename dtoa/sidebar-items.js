@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["write","Write float to an `io::Write`."]],"trait":[["Floating","An floating point number that can be formatted by `dtoa::write`."]]};
+window.SIDEBAR_ITEMS = {"fn":["write"],"trait":["Floating"]};

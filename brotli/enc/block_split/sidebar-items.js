@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["BlockSplit",""]]};
+window.SIDEBAR_ITEMS = {"struct":["BlockSplit"]};

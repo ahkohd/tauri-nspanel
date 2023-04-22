@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["ExternalError","An error whose cause it outside Tao’s control."]],"struct":[["NotSupportedError","The error type for when the requested operation is not supported by the backend."],["OsError","The error type for when the OS cannot perform the requested operation."]]};
+window.SIDEBAR_ITEMS = {"enum":["ExternalError"],"struct":["NotSupportedError","OsError"]};

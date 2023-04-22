@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["MimeType","Web Compatible MimeTypes"]]};
+window.SIDEBAR_ITEMS = {"enum":["MimeType"]};

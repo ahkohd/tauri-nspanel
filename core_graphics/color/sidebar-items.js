@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["CGColor",""]]};
+window.SIDEBAR_ITEMS = {"struct":["CGColor"]};

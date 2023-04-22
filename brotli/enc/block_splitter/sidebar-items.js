@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["BrotliSplitBlock",""]]};
+window.SIDEBAR_ITEMS = {"fn":["BrotliSplitBlock"]};

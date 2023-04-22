@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["CGGradient",""],["CGGradientDrawingOptions",""],["CGGradientRef",""]]};
+window.SIDEBAR_ITEMS = {"struct":["CGGradient","CGGradientDrawingOptions","CGGradientRef"]};

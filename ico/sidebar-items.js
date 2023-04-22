@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["ResourceType","The type of resource stored in an ICO/CUR file."]],"struct":[["IconDir","A collection of images; the contents of a single ICO or CUR file."],["IconDirEntry","One entry in an ICO or CUR file; a single icon or cursor."],["IconImage","A decoded image."]]};
+window.SIDEBAR_ITEMS = {"enum":["ResourceType"],"struct":["IconDir","IconDirEntry","IconImage"]};

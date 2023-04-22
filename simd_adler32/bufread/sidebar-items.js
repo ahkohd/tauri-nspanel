@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["adler32","Compute Adler-32 hash on buf reader until EOF."]]};
+window.SIDEBAR_ITEMS = {"fn":["adler32"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["WebviewAttributes","The attributes used to create an webview."]],"trait":[["WindowBuilder","A builder for all attributes related to a single webview."],["WindowBuilderBase","Do NOT implement this trait except for use in a custom `Runtime`."]],"type":[["WebviewIpcHandler","IPC handler."]]};
+window.SIDEBAR_ITEMS = {"struct":["WebviewAttributes"],"trait":["WindowBuilder","WindowBuilderBase"],"type":["WebviewIpcHandler"]};

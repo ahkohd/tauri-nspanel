@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"trait":[["TendrilSink","Trait for types that can process a tendril."]]};
+window.SIDEBAR_ITEMS = {"trait":["TendrilSink"]};

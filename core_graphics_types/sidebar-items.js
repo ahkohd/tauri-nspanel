@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["base",""],["geometry",""]]};
+window.SIDEBAR_ITEMS = {"mod":["base","geometry"]};

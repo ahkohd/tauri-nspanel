@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["CodeBlockState",""]],"fn":[["BrotliCompressFragmentFast",""]]};
+window.SIDEBAR_ITEMS = {"enum":["CodeBlockState"],"fn":["BrotliCompressFragmentFast"]};

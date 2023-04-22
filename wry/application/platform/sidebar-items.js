@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["macos",""],["run_return",""]]};
+window.SIDEBAR_ITEMS = {"mod":["macos","run_return"]};

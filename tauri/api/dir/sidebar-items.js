@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["is_dir","Checks if the given path is a directory."],["read_dir","Reads a directory. Can perform recursive operations."],["with_temp_dir","Runs a closure with a temporary directory argument."]],"struct":[["DiskEntry","A disk entry which is either a file or a directory."]]};
+window.SIDEBAR_ITEMS = {"fn":["is_dir","read_dir","with_temp_dir"],"struct":["DiskEntry"]};

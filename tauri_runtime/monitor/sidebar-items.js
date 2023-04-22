@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["Monitor","Monitor descriptor."]]};
+window.SIDEBAR_ITEMS = {"struct":["Monitor"]};

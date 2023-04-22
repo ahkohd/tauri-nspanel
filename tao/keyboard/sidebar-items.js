@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["Key","Key represents the meaning of a keypress."],["KeyCode","Represents the code of a physical key."],["KeyLocation","Represents the location of a physical key."],["NativeKeyCode","Contains the platform-native physical key identifier (aka scancode)"]],"struct":[["ModifiersState","Represents the current state of the keyboard modifiers"]]};
+window.SIDEBAR_ITEMS = {"enum":["Key","KeyCode","KeyLocation","NativeKeyCode"],"struct":["ModifiersState"]};

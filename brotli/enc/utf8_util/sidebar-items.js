@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["BrotliIsMostlyUTF8",""]]};
+window.SIDEBAR_ITEMS = {"fn":["BrotliIsMostlyUTF8"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["BrotliEstimateBitCostsForLiterals",""]]};
+window.SIDEBAR_ITEMS = {"fn":["BrotliEstimateBitCostsForLiterals"]};

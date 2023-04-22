@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["compress_multi",""]],"struct":[["MultiThreadedJoinable",""],["MultiThreadedOwnedRetriever",""],["MultiThreadedSpawner",""]]};
+window.SIDEBAR_ITEMS = {"fn":["compress_multi"],"struct":["MultiThreadedJoinable","MultiThreadedOwnedRetriever","MultiThreadedSpawner"]};
