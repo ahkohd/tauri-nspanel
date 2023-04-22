@@ -113,7 +113,6 @@ impl RawNSPanel {
     }
 
     pub fn order_out(&self, sender: Option<id>) {
-        println!("called order out");
         let _: () = unsafe { msg_send![self, orderOut: sender.unwrap_or(nil)] };
     }
 
