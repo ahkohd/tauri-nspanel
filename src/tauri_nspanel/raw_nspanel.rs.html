@@ -204,10 +204,6 @@
 <a href="#204" id="204">204</a>
 <a href="#205" id="205">205</a>
 <a href="#206" id="206">206</a>
-<a href="#207" id="207">207</a>
-<a href="#208" id="208">208</a>
-<a href="#209" id="209">209</a>
-<a href="#210" id="210">210</a>
 </pre><pre class="rust"><code><span class="kw">use </span>std::ffi::c_void;
 
 <span class="kw">use </span>cocoa::{
@@ -236,11 +232,13 @@
 <span class="kw">unsafe impl </span>Sync <span class="kw">for </span>RawNSPanel {}
 <span class="kw">unsafe impl </span>Send <span class="kw">for </span>RawNSPanel {}
 
-<span class="kw">impl </span>RawNSPanel {
-    <span class="kw">fn </span>get_class() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>Class {
+<span class="kw">impl </span>INSObject <span class="kw">for </span>RawNSPanel {
+    <span class="kw">fn </span>class() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>runtime::Class {
         Class::get(CLS_NAME).unwrap_or_else(<span class="self">Self</span>::define_class)
     }
+}
 
+<span class="kw">impl </span>RawNSPanel {
     <span class="kw">fn </span>define_class() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>Class {
         <span class="kw">let </span><span class="kw-2">mut </span>cls = ClassDecl::new(CLS_NAME, <span class="macro">class!</span>(NSPanel))
             .unwrap_or_else(|| <span class="macro">panic!</span>(<span class="string">&quot;Unable to register {} class&quot;</span>, CLS_NAME));
@@ -387,7 +385,7 @@
     </span><span class="kw">pub fn </span>from_window&lt;R: Runtime&gt;(window: Window&lt;R&gt;) -&gt; Id&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span>app_handle = window.app_handle();
         <span class="kw">let </span>nswindow: id = window.ns_window().unwrap() <span class="kw">as _</span>;
-        <span class="kw">let </span>nspanel_class: id = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="self">Self</span>::get_class(), class] };
+        <span class="kw">let </span>nspanel_class: id = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="self">Self</span>::class(), class] };
         <span class="kw">let </span>panel = <span class="kw">unsafe </span>{
             object_setClass(nswindow, nspanel_class);
             Id::from_retained_ptr(nswindow <span class="kw">as </span><span class="kw-2">*mut </span>RawNSPanel)
@@ -398,12 +396,6 @@
 }
 
 <span class="kw">unsafe impl </span>Message <span class="kw">for </span>RawNSPanel {}
-
-<span class="kw">impl </span>INSObject <span class="kw">for </span>RawNSPanel {
-    <span class="kw">fn </span>class() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>runtime::Class {
-        <span class="self">Self</span>::get_class()
-    }
-}
 
 <span class="kw">pub struct </span>AppHandleWrapper&lt;R: Runtime&gt; {
     app_handle: AppHandle&lt;R&gt;,
