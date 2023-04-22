@@ -180,7 +180,7 @@ impl RawNSPanel {
         let ns_panel: id = unsafe { msg_send![Self::class(), class] };
         let raw_panel = unsafe {
             object_setClass(ns_window, ns_panel);
-            Id::from_ptr(ns_window as *mut RawNSPanel)
+            Id::from_retained_ptr(ns_window as *mut RawNSPanel)
         };
         raw_panel.set_app_handle(app_handle);
         raw_panel
