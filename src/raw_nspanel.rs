@@ -176,14 +176,14 @@ impl RawNSPanel {
     /// Create an NSPanel from a Tauri window
     pub fn from_window<R: Runtime>(window: Window<R>) -> Id<Self> {
         let app_handle = window.app_handle();
-        let ns_window: id = window.ns_window().unwrap() as _;
-        let ns_panel: id = unsafe { msg_send![Self::class(), class] };
-        let raw_panel = unsafe {
-            object_setClass(ns_window, ns_panel);
-            Id::from_retained_ptr(ns_window as *mut RawNSPanel)
+        let nswindow: id = window.ns_window().unwrap() as _;
+        let nspanel_class: id = unsafe { msg_send![Self::get_class(), class] };
+        let panel = unsafe {
+            object_setClass(nswindow, nspanel_class);
+            Id::from_retained_ptr(nswindow as *mut RawNSPanel)
         };
-        raw_panel.set_app_handle(app_handle);
-        raw_panel
+        panel.set_app_handle(app_handle);
+        panel
     }
 }
 
@@ -191,7 +191,7 @@ unsafe impl Message for RawNSPanel {}
 
 impl INSObject for RawNSPanel {
     fn class() -> &'static runtime::Class {
-        RawNSPanel::get_class()
+        Self::get_class()
     }
 }
 
