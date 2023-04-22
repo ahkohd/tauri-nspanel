@@ -26,11 +26,13 @@ pub struct RawNSPanel;
 unsafe impl Sync for RawNSPanel {}
 unsafe impl Send for RawNSPanel {}
 
-impl RawNSPanel {
-    fn get_class() -> &'static Class {
+impl INSObject for RawNSPanel {
+    fn class() -> &'static runtime::Class {
         Class::get(CLS_NAME).unwrap_or_else(Self::define_class)
     }
+}
 
+impl RawNSPanel {
     fn define_class() -> &'static Class {
         let mut cls = ClassDecl::new(CLS_NAME, class!(NSPanel))
             .unwrap_or_else(|| panic!("Unable to register {} class", CLS_NAME));
@@ -177,7 +179,7 @@ impl RawNSPanel {
     pub fn from_window<R: Runtime>(window: Window<R>) -> Id<Self> {
         let app_handle = window.app_handle();
         let nswindow: id = window.ns_window().unwrap() as _;
-        let nspanel_class: id = unsafe { msg_send![Self::get_class(), class] };
+        let nspanel_class: id = unsafe { msg_send![Self::class(), class] };
         let panel = unsafe {
             object_setClass(nswindow, nspanel_class);
             Id::from_retained_ptr(nswindow as *mut RawNSPanel)
@@ -188,12 +190,6 @@ impl RawNSPanel {
 }
 
 unsafe impl Message for RawNSPanel {}
-
-impl INSObject for RawNSPanel {
-    fn class() -> &'static runtime::Class {
-        Self::get_class()
-    }
-}
 
 pub struct AppHandleWrapper<R: Runtime> {
     app_handle: AppHandle<R>,
