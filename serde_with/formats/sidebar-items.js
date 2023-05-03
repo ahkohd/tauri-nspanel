@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Flexible","Lowercase","Padded","PreferMany","PreferOne","Strict","Unpadded","Uppercase"],"trait":["Format","Strictness"]};
+window.SIDEBAR_ITEMS = {"struct":["ColonSeparator","CommaSeparator","Flexible","Lowercase","Padded","PreferMany","PreferOne","SemicolonSeparator","SpaceSeparator","Strict","Unpadded","Uppercase"],"trait":["Format","Separator","Strictness"]};

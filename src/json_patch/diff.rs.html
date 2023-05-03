@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/json-patch-0.2.7/src/diff.rs`."><title>diff.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../static.files/ayu-be46fdc453a55015.css"><script src="../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../json_patch/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/json-patch-1.0.0/src/diff.rs`."><title>diff.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../static.files/ayu-be46fdc453a55015.css"><script src="../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../json_patch/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -231,6 +231,16 @@
 <a href="#231" id="231">231</a>
 <a href="#232" id="232">232</a>
 <a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
+<a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
+<a href="#241" id="241">241</a>
+<a href="#242" id="242">242</a>
+<a href="#243" id="243">243</a>
 </pre><pre class="rust"><code><span class="kw">use </span>serde_json::Value;
 
 <span class="kw">struct </span>PatchDiffer {
@@ -242,7 +252,7 @@
 <span class="kw">impl </span>PatchDiffer {
     <span class="kw">fn </span>new() -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
-            path: <span class="string">&quot;/&quot;</span>.to_string(),
+            path: <span class="string">&quot;&quot;</span>.to_string(),
             patch: <span class="kw">super</span>::Patch(Vec::new()),
             shift: <span class="number">0</span>,
         }
@@ -252,9 +262,7 @@
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; treediff::Delegate&lt;<span class="lifetime">&#39;a</span>, treediff::value::Key, Value&gt; <span class="kw">for </span>PatchDiffer {
     <span class="kw">fn </span>push(<span class="kw-2">&amp;mut </span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>treediff::value::Key) {
         <span class="kw">use </span>std::fmt::Write;
-        <span class="kw">if </span><span class="self">self</span>.path.len() != <span class="number">1 </span>{
-            <span class="self">self</span>.path.push(<span class="string">&#39;/&#39;</span>);
-        }
+        <span class="self">self</span>.path.push(<span class="string">&#39;/&#39;</span>);
         <span class="kw">match </span><span class="kw-2">*</span>key {
             treediff::value::Key::Index(idx) =&gt; <span class="macro">write!</span>(<span class="self">self</span>.path, <span class="string">&quot;{}&quot;</span>, idx - <span class="self">self</span>.shift).unwrap(),
             treediff::value::Key::String(<span class="kw-2">ref </span>key) =&gt; append_path(<span class="kw-2">&amp;mut </span><span class="self">self</span>.path, key),
@@ -262,10 +270,7 @@
     }
 
     <span class="kw">fn </span>pop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="kw">let </span><span class="kw-2">mut </span>pos = <span class="self">self</span>.path.rfind(<span class="string">&#39;/&#39;</span>).unwrap_or(<span class="number">0</span>);
-        <span class="kw">if </span>pos == <span class="number">0 </span>{
-            pos = <span class="number">1</span>;
-        }
+        <span class="kw">let </span>pos = <span class="self">self</span>.path.rfind(<span class="string">&#39;/&#39;</span>).unwrap_or(<span class="number">0</span>);
         <span class="self">self</span>.path.truncate(pos);
         <span class="self">self</span>.shift = <span class="number">0</span>;
     }
@@ -327,10 +332,8 @@
 ///
 /// ```rust
 /// #[macro_use]
-/// extern crate serde_json;
-/// extern crate json_patch;
-///
-/// use json_patch::{patch, diff, from_value};
+/// use json_patch::{Patch, patch, diff};
+/// use serde_json::{json, from_value};
 ///
 /// # pub fn main() {
 /// let left = json!({
@@ -354,7 +357,7 @@
 /// });
 ///
 /// let p = diff(&amp;left, &amp;right);
-/// assert_eq!(p, from_value(json!([
+/// assert_eq!(p, from_value::&lt;Patch&gt;(json!([
 ///   { &quot;op&quot;: &quot;remove&quot;, &quot;path&quot;: &quot;/author/familyName&quot; },
 ///   { &quot;op&quot;: &quot;remove&quot;, &quot;path&quot;: &quot;/tags/1&quot; },
 ///   { &quot;op&quot;: &quot;replace&quot;, &quot;path&quot;: &quot;/title&quot;, &quot;value&quot;: &quot;Hello!&quot; },
@@ -375,7 +378,7 @@
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
-    <span class="kw">use </span>serde_json::Value;
+    <span class="kw">use </span>serde_json::{json, Value};
 
     <span class="attr">#[test]
     </span><span class="kw">pub fn </span>replace_all() {
@@ -384,10 +387,29 @@
         <span class="macro">assert_eq!</span>(
             p,
             serde_json::from_value(<span class="macro">json!</span>([
-                { <span class="string">&quot;op&quot;</span>: <span class="string">&quot;replace&quot;</span>, <span class="string">&quot;path&quot;</span>: <span class="string">&quot;/&quot;</span>, <span class="string">&quot;value&quot;</span>: null },
+                { <span class="string">&quot;op&quot;</span>: <span class="string">&quot;replace&quot;</span>, <span class="string">&quot;path&quot;</span>: <span class="string">&quot;&quot;</span>, <span class="string">&quot;value&quot;</span>: null },
             ]))
             .unwrap()
         );
+        <span class="kw">let </span><span class="kw-2">mut </span>left = <span class="macro">json!</span>({<span class="string">&quot;title&quot;</span>: <span class="string">&quot;Hello!&quot;</span>});
+        <span class="kw">crate</span>::patch(<span class="kw-2">&amp;mut </span>left, <span class="kw-2">&amp;</span>p).unwrap();
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">pub fn </span>diff_empty_key() {
+        <span class="kw">let </span>left = <span class="macro">json!</span>({<span class="string">&quot;title&quot;</span>: <span class="string">&quot;Something&quot;</span>, <span class="string">&quot;&quot;</span>: <span class="string">&quot;Hello!&quot;</span>});
+        <span class="kw">let </span>right = <span class="macro">json!</span>({<span class="string">&quot;title&quot;</span>: <span class="string">&quot;Something&quot;</span>, <span class="string">&quot;&quot;</span>: <span class="string">&quot;Bye!&quot;</span>});
+        <span class="kw">let </span>p = <span class="kw">super</span>::diff(<span class="kw-2">&amp;</span>left, <span class="kw-2">&amp;</span>right);
+        <span class="macro">assert_eq!</span>(
+            p,
+            serde_json::from_value(<span class="macro">json!</span>([
+                { <span class="string">&quot;op&quot;</span>: <span class="string">&quot;replace&quot;</span>, <span class="string">&quot;path&quot;</span>: <span class="string">&quot;/&quot;</span>, <span class="string">&quot;value&quot;</span>: <span class="string">&quot;Bye!&quot; </span>},
+            ]))
+            .unwrap()
+        );
+        <span class="kw">let </span><span class="kw-2">mut </span>left_patched = <span class="macro">json!</span>({<span class="string">&quot;title&quot;</span>: <span class="string">&quot;Something&quot;</span>, <span class="string">&quot;&quot;</span>: <span class="string">&quot;Hello!&quot;</span>});
+        <span class="kw">crate</span>::patch(<span class="kw-2">&amp;mut </span>left_patched, <span class="kw-2">&amp;</span>p).unwrap();
+        <span class="macro">assert_eq!</span>(left_patched, right);
     }
 
     <span class="attr">#[test]
@@ -397,7 +419,7 @@
         <span class="macro">assert_eq!</span>(
             p,
             serde_json::from_value(<span class="macro">json!</span>([
-                { <span class="string">&quot;op&quot;</span>: <span class="string">&quot;replace&quot;</span>, <span class="string">&quot;path&quot;</span>: <span class="string">&quot;/&quot;</span>, <span class="string">&quot;value&quot;</span>: { <span class="string">&quot;title&quot;</span>: <span class="string">&quot;Hello!&quot; </span>} },
+                { <span class="string">&quot;op&quot;</span>: <span class="string">&quot;replace&quot;</span>, <span class="string">&quot;path&quot;</span>: <span class="string">&quot;&quot;</span>, <span class="string">&quot;value&quot;</span>: { <span class="string">&quot;title&quot;</span>: <span class="string">&quot;Hello!&quot; </span>} },
             ]))
             .unwrap()
         );
@@ -451,14 +473,12 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>escape_json_keys() {
         <span class="kw">let </span><span class="kw-2">mut </span>left = <span class="macro">json!</span>({
-            <span class="string">&quot;/slashed/path&quot;</span>: <span class="number">1
+            <span class="string">&quot;/slashed/path/with/~&quot;</span>: <span class="number">1
         </span>});
         <span class="kw">let </span>right = <span class="macro">json!</span>({
-            <span class="string">&quot;/slashed/path&quot;</span>: <span class="number">2</span>,
+            <span class="string">&quot;/slashed/path/with/~&quot;</span>: <span class="number">2</span>,
         });
         <span class="kw">let </span>patch = <span class="kw">super</span>::diff(<span class="kw-2">&amp;</span>left, <span class="kw-2">&amp;</span>right);
-
-        <span class="macro">eprintln!</span>(<span class="string">&quot;{:?}&quot;</span>, patch);
 
         <span class="kw">crate</span>::patch(<span class="kw-2">&amp;mut </span>left, <span class="kw-2">&amp;</span>patch).unwrap();
         <span class="macro">assert_eq!</span>(left, right);

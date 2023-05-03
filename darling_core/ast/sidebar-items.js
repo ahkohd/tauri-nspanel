@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Data","GenericParam","Style"],"struct":["Fields","Generics"],"trait":["GenericParamExt"]};
+window.SIDEBAR_ITEMS = {"enum":["Data","GenericParam","NestedMeta","Style"],"struct":["Fields","Generics"],"trait":["GenericParamExt"]};

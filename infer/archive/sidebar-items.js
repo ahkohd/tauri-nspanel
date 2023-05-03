@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["is_7z","is_ar","is_bz2","is_cab","is_crx","is_dcm","is_deb","is_eot","is_epub","is_gz","is_lz","is_msi","is_nes","is_pdf","is_ps","is_rar","is_rpm","is_rtf","is_sqlite","is_swf","is_tar","is_xz","is_z","is_zip","is_zst"]};
+window.SIDEBAR_ITEMS = {"fn":["is_7z","is_ar","is_bz2","is_cab","is_cpio","is_crx","is_dcm","is_deb","is_eot","is_epub","is_gz","is_lz","is_msi","is_nes","is_pdf","is_ps","is_rar","is_rpm","is_rtf","is_sqlite","is_swf","is_tar","is_xz","is_z","is_zip","is_zst"]};

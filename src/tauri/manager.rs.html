@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/tauri-1.2.4/src/manager.rs`."><title>manager.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../static.files/ayu-be46fdc453a55015.css"><script src="../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../tauri/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/tauri-1.3.0/src/manager.rs`."><title>manager.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../static.files/ayu-be46fdc453a55015.css"><script src="../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../tauri/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1513,7 +1513,33 @@
 <a href="#1513" id="1513">1513</a>
 <a href="#1514" id="1514">1514</a>
 <a href="#1515" id="1515">1515</a>
-</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 Tauri Programme within The Commons Conservancy
+<a href="#1516" id="1516">1516</a>
+<a href="#1517" id="1517">1517</a>
+<a href="#1518" id="1518">1518</a>
+<a href="#1519" id="1519">1519</a>
+<a href="#1520" id="1520">1520</a>
+<a href="#1521" id="1521">1521</a>
+<a href="#1522" id="1522">1522</a>
+<a href="#1523" id="1523">1523</a>
+<a href="#1524" id="1524">1524</a>
+<a href="#1525" id="1525">1525</a>
+<a href="#1526" id="1526">1526</a>
+<a href="#1527" id="1527">1527</a>
+<a href="#1528" id="1528">1528</a>
+<a href="#1529" id="1529">1529</a>
+<a href="#1530" id="1530">1530</a>
+<a href="#1531" id="1531">1531</a>
+<a href="#1532" id="1532">1532</a>
+<a href="#1533" id="1533">1533</a>
+<a href="#1534" id="1534">1534</a>
+<a href="#1535" id="1535">1535</a>
+<a href="#1536" id="1536">1536</a>
+<a href="#1537" id="1537">1537</a>
+<a href="#1538" id="1538">1538</a>
+<a href="#1539" id="1539">1539</a>
+<a href="#1540" id="1540">1540</a>
+<a href="#1541" id="1541">1541</a>
+</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2023 Tauri Programme within The Commons Conservancy
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-License-Identifier: MIT
 
@@ -1543,7 +1569,7 @@
 <span class="kw">use </span><span class="kw">crate</span>::hooks::IpcJavascript;
 <span class="attr">#[cfg(feature = <span class="string">&quot;isolation&quot;</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::hooks::IsolationJavascript;
-<span class="kw">use </span><span class="kw">crate</span>::pattern::{format_real_schema, PatternJavascript};
+<span class="kw">use </span><span class="kw">crate</span>::pattern::PatternJavascript;
 <span class="kw">use crate</span>::{
   app::{AppHandle, GlobalWindowEvent, GlobalWindowEventListener},
   event::{assert_event_name_is_valid, Event, EventHandler, Listeners},
@@ -1587,6 +1613,9 @@
 <span class="kw">const </span>WINDOW_FILE_DROP_HOVER_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">&quot;tauri://file-drop-hover&quot;</span>;
 <span class="kw">const </span>WINDOW_FILE_DROP_CANCELLED_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">&quot;tauri://file-drop-cancelled&quot;</span>;
 <span class="kw">const </span>MENU_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">&quot;tauri://menu&quot;</span>;
+
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>STRINGIFY_IPC_MESSAGE_FN: <span class="kw-2">&amp;</span>str =
+  <span class="macro">include_str!</span>(<span class="string">&quot;../scripts/stringify-ipc-message-fn.js&quot;</span>);
 
 <span class="attr">#[derive(Default)]
 </span><span class="doccomment">/// Spaced and quoted Content-Security-Policy hash values.
@@ -1654,7 +1683,7 @@
     <span class="kw">let </span>default_src = csp
       .entry(<span class="string">&quot;default-src&quot;</span>.into())
       .or_insert_with(Default::default);
-    default_src.push(format_real_schema(schema));
+    default_src.push(<span class="kw">crate</span>::pattern::format_real_schema(schema));
   }
 
   Csp::DirectiveMap(csp).to_string()
@@ -1699,7 +1728,7 @@
   <span class="kw">if </span>!(nonces.is_empty() &amp;&amp; hashes.is_empty()) {
     <span class="kw">let </span>nonce_sources = nonces
       .into_iter()
-      .map(|n| <span class="macro">format!</span>(<span class="string">&quot;&#39;nonce-{}&#39;&quot;</span>, n))
+      .map(|n| <span class="macro">format!</span>(<span class="string">&quot;&#39;nonce-{n}&#39;&quot;</span>))
       .collect::&lt;Vec&lt;String&gt;&gt;();
     <span class="kw">let </span>sources = csp.entry(directive.into()).or_insert_with(Default::default);
     <span class="kw">let </span>self_source = <span class="string">&quot;&#39;self&#39;&quot;</span>.to_string();
@@ -1746,7 +1775,7 @@
   <span class="doccomment">/// The script that initializes the invoke system.
   </span>invoke_initialization_script: String,
   <span class="doccomment">/// Application pattern.
-  </span>pattern: Pattern,
+  </span><span class="kw">pub</span>(<span class="kw">crate</span>) pattern: Pattern,
 }
 
 <span class="kw">impl</span>&lt;R: Runtime&gt; fmt::Debug <span class="kw">for </span>InnerWindowManager&lt;R&gt; {
@@ -1882,18 +1911,13 @@
   <span class="doccomment">/// Get the base URL to use for webview requests.
   ///
   /// In dev mode, this will be based on the `devPath` configuration value.
-  </span><span class="kw">fn </span>get_url(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Cow&lt;<span class="lifetime">&#39;_</span>, Url&gt; {
+  </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_url(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Cow&lt;<span class="lifetime">&#39;_</span>, Url&gt; {
     <span class="kw">match </span><span class="self">self</span>.base_path() {
       AppUrl::Url(WindowUrl::External(url)) =&gt; Cow::Borrowed(url),
-      <span class="kw">_ </span>=&gt; Cow::Owned(Url::parse(<span class="string">&quot;tauri://localhost&quot;</span>).unwrap()),
-    }
-  }
-
-  <span class="doccomment">/// Get the origin as it will be seen in the webview.
-  </span><span class="kw">fn </span>get_browser_origin(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
-    <span class="kw">match </span><span class="self">self</span>.base_path() {
-      AppUrl::Url(WindowUrl::External(url)) =&gt; url.origin().ascii_serialization(),
-      <span class="kw">_ </span>=&gt; format_real_schema(<span class="string">&quot;tauri&quot;</span>),
+      <span class="attr">#[cfg(windows)]
+      </span><span class="kw">_ </span>=&gt; Cow::Owned(Url::parse(<span class="string">&quot;https://tauri.localhost&quot;</span>).unwrap()),
+      <span class="attr">#[cfg(not(windows))]
+      </span><span class="kw">_ </span>=&gt; Cow::Owned(Url::parse(<span class="string">&quot;tauri://localhost&quot;</span>).unwrap()),
     }
   }
 
@@ -1970,7 +1994,6 @@
     </span><span class="kw">if let </span>Pattern::Isolation { schema, .. } = <span class="self">self</span>.pattern() {
       webview_attributes = webview_attributes.initialization_script(
         <span class="kw-2">&amp;</span>IsolationJavascript {
-          origin: <span class="self">self</span>.get_browser_origin(),
           isolation_src: <span class="kw-2">&amp;</span><span class="kw">crate</span>::pattern::format_real_schema(schema),
           style: tauri_utils::pattern::isolation::IFRAME_STYLE,
         }
@@ -1992,7 +2015,7 @@
       });
     }
 
-    <span class="kw">let </span>window_url = Url::parse(<span class="kw-2">&amp;</span>pending.url).unwrap();
+    <span class="kw">let </span>window_url = pending.current_url.lock().unwrap().clone();
     <span class="kw">let </span>window_origin =
       <span class="kw">if </span><span class="macro">cfg!</span>(windows) &amp;&amp; window_url.scheme() != <span class="string">&quot;http&quot; </span>&amp;&amp; window_url.scheme() != <span class="string">&quot;https&quot; </span>{
         <span class="macro">format!</span>(<span class="string">&quot;https://{}.localhost&quot;</span>, window_url.scheme())
@@ -2002,7 +2025,7 @@
           window_url.scheme(),
           window_url.host().unwrap(),
           <span class="kw">if let </span><span class="prelude-val">Some</span>(port) = window_url.port() {
-            <span class="macro">format!</span>(<span class="string">&quot;:{}&quot;</span>, port)
+            <span class="macro">format!</span>(<span class="string">&quot;:{port}&quot;</span>)
           } <span class="kw">else </span>{
             <span class="string">&quot;&quot;</span>.into()
           }
@@ -2133,7 +2156,7 @@
                 .insert(<span class="string">&quot;Content-Length&quot;</span>, real_length.to_string());
               data.headers.insert(
                 <span class="string">&quot;Content-Range&quot;</span>,
-                <span class="macro">format!</span>(<span class="string">&quot;bytes {}-{}/{}&quot;</span>, range.start, last_byte, file_size),
+                <span class="macro">format!</span>(<span class="string">&quot;bytes {}-{last_byte}/{file_size}&quot;</span>, range.start),
               );
 
               <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = file.seek(std::io::SeekFrom::Start(range.start)).<span class="kw">await </span>{
@@ -2229,7 +2252,7 @@
     {
       <span class="kw">let </span>assets = assets.clone();
       <span class="kw">let </span>schema_ = schema.clone();
-      <span class="kw">let </span>url_base = <span class="macro">format!</span>(<span class="string">&quot;{}://localhost&quot;</span>, schema_);
+      <span class="kw">let </span>url_base = <span class="macro">format!</span>(<span class="string">&quot;{schema_}://localhost&quot;</span>);
       <span class="kw">let </span>aes_gcm_key = <span class="kw-2">*</span>crypto_keys.aes_gcm().raw();
 
       pending.register_uri_scheme_protocol(schema, <span class="kw">move </span>|request| {
@@ -2239,6 +2262,7 @@
               <span class="kw">let </span>asset = String::from_utf8_lossy(asset.as_ref());
               <span class="kw">let </span>template = tauri_utils::pattern::isolation::IsolationJavascriptRuntime {
                 runtime_aes_gcm_key: <span class="kw-2">&amp;</span>aes_gcm_key,
+                stringify_ipc_message_fn: STRINGIFY_IPC_MESSAGE_FN,
               };
               <span class="kw">match </span>template.render(asset.as_ref(), <span class="kw-2">&amp;</span>Default::default()) {
                 <span class="prelude-val">Ok</span>(asset) =&gt; HttpResponseBuilder::new()
@@ -2328,7 +2352,7 @@
     <span class="kw">let </span>asset_response = assets
       .get(<span class="kw-2">&amp;</span>path.as_str().into())
       .or_else(|| {
-        <span class="macro">eprintln!</span>(<span class="string">&quot;Asset `{}` not found; fallback to {}.html&quot;</span>, path, path);
+        <span class="macro">eprintln!</span>(<span class="string">&quot;Asset `{path}` not found; fallback to {path}.html&quot;</span>);
         <span class="kw">let </span>fallback = <span class="macro">format!</span>(<span class="string">&quot;{}.html&quot;</span>, path.as_str()).into();
         <span class="kw">let </span>asset = assets.get(<span class="kw-2">&amp;</span>fallback);
         asset_path = fallback;
@@ -2454,7 +2478,6 @@
     <span class="attr">#[derive(Template)]
     #[default_template(<span class="string">&quot;../scripts/init.js&quot;</span>)]
     </span><span class="kw">struct </span>InitJavascript&lt;<span class="lifetime">&#39;a</span>&gt; {
-      origin: String,
       <span class="attr">#[raw]
       </span>pattern_script: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str,
       <span class="attr">#[raw]
@@ -2517,7 +2540,6 @@
     </span><span class="kw">let </span>hotkeys = <span class="string">&quot;&quot;</span>;
 
     InitJavascript {
-      origin: <span class="self">self</span>.get_browser_origin(),
       pattern_script,
       ipc_script,
       bundle_script,
@@ -2587,7 +2609,16 @@
     );
 
     <span class="attr">#[cfg(custom_protocol)]
-    </span><span class="macro">assert_eq!</span>(manager.get_url().to_string(), <span class="string">&quot;tauri://localhost&quot;</span>);
+    </span>{
+      <span class="macro">assert_eq!</span>(
+        manager.get_url().to_string(),
+        <span class="kw">if </span><span class="macro">cfg!</span>(windows) {
+          <span class="string">&quot;https://tauri.localhost/&quot;
+        </span>} <span class="kw">else </span>{
+          <span class="string">&quot;tauri://localhost&quot;
+        </span>}
+      );
+    }
 
     <span class="attr">#[cfg(dev)]
     </span><span class="macro">assert_eq!</span>(manager.get_url().to_string(), <span class="string">&quot;http://localhost:4000/&quot;</span>);
@@ -2638,27 +2669,21 @@
       <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::WindowLabelAlreadyExists(pending.label));
     }
     <span class="attr">#[allow(unused_mut)] </span><span class="comment">// mut url only for the data-url parsing
-    </span><span class="kw">let </span>(is_local, <span class="kw-2">mut </span>url) = <span class="kw">match </span><span class="kw-2">&amp;</span>pending.webview_attributes.url {
+    </span><span class="kw">let </span><span class="kw-2">mut </span>url = <span class="kw">match </span><span class="kw-2">&amp;</span>pending.webview_attributes.url {
       WindowUrl::App(path) =&gt; {
         <span class="kw">let </span>url = <span class="self">self</span>.get_url();
-        (
-          <span class="bool-val">true</span>,
-          <span class="comment">// ignore &quot;index.html&quot; just to simplify the url
-          </span><span class="kw">if </span>path.to_str() != <span class="prelude-val">Some</span>(<span class="string">&quot;index.html&quot;</span>) {
-            url
-              .join(<span class="kw-2">&amp;</span>path.to_string_lossy())
-              .map_err(<span class="kw">crate</span>::Error::InvalidUrl)
-              <span class="comment">// this will never fail
-              </span>.unwrap()
-          } <span class="kw">else </span>{
-            url.into_owned()
-          },
-        )
+        <span class="comment">// ignore &quot;index.html&quot; just to simplify the url
+        </span><span class="kw">if </span>path.to_str() != <span class="prelude-val">Some</span>(<span class="string">&quot;index.html&quot;</span>) {
+          url
+            .join(<span class="kw-2">&amp;</span>path.to_string_lossy())
+            .map_err(<span class="kw">crate</span>::Error::InvalidUrl)
+            <span class="comment">// this will never fail
+            </span>.unwrap()
+        } <span class="kw">else </span>{
+          url.into_owned()
+        }
       }
-      WindowUrl::External(url) =&gt; {
-        <span class="kw">let </span>config_url = <span class="self">self</span>.get_url();
-        (config_url.make_relative(url).is_some(), url.clone())
-      }
+      WindowUrl::External(url) =&gt; url.clone(),
       <span class="kw">_ </span>=&gt; <span class="macro">unimplemented!</span>(),
     };
 
@@ -2685,7 +2710,7 @@
       }
     }
 
-    pending.url = url.to_string();
+    <span class="kw-2">*</span>pending.current_url.lock().unwrap() = url;
 
     <span class="kw">if </span>!pending.window_builder.has_icon() {
       <span class="kw">if let </span><span class="prelude-val">Some</span>(default_window_icon) = <span class="self">self</span>.inner.default_window_icon.clone() {
@@ -2701,17 +2726,15 @@
       }
     }
 
-    <span class="kw">if </span>is_local {
-      <span class="kw">let </span>label = pending.label.clone();
-      pending = <span class="self">self</span>.prepare_pending_window(
-        pending,
-        <span class="kw-2">&amp;</span>label,
-        window_labels,
-        app_handle.clone(),
-        web_resource_request_handler,
-      )<span class="question-mark">?</span>;
-      pending.ipc_handler = <span class="prelude-val">Some</span>(<span class="self">self</span>.prepare_ipc_handler(app_handle));
-    }
+    <span class="kw">let </span>label = pending.label.clone();
+    pending = <span class="self">self</span>.prepare_pending_window(
+      pending,
+      <span class="kw-2">&amp;</span>label,
+      window_labels,
+      app_handle.clone(),
+      web_resource_request_handler,
+    )<span class="question-mark">?</span>;
+    pending.ipc_handler = <span class="prelude-val">Some</span>(<span class="self">self</span>.prepare_ipc_handler(app_handle));
 
     <span class="comment">// in `Windows`, we need to force a data_directory
     // but we do respect user-specification
@@ -2735,6 +2758,28 @@
         create_dir_all(user_data_dir)<span class="question-mark">?</span>;
       }
     }
+
+    <span class="attr">#[cfg(feature = <span class="string">&quot;isolation&quot;</span>)]
+    </span><span class="kw">let </span>pattern = <span class="self">self</span>.pattern().clone();
+    <span class="kw">let </span>current_url_ = pending.current_url.clone();
+    <span class="kw">let </span>navigation_handler = pending.navigation_handler.take();
+    pending.navigation_handler = <span class="prelude-val">Some</span>(Box::new(<span class="kw">move </span>|url| {
+      <span class="comment">// always allow navigation events for the isolation iframe and do not emit them for consumers
+      </span><span class="attr">#[cfg(feature = <span class="string">&quot;isolation&quot;</span>)]
+      </span><span class="kw">if let </span>Pattern::Isolation { schema, .. } = <span class="kw-2">&amp;</span>pattern {
+        <span class="kw">if </span>url.scheme() == schema
+          &amp;&amp; url.domain() == <span class="prelude-val">Some</span>(<span class="kw">crate</span>::pattern::ISOLATION_IFRAME_SRC_DOMAIN)
+        {
+          <span class="kw">return </span><span class="bool-val">true</span>;
+        }
+      }
+      <span class="kw-2">*</span>current_url_.lock().unwrap() = url.clone();
+      <span class="kw">if let </span><span class="prelude-val">Some</span>(handler) = <span class="kw-2">&amp;</span>navigation_handler {
+        handler(url)
+      } <span class="kw">else </span>{
+        <span class="bool-val">true
+      </span>}
+    }));
 
     <span class="prelude-val">Ok</span>(pending)
   }
@@ -2815,6 +2860,14 @@
       .values()
       .filter(|<span class="kw-2">&amp;</span>w| filter(w))
       .try_for_each(|window| window.emit_internal(event, source_window_label, payload.clone()))
+  }
+
+  <span class="kw">pub fn </span>eval_script_all&lt;S: Into&lt;String&gt;&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, script: S) -&gt; <span class="kw">crate</span>::Result&lt;()&gt; {
+    <span class="kw">let </span>script = script.into();
+    <span class="self">self
+      </span>.windows_lock()
+      .values()
+      .try_for_each(|window| window.eval(<span class="kw-2">&amp;</span>script))
   }
 
   <span class="kw">pub fn </span>labels(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; HashSet&lt;String&gt; {
@@ -2923,9 +2976,8 @@
       <span class="kw">let </span>windows = windows_map.values();
       <span class="kw">for </span>window <span class="kw">in </span>windows {
         window.eval(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
-          <span class="string">r#&quot;(function () {{ const metadata = window.__TAURI_METADATA__; if (metadata != null) {{ metadata.__windows = window.__TAURI_METADATA__.__windows.filter(w =&gt; w.label !== &quot;{}&quot;); }} }})()&quot;#</span>,
-          label
-        ))<span class="question-mark">?</span>;
+          <span class="string">r#&quot;(function () {{ const metadata = window.__TAURI_METADATA__; if (metadata != null) {{ metadata.__windows = window.__TAURI_METADATA__.__windows.filter(w =&gt; w.label !== &quot;{label}&quot;); }} }})()&quot;#
+        </span>))<span class="question-mark">?</span>;
       }
     }
     WindowEvent::Focused(focused) =&gt; window.emit(

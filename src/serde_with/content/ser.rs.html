@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_with-1.14.0/src/content/ser.rs`."><title>ser.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-be46fdc453a55015.css"><script src="../../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../serde_with/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_with-2.3.3/src/content/ser.rs`."><title>ser.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-be46fdc453a55015.css"><script src="../../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../serde_with/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -621,6 +621,7 @@
 <a href="#621" id="621">621</a>
 <a href="#622" id="622">622</a>
 <a href="#623" id="623">623</a>
+<a href="#624" id="624">624</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Buffer for serializing data.
 //!
 //! This is a copy and improvement of the `serde` private type:
@@ -634,12 +635,9 @@
 //! The types support 128-bit integers, which is supported for all targets in Rust 1.40+.
 //! The [`ContentSerializer`] can also be configured to human readable or compact representation.
 
-</span><span class="kw">use </span>alloc::{borrow::ToOwned, boxed::Box, string::String, vec::Vec};
-<span class="kw">use </span>core::marker::PhantomData;
-<span class="kw">use </span>serde::ser::{<span class="self">self</span>, Serialize, Serializer};
+</span><span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 
-<span class="attr">#[derive(Debug)]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">enum </span>Content {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">enum </span>Content {
     Bool(bool),
 
     U8(u8),
@@ -684,6 +682,16 @@
     ),
 }
 
+<span class="kw">impl </span>Content {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>as_str(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt; {
+        <span class="kw">match </span><span class="self">self </span>{
+            <span class="self">Self</span>::String(<span class="kw-2">ref </span>x) =&gt; <span class="prelude-val">Some</span>(x),
+            <span class="self">Self</span>::Bytes(x) =&gt; core::str::from_utf8(x).ok(),
+            <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+        }
+    }
+}
+
 <span class="kw">impl </span>Serialize <span class="kw">for </span>Content {
     <span class="kw">fn </span>serialize&lt;S&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, serializer: S) -&gt; <span class="prelude-ty">Result</span>&lt;S::Ok, S::Error&gt;
     <span class="kw">where
@@ -717,7 +725,6 @@
             }
             Content::Seq(<span class="kw-2">ref </span>elements) =&gt; elements.serialize(serializer),
             Content::Tuple(<span class="kw-2">ref </span>elements) =&gt; {
-                <span class="kw">use </span>serde::ser::SerializeTuple;
                 <span class="kw">let </span><span class="kw-2">mut </span>tuple = serializer.serialize_tuple(elements.len())<span class="question-mark">?</span>;
                 <span class="kw">for </span>e <span class="kw">in </span>elements {
                     tuple.serialize_element(e)<span class="question-mark">?</span>;
@@ -725,7 +732,6 @@
                 tuple.end()
             }
             Content::TupleStruct(n, <span class="kw-2">ref </span>fields) =&gt; {
-                <span class="kw">use </span>serde::ser::SerializeTupleStruct;
                 <span class="kw">let </span><span class="kw-2">mut </span>ts = serializer.serialize_tuple_struct(n, fields.len())<span class="question-mark">?</span>;
                 <span class="kw">for </span>f <span class="kw">in </span>fields {
                     ts.serialize_field(f)<span class="question-mark">?</span>;
@@ -733,7 +739,6 @@
                 ts.end()
             }
             Content::TupleVariant(n, i, v, <span class="kw-2">ref </span>fields) =&gt; {
-                <span class="kw">use </span>serde::ser::SerializeTupleVariant;
                 <span class="kw">let </span><span class="kw-2">mut </span>tv = serializer.serialize_tuple_variant(n, i, v, fields.len())<span class="question-mark">?</span>;
                 <span class="kw">for </span>f <span class="kw">in </span>fields {
                     tv.serialize_field(f)<span class="question-mark">?</span>;
@@ -741,25 +746,22 @@
                 tv.end()
             }
             Content::Map(<span class="kw-2">ref </span>entries) =&gt; {
-                <span class="kw">use </span>serde::ser::SerializeMap;
                 <span class="kw">let </span><span class="kw-2">mut </span>map = serializer.serialize_map(<span class="prelude-val">Some</span>(entries.len()))<span class="question-mark">?</span>;
-                <span class="kw">for </span><span class="kw-2">&amp;</span>(<span class="kw-2">ref </span>k, <span class="kw-2">ref </span>v) <span class="kw">in </span>entries {
+                <span class="kw">for </span>(k, v) <span class="kw">in </span>entries {
                     map.serialize_entry(k, v)<span class="question-mark">?</span>;
                 }
                 map.end()
             }
             Content::Struct(n, <span class="kw-2">ref </span>fields) =&gt; {
-                <span class="kw">use </span>serde::ser::SerializeStruct;
                 <span class="kw">let </span><span class="kw-2">mut </span>s = serializer.serialize_struct(n, fields.len())<span class="question-mark">?</span>;
-                <span class="kw">for </span><span class="kw-2">&amp;</span>(k, <span class="kw-2">ref </span>v) <span class="kw">in </span>fields {
+                <span class="kw">for </span>(k, v) <span class="kw">in </span>fields {
                     s.serialize_field(k, v)<span class="question-mark">?</span>;
                 }
                 s.end()
             }
             Content::StructVariant(n, i, v, <span class="kw-2">ref </span>fields) =&gt; {
-                <span class="kw">use </span>serde::ser::SerializeStructVariant;
                 <span class="kw">let </span><span class="kw-2">mut </span>sv = serializer.serialize_struct_variant(n, i, v, fields.len())<span class="question-mark">?</span>;
-                <span class="kw">for </span><span class="kw-2">&amp;</span>(k, <span class="kw-2">ref </span>v) <span class="kw">in </span>fields {
+                <span class="kw">for </span>(k, v) <span class="kw">in </span>fields {
                     sv.serialize_field(k, v)<span class="question-mark">?</span>;
                 }
                 sv.end()
@@ -790,18 +792,18 @@
 
 <span class="kw">impl</span>&lt;E&gt; Serializer <span class="kw">for </span>ContentSerializer&lt;E&gt;
 <span class="kw">where
-    </span>E: ser::Error,
+    </span>E: SerError,
 {
     <span class="kw">type </span><span class="prelude-val">Ok </span>= Content;
     <span class="kw">type </span>Error = E;
 
-    <span class="kw">type </span>SerializeSeq = SerializeSeq&lt;E&gt;;
-    <span class="kw">type </span>SerializeTuple = SerializeTuple&lt;E&gt;;
-    <span class="kw">type </span>SerializeTupleStruct = SerializeTupleStruct&lt;E&gt;;
-    <span class="kw">type </span>SerializeTupleVariant = SerializeTupleVariant&lt;E&gt;;
-    <span class="kw">type </span>SerializeMap = SerializeMap&lt;E&gt;;
-    <span class="kw">type </span>SerializeStruct = SerializeStruct&lt;E&gt;;
-    <span class="kw">type </span>SerializeStructVariant = SerializeStructVariant&lt;E&gt;;
+    <span class="kw">type </span>SerializeSeq = SeqSerialize&lt;E&gt;;
+    <span class="kw">type </span>SerializeTuple = TupleSerialize&lt;E&gt;;
+    <span class="kw">type </span>SerializeTupleStruct = TupleStructSerialize&lt;E&gt;;
+    <span class="kw">type </span>SerializeTupleVariant = TupleVariantSerialize&lt;E&gt;;
+    <span class="kw">type </span>SerializeMap = MapSerialize&lt;E&gt;;
+    <span class="kw">type </span>SerializeStruct = StructSerialize&lt;E&gt;;
+    <span class="kw">type </span>SerializeStructVariant = StructVariantSerialize&lt;E&gt;;
 
     <span class="kw">fn </span>is_human_readable(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.is_human_readable
@@ -932,7 +934,7 @@
     }
 
     <span class="kw">fn </span>serialize_seq(<span class="self">self</span>, len: <span class="prelude-ty">Option</span>&lt;usize&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::SerializeSeq, E&gt; {
-        <span class="prelude-val">Ok</span>(SerializeSeq {
+        <span class="prelude-val">Ok</span>(SeqSerialize {
             is_human_readable: <span class="self">self</span>.is_human_readable,
             elements: Vec::with_capacity(len.unwrap_or(<span class="number">0</span>)),
             error: PhantomData,
@@ -940,7 +942,7 @@
     }
 
     <span class="kw">fn </span>serialize_tuple(<span class="self">self</span>, len: usize) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::SerializeTuple, E&gt; {
-        <span class="prelude-val">Ok</span>(SerializeTuple {
+        <span class="prelude-val">Ok</span>(TupleSerialize {
             is_human_readable: <span class="self">self</span>.is_human_readable,
             elements: Vec::with_capacity(len),
             error: PhantomData,
@@ -952,7 +954,7 @@
         name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
         len: usize,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::SerializeTupleStruct, E&gt; {
-        <span class="prelude-val">Ok</span>(SerializeTupleStruct {
+        <span class="prelude-val">Ok</span>(TupleStructSerialize {
             is_human_readable: <span class="self">self</span>.is_human_readable,
             name,
             fields: Vec::with_capacity(len),
@@ -967,7 +969,7 @@
         variant: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
         len: usize,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::SerializeTupleVariant, E&gt; {
-        <span class="prelude-val">Ok</span>(SerializeTupleVariant {
+        <span class="prelude-val">Ok</span>(TupleVariantSerialize {
             is_human_readable: <span class="self">self</span>.is_human_readable,
             name,
             variant_index,
@@ -978,7 +980,7 @@
     }
 
     <span class="kw">fn </span>serialize_map(<span class="self">self</span>, len: <span class="prelude-ty">Option</span>&lt;usize&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::SerializeMap, E&gt; {
-        <span class="prelude-val">Ok</span>(SerializeMap {
+        <span class="prelude-val">Ok</span>(MapSerialize {
             is_human_readable: <span class="self">self</span>.is_human_readable,
             entries: Vec::with_capacity(len.unwrap_or(<span class="number">0</span>)),
             key: <span class="prelude-val">None</span>,
@@ -987,7 +989,7 @@
     }
 
     <span class="kw">fn </span>serialize_struct(<span class="self">self</span>, name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str, len: usize) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::SerializeStruct, E&gt; {
-        <span class="prelude-val">Ok</span>(SerializeStruct {
+        <span class="prelude-val">Ok</span>(StructSerialize {
             is_human_readable: <span class="self">self</span>.is_human_readable,
             name,
             fields: Vec::with_capacity(len),
@@ -1002,7 +1004,7 @@
         variant: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
         len: usize,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::SerializeStructVariant, E&gt; {
-        <span class="prelude-val">Ok</span>(SerializeStructVariant {
+        <span class="prelude-val">Ok</span>(StructVariantSerialize {
             is_human_readable: <span class="self">self</span>.is_human_readable,
             name,
             variant_index,
@@ -1013,15 +1015,15 @@
     }
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>SerializeSeq&lt;E&gt; {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>SeqSerialize&lt;E&gt; {
     is_human_readable: bool,
     elements: Vec&lt;Content&gt;,
     error: PhantomData&lt;E&gt;,
 }
 
-<span class="kw">impl</span>&lt;E&gt; ser::SerializeSeq <span class="kw">for </span>SerializeSeq&lt;E&gt;
+<span class="kw">impl</span>&lt;E&gt; SerializeSeq <span class="kw">for </span>SeqSerialize&lt;E&gt;
 <span class="kw">where
-    </span>E: ser::Error,
+    </span>E: SerError,
 {
     <span class="kw">type </span><span class="prelude-val">Ok </span>= Content;
     <span class="kw">type </span>Error = E;
@@ -1040,15 +1042,15 @@
     }
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>SerializeTuple&lt;E&gt; {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>TupleSerialize&lt;E&gt; {
     is_human_readable: bool,
     elements: Vec&lt;Content&gt;,
     error: PhantomData&lt;E&gt;,
 }
 
-<span class="kw">impl</span>&lt;E&gt; ser::SerializeTuple <span class="kw">for </span>SerializeTuple&lt;E&gt;
+<span class="kw">impl</span>&lt;E&gt; SerializeTuple <span class="kw">for </span>TupleSerialize&lt;E&gt;
 <span class="kw">where
-    </span>E: ser::Error,
+    </span>E: SerError,
 {
     <span class="kw">type </span><span class="prelude-val">Ok </span>= Content;
     <span class="kw">type </span>Error = E;
@@ -1067,16 +1069,16 @@
     }
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>SerializeTupleStruct&lt;E&gt; {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>TupleStructSerialize&lt;E&gt; {
     is_human_readable: bool,
     name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
     fields: Vec&lt;Content&gt;,
     error: PhantomData&lt;E&gt;,
 }
 
-<span class="kw">impl</span>&lt;E&gt; ser::SerializeTupleStruct <span class="kw">for </span>SerializeTupleStruct&lt;E&gt;
+<span class="kw">impl</span>&lt;E&gt; SerializeTupleStruct <span class="kw">for </span>TupleStructSerialize&lt;E&gt;
 <span class="kw">where
-    </span>E: ser::Error,
+    </span>E: SerError,
 {
     <span class="kw">type </span><span class="prelude-val">Ok </span>= Content;
     <span class="kw">type </span>Error = E;
@@ -1095,7 +1097,7 @@
     }
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>SerializeTupleVariant&lt;E&gt; {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>TupleVariantSerialize&lt;E&gt; {
     is_human_readable: bool,
     name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
     variant_index: u32,
@@ -1104,9 +1106,9 @@
     error: PhantomData&lt;E&gt;,
 }
 
-<span class="kw">impl</span>&lt;E&gt; ser::SerializeTupleVariant <span class="kw">for </span>SerializeTupleVariant&lt;E&gt;
+<span class="kw">impl</span>&lt;E&gt; SerializeTupleVariant <span class="kw">for </span>TupleVariantSerialize&lt;E&gt;
 <span class="kw">where
-    </span>E: ser::Error,
+    </span>E: SerError,
 {
     <span class="kw">type </span><span class="prelude-val">Ok </span>= Content;
     <span class="kw">type </span>Error = E;
@@ -1130,16 +1132,16 @@
     }
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>SerializeMap&lt;E&gt; {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>MapSerialize&lt;E&gt; {
     is_human_readable: bool,
     entries: Vec&lt;(Content, Content)&gt;,
     key: <span class="prelude-ty">Option</span>&lt;Content&gt;,
     error: PhantomData&lt;E&gt;,
 }
 
-<span class="kw">impl</span>&lt;E&gt; ser::SerializeMap <span class="kw">for </span>SerializeMap&lt;E&gt;
+<span class="kw">impl</span>&lt;E&gt; SerializeMap <span class="kw">for </span>MapSerialize&lt;E&gt;
 <span class="kw">where
-    </span>E: ser::Error,
+    </span>E: SerError,
 {
     <span class="kw">type </span><span class="prelude-val">Ok </span>= Content;
     <span class="kw">type </span>Error = E;
@@ -1182,16 +1184,16 @@
     }
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>SerializeStruct&lt;E&gt; {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>StructSerialize&lt;E&gt; {
     is_human_readable: bool,
     name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
     fields: Vec&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str, Content)&gt;,
     error: PhantomData&lt;E&gt;,
 }
 
-<span class="kw">impl</span>&lt;E&gt; ser::SerializeStruct <span class="kw">for </span>SerializeStruct&lt;E&gt;
+<span class="kw">impl</span>&lt;E&gt; SerializeStruct <span class="kw">for </span>StructSerialize&lt;E&gt;
 <span class="kw">where
-    </span>E: ser::Error,
+    </span>E: SerError,
 {
     <span class="kw">type </span><span class="prelude-val">Ok </span>= Content;
     <span class="kw">type </span>Error = E;
@@ -1210,7 +1212,7 @@
     }
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>SerializeStructVariant&lt;E&gt; {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>StructVariantSerialize&lt;E&gt; {
     is_human_readable: bool,
     name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
     variant_index: u32,
@@ -1219,9 +1221,9 @@
     error: PhantomData&lt;E&gt;,
 }
 
-<span class="kw">impl</span>&lt;E&gt; ser::SerializeStructVariant <span class="kw">for </span>SerializeStructVariant&lt;E&gt;
+<span class="kw">impl</span>&lt;E&gt; SerializeStructVariant <span class="kw">for </span>StructVariantSerialize&lt;E&gt;
 <span class="kw">where
-    </span>E: ser::Error,
+    </span>E: SerError,
 {
     <span class="kw">type </span><span class="prelude-val">Ok </span>= Content;
     <span class="kw">type </span>Error = E;

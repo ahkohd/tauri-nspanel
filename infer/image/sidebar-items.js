@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["is_avif","is_bmp","is_cr2","is_gif","is_heif","is_ico","is_jpeg","is_jpeg2000","is_jxr","is_png","is_psd","is_tiff","is_webp"]};
+window.SIDEBAR_ITEMS = {"fn":["is_avif","is_bmp","is_cr2","is_gif","is_heif","is_ico","is_jpeg","is_jpeg2000","is_jxl","is_jxr","is_ora","is_png","is_psd","is_tiff","is_webp"]};

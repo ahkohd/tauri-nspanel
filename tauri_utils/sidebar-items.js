@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Error","Theme","TitleBarStyle"],"macro":["consume_unused_variable","debug_eprintln"],"mod":["assets","config","html","io","mime_type","pattern","platform","resources"],"struct":["Env","PackageInfo"],"type":["Result"]};
+window.SIDEBAR_ITEMS = {"enum":["Error","Theme","TitleBarStyle"],"fn":["display_path"],"macro":["consume_unused_variable","debug_eprintln"],"mod":["assets","config","html","io","mime_type","pattern","platform","resources"],"struct":["Env","PackageInfo"],"type":["Result"]};

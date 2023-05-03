@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["is_coff","is_coff_i386","is_coff_ia64","is_coff_x64","is_der","is_dex","is_dey","is_dll","is_elf","is_exe","is_java","is_llvm","is_mach","is_wasm"]};
+window.SIDEBAR_ITEMS = {"fn":["is_coff","is_coff_i386","is_coff_ia64","is_coff_x64","is_der","is_dex","is_dey","is_dll","is_elf","is_exe","is_java","is_llvm","is_mach","is_pem","is_wasm"]};
