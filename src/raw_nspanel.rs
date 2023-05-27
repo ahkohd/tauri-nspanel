@@ -138,6 +138,10 @@ impl RawNSPanel {
         let _: () = unsafe { msg_send![self, setLevel: level] };
     }
 
+    pub fn set_content_size(&self, width: f64, height: f64) {
+        let _: () = unsafe { msg_send![self, setContentSize: (width, height)] };
+    }
+
     pub fn set_style_mask(&self, style_mask: i32) {
         let _: () = unsafe { msg_send![self, setStyleMask: style_mask] };
     }
