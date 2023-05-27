@@ -172,7 +172,7 @@ var sourcesIndex = JSON.parse('{\
 "utf8":["",[],["lib.rs","lossy.rs","read.rs"]],\
 "uuid":["",[],["builder.rs","error.rs","external.rs","fmt.rs","lib.rs","macros.rs","parser.rs","rng.rs","timestamp.rs","v4.rs"]],\
 "walkdir":["",[],["dent.rs","error.rs","lib.rs","util.rs"]],\
-"wry":["",[["webview",[["wkwebview",[],["download.rs","file_drop.rs","mod.rs","web_context.rs"]]],["mod.rs","web_context.rs"]]],["application.rs","lib.rs"]],\
+"wry":["",[["webview",[["wkwebview",[],["download.rs","file_drop.rs","mod.rs"]]],["mod.rs","web_context.rs"]]],["application.rs","lib.rs"]],\
 "xattr":["",[["sys",[["linux_macos",[],["macos.rs","mod.rs"]]],["mod.rs"]]],["error.rs","lib.rs","util.rs"]]\
 }');
 createSourceSidebar();

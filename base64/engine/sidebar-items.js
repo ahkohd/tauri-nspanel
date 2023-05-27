@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["DecodePaddingMode"],"mod":["general_purpose"],"trait":["Config","DecodeEstimate","Engine"]};
+window.SIDEBAR_ITEMS = {"enum":["DecodePaddingMode"],"mod":["general_purpose"],"struct":["DecodeMetadata"],"trait":["Config","DecodeEstimate","Engine"]};
