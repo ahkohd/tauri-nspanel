@@ -110,6 +110,10 @@ impl RawNSPanel {
         let _: () = unsafe { msg_send![self, makeKeyWindow] };
     }
 
+    pub fn make_key_and_order_front(&self, sender: Option<id>) {
+        let _: () = unsafe { msg_send![self, makeKeyAndOrderFront: sender.unwrap_or(nil)] };
+    }
+
     pub fn order_front_regardless(&self) {
         let _: () = unsafe { msg_send![self, orderFrontRegardless] };
     }
