@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rustix-0.37.19/src/backend/libc/process/syscalls.rs`."><title>syscalls.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../../../../static.files/ayu-be46fdc453a55015.css"><script src="../../../../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../rustix/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rustix-0.37.20/src/backend/libc/process/syscalls.rs`."><title>syscalls.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-ba5701c5741a7b69.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="rustix" data-themes="" data-resource-suffix="" data-rustdoc-version="1.70.0 (90c541806 2023-05-31)" data-search-js="search-e077946657036a58.js" data-settings-js="settings-298e1ea74db45b39.js" data-settings-css="settings-7bfb4c59cc6bc502.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../../../static.files/source-script-905937fbbdc8e9ea.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-f61008743c98d196.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../rustix/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -637,35 +637,17 @@
 <a href="#637" id="637">637</a>
 <a href="#638" id="638">638</a>
 <a href="#639" id="639">639</a>
-<a href="#640" id="640">640</a>
-<a href="#641" id="641">641</a>
-<a href="#642" id="642">642</a>
-<a href="#643" id="643">643</a>
-<a href="#644" id="644">644</a>
-<a href="#645" id="645">645</a>
-<a href="#646" id="646">646</a>
-<a href="#647" id="647">647</a>
-<a href="#648" id="648">648</a>
-<a href="#649" id="649">649</a>
-<a href="#650" id="650">650</a>
-</pre><pre class="rust"><code><span class="doccomment">//! libc syscalls supporting `rustix::process`.
+</pre></div><pre class="rust"><code><span class="doccomment">//! libc syscalls supporting `rustix::process`.
 
 </span><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::c;
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;wasi&quot;</span>, target_os = <span class="string">&quot;fuchsia&quot;</span>)))]
-</span><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::conv::borrowed_fd;
-<span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::conv::{c_str, ret, ret_c_int, ret_discarded_char_ptr};
 <span class="attr">#[cfg(not(target_os = <span class="string">&quot;wasi&quot;</span>))]
-</span><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::conv::{ret_infallible, ret_pid_t, ret_usize};
-<span class="attr">#[cfg(any(target_os = <span class="string">&quot;android&quot;</span>, target_os = <span class="string">&quot;linux&quot;</span>))]
+</span><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::conv::{borrowed_fd, ret_infallible, ret_pid_t, ret_usize};
+<span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::conv::{c_str, ret, ret_c_int, ret_discarded_char_ptr};
+<span class="attr">#[cfg(linux_kernel)]
 </span><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::conv::{syscall_ret, syscall_ret_u32};
-<span class="attr">#[cfg(any(
-    target_os = <span class="string">&quot;android&quot;</span>,
-    target_os = <span class="string">&quot;dragonfly&quot;</span>,
-    target_os = <span class="string">&quot;fuchsia&quot;</span>,
-    target_os = <span class="string">&quot;linux&quot;</span>,
-))]
+<span class="attr">#[cfg(any(linux_kernel, target_os = <span class="string">&quot;dragonfly&quot;</span>, target_os = <span class="string">&quot;fuchsia&quot;</span>))]
 </span><span class="kw">use </span><span class="kw">super</span>::types::RawCpuSet;
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;wasi&quot;</span>, target_os = <span class="string">&quot;fuchsia&quot;</span>)))]
+<span class="attr">#[cfg(not(target_os = <span class="string">&quot;wasi&quot;</span>))]
 </span><span class="kw">use </span><span class="kw">crate</span>::fd::BorrowedFd;
 <span class="attr">#[cfg(target_os = <span class="string">&quot;linux&quot;</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::fd::{AsRawFd, OwnedFd};
@@ -673,14 +655,14 @@
 <span class="attr">#[cfg(feature = <span class="string">&quot;fs&quot;</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::fs::Mode;
 <span class="kw">use </span><span class="kw">crate</span>::io;
-<span class="attr">#[cfg(any(target_os = <span class="string">&quot;android&quot;</span>, target_os = <span class="string">&quot;linux&quot;</span>))]
+<span class="attr">#[cfg(linux_kernel)]
 </span><span class="kw">use </span><span class="kw">crate</span>::process::Sysinfo;
 <span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;wasi&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;openbsd&quot;</span>)))]
 </span><span class="kw">use </span><span class="kw">crate</span>::process::{WaitId, WaitidOptions, WaitidStatus};
 <span class="kw">use </span>core::mem::MaybeUninit;
 <span class="attr">#[cfg(target_os = <span class="string">&quot;linux&quot;</span>)]
 </span><span class="kw">use </span>{<span class="kw">super</span>::<span class="kw">super</span>::conv::syscall_ret_owned_fd, <span class="kw">crate</span>::process::PidfdFlags};
-<span class="attr">#[cfg(any(target_os = <span class="string">&quot;android&quot;</span>, target_os = <span class="string">&quot;linux&quot;</span>))]
+<span class="attr">#[cfg(linux_kernel)]
 </span><span class="kw">use </span>{
     <span class="kw">super</span>::<span class="kw">super</span>::offset::libc_prlimit,
     <span class="kw">crate</span>::process::{Cpuid, MembarrierCommand, MembarrierQuery},
@@ -717,7 +699,7 @@
     <span class="kw">unsafe </span>{ ret_discarded_char_ptr(c::getcwd(buf.as_mut_ptr().cast(), buf.len())) }
 }
 
-<span class="attr">#[cfg(any(target_os = <span class="string">&quot;android&quot;</span>, target_os = <span class="string">&quot;linux&quot;</span>))]
+<span class="attr">#[cfg(linux_kernel)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>membarrier_query() -&gt; MembarrierQuery {
     <span class="comment">// glibc does not have a wrapper for `membarrier`; [the documentation]
     // says to use `syscall`.
@@ -732,12 +714,12 @@
     }
 }
 
-<span class="attr">#[cfg(any(target_os = <span class="string">&quot;android&quot;</span>, target_os = <span class="string">&quot;linux&quot;</span>))]
+<span class="attr">#[cfg(linux_kernel)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>membarrier(cmd: MembarrierCommand) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{ syscall_ret(c::syscall(c::SYS_membarrier, cmd <span class="kw">as </span>u32, <span class="number">0</span>)) }
 }
 
-<span class="attr">#[cfg(any(target_os = <span class="string">&quot;android&quot;</span>, target_os = <span class="string">&quot;linux&quot;</span>))]
+<span class="attr">#[cfg(linux_kernel)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>membarrier_cpu(cmd: MembarrierCommand, cpu: Cpuid) -&gt; io::Result&lt;()&gt; {
     <span class="kw">const </span>MEMBARRIER_CMD_FLAG_CPU: u32 = <span class="number">1</span>;
     <span class="kw">unsafe </span>{
@@ -838,12 +820,7 @@
     }
 }
 
-<span class="attr">#[cfg(any(
-    target_os = <span class="string">&quot;android&quot;</span>,
-    target_os = <span class="string">&quot;dragonfly&quot;</span>,
-    target_os = <span class="string">&quot;fuchsia&quot;</span>,
-    target_os = <span class="string">&quot;linux&quot;</span>,
-))]
+<span class="attr">#[cfg(any(linux_kernel, target_os = <span class="string">&quot;dragonfly&quot;</span>, target_os = <span class="string">&quot;fuchsia&quot;</span>))]
 #[inline]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>sched_getaffinity(pid: <span class="prelude-ty">Option</span>&lt;Pid&gt;, cpuset: <span class="kw-2">&amp;mut </span>RawCpuSet) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{
@@ -855,12 +832,7 @@
     }
 }
 
-<span class="attr">#[cfg(any(
-    target_os = <span class="string">&quot;android&quot;</span>,
-    target_os = <span class="string">&quot;dragonfly&quot;</span>,
-    target_os = <span class="string">&quot;fuchsia&quot;</span>,
-    target_os = <span class="string">&quot;linux&quot;</span>,
-))]
+<span class="attr">#[cfg(any(linux_kernel, target_os = <span class="string">&quot;dragonfly&quot;</span>, target_os = <span class="string">&quot;fuchsia&quot;</span>))]
 #[inline]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>sched_setaffinity(pid: <span class="prelude-ty">Option</span>&lt;Pid&gt;, cpuset: <span class="kw-2">&amp;</span>RawCpuSet) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{
@@ -909,7 +881,7 @@
     }
 }
 
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;fuchsia&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
+<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;fuchsia&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
 #[inline]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>getpriority_user(uid: Uid) -&gt; io::Result&lt;i32&gt; {
     libc_errno::set_errno(libc_errno::Errno(<span class="number">0</span>));
@@ -921,7 +893,7 @@
     }
 }
 
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;fuchsia&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
+<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;fuchsia&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
 #[inline]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>getpriority_pgrp(pgid: <span class="prelude-ty">Option</span>&lt;Pid&gt;) -&gt; io::Result&lt;i32&gt; {
     libc_errno::set_errno(libc_errno::Errno(<span class="number">0</span>));
@@ -933,7 +905,7 @@
     }
 }
 
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;fuchsia&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
+<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;fuchsia&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
 #[inline]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>getpriority_process(pid: <span class="prelude-ty">Option</span>&lt;Pid&gt;) -&gt; io::Result&lt;i32&gt; {
     libc_errno::set_errno(libc_errno::Errno(<span class="number">0</span>));
@@ -945,13 +917,13 @@
     }
 }
 
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;fuchsia&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
+<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;fuchsia&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
 #[inline]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>setpriority_user(uid: Uid, priority: i32) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{ ret(c::setpriority(c::PRIO_USER, uid.as_raw() <span class="kw">as _</span>, priority)) }
 }
 
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;fuchsia&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
+<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;fuchsia&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
 #[inline]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>setpriority_pgrp(pgid: <span class="prelude-ty">Option</span>&lt;Pid&gt;, priority: i32) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{
@@ -963,7 +935,7 @@
     }
 }
 
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;fuchsia&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
+<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;fuchsia&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
 #[inline]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>setpriority_process(pid: <span class="prelude-ty">Option</span>&lt;Pid&gt;, priority: i32) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{
@@ -992,7 +964,7 @@
     <span class="kw">unsafe </span>{ ret(libc_setrlimit(limit <span class="kw">as _</span>, <span class="kw-2">&amp;</span>lim)) }
 }
 
-<span class="attr">#[cfg(any(target_os = <span class="string">&quot;android&quot;</span>, target_os = <span class="string">&quot;linux&quot;</span>))]
+<span class="attr">#[cfg(linux_kernel)]
 #[inline]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>prlimit(pid: <span class="prelude-ty">Option</span>&lt;Pid&gt;, limit: Resource, new: Rlimit) -&gt; io::Result&lt;Rlimit&gt; {
     <span class="kw">let </span>lim = rlimit_to_libc(new)<span class="question-mark">?</span>;
@@ -1239,7 +1211,7 @@
     <span class="kw">unsafe </span>{ ret(c::kill(<span class="number">0</span>, <span class="number">0</span>)) }
 }
 
-<span class="attr">#[cfg(any(target_os = <span class="string">&quot;android&quot;</span>, target_os = <span class="string">&quot;linux&quot;</span>))]
+<span class="attr">#[cfg(linux_kernel)]
 #[inline]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>prctl(
     option: c::c_int,
@@ -1280,7 +1252,7 @@
     <span class="kw">unsafe </span>{ ret_usize(c::getgroups(len, buf.as_mut_ptr().cast()) <span class="kw">as </span>isize) }
 }
 
-<span class="attr">#[cfg(any(target_os = <span class="string">&quot;android&quot;</span>, target_os = <span class="string">&quot;linux&quot;</span>))]
+<span class="attr">#[cfg(linux_kernel)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>sysinfo() -&gt; Sysinfo {
     <span class="kw">let </span><span class="kw-2">mut </span>info = MaybeUninit::&lt;Sysinfo&gt;::uninit();
     <span class="kw">unsafe </span>{
@@ -1298,5 +1270,10 @@
         ))
     }
 }
-</code></pre></div>
-</section></main><div id="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="rustix" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0 (84c898d65 2023-04-16)" data-search-js="search-8a59a8356673ec1f.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" ></div></body></html>
+
+<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
+#[inline]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>ioctl_tiocsctty(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; io::Result&lt;()&gt; {
+    <span class="kw">unsafe </span>{ ret(c::ioctl(borrowed_fd(fd), c::TIOCSCTTY <span class="kw">as _</span>, <span class="kw-2">&amp;</span><span class="number">0_u32</span>)) }
+}
+</code></pre></div></section></main></body></html>

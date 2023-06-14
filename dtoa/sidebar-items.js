@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["write"],"trait":["Floating"]};
+window.SIDEBAR_ITEMS = {"struct":["Buffer"],"trait":["Float"]};
