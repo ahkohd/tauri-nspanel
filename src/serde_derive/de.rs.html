@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_derive-1.0.164/src/de.rs`."><title>de.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ba5701c5741a7b69.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="serde_derive" data-themes="" data-resource-suffix="" data-rustdoc-version="1.70.0 (90c541806 2023-05-31)" data-search-js="search-e077946657036a58.js" data-settings-js="settings-298e1ea74db45b39.js" data-settings-css="settings-7bfb4c59cc6bc502.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-905937fbbdc8e9ea.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f61008743c98d196.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../serde_derive/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_derive-1.0.167/src/de.rs`."><title>de.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ba5701c5741a7b69.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="serde_derive" data-themes="" data-resource-suffix="" data-rustdoc-version="1.70.0 (90c541806 2023-05-31)" data-search-js="search-e077946657036a58.js" data-settings-js="settings-298e1ea74db45b39.js" data-settings-css="settings-7bfb4c59cc6bc502.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-905937fbbdc8e9ea.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f61008743c98d196.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../serde_derive/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -3173,11 +3173,6 @@
 <a href="#3173" id="3173">3173</a>
 <a href="#3174" id="3174">3174</a>
 <a href="#3175" id="3175">3175</a>
-<a href="#3176" id="3176">3176</a>
-<a href="#3177" id="3177">3177</a>
-<a href="#3178" id="3178">3178</a>
-<a href="#3179" id="3179">3179</a>
-<a href="#3180" id="3180">3180</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>proc_macro2::{Literal, Span, TokenStream};
 <span class="kw">use </span>quote::ToTokens;
 <span class="kw">use </span>syn::punctuated::Punctuated;
@@ -3467,10 +3462,10 @@
         <span class="kw">match </span><span class="kw-2">&amp;</span>cont.data {
             Data::Enum(variants) =&gt; deserialize_enum(params, variants, <span class="kw-2">&amp;</span>cont.attrs),
             Data::Struct(Style::Struct, fields) =&gt; {
-                deserialize_struct(<span class="prelude-val">None</span>, params, fields, <span class="kw-2">&amp;</span>cont.attrs, <span class="prelude-val">None</span>, <span class="kw-2">&amp;</span>Untagged::No)
+                deserialize_struct(params, fields, <span class="kw-2">&amp;</span>cont.attrs, StructForm::Struct)
             }
             Data::Struct(Style::Tuple, fields) | Data::Struct(Style::Newtype, fields) =&gt; {
-                deserialize_tuple(<span class="prelude-val">None</span>, params, fields, <span class="kw-2">&amp;</span>cont.attrs, <span class="prelude-val">None</span>)
+                deserialize_tuple(params, fields, <span class="kw-2">&amp;</span>cont.attrs, TupleForm::Tuple)
             }
             Data::Struct(Style::Unit, <span class="kw">_</span>) =&gt; deserialize_unit_struct(params, <span class="kw-2">&amp;</span>cont.attrs),
         }
@@ -3618,20 +3613,33 @@
     }
 }
 
+<span class="kw">enum </span>TupleForm&lt;<span class="lifetime">&#39;a</span>&gt; {
+    Tuple,
+    <span class="doccomment">/// Contains a variant name
+    </span>ExternallyTagged(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>syn::Ident),
+    <span class="doccomment">/// Contains a variant name and an intermediate deserializer from which actual
+    /// deserialization will be performed
+    </span>Untagged(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>syn::Ident, TokenStream),
+}
+
 <span class="kw">fn </span>deserialize_tuple(
-    variant_ident: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>syn::Ident&gt;,
     params: <span class="kw-2">&amp;</span>Parameters,
     fields: <span class="kw-2">&amp;</span>[Field],
     cattrs: <span class="kw-2">&amp;</span>attr::Container,
-    deserializer: <span class="prelude-ty">Option</span>&lt;TokenStream&gt;,
+    form: TupleForm,
 ) -&gt; Fragment {
+    <span class="macro">assert!</span>(!cattrs.has_flatten());
+
+    <span class="kw">let </span>field_count = fields
+        .iter()
+        .filter(|field| !field.attrs.skip_deserializing())
+        .count();
+
     <span class="kw">let </span>this_type = <span class="kw-2">&amp;</span>params.this_type;
     <span class="kw">let </span>this_value = <span class="kw-2">&amp;</span>params.this_value;
     <span class="kw">let </span>(de_impl_generics, de_ty_generics, ty_generics, where_clause) =
         split_with_de_lifetime(params);
     <span class="kw">let </span>delife = params.borrowed.de_lifetime();
-
-    <span class="macro">assert!</span>(!cattrs.has_flatten());
 
     <span class="comment">// If there are getters (implying private fields), construct the local type
     // and use an `Into` conversion to get the remote type. If there are no
@@ -3643,24 +3651,28 @@
         <span class="macro">quote!</span>(#this_value)
     };
 
-    <span class="kw">let </span>is_enum = variant_ident.is_some();
-    <span class="kw">let </span>type_path = <span class="kw">match </span>variant_ident {
-        <span class="prelude-val">Some</span>(variant_ident) =&gt; <span class="macro">quote!</span>(#construct::#variant_ident),
-        <span class="prelude-val">None </span>=&gt; construct,
+    <span class="kw">let </span>type_path = <span class="kw">match </span>form {
+        TupleForm::Tuple =&gt; construct,
+        TupleForm::ExternallyTagged(variant_ident) | TupleForm::Untagged(variant_ident, <span class="kw">_</span>) =&gt; {
+            <span class="macro">quote!</span>(#construct::#variant_ident)
+        }
     };
-    <span class="kw">let </span>expecting = <span class="kw">match </span>variant_ident {
-        <span class="prelude-val">Some</span>(variant_ident) =&gt; <span class="macro">format!</span>(<span class="string">&quot;tuple variant {}::{}&quot;</span>, params.type_name(), variant_ident),
-        <span class="prelude-val">None </span>=&gt; <span class="macro">format!</span>(<span class="string">&quot;tuple struct {}&quot;</span>, params.type_name()),
+    <span class="kw">let </span>expecting = <span class="kw">match </span>form {
+        TupleForm::Tuple =&gt; <span class="macro">format!</span>(<span class="string">&quot;tuple struct {}&quot;</span>, params.type_name()),
+        TupleForm::ExternallyTagged(variant_ident) | TupleForm::Untagged(variant_ident, <span class="kw">_</span>) =&gt; {
+            <span class="macro">format!</span>(<span class="string">&quot;tuple variant {}::{}&quot;</span>, params.type_name(), variant_ident)
+        }
     };
     <span class="kw">let </span>expecting = cattrs.expecting().unwrap_or(<span class="kw-2">&amp;</span>expecting);
 
     <span class="kw">let </span>nfields = fields.len();
 
-    <span class="kw">let </span>visit_newtype_struct = <span class="kw">if </span>!is_enum &amp;&amp; nfields == <span class="number">1 </span>{
-        <span class="prelude-val">Some</span>(deserialize_newtype_struct(<span class="kw-2">&amp;</span>type_path, params, <span class="kw-2">&amp;</span>fields[<span class="number">0</span>]))
-    } <span class="kw">else </span>{
-        <span class="prelude-val">None
-    </span>};
+    <span class="kw">let </span>visit_newtype_struct = <span class="kw">match </span>form {
+        TupleForm::Tuple <span class="kw">if </span>nfields == <span class="number">1 </span>=&gt; {
+            <span class="prelude-val">Some</span>(deserialize_newtype_struct(<span class="kw-2">&amp;</span>type_path, params, <span class="kw-2">&amp;</span>fields[<span class="number">0</span>]))
+        }
+        <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+    };
 
     <span class="kw">let </span>visit_seq = Stmts(deserialize_seq(
         <span class="kw-2">&amp;</span>type_path, params, fields, <span class="bool-val">false</span>, cattrs, expecting,
@@ -3672,20 +3684,28 @@
             lifetime: _serde::__private::PhantomData,
         }
     };
-    <span class="kw">let </span>dispatch = <span class="kw">if let </span><span class="prelude-val">Some</span>(deserializer) = deserializer {
-        <span class="macro">quote!</span>(_serde::Deserializer::deserialize_tuple(#deserializer, #nfields, #visitor_expr))
-    } <span class="kw">else if </span>is_enum {
-        <span class="macro">quote!</span>(_serde::de::VariantAccess::tuple_variant(__variant, #nfields, #visitor_expr))
-    } <span class="kw">else if </span>nfields == <span class="number">1 </span>{
-        <span class="kw">let </span>type_name = cattrs.name().deserialize_name();
-        <span class="macro">quote!</span>(_serde::Deserializer::deserialize_newtype_struct(__deserializer, #type_name, #visitor_expr))
-    } <span class="kw">else </span>{
-        <span class="kw">let </span>type_name = cattrs.name().deserialize_name();
-        <span class="macro">quote!</span>(_serde::Deserializer::deserialize_tuple_struct(__deserializer, #type_name, #nfields, #visitor_expr))
+    <span class="kw">let </span>dispatch = <span class="kw">match </span>form {
+        TupleForm::Tuple <span class="kw">if </span>nfields == <span class="number">1 </span>=&gt; {
+            <span class="kw">let </span>type_name = cattrs.name().deserialize_name();
+            <span class="macro">quote! </span>{
+                _serde::Deserializer::deserialize_newtype_struct(__deserializer, #type_name, #visitor_expr)
+            }
+        }
+        TupleForm::Tuple =&gt; {
+            <span class="kw">let </span>type_name = cattrs.name().deserialize_name();
+            <span class="macro">quote! </span>{
+                _serde::Deserializer::deserialize_tuple_struct(__deserializer, #type_name, #field_count, #visitor_expr)
+            }
+        }
+        TupleForm::ExternallyTagged(<span class="kw">_</span>) =&gt; <span class="macro">quote! </span>{
+            _serde::de::VariantAccess::tuple_variant(__variant, #field_count, #visitor_expr)
+        },
+        TupleForm::Untagged(<span class="kw">_</span>, deserializer) =&gt; <span class="macro">quote! </span>{
+            _serde::Deserializer::deserialize_tuple(#deserializer, #field_count, #visitor_expr)
+        },
     };
 
-    <span class="kw">let </span>all_skipped = fields.iter().all(|field| field.attrs.skip_deserializing());
-    <span class="kw">let </span>visitor_var = <span class="kw">if </span>all_skipped {
+    <span class="kw">let </span>visitor_var = <span class="kw">if </span>field_count == <span class="number">0 </span>{
         <span class="macro">quote!</span>(<span class="kw">_</span>)
     } <span class="kw">else </span>{
         <span class="macro">quote!</span>(<span class="kw-2">mut </span>__seq)
@@ -3728,12 +3748,17 @@
     cattrs: <span class="kw-2">&amp;</span>attr::Container,
     deserializer: <span class="prelude-ty">Option</span>&lt;TokenStream&gt;,
 ) -&gt; Fragment {
+    <span class="macro">assert!</span>(!cattrs.has_flatten());
+
+    <span class="kw">let </span>field_count = fields
+        .iter()
+        .filter(|field| !field.attrs.skip_deserializing())
+        .count();
+
     <span class="kw">let </span>this_type = <span class="kw-2">&amp;</span>params.this_type;
     <span class="kw">let </span>(de_impl_generics, de_ty_generics, ty_generics, where_clause) =
         split_with_de_lifetime(params);
     <span class="kw">let </span>delife = params.borrowed.de_lifetime();
-
-    <span class="macro">assert!</span>(!cattrs.has_flatten());
 
     <span class="kw">let </span>is_enum = variant_ident.is_some();
     <span class="kw">let </span>expecting = <span class="kw">match </span>variant_ident {
@@ -3760,19 +3785,18 @@
     };
 
     <span class="kw">let </span>dispatch = <span class="kw">if let </span><span class="prelude-val">Some</span>(deserializer) = deserializer {
-        <span class="macro">quote!</span>(_serde::Deserializer::deserialize_tuple(#deserializer, #nfields, #visitor_expr))
+        <span class="macro">quote!</span>(_serde::Deserializer::deserialize_tuple(#deserializer, #field_count, #visitor_expr))
     } <span class="kw">else if </span>is_enum {
-        <span class="macro">quote!</span>(_serde::de::VariantAccess::tuple_variant(__variant, #nfields, #visitor_expr))
+        <span class="macro">quote!</span>(_serde::de::VariantAccess::tuple_variant(__variant, #field_count, #visitor_expr))
     } <span class="kw">else if </span>nfields == <span class="number">1 </span>{
         <span class="kw">let </span>type_name = cattrs.name().deserialize_name();
         <span class="macro">quote!</span>(_serde::Deserializer::deserialize_newtype_struct(__deserializer, #type_name, #visitor_expr))
     } <span class="kw">else </span>{
         <span class="kw">let </span>type_name = cattrs.name().deserialize_name();
-        <span class="macro">quote!</span>(_serde::Deserializer::deserialize_tuple_struct(__deserializer, #type_name, #nfields, #visitor_expr))
+        <span class="macro">quote!</span>(_serde::Deserializer::deserialize_tuple_struct(__deserializer, #type_name, #field_count, #visitor_expr))
     };
 
-    <span class="kw">let </span>all_skipped = fields.iter().all(|field| field.attrs.skip_deserializing());
-    <span class="kw">let </span>visitor_var = <span class="kw">if </span>all_skipped {
+    <span class="kw">let </span>visitor_var = <span class="kw">if </span>field_count == <span class="number">0 </span>{
         <span class="macro">quote!</span>(<span class="kw">_</span>)
     } <span class="kw">else </span>{
         <span class="macro">quote!</span>(<span class="kw-2">mut </span>__seq)
@@ -4073,21 +4097,24 @@
     }
 }
 
-<span class="kw">enum </span>Untagged {
-    Yes,
-    No,
+<span class="kw">enum </span>StructForm&lt;<span class="lifetime">&#39;a</span>&gt; {
+    Struct,
+    <span class="doccomment">/// Contains a variant name
+    </span>ExternallyTagged(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>syn::Ident),
+    <span class="doccomment">/// Contains a variant name and an intermediate deserializer from which actual
+    /// deserialization will be performed
+    </span>InternallyTagged(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>syn::Ident, TokenStream),
+    <span class="doccomment">/// Contains a variant name and an intermediate deserializer from which actual
+    /// deserialization will be performed
+    </span>Untagged(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>syn::Ident, TokenStream),
 }
 
 <span class="kw">fn </span>deserialize_struct(
-    variant_ident: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>syn::Ident&gt;,
     params: <span class="kw-2">&amp;</span>Parameters,
     fields: <span class="kw-2">&amp;</span>[Field],
     cattrs: <span class="kw-2">&amp;</span>attr::Container,
-    deserializer: <span class="prelude-ty">Option</span>&lt;TokenStream&gt;,
-    untagged: <span class="kw-2">&amp;</span>Untagged,
+    form: StructForm,
 ) -&gt; Fragment {
-    <span class="kw">let </span>is_enum = variant_ident.is_some();
-
     <span class="kw">let </span>this_type = <span class="kw-2">&amp;</span>params.this_type;
     <span class="kw">let </span>this_value = <span class="kw-2">&amp;</span>params.this_value;
     <span class="kw">let </span>(de_impl_generics, de_ty_generics, ty_generics, where_clause) =
@@ -4104,83 +4131,74 @@
         <span class="macro">quote!</span>(#this_value)
     };
 
-    <span class="kw">let </span>type_path = <span class="kw">match </span>variant_ident {
-        <span class="prelude-val">Some</span>(variant_ident) =&gt; <span class="macro">quote!</span>(#construct::#variant_ident),
-        <span class="prelude-val">None </span>=&gt; construct,
+    <span class="kw">let </span>type_path = <span class="kw">match </span>form {
+        StructForm::Struct =&gt; construct,
+        StructForm::ExternallyTagged(variant_ident)
+        | StructForm::InternallyTagged(variant_ident, <span class="kw">_</span>)
+        | StructForm::Untagged(variant_ident, <span class="kw">_</span>) =&gt; <span class="macro">quote!</span>(#construct::#variant_ident),
     };
-    <span class="kw">let </span>expecting = <span class="kw">match </span>variant_ident {
-        <span class="prelude-val">Some</span>(variant_ident) =&gt; <span class="macro">format!</span>(<span class="string">&quot;struct variant {}::{}&quot;</span>, params.type_name(), variant_ident),
-        <span class="prelude-val">None </span>=&gt; <span class="macro">format!</span>(<span class="string">&quot;struct {}&quot;</span>, params.type_name()),
+    <span class="kw">let </span>expecting = <span class="kw">match </span>form {
+        StructForm::Struct =&gt; <span class="macro">format!</span>(<span class="string">&quot;struct {}&quot;</span>, params.type_name()),
+        StructForm::ExternallyTagged(variant_ident)
+        | StructForm::InternallyTagged(variant_ident, <span class="kw">_</span>)
+        | StructForm::Untagged(variant_ident, <span class="kw">_</span>) =&gt; {
+            <span class="macro">format!</span>(<span class="string">&quot;struct variant {}::{}&quot;</span>, params.type_name(), variant_ident)
+        }
     };
     <span class="kw">let </span>expecting = cattrs.expecting().unwrap_or(<span class="kw-2">&amp;</span>expecting);
 
-    <span class="kw">let </span>visit_seq = Stmts(deserialize_seq(
-        <span class="kw-2">&amp;</span>type_path, params, fields, <span class="bool-val">true</span>, cattrs, expecting,
+    <span class="kw">let </span>field_names_idents: Vec&lt;<span class="kw">_</span>&gt; = fields
+        .iter()
+        .enumerate()
+        <span class="comment">// Skip fields that shouldn&#39;t be deserialized or that were flattened,
+        // so they don&#39;t appear in the storage in their literal form
+        </span>.filter(|<span class="kw-2">&amp;</span>(<span class="kw">_</span>, field)| !field.attrs.skip_deserializing() &amp;&amp; !field.attrs.flatten())
+        .map(|(i, field)| {
+            (
+                field.attrs.name().deserialize_name(),
+                field_i(i),
+                field.attrs.aliases(),
+            )
+        })
+        .collect();
+    <span class="kw">let </span>field_visitor = Stmts(deserialize_generated_identifier(
+        <span class="kw-2">&amp;</span>field_names_idents,
+        cattrs,
+        <span class="bool-val">false</span>,
+        <span class="prelude-val">None</span>,
     ));
-
-    <span class="kw">let </span>(field_visitor, fields_stmt, visit_map) = <span class="kw">if </span>cattrs.has_flatten() {
-        deserialize_struct_as_map_visitor(<span class="kw-2">&amp;</span>type_path, params, fields, cattrs)
-    } <span class="kw">else </span>{
-        deserialize_struct_as_struct_visitor(<span class="kw-2">&amp;</span>type_path, params, fields, cattrs)
-    };
-    <span class="kw">let </span>field_visitor = Stmts(field_visitor);
-    <span class="kw">let </span>fields_stmt = fields_stmt.map(Stmts);
-    <span class="kw">let </span>visit_map = Stmts(visit_map);
-
-    <span class="kw">let </span>visitor_expr = <span class="macro">quote! </span>{
-        __Visitor {
-            marker: _serde::__private::PhantomData::&lt;#this_type #ty_generics&gt;,
-            lifetime: _serde::__private::PhantomData,
-        }
-    };
-    <span class="kw">let </span>need_seed = deserializer.is_none();
-    <span class="kw">let </span>dispatch = <span class="kw">if let </span><span class="prelude-val">Some</span>(deserializer) = deserializer {
-        <span class="macro">quote! </span>{
-            _serde::Deserializer::deserialize_any(#deserializer, #visitor_expr)
-        }
-    } <span class="kw">else if </span>is_enum &amp;&amp; cattrs.has_flatten() {
-        <span class="macro">quote! </span>{
-            _serde::de::VariantAccess::newtype_variant_seed(__variant, #visitor_expr)
-        }
-    } <span class="kw">else if </span>is_enum {
-        <span class="macro">quote! </span>{
-            _serde::de::VariantAccess::struct_variant(__variant, FIELDS, #visitor_expr)
-        }
-    } <span class="kw">else if </span>cattrs.has_flatten() {
-        <span class="macro">quote! </span>{
-            _serde::Deserializer::deserialize_map(__deserializer, #visitor_expr)
-        }
-    } <span class="kw">else </span>{
-        <span class="kw">let </span>type_name = cattrs.name().deserialize_name();
-        <span class="macro">quote! </span>{
-            _serde::Deserializer::deserialize_struct(__deserializer, #type_name, FIELDS, #visitor_expr)
-        }
-    };
-
-    <span class="kw">let </span>all_skipped = fields.iter().all(|field| field.attrs.skip_deserializing());
-    <span class="kw">let </span>visitor_var = <span class="kw">if </span>all_skipped {
-        <span class="macro">quote!</span>(<span class="kw">_</span>)
-    } <span class="kw">else </span>{
-        <span class="macro">quote!</span>(<span class="kw-2">mut </span>__seq)
-    };
 
     <span class="comment">// untagged struct variants do not get a visit_seq method. The same applies to
     // structs that only have a map representation.
-    </span><span class="kw">let </span>visit_seq = <span class="kw">match </span><span class="kw-2">*</span>untagged {
-        Untagged::No <span class="kw">if </span>!cattrs.has_flatten() =&gt; <span class="prelude-val">Some</span>(<span class="macro">quote! </span>{
-            <span class="attr">#[inline]
-            </span><span class="kw">fn </span>visit_seq&lt;__A&gt;(<span class="self">self</span>, #visitor_var: __A) -&gt; _serde::__private::Result&lt;<span class="self">Self</span>::Value, __A::Error&gt;
-            <span class="kw">where
-                </span>__A: _serde::de::SeqAccess&lt;#delife&gt;,
-            {
-                #visit_seq
-            }
-        }),
-        <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
-    };
+    </span><span class="kw">let </span>visit_seq = <span class="kw">match </span>form {
+        StructForm::Untagged(..) =&gt; <span class="prelude-val">None</span>,
+        <span class="kw">_ if </span>cattrs.has_flatten() =&gt; <span class="prelude-val">None</span>,
+        <span class="kw">_ </span>=&gt; {
+            <span class="kw">let </span>mut_seq = <span class="kw">if </span>field_names_idents.is_empty() {
+                <span class="macro">quote!</span>(<span class="kw">_</span>)
+            } <span class="kw">else </span>{
+                <span class="macro">quote!</span>(<span class="kw-2">mut </span>__seq)
+            };
 
-    <span class="kw">let </span>visitor_seed = <span class="kw">if </span>need_seed &amp;&amp; is_enum &amp;&amp; cattrs.has_flatten() {
-        <span class="prelude-val">Some</span>(<span class="macro">quote! </span>{
+            <span class="kw">let </span>visit_seq = Stmts(deserialize_seq(
+                <span class="kw-2">&amp;</span>type_path, params, fields, <span class="bool-val">true</span>, cattrs, expecting,
+            ));
+
+            <span class="prelude-val">Some</span>(<span class="macro">quote! </span>{
+                <span class="attr">#[inline]
+                </span><span class="kw">fn </span>visit_seq&lt;__A&gt;(<span class="self">self</span>, #mut_seq: __A) -&gt; _serde::__private::Result&lt;<span class="self">Self</span>::Value, __A::Error&gt;
+                <span class="kw">where
+                    </span>__A: _serde::de::SeqAccess&lt;#delife&gt;,
+                {
+                    #visit_seq
+                }
+            })
+        }
+    };
+    <span class="kw">let </span>visit_map = Stmts(deserialize_map(<span class="kw-2">&amp;</span>type_path, params, fields, cattrs));
+
+    <span class="kw">let </span>visitor_seed = <span class="kw">match </span>form {
+        StructForm::ExternallyTagged(..) <span class="kw">if </span>cattrs.has_flatten() =&gt; <span class="prelude-val">Some</span>(<span class="macro">quote! </span>{
             <span class="kw">impl </span>#de_impl_generics _serde::de::DeserializeSeed&lt;#delife&gt; <span class="kw">for </span>__Visitor #de_ty_generics #where_clause {
                 <span class="kw">type </span>Value = #this_type #ty_generics;
 
@@ -4191,10 +4209,52 @@
                     _serde::Deserializer::deserialize_map(__deserializer, <span class="self">self</span>)
                 }
             }
-        })
-    } <span class="kw">else </span>{
+        }),
+        <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+    };
+
+    <span class="kw">let </span>fields_stmt = <span class="kw">if </span>cattrs.has_flatten() {
         <span class="prelude-val">None
-    </span>};
+    </span>} <span class="kw">else </span>{
+        <span class="kw">let </span>field_names = field_names_idents
+            .iter()
+            .flat_map(|(<span class="kw">_</span>, <span class="kw">_</span>, aliases)| aliases);
+
+        <span class="prelude-val">Some</span>(<span class="macro">quote! </span>{
+            <span class="attr">#[doc(hidden)]
+            </span><span class="kw">const </span>FIELDS: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str] = <span class="kw-2">&amp;</span>[ #(#field_names),* ];
+        })
+    };
+
+    <span class="kw">let </span>visitor_expr = <span class="macro">quote! </span>{
+        __Visitor {
+            marker: _serde::__private::PhantomData::&lt;#this_type #ty_generics&gt;,
+            lifetime: _serde::__private::PhantomData,
+        }
+    };
+    <span class="kw">let </span>dispatch = <span class="kw">match </span>form {
+        StructForm::Struct <span class="kw">if </span>cattrs.has_flatten() =&gt; <span class="macro">quote! </span>{
+            _serde::Deserializer::deserialize_map(__deserializer, #visitor_expr)
+        },
+        StructForm::Struct =&gt; {
+            <span class="kw">let </span>type_name = cattrs.name().deserialize_name();
+            <span class="macro">quote! </span>{
+                _serde::Deserializer::deserialize_struct(__deserializer, #type_name, FIELDS, #visitor_expr)
+            }
+        }
+        StructForm::ExternallyTagged(<span class="kw">_</span>) <span class="kw">if </span>cattrs.has_flatten() =&gt; <span class="macro">quote! </span>{
+            _serde::de::VariantAccess::newtype_variant_seed(__variant, #visitor_expr)
+        },
+        StructForm::ExternallyTagged(<span class="kw">_</span>) =&gt; <span class="macro">quote! </span>{
+            _serde::de::VariantAccess::struct_variant(__variant, FIELDS, #visitor_expr)
+        },
+        StructForm::InternallyTagged(<span class="kw">_</span>, deserializer) =&gt; <span class="macro">quote! </span>{
+            _serde::Deserializer::deserialize_any(#deserializer, #visitor_expr)
+        },
+        StructForm::Untagged(<span class="kw">_</span>, deserializer) =&gt; <span class="macro">quote! </span>{
+            _serde::Deserializer::deserialize_any(#deserializer, #visitor_expr)
+        },
+    };
 
     <span class="macro">quote_block! </span>{
         #field_visitor
@@ -4528,9 +4588,7 @@
                 params,
                 variant,
                 cattrs,
-                <span class="macro">quote! </span>{
-                    _serde::__private::de::ContentDeserializer::&lt;__D::Error&gt;::new(__tagged.content)
-                },
+                <span class="macro">quote!</span>(__deserializer),
             ));
 
             <span class="macro">quote! </span>{
@@ -4546,11 +4604,12 @@
 
         #variants_stmt
 
-        <span class="kw">let </span>__tagged = <span class="macro">try!</span>(_serde::Deserializer::deserialize_any(
+        <span class="kw">let </span>(__tag, __content) = <span class="macro">try!</span>(_serde::Deserializer::deserialize_any(
             __deserializer,
             _serde::__private::de::TaggedContentVisitor::&lt;__Field&gt;::new(#tag, #expecting)));
+        <span class="kw">let </span>__deserializer = _serde::__private::de::ContentDeserializer::&lt;__D::Error&gt;::new(__content);
 
-        <span class="kw">match </span>__tagged.tag {
+        <span class="kw">match </span>__tag {
             #(#variant_arms)*
         }
     }
@@ -4941,16 +5000,17 @@
             <span class="kw-2">&amp;</span>variant.fields[<span class="number">0</span>],
             cattrs,
         ),
-        Style::Tuple =&gt; {
-            deserialize_tuple(<span class="prelude-val">Some</span>(variant_ident), params, <span class="kw-2">&amp;</span>variant.fields, cattrs, <span class="prelude-val">None</span>)
-        }
-        Style::Struct =&gt; deserialize_struct(
-            <span class="prelude-val">Some</span>(variant_ident),
+        Style::Tuple =&gt; deserialize_tuple(
             params,
             <span class="kw-2">&amp;</span>variant.fields,
             cattrs,
-            <span class="prelude-val">None</span>,
-            <span class="kw-2">&amp;</span>Untagged::No,
+            TupleForm::ExternallyTagged(variant_ident),
+        ),
+        Style::Struct =&gt; deserialize_struct(
+            params,
+            <span class="kw-2">&amp;</span>variant.fields,
+            cattrs,
+            StructForm::ExternallyTagged(variant_ident),
         ),
     }
 }
@@ -4990,12 +5050,10 @@
             <span class="kw-2">&amp;</span>deserializer,
         ),
         Style::Struct =&gt; deserialize_struct(
-            <span class="prelude-val">Some</span>(variant_ident),
             params,
             <span class="kw-2">&amp;</span>variant.fields,
             cattrs,
-            <span class="prelude-val">Some</span>(deserializer),
-            <span class="kw-2">&amp;</span>Untagged::No,
+            StructForm::InternallyTagged(variant_ident, deserializer),
         ),
         Style::Tuple =&gt; <span class="macro">unreachable!</span>(<span class="string">&quot;checked in serde_derive_internals&quot;</span>),
     }
@@ -5042,19 +5100,16 @@
             <span class="kw-2">&amp;</span>deserializer,
         ),
         Style::Tuple =&gt; deserialize_tuple(
-            <span class="prelude-val">Some</span>(variant_ident),
             params,
             <span class="kw-2">&amp;</span>variant.fields,
             cattrs,
-            <span class="prelude-val">Some</span>(deserializer),
+            TupleForm::Untagged(variant_ident, deserializer),
         ),
         Style::Struct =&gt; deserialize_struct(
-            <span class="prelude-val">Some</span>(variant_ident),
             params,
             <span class="kw-2">&amp;</span>variant.fields,
             cattrs,
-            <span class="prelude-val">Some</span>(deserializer),
-            <span class="kw-2">&amp;</span>Untagged::Yes,
+            StructForm::Untagged(variant_ident, deserializer),
         ),
     }
 }
@@ -5593,71 +5648,6 @@
 
         #visit_borrowed
     }
-}
-
-<span class="kw">fn </span>deserialize_struct_as_struct_visitor(
-    struct_path: <span class="kw-2">&amp;</span>TokenStream,
-    params: <span class="kw-2">&amp;</span>Parameters,
-    fields: <span class="kw-2">&amp;</span>[Field],
-    cattrs: <span class="kw-2">&amp;</span>attr::Container,
-) -&gt; (Fragment, <span class="prelude-ty">Option</span>&lt;Fragment&gt;, Fragment) {
-    <span class="macro">assert!</span>(!cattrs.has_flatten());
-
-    <span class="kw">let </span>field_names_idents: Vec&lt;<span class="kw">_</span>&gt; = fields
-        .iter()
-        .enumerate()
-        .filter(|<span class="kw-2">&amp;</span>(<span class="kw">_</span>, field)| !field.attrs.skip_deserializing())
-        .map(|(i, field)| {
-            (
-                field.attrs.name().deserialize_name(),
-                field_i(i),
-                field.attrs.aliases(),
-            )
-        })
-        .collect();
-
-    <span class="kw">let </span>fields_stmt = {
-        <span class="kw">let </span>field_names = field_names_idents
-            .iter()
-            .flat_map(|(<span class="kw">_</span>, <span class="kw">_</span>, aliases)| aliases);
-
-        <span class="macro">quote_block! </span>{
-            <span class="attr">#[doc(hidden)]
-            </span><span class="kw">const </span>FIELDS: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str] = <span class="kw-2">&amp;</span>[ #(#field_names),* ];
-        }
-    };
-
-    <span class="kw">let </span>field_visitor = deserialize_generated_identifier(<span class="kw-2">&amp;</span>field_names_idents, cattrs, <span class="bool-val">false</span>, <span class="prelude-val">None</span>);
-
-    <span class="kw">let </span>visit_map = deserialize_map(struct_path, params, fields, cattrs);
-
-    (field_visitor, <span class="prelude-val">Some</span>(fields_stmt), visit_map)
-}
-
-<span class="kw">fn </span>deserialize_struct_as_map_visitor(
-    struct_path: <span class="kw-2">&amp;</span>TokenStream,
-    params: <span class="kw-2">&amp;</span>Parameters,
-    fields: <span class="kw-2">&amp;</span>[Field],
-    cattrs: <span class="kw-2">&amp;</span>attr::Container,
-) -&gt; (Fragment, <span class="prelude-ty">Option</span>&lt;Fragment&gt;, Fragment) {
-    <span class="kw">let </span>field_names_idents: Vec&lt;<span class="kw">_</span>&gt; = fields
-        .iter()
-        .enumerate()
-        .filter(|<span class="kw-2">&amp;</span>(<span class="kw">_</span>, field)| !field.attrs.skip_deserializing() &amp;&amp; !field.attrs.flatten())
-        .map(|(i, field)| {
-            (
-                field.attrs.name().deserialize_name(),
-                field_i(i),
-                field.attrs.aliases(),
-            )
-        })
-        .collect();
-
-    <span class="kw">let </span>field_visitor = deserialize_generated_identifier(<span class="kw-2">&amp;</span>field_names_idents, cattrs, <span class="bool-val">false</span>, <span class="prelude-val">None</span>);
-
-    <span class="kw">let </span>visit_map = deserialize_map(struct_path, params, fields, cattrs);
-
-    (field_visitor, <span class="prelude-val">None</span>, visit_map)
 }
 
 <span class="kw">fn </span>deserialize_map(
