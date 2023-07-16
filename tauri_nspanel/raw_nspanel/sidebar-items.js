@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["object_setClass"],"struct":["AppHandleWrapper","RawNSPanel"]};
+window.SIDEBAR_ITEMS = {"fn":["object_setClass"],"struct":["RawNSPanel"]};

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tar-0.4.38/src/entry.rs`."><title>entry.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ba5701c5741a7b69.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tar" data-themes="" data-resource-suffix="" data-rustdoc-version="1.70.0 (90c541806 2023-05-31)" data-search-js="search-e077946657036a58.js" data-settings-js="settings-298e1ea74db45b39.js" data-settings-css="settings-7bfb4c59cc6bc502.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-905937fbbdc8e9ea.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f61008743c98d196.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../tar/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tar-0.4.39/src/entry.rs`."><title>entry.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tar" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../tar/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -830,6 +830,146 @@
 <a href="#830" id="830">830</a>
 <a href="#831" id="831">831</a>
 <a href="#832" id="832">832</a>
+<a href="#833" id="833">833</a>
+<a href="#834" id="834">834</a>
+<a href="#835" id="835">835</a>
+<a href="#836" id="836">836</a>
+<a href="#837" id="837">837</a>
+<a href="#838" id="838">838</a>
+<a href="#839" id="839">839</a>
+<a href="#840" id="840">840</a>
+<a href="#841" id="841">841</a>
+<a href="#842" id="842">842</a>
+<a href="#843" id="843">843</a>
+<a href="#844" id="844">844</a>
+<a href="#845" id="845">845</a>
+<a href="#846" id="846">846</a>
+<a href="#847" id="847">847</a>
+<a href="#848" id="848">848</a>
+<a href="#849" id="849">849</a>
+<a href="#850" id="850">850</a>
+<a href="#851" id="851">851</a>
+<a href="#852" id="852">852</a>
+<a href="#853" id="853">853</a>
+<a href="#854" id="854">854</a>
+<a href="#855" id="855">855</a>
+<a href="#856" id="856">856</a>
+<a href="#857" id="857">857</a>
+<a href="#858" id="858">858</a>
+<a href="#859" id="859">859</a>
+<a href="#860" id="860">860</a>
+<a href="#861" id="861">861</a>
+<a href="#862" id="862">862</a>
+<a href="#863" id="863">863</a>
+<a href="#864" id="864">864</a>
+<a href="#865" id="865">865</a>
+<a href="#866" id="866">866</a>
+<a href="#867" id="867">867</a>
+<a href="#868" id="868">868</a>
+<a href="#869" id="869">869</a>
+<a href="#870" id="870">870</a>
+<a href="#871" id="871">871</a>
+<a href="#872" id="872">872</a>
+<a href="#873" id="873">873</a>
+<a href="#874" id="874">874</a>
+<a href="#875" id="875">875</a>
+<a href="#876" id="876">876</a>
+<a href="#877" id="877">877</a>
+<a href="#878" id="878">878</a>
+<a href="#879" id="879">879</a>
+<a href="#880" id="880">880</a>
+<a href="#881" id="881">881</a>
+<a href="#882" id="882">882</a>
+<a href="#883" id="883">883</a>
+<a href="#884" id="884">884</a>
+<a href="#885" id="885">885</a>
+<a href="#886" id="886">886</a>
+<a href="#887" id="887">887</a>
+<a href="#888" id="888">888</a>
+<a href="#889" id="889">889</a>
+<a href="#890" id="890">890</a>
+<a href="#891" id="891">891</a>
+<a href="#892" id="892">892</a>
+<a href="#893" id="893">893</a>
+<a href="#894" id="894">894</a>
+<a href="#895" id="895">895</a>
+<a href="#896" id="896">896</a>
+<a href="#897" id="897">897</a>
+<a href="#898" id="898">898</a>
+<a href="#899" id="899">899</a>
+<a href="#900" id="900">900</a>
+<a href="#901" id="901">901</a>
+<a href="#902" id="902">902</a>
+<a href="#903" id="903">903</a>
+<a href="#904" id="904">904</a>
+<a href="#905" id="905">905</a>
+<a href="#906" id="906">906</a>
+<a href="#907" id="907">907</a>
+<a href="#908" id="908">908</a>
+<a href="#909" id="909">909</a>
+<a href="#910" id="910">910</a>
+<a href="#911" id="911">911</a>
+<a href="#912" id="912">912</a>
+<a href="#913" id="913">913</a>
+<a href="#914" id="914">914</a>
+<a href="#915" id="915">915</a>
+<a href="#916" id="916">916</a>
+<a href="#917" id="917">917</a>
+<a href="#918" id="918">918</a>
+<a href="#919" id="919">919</a>
+<a href="#920" id="920">920</a>
+<a href="#921" id="921">921</a>
+<a href="#922" id="922">922</a>
+<a href="#923" id="923">923</a>
+<a href="#924" id="924">924</a>
+<a href="#925" id="925">925</a>
+<a href="#926" id="926">926</a>
+<a href="#927" id="927">927</a>
+<a href="#928" id="928">928</a>
+<a href="#929" id="929">929</a>
+<a href="#930" id="930">930</a>
+<a href="#931" id="931">931</a>
+<a href="#932" id="932">932</a>
+<a href="#933" id="933">933</a>
+<a href="#934" id="934">934</a>
+<a href="#935" id="935">935</a>
+<a href="#936" id="936">936</a>
+<a href="#937" id="937">937</a>
+<a href="#938" id="938">938</a>
+<a href="#939" id="939">939</a>
+<a href="#940" id="940">940</a>
+<a href="#941" id="941">941</a>
+<a href="#942" id="942">942</a>
+<a href="#943" id="943">943</a>
+<a href="#944" id="944">944</a>
+<a href="#945" id="945">945</a>
+<a href="#946" id="946">946</a>
+<a href="#947" id="947">947</a>
+<a href="#948" id="948">948</a>
+<a href="#949" id="949">949</a>
+<a href="#950" id="950">950</a>
+<a href="#951" id="951">951</a>
+<a href="#952" id="952">952</a>
+<a href="#953" id="953">953</a>
+<a href="#954" id="954">954</a>
+<a href="#955" id="955">955</a>
+<a href="#956" id="956">956</a>
+<a href="#957" id="957">957</a>
+<a href="#958" id="958">958</a>
+<a href="#959" id="959">959</a>
+<a href="#960" id="960">960</a>
+<a href="#961" id="961">961</a>
+<a href="#962" id="962">962</a>
+<a href="#963" id="963">963</a>
+<a href="#964" id="964">964</a>
+<a href="#965" id="965">965</a>
+<a href="#966" id="966">966</a>
+<a href="#967" id="967">967</a>
+<a href="#968" id="968">968</a>
+<a href="#969" id="969">969</a>
+<a href="#970" id="970">970</a>
+<a href="#971" id="971">971</a>
+<a href="#972" id="972">972</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::borrow::Cow;
 <span class="kw">use </span>std::cmp;
 <span class="kw">use </span>std::fs;
@@ -863,6 +1003,7 @@
     <span class="kw">pub </span>long_pathname: <span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;,
     <span class="kw">pub </span>long_linkname: <span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;,
     <span class="kw">pub </span>pax_extensions: <span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;,
+    <span class="kw">pub </span>mask: u32,
     <span class="kw">pub </span>header: Header,
     <span class="kw">pub </span>size: u64,
     <span class="kw">pub </span>header_pos: u64,
@@ -870,6 +1011,7 @@
     <span class="kw">pub </span>data: Vec&lt;EntryIo&lt;<span class="lifetime">&#39;a</span>&gt;&gt;,
     <span class="kw">pub </span>unpack_xattrs: bool,
     <span class="kw">pub </span>preserve_permissions: bool,
+    <span class="kw">pub </span>preserve_ownerships: bool,
     <span class="kw">pub </span>preserve_mtime: bool,
     <span class="kw">pub </span>overwrite: bool,
 }
@@ -1060,6 +1202,20 @@
     /// ```
     </span><span class="kw">pub fn </span>unpack_in&lt;P: AsRef&lt;Path&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, dst: P) -&gt; io::Result&lt;bool&gt; {
         <span class="self">self</span>.fields.unpack_in(dst.as_ref())
+    }
+
+    <span class="doccomment">/// Set the mask of the permission bits when unpacking this entry.
+    ///
+    /// The mask will be inverted when applying against a mode, similar to how
+    /// `umask` works on Unix. In logical notation it looks like:
+    ///
+    /// ```text
+    /// new_mode = old_mode &amp; (~mask)
+    /// ```
+    ///
+    /// The mask is 0 by default and is currently only implemented on Unix.
+    </span><span class="kw">pub fn </span>set_mask(<span class="kw-2">&amp;mut </span><span class="self">self</span>, mask: u32) {
+        <span class="self">self</span>.fields.mask = mask;
     }
 
     <span class="doccomment">/// Indicate whether extended file attributes (xattrs on Unix) are preserved
@@ -1276,13 +1432,51 @@
 
     <span class="doccomment">/// Returns access to the header of this entry in the archive.
     </span><span class="kw">fn </span>unpack(<span class="kw-2">&amp;mut </span><span class="self">self</span>, target_base: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Path&gt;, dst: <span class="kw-2">&amp;</span>Path) -&gt; io::Result&lt;Unpacked&gt; {
+        <span class="kw">fn </span>set_perms_ownerships(
+            dst: <span class="kw-2">&amp;</span>Path,
+            f: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>std::fs::File&gt;,
+            header: <span class="kw-2">&amp;</span>Header,
+            mask: u32,
+            perms: bool,
+            ownerships: bool,
+        ) -&gt; io::Result&lt;()&gt; {
+            <span class="comment">// ownerships need to be set first to avoid stripping SUID bits in the permissions ...
+            </span><span class="kw">if </span>ownerships {
+                set_ownerships(dst, <span class="kw-2">&amp;</span>f, header.uid()<span class="question-mark">?</span>, header.gid()<span class="question-mark">?</span>)<span class="question-mark">?</span>;
+            }
+            <span class="comment">// ... then set permissions, SUID bits set here is kept
+            </span><span class="kw">if let </span><span class="prelude-val">Ok</span>(mode) = header.mode() {
+                set_perms(dst, f, mode, mask, perms)<span class="question-mark">?</span>;
+            }
+
+            <span class="prelude-val">Ok</span>(())
+        }
+
+        <span class="kw">fn </span>get_mtime(header: <span class="kw-2">&amp;</span>Header) -&gt; <span class="prelude-ty">Option</span>&lt;FileTime&gt; {
+            header.mtime().ok().map(|mtime| {
+                <span class="comment">// For some more information on this see the comments in
+                // `Header::fill_platform_from`, but the general idea is that
+                // we&#39;re trying to avoid 0-mtime files coming out of archives
+                // since some tools don&#39;t ingest them well. Perhaps one day
+                // when Cargo stops working with 0-mtime archives we can remove
+                // this.
+                </span><span class="kw">let </span>mtime = <span class="kw">if </span>mtime == <span class="number">0 </span>{ <span class="number">1 </span>} <span class="kw">else </span>{ mtime };
+                FileTime::from_unix_time(mtime <span class="kw">as </span>i64, <span class="number">0</span>)
+            })
+        }
+
         <span class="kw">let </span>kind = <span class="self">self</span>.header.entry_type();
 
         <span class="kw">if </span>kind.is_dir() {
             <span class="self">self</span>.unpack_dir(dst)<span class="question-mark">?</span>;
-            <span class="kw">if let </span><span class="prelude-val">Ok</span>(mode) = <span class="self">self</span>.header.mode() {
-                set_perms(dst, <span class="prelude-val">None</span>, mode, <span class="self">self</span>.preserve_permissions)<span class="question-mark">?</span>;
-            }
+            set_perms_ownerships(
+                dst,
+                <span class="prelude-val">None</span>,
+                <span class="kw-2">&amp;</span><span class="self">self</span>.header,
+                <span class="self">self</span>.mask,
+                <span class="self">self</span>.preserve_permissions,
+                <span class="self">self</span>.preserve_ownerships,
+            )<span class="question-mark">?</span>;
             <span class="kw">return </span><span class="prelude-val">Ok</span>(Unpacked::__Nonexhaustive);
         } <span class="kw">else if </span>kind.is_hard_link() || kind.is_symlink() {
             <span class="kw">let </span>src = <span class="kw">match </span><span class="self">self</span>.link_name()<span class="question-mark">? </span>{
@@ -1354,7 +1548,14 @@
                             ),
                         )
                     })<span class="question-mark">?</span>;
-            };
+                <span class="kw">if </span><span class="self">self</span>.preserve_mtime {
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(mtime) = get_mtime(<span class="kw-2">&amp;</span><span class="self">self</span>.header) {
+                        filetime::set_symlink_file_times(dst, mtime, mtime).map_err(|e| {
+                            TarError::new(<span class="macro">format!</span>(<span class="string">&quot;failed to set mtime for `{}`&quot;</span>, dst.display()), e)
+                        })<span class="question-mark">?</span>;
+                    }
+                }
+            }
             <span class="kw">return </span><span class="prelude-val">Ok</span>(Unpacked::__Nonexhaustive);
 
             <span class="attr">#[cfg(target_arch = <span class="string">&quot;wasm32&quot;</span>)]
@@ -1385,9 +1586,14 @@
         // Only applies to old headers.
         </span><span class="kw">if </span><span class="self">self</span>.header.as_ustar().is_none() &amp;&amp; <span class="self">self</span>.path_bytes().ends_with(<span class="string">b&quot;/&quot;</span>) {
             <span class="self">self</span>.unpack_dir(dst)<span class="question-mark">?</span>;
-            <span class="kw">if let </span><span class="prelude-val">Ok</span>(mode) = <span class="self">self</span>.header.mode() {
-                set_perms(dst, <span class="prelude-val">None</span>, mode, <span class="self">self</span>.preserve_permissions)<span class="question-mark">?</span>;
-            }
+            set_perms_ownerships(
+                dst,
+                <span class="prelude-val">None</span>,
+                <span class="kw-2">&amp;</span><span class="self">self</span>.header,
+                <span class="self">self</span>.mask,
+                <span class="self">self</span>.preserve_permissions,
+                <span class="self">self</span>.preserve_ownerships,
+            )<span class="question-mark">?</span>;
             <span class="kw">return </span><span class="prelude-val">Ok</span>(Unpacked::__Nonexhaustive);
         }
 
@@ -1450,35 +1656,105 @@
         })<span class="question-mark">?</span>;
 
         <span class="kw">if </span><span class="self">self</span>.preserve_mtime {
-            <span class="kw">if let </span><span class="prelude-val">Ok</span>(mtime) = <span class="self">self</span>.header.mtime() {
-                <span class="comment">// For some more information on this see the comments in
-                // `Header::fill_platform_from`, but the general idea is that
-                // we&#39;re trying to avoid 0-mtime files coming out of archives
-                // since some tools don&#39;t ingest them well. Perhaps one day
-                // when Cargo stops working with 0-mtime archives we can remove
-                // this.
-                </span><span class="kw">let </span>mtime = <span class="kw">if </span>mtime == <span class="number">0 </span>{ <span class="number">1 </span>} <span class="kw">else </span>{ mtime };
-                <span class="kw">let </span>mtime = FileTime::from_unix_time(mtime <span class="kw">as </span>i64, <span class="number">0</span>);
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(mtime) = get_mtime(<span class="kw-2">&amp;</span><span class="self">self</span>.header) {
                 filetime::set_file_handle_times(<span class="kw-2">&amp;</span>f, <span class="prelude-val">Some</span>(mtime), <span class="prelude-val">Some</span>(mtime)).map_err(|e| {
                     TarError::new(<span class="macro">format!</span>(<span class="string">&quot;failed to set mtime for `{}`&quot;</span>, dst.display()), e)
                 })<span class="question-mark">?</span>;
             }
         }
-        <span class="kw">if let </span><span class="prelude-val">Ok</span>(mode) = <span class="self">self</span>.header.mode() {
-            set_perms(dst, <span class="prelude-val">Some</span>(<span class="kw-2">&amp;mut </span>f), mode, <span class="self">self</span>.preserve_permissions)<span class="question-mark">?</span>;
-        }
+        set_perms_ownerships(
+            dst,
+            <span class="prelude-val">Some</span>(<span class="kw-2">&amp;mut </span>f),
+            <span class="kw-2">&amp;</span><span class="self">self</span>.header,
+            <span class="self">self</span>.mask,
+            <span class="self">self</span>.preserve_permissions,
+            <span class="self">self</span>.preserve_ownerships,
+        )<span class="question-mark">?</span>;
         <span class="kw">if </span><span class="self">self</span>.unpack_xattrs {
             set_xattrs(<span class="self">self</span>, dst)<span class="question-mark">?</span>;
         }
         <span class="kw">return </span><span class="prelude-val">Ok</span>(Unpacked::File(f));
 
+        <span class="kw">fn </span>set_ownerships(
+            dst: <span class="kw-2">&amp;</span>Path,
+            f: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>std::fs::File&gt;,
+            uid: u64,
+            gid: u64,
+        ) -&gt; <span class="prelude-ty">Result</span>&lt;(), TarError&gt; {
+            _set_ownerships(dst, f, uid, gid).map_err(|e| {
+                TarError::new(
+                    <span class="macro">format!</span>(
+                        <span class="string">&quot;failed to set ownerships to uid={:?}, gid={:?} \
+                         for `{}`&quot;</span>,
+                        uid,
+                        gid,
+                        dst.display()
+                    ),
+                    e,
+                )
+            })
+        }
+
+        <span class="attr">#[cfg(unix)]
+        </span><span class="kw">fn </span>_set_ownerships(
+            dst: <span class="kw-2">&amp;</span>Path,
+            f: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>std::fs::File&gt;,
+            uid: u64,
+            gid: u64,
+        ) -&gt; io::Result&lt;()&gt; {
+            <span class="kw">use </span>std::convert::TryInto;
+            <span class="kw">use </span>std::os::unix::prelude::<span class="kw-2">*</span>;
+
+            <span class="kw">let </span>uid: libc::uid_t = uid.try_into().map_err(|<span class="kw">_</span>| {
+                io::Error::new(io::ErrorKind::Other, <span class="macro">format!</span>(<span class="string">&quot;UID {} is too large!&quot;</span>, uid))
+            })<span class="question-mark">?</span>;
+            <span class="kw">let </span>gid: libc::gid_t = gid.try_into().map_err(|<span class="kw">_</span>| {
+                io::Error::new(io::ErrorKind::Other, <span class="macro">format!</span>(<span class="string">&quot;GID {} is too large!&quot;</span>, gid))
+            })<span class="question-mark">?</span>;
+            <span class="kw">match </span>f {
+                <span class="prelude-val">Some</span>(f) =&gt; <span class="kw">unsafe </span>{
+                    <span class="kw">let </span>fd = f.as_raw_fd();
+                    <span class="kw">if </span>libc::fchown(fd, uid, gid) != <span class="number">0 </span>{
+                        <span class="prelude-val">Err</span>(io::Error::last_os_error())
+                    } <span class="kw">else </span>{
+                        <span class="prelude-val">Ok</span>(())
+                    }
+                },
+                <span class="prelude-val">None </span>=&gt; <span class="kw">unsafe </span>{
+                    <span class="kw">let </span>path = std::ffi::CString::new(dst.as_os_str().as_bytes()).map_err(|e| {
+                        io::Error::new(
+                            io::ErrorKind::Other,
+                            <span class="macro">format!</span>(<span class="string">&quot;path contains null character: {:?}&quot;</span>, e),
+                        )
+                    })<span class="question-mark">?</span>;
+                    <span class="kw">if </span>libc::lchown(path.as_ptr(), uid, gid) != <span class="number">0 </span>{
+                        <span class="prelude-val">Err</span>(io::Error::last_os_error())
+                    } <span class="kw">else </span>{
+                        <span class="prelude-val">Ok</span>(())
+                    }
+                },
+            }
+        }
+
+        <span class="comment">// Windows does not support posix numeric ownership IDs
+        </span><span class="attr">#[cfg(any(windows, target_arch = <span class="string">&quot;wasm32&quot;</span>))]
+        </span><span class="kw">fn </span>_set_ownerships(
+            <span class="kw">_</span>: <span class="kw-2">&amp;</span>Path,
+            <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>std::fs::File&gt;,
+            <span class="kw">_</span>: u64,
+            <span class="kw">_</span>: u64,
+        ) -&gt; io::Result&lt;()&gt; {
+            <span class="prelude-val">Ok</span>(())
+        }
+
         <span class="kw">fn </span>set_perms(
             dst: <span class="kw-2">&amp;</span>Path,
             f: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>std::fs::File&gt;,
             mode: u32,
+            mask: u32,
             preserve: bool,
         ) -&gt; <span class="prelude-ty">Result</span>&lt;(), TarError&gt; {
-            _set_perms(dst, f, mode, preserve).map_err(|e| {
+            _set_perms(dst, f, mode, mask, preserve).map_err(|e| {
                 TarError::new(
                     <span class="macro">format!</span>(
                         <span class="string">&quot;failed to set permissions to {:o} \
@@ -1496,11 +1772,13 @@
             dst: <span class="kw-2">&amp;</span>Path,
             f: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>std::fs::File&gt;,
             mode: u32,
+            mask: u32,
             preserve: bool,
         ) -&gt; io::Result&lt;()&gt; {
             <span class="kw">use </span>std::os::unix::prelude::<span class="kw-2">*</span>;
 
             <span class="kw">let </span>mode = <span class="kw">if </span>preserve { mode } <span class="kw">else </span>{ mode &amp; <span class="number">0o777 </span>};
+            <span class="kw">let </span>mode = mode &amp; !mask;
             <span class="kw">let </span>perm = fs::Permissions::from_mode(mode <span class="kw">as _</span>);
             <span class="kw">match </span>f {
                 <span class="prelude-val">Some</span>(f) =&gt; f.set_permissions(perm),
@@ -1513,6 +1791,7 @@
             dst: <span class="kw-2">&amp;</span>Path,
             f: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>std::fs::File&gt;,
             mode: u32,
+            _mask: u32,
             _preserve: bool,
         ) -&gt; io::Result&lt;()&gt; {
             <span class="kw">if </span>mode &amp; <span class="number">0o200 </span>== <span class="number">0o200 </span>{
@@ -1538,6 +1817,7 @@
             dst: <span class="kw-2">&amp;</span>Path,
             f: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>std::fs::File&gt;,
             mode: u32,
+            mask: u32,
             _preserve: bool,
         ) -&gt; io::Result&lt;()&gt; {
             <span class="prelude-val">Err</span>(io::Error::new(io::ErrorKind::Other, <span class="string">&quot;Not implemented&quot;</span>))

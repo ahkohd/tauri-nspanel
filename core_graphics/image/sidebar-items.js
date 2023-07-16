@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["CGImageAlphaInfo","CGImageByteOrderInfo"],"struct":["CGImageRef"]};
+window.SIDEBAR_ITEMS = {"enum":["CGImageAlphaInfo","CGImageByteOrderInfo"],"struct":["CGImage","CGImageRef"]};

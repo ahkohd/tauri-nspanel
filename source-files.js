@@ -20,7 +20,7 @@ var sourcesIndex = JSON.parse('{\
 "convert_case":["",[],["case.rs","lib.rs","words.rs"]],\
 "core_foundation":["",[],["array.rs","attributed_string.rs","base.rs","boolean.rs","bundle.rs","characterset.rs","data.rs","date.rs","dictionary.rs","error.rs","filedescriptor.rs","lib.rs","mach_port.rs","number.rs","propertylist.rs","runloop.rs","set.rs","string.rs","timezone.rs","url.rs","uuid.rs"]],\
 "core_foundation_sys":["",[],["array.rs","attributed_string.rs","base.rs","bundle.rs","characterset.rs","data.rs","date.rs","dictionary.rs","error.rs","filedescriptor.rs","lib.rs","mach_port.rs","messageport.rs","number.rs","propertylist.rs","runloop.rs","set.rs","string.rs","timezone.rs","url.rs","uuid.rs"]],\
-"core_graphics":["",[],["access.rs","base.rs","color.rs","color_space.rs","context.rs","data_provider.rs","display.rs","event.rs","event_source.rs","font.rs","geometry.rs","gradient.rs","image.rs","lib.rs","path.rs","private.rs","sys.rs","window.rs"]],\
+"core_graphics":["",[],["base.rs","color.rs","color_space.rs","context.rs","data_provider.rs","display.rs","event.rs","event_source.rs","font.rs","geometry.rs","gradient.rs","image.rs","lib.rs","path.rs","private.rs","sys.rs","window.rs"]],\
 "core_graphics_types":["",[],["base.rs","geometry.rs","lib.rs"]],\
 "cpufeatures":["",[],["lib.rs","x86.rs"]],\
 "crc32fast":["",[["specialized",[],["mod.rs","pclmulqdq.rs"]]],["baseline.rs","combine.rs","lib.rs","table.rs"]],\
@@ -31,7 +31,7 @@ var sourcesIndex = JSON.parse('{\
 "cssparser_macros":["",[],["lib.rs"]],\
 "ctor":["",[],["lib.rs"]],\
 "darling":["",[],["lib.rs","macros_public.rs"]],\
-"darling_core":["",[["ast",[],["data.rs","generics.rs","mod.rs"]],["codegen",[],["attr_extractor.rs","default_expr.rs","error.rs","field.rs","from_attributes_impl.rs","from_derive_impl.rs","from_field.rs","from_meta_impl.rs","from_type_param.rs","from_variant_impl.rs","mod.rs","outer_from_impl.rs","postfix_transform.rs","trait_impl.rs","variant.rs","variant_data.rs"]],["error",[],["kind.rs","mod.rs"]],["options",[],["core.rs","forward_attrs.rs","from_attributes.rs","from_derive.rs","from_field.rs","from_meta.rs","from_type_param.rs","from_variant.rs","input_field.rs","input_variant.rs","mod.rs","outer_from.rs","shape.rs"]],["usage",[],["generics_ext.rs","ident_set.rs","lifetimes.rs","mod.rs","options.rs","type_params.rs"]],["util",[],["flag.rs","ident_string.rs","ignored.rs","mod.rs","over_ride.rs","parse_attribute.rs","path_list.rs","path_to_string.rs","shape.rs","spanned_value.rs","with_original.rs"]]],["derive.rs","from_attributes.rs","from_derive_input.rs","from_field.rs","from_generic_param.rs","from_generics.rs","from_meta.rs","from_type_param.rs","from_variant.rs","lib.rs","macros_private.rs","macros_public.rs"]],\
+"darling_core":["",[["ast",[],["data.rs","generics.rs","mod.rs"]],["codegen",[],["attr_extractor.rs","default_expr.rs","error.rs","field.rs","from_attributes_impl.rs","from_derive_impl.rs","from_field.rs","from_meta_impl.rs","from_type_param.rs","from_variant_impl.rs","mod.rs","outer_from_impl.rs","postfix_transform.rs","trait_impl.rs","variant.rs","variant_data.rs"]],["error",[],["kind.rs","mod.rs"]],["options",[],["core.rs","forward_attrs.rs","from_attributes.rs","from_derive.rs","from_field.rs","from_meta.rs","from_type_param.rs","from_variant.rs","input_field.rs","input_variant.rs","mod.rs","outer_from.rs","shape.rs"]],["usage",[],["generics_ext.rs","ident_set.rs","lifetimes.rs","mod.rs","options.rs","type_params.rs"]],["util",[],["flag.rs","ident_string.rs","ignored.rs","mod.rs","over_ride.rs","parse_attribute.rs","parse_expr.rs","path_list.rs","path_to_string.rs","shape.rs","spanned_value.rs","with_original.rs"]]],["derive.rs","from_attributes.rs","from_derive_input.rs","from_field.rs","from_generic_param.rs","from_generics.rs","from_meta.rs","from_type_param.rs","from_variant.rs","lib.rs","macros_private.rs","macros_public.rs"]],\
 "darling_macro":["",[],["lib.rs"]],\
 "debug_unreachable":["",[],["lib.rs"]],\
 "derive_more":["",[],["add_assign_like.rs","add_helpers.rs","add_like.rs","as_mut.rs","as_ref.rs","constructor.rs","deref.rs","deref_mut.rs","display.rs","error.rs","from.rs","from_str.rs","index.rs","index_mut.rs","into.rs","into_iterator.rs","is_variant.rs","lib.rs","mul_assign_like.rs","mul_helpers.rs","mul_like.rs","not_like.rs","parsing.rs","sum_like.rs","try_into.rs","unwrap.rs","utils.rs"]],\
@@ -51,7 +51,6 @@ var sourcesIndex = JSON.parse('{\
 "flate2":["",[["deflate",[],["bufread.rs","mod.rs","read.rs","write.rs"]],["ffi",[],["mod.rs","rust.rs"]],["gz",[],["bufread.rs","mod.rs","read.rs","write.rs"]],["zlib",[],["bufread.rs","mod.rs","read.rs","write.rs"]]],["bufreader.rs","crc.rs","lib.rs","mem.rs","zio.rs"]],\
 "fnv":["",[],["lib.rs"]],\
 "foreign_types":["",[],["lib.rs"]],\
-"foreign_types_macros":["",[],["build.rs","lib.rs","parse.rs"]],\
 "foreign_types_shared":["",[],["lib.rs"]],\
 "form_urlencoded":["",[],["lib.rs"]],\
 "futf":["",[],["lib.rs"]],\
