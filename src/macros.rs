@@ -8,11 +8,13 @@ macro_rules! panel_delegate {
             runtime::{self, Class, Object, Protocol, Sel},
             sel, sel_impl, Message,
         };
-        use $crate::cocoa::base::{id, nil};
+        use $crate::cocoa::base::{id, nil, BOOL, NO};
         use $crate::objc_foundation::INSObject;
-        use $crate::objc_id::ShareId;
+        use $crate::objc_id::{Id, ShareId};
         use $crate::raw_nspanel::RawNSPanel;
         use $crate::tauri::Runtime;
+        use $crate::block::ConcreteBlock;
+        use std::ffi::{c_void, c_char};
 
         macro_rules! snake_to_camel {
             ($input:ident) => {{
@@ -62,13 +64,12 @@ macro_rules! panel_delegate {
                 );
 
                 unsafe {
-                    cls.add_ivar::<id>("panel");
+                    cls.add_ivar::<*mut c_void>("_listener");
 
                     cls.add_method(
-                        sel!(setPanel:),
-                        Self::setPanel as extern "C" fn(&mut Object, Sel, id),
+                        sel!(setListener:),
+                        Self::handle_set_listener as extern "C" fn(&mut Object, Sel, *mut c_void),
                     );
-
 
                     $(
                         cls.add_method(
@@ -76,21 +77,42 @@ macro_rules! panel_delegate {
                             Self::$fn_name as extern "C" fn(&Object, Sel, id),
                         );
                     )*
+
+                    cls.add_method(
+                        sel!(dealloc),
+                        Self::dealloc as extern "C" fn(&mut Object, Sel),
+                    );
                 }
 
                 cls.register()
             }
 
-            extern "C" fn setPanel(this: &mut Object, _: Sel, panel: id) {
-                unsafe { this.set_ivar("panel", panel) };
+            extern "C" fn handle_set_listener(this: &mut Object, _: Sel, listener: *mut c_void) {
+                unsafe { this.set_ivar::<*mut c_void>("_listener", listener) };
             }
 
             $(
                 extern "C" fn $fn_name(this: &Object, _: Sel, _: id) {
-                    let panel: id = unsafe { *this.get_ivar("panel") };
-                    $fn_name(unsafe {Id::from_ptr(panel as *mut RawNSPanel) });
+                    let delegate_name = std::ffi::CString::new(stringify!($fn_name)).unwrap();
+                    let delegate_name_ptr = delegate_name.as_ptr();
+
+                    let listener: *mut c_void = unsafe { *this.get_ivar("_listener") };
+                    let listener = listener as *const ConcreteBlock<(*const c_char, BOOL, *mut Object, *mut Sel, *mut c_void), (), ()>;
+
+                    unsafe {
+                        (*listener).call((delegate_name_ptr, NO, std::ptr::null_mut(), std::ptr::null_mut(), std::ptr::null_mut()));
+                    }
                 }
             )*
+
+            extern "C" fn dealloc(this: &mut Object, _cmd: Sel) {
+                unsafe {
+                    let superclass = class!(NSObject);
+                    let dealloc: extern "C" fn(&mut Object, Sel) =
+                        msg_send![super(this, superclass), dealloc];
+                    dealloc(this, _cmd);
+                }
+            }
         }
 
         unsafe impl Message for $delegate_name {}
@@ -102,8 +124,13 @@ macro_rules! panel_delegate {
         }
 
         impl $delegate_name {
-            pub fn set_panel(&self, panel: ShareId<RawNSPanel>) {
-                let _: () = unsafe { msg_send![self, setPanel: panel] };
+            pub fn set_listener(&self, callback: Box<dyn Fn(String)>) {
+                let block = ConcreteBlock::new(move |_delegate_name: *const c_char| {
+                    let delegate_name = unsafe { std::ffi::CStr::from_ptr(_delegate_name).to_string_lossy().into_owned() };
+                    callback(delegate_name);
+                });
+                let block = block.copy();
+                let _: () = unsafe { msg_send![self, setListener: block] };
             }
         }
 

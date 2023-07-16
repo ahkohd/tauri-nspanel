@@ -62,32 +62,24 @@ use tauri::Wry;
 use tauri_nspanel::{objc_id::Id, panel_delegate, ManagerExt, Panel, WindowExt};
 
 // ...
+// Use the `panel_delegate!()` macro to create your custom delegate
 
-// Define your handlers
+// Specify your handlers
 // See, https://developer.apple.com/documentation/appkit/nswindowdelegate?language=objc
 // for an exhaustive list of handlers.
 //
-// Example: to respond to windowWillBeginSheet:
-// declare the function in snake case:
-// fn window_will_begin_sheet(_: Panel) { }
+// Example: to respond to windowDidBecomeKey:
+// specify in snake case: window_did_become_key
 
-fn window_did_become_key(panel: Panel) {
-  let app_name = panel.app_handle::<Wry>().unwrap().package_info().name.to_owned();
-  println!("[info]: {:?} panel becomes key window!", app_name);
-}
-
-fn window_did_resign_key(_: Panel) {
-  println!("[info]: panel resigned from key window!");
-}
-
-// Use the `panel_delegate!()` macro to create your custom delegate
 let delegate = panel_delegate!(MyPanelDelegate {
   window_did_become_key,
   window_did_resign_key
 });
 
-// Give the delegate a reference to your panel
-delegate.set_panel(panel.to_owned());
+// Listen to when a delegate is called
+delegate.set_listener(Box::new(|delegate_name: String| {
+    println!("{} was called!", delegate_name);
+}));
 
 // Set your panel's delegate
 panel.set_delegate(delegate);

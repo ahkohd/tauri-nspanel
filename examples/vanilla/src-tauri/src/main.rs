@@ -4,7 +4,7 @@
 )]
 
 use tauri::{AppHandle, Manager, Window, Wry};
-use tauri_nspanel::{objc_id::Id, panel_delegate, ManagerExt, Panel, WindowExt};
+use tauri_nspanel::{panel_delegate, ManagerExt, WindowExt};
 
 fn main() {
   tauri::Builder::default()
@@ -26,26 +26,25 @@ fn main() {
 fn init(window: Window<Wry>) {
   let panel = window.to_panel().unwrap();
 
-  fn window_did_become_key(panel: Panel) {
-    let app_name = panel
-      .app_handle::<Wry>()
-      .unwrap()
-      .package_info()
-      .name
-      .to_owned();
-    println!("[info]: {:?} panel becomes key window!", app_name);
-  }
-
-  fn window_did_resign_key(_: Panel) {
-    println!("[info]: panel resigned from key window!");
-  }
-
   let delegate = panel_delegate!(MyPanelDelegate {
     window_did_become_key,
     window_did_resign_key
   });
 
-  delegate.set_panel(panel.to_owned());
+  let handle = window.app_handle();
+  delegate.set_listener(Box::new(move |delegate_name: String| {
+    match delegate_name.as_str() {
+      "window_did_become_key" => {
+        let app_name = handle.package_info().name.to_owned();
+        println!("[info]: {:?} panel becomes key window!", app_name);
+      }
+      "window_did_resign_key" => {
+        println!("[info]: panel resigned from key window!");
+      }
+      _ => (),
+    }
+  }));
+
   panel.set_delegate(delegate);
 }
 

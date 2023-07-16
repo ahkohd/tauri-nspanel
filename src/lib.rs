@@ -11,6 +11,7 @@ use tauri::{
     Manager, Runtime, Window,
 };
 
+pub extern crate block;
 pub extern crate cocoa;
 pub extern crate objc;
 pub extern crate objc_foundation;

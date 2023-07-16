@@ -1,5 +1,3 @@
-use std::ffi::c_void;
-
 use cocoa::{
     appkit::NSWindowCollectionBehavior,
     base::{id, nil, BOOL, NO, YES},
@@ -13,7 +11,7 @@ use objc::{
 };
 use objc_foundation::INSObject;
 use objc_id::{Id, ShareId};
-use tauri::{AppHandle, Manager, Runtime, Window};
+use tauri::{Runtime, Window};
 
 extern "C" {
     pub fn object_setClass(obj: id, cls: id) -> id;
@@ -38,18 +36,6 @@ impl RawNSPanel {
             .unwrap_or_else(|| panic!("Unable to register {} class", CLS_NAME));
 
         unsafe {
-            cls.add_ivar::<*mut c_void>("_app_handle");
-
-            cls.add_method(
-                sel!(setAppHandle:),
-                Self::handle_set_app_handle as extern "C" fn(&mut Object, Sel, *mut c_void),
-            );
-
-            cls.add_method(
-                sel!(appHandle),
-                Self::handle_get_app_handle as extern "C" fn(&Object, Sel) -> *mut c_void,
-            );
-
             cls.add_method(
                 sel!(canBecomeKeyWindow),
                 Self::can_become_key_window as extern "C" fn(&Object, Sel) -> BOOL,
@@ -64,27 +50,13 @@ impl RawNSPanel {
         cls.register()
     }
 
-    extern "C" fn handle_set_app_handle(this: &mut Object, _: Sel, app_handle: *mut c_void) {
-        unsafe { this.set_ivar("_app_handle", app_handle) };
-    }
-
-    extern "C" fn handle_get_app_handle(this: &Object, _: Sel) -> *mut c_void {
-        unsafe { *this.get_ivar("_app_handle") }
-    }
-
     /// Returns YES to ensure that RawNSPanel can become a key window
     extern "C" fn can_become_key_window(_: &Object, _: Sel) -> BOOL {
         YES
     }
 
     extern "C" fn dealloc(this: &mut Object, _cmd: Sel) {
-        let app_handle_wrapper_ptr: *mut c_void = unsafe { *this.get_ivar("_app_handle") };
-
-        if !app_handle_wrapper_ptr.is_null() {
-            let app_handle_wrapper = unsafe { Box::from_raw(app_handle_wrapper_ptr) };
-            drop(app_handle_wrapper);
-        }
-
+        println!("fuck don't dealloc");
         unsafe {
             let superclass = class!(NSObject);
             let dealloc: extern "C" fn(&mut Object, Sel) =
@@ -166,49 +138,15 @@ impl RawNSPanel {
         unsafe { ShareId::from_ptr(self as *mut Self) }
     }
 
-    fn set_app_handle<R: Runtime>(&self, app_handle: AppHandle<R>) {
-        let handle = app_handle as _;
-        let app_handle_wrapper = AppHandleWrapper::new(handle);
-        let _: () = unsafe { msg_send![self, setAppHandle: app_handle_wrapper.into_raw()] };
-    }
-
-    pub fn app_handle<R: Runtime>(&self) -> Option<AppHandle<R>> {
-        let wrapper_ptr: *mut c_void = unsafe { msg_send![self, appHandle] };
-
-        if wrapper_ptr.is_null() {
-            return None;
-        }
-
-        let wrapper = unsafe { &*(wrapper_ptr as *const AppHandleWrapper<R>) };
-        Some(wrapper.app_handle.clone())
-    }
-
     /// Create an NSPanel from a Tauri window
     pub fn from_window<R: Runtime>(window: Window<R>) -> Id<Self> {
-        let app_handle = window.app_handle();
         let nswindow: id = window.ns_window().unwrap() as _;
         let nspanel_class: id = unsafe { msg_send![Self::class(), class] };
-        let panel = unsafe {
+        unsafe {
             object_setClass(nswindow, nspanel_class);
             Id::from_retained_ptr(nswindow as *mut RawNSPanel)
-        };
-        panel.set_app_handle(app_handle);
-        panel
+        }
     }
 }
 
 unsafe impl Message for RawNSPanel {}
-
-pub struct AppHandleWrapper<R: Runtime> {
-    app_handle: AppHandle<R>,
-}
-
-impl<R: Runtime> AppHandleWrapper<R> {
-    pub fn new(app_handle: AppHandle<R>) -> Self {
-        Self { app_handle }
-    }
-
-    pub fn into_raw(self) -> *mut c_void {
-        Box::into_raw(Box::new(self)) as *mut c_void
-    }
-}
