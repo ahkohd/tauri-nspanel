@@ -20,7 +20,7 @@ var sourcesIndex = JSON.parse('{\
 "convert_case":["",[],["case.rs","lib.rs","words.rs"]],\
 "core_foundation":["",[],["array.rs","attributed_string.rs","base.rs","boolean.rs","bundle.rs","characterset.rs","data.rs","date.rs","dictionary.rs","error.rs","filedescriptor.rs","lib.rs","mach_port.rs","number.rs","propertylist.rs","runloop.rs","set.rs","string.rs","timezone.rs","url.rs","uuid.rs"]],\
 "core_foundation_sys":["",[],["array.rs","attributed_string.rs","base.rs","bundle.rs","characterset.rs","data.rs","date.rs","dictionary.rs","error.rs","filedescriptor.rs","lib.rs","mach_port.rs","messageport.rs","number.rs","propertylist.rs","runloop.rs","set.rs","string.rs","timezone.rs","url.rs","uuid.rs"]],\
-"core_graphics":["",[],["base.rs","color.rs","color_space.rs","context.rs","data_provider.rs","display.rs","event.rs","event_source.rs","font.rs","geometry.rs","gradient.rs","image.rs","lib.rs","path.rs","private.rs","sys.rs","window.rs"]],\
+"core_graphics":["",[],["access.rs","base.rs","color.rs","color_space.rs","context.rs","data_provider.rs","display.rs","event.rs","event_source.rs","font.rs","geometry.rs","gradient.rs","image.rs","lib.rs","path.rs","private.rs","sys.rs","window.rs"]],\
 "core_graphics_types":["",[],["base.rs","geometry.rs","lib.rs"]],\
 "cpufeatures":["",[],["lib.rs","x86.rs"]],\
 "crc32fast":["",[["specialized",[],["mod.rs","pclmulqdq.rs"]]],["baseline.rs","combine.rs","lib.rs","table.rs"]],\
@@ -51,6 +51,7 @@ var sourcesIndex = JSON.parse('{\
 "flate2":["",[["deflate",[],["bufread.rs","mod.rs","read.rs","write.rs"]],["ffi",[],["mod.rs","rust.rs"]],["gz",[],["bufread.rs","mod.rs","read.rs","write.rs"]],["zlib",[],["bufread.rs","mod.rs","read.rs","write.rs"]]],["bufreader.rs","crc.rs","lib.rs","mem.rs","zio.rs"]],\
 "fnv":["",[],["lib.rs"]],\
 "foreign_types":["",[],["lib.rs"]],\
+"foreign_types_macros":["",[],["build.rs","lib.rs","parse.rs"]],\
 "foreign_types_shared":["",[],["lib.rs"]],\
 "form_urlencoded":["",[],["lib.rs"]],\
 "futf":["",[],["lib.rs"]],\

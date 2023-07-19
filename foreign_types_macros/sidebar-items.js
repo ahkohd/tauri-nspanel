@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"macro":["foreign_type_impl"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["CGFont","CGFontRef"],"type":["CGGlyph"]};
+window.SIDEBAR_ITEMS = {"struct":["CGFontRef"],"type":["CGGlyph"]};
