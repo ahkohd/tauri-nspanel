@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.29.1/src/runtime/runtime.rs`."><title>runtime.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="tokio" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../tokio/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.32.0/src/runtime/runtime.rs`."><title>runtime.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9bb858ba049f1f21.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="tokio" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.0 (5680fa18f 2023-08-23)" data-channel="1.72.0" data-search-js="search-f6292fe389d70017.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ><script src="../../../static.files/storage-59fd9b8ccb335783.js"></script><script defer src="../../../static.files/source-script-106908c7a7964ba4.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../tokio/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -443,6 +443,50 @@
 <a href="#443" id="443">443</a>
 <a href="#444" id="444">444</a>
 <a href="#445" id="445">445</a>
+<a href="#446" id="446">446</a>
+<a href="#447" id="447">447</a>
+<a href="#448" id="448">448</a>
+<a href="#449" id="449">449</a>
+<a href="#450" id="450">450</a>
+<a href="#451" id="451">451</a>
+<a href="#452" id="452">452</a>
+<a href="#453" id="453">453</a>
+<a href="#454" id="454">454</a>
+<a href="#455" id="455">455</a>
+<a href="#456" id="456">456</a>
+<a href="#457" id="457">457</a>
+<a href="#458" id="458">458</a>
+<a href="#459" id="459">459</a>
+<a href="#460" id="460">460</a>
+<a href="#461" id="461">461</a>
+<a href="#462" id="462">462</a>
+<a href="#463" id="463">463</a>
+<a href="#464" id="464">464</a>
+<a href="#465" id="465">465</a>
+<a href="#466" id="466">466</a>
+<a href="#467" id="467">467</a>
+<a href="#468" id="468">468</a>
+<a href="#469" id="469">469</a>
+<a href="#470" id="470">470</a>
+<a href="#471" id="471">471</a>
+<a href="#472" id="472">472</a>
+<a href="#473" id="473">473</a>
+<a href="#474" id="474">474</a>
+<a href="#475" id="475">475</a>
+<a href="#476" id="476">476</a>
+<a href="#477" id="477">477</a>
+<a href="#478" id="478">478</a>
+<a href="#479" id="479">479</a>
+<a href="#480" id="480">480</a>
+<a href="#481" id="481">481</a>
+<a href="#482" id="482">482</a>
+<a href="#483" id="483">483</a>
+<a href="#484" id="484">484</a>
+<a href="#485" id="485">485</a>
+<a href="#486" id="486">486</a>
+<a href="#487" id="487">487</a>
+<a href="#488" id="488">488</a>
+<a href="#489" id="489">489</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::runtime::blocking::BlockingPool;
 <span class="kw">use </span><span class="kw">crate</span>::runtime::scheduler::CurrentThread;
 <span class="kw">use </span><span class="kw">crate</span>::runtime::{context, EnterGuard, Handle};
@@ -454,6 +498,10 @@
 <span class="macro">cfg_rt_multi_thread! </span>{
     <span class="kw">use </span><span class="kw">crate</span>::runtime::Builder;
     <span class="kw">use </span><span class="kw">crate</span>::runtime::scheduler::MultiThread;
+
+    <span class="macro">cfg_unstable! </span>{
+        <span class="kw">use </span><span class="kw">crate</span>::runtime::scheduler::MultiThreadAlt;
+    }
 }
 
 <span class="doccomment">/// The Tokio runtime.
@@ -470,7 +518,7 @@
 /// # Shutdown
 ///
 /// Shutting down the runtime is done by dropping the value, or calling
-/// [`Runtime::shutdown_background`] or [`Runtime::shutdown_timeout`].
+/// [`shutdown_background`] or [`shutdown_timeout`].
 ///
 /// Tasks spawned through [`Runtime::spawn`] keep running until they yield.
 /// Then they are dropped. They are not *guaranteed* to run to completion, but
@@ -483,11 +531,11 @@
 /// stopped. This can take an indefinite amount of time. The `Drop`
 /// implementation waits forever for this.
 ///
-/// `shutdown_background` and `shutdown_timeout` can be used if waiting forever
-/// is undesired. When the timeout is reached, spawned work that did not stop
-/// in time and threads running it are leaked. The work continues to run until
-/// one of the stopping conditions is fulfilled, but the thread initiating the
-/// shutdown is unblocked.
+/// The [`shutdown_background`] and [`shutdown_timeout`] methods can be used if
+/// waiting forever is undesired. When the timeout is reached, spawned work that
+/// did not stop in time and threads running it are leaked. The work continues
+/// to run until one of the stopping conditions is fulfilled, but the thread
+/// initiating the shutdown is unblocked.
 ///
 /// Once the runtime has been dropped, any outstanding I/O resources bound to
 /// it will no longer function. Calling any method on them will result in an
@@ -495,18 +543,43 @@
 ///
 /// # Sharing
 ///
-/// The Tokio runtime implements `Sync` and `Send` to allow you to wrap it
-/// in a `Arc`. Most fn take `&amp;self` to allow you to call them concurrently
-/// across multiple threads.
+/// There are several ways to establish shared access to a Tokio runtime:
 ///
-/// Calls to `shutdown` and `shutdown_timeout` require exclusive ownership of
-/// the runtime type and this can be achieved via `Arc::try_unwrap` when only
-/// one strong count reference is left over.
+///  * Using an &lt;code&gt;[Arc]\&lt;Runtime&gt;&lt;/code&gt;.
+///  * Using a [`Handle`].
+///  * Entering the runtime context.
+///
+/// Using an &lt;code&gt;[Arc]\&lt;Runtime&gt;&lt;/code&gt; or [`Handle`] allows you to do various
+/// things with the runtime such as spawning new tasks or entering the runtime
+/// context. Both types can be cloned to create a new handle that allows access
+/// to the same runtime. By passing clones into different tasks or threads, you
+/// will be able to access the runtime from those tasks or threads.
+///
+/// The difference between &lt;code&gt;[Arc]\&lt;Runtime&gt;&lt;/code&gt; and [`Handle`] is that
+/// an &lt;code&gt;[Arc]\&lt;Runtime&gt;&lt;/code&gt; will prevent the runtime from shutting down,
+/// whereas a [`Handle`] does not prevent that. This is because shutdown of the
+/// runtime happens when the destructor of the `Runtime` object runs.
+///
+/// Calls to [`shutdown_background`] and [`shutdown_timeout`] require exclusive
+/// ownership of the `Runtime` type. When using an &lt;code&gt;[Arc]\&lt;Runtime&gt;&lt;/code&gt;,
+/// this can be achieved via [`Arc::try_unwrap`] when only one strong count
+/// reference is left over.
+///
+/// The runtime context is entered using the [`Runtime::enter`] or
+/// [`Handle::enter`] methods, which use a thread-local variable to store the
+/// current runtime. Whenever you are inside the runtime context, methods such
+/// as [`tokio::spawn`] will use the runtime whose context you are inside.
 ///
 /// [timer]: crate::time
 /// [mod]: index.html
 /// [`new`]: method@Self::new
 /// [`Builder`]: struct@Builder
+/// [`Handle`]: struct@Handle
+/// [`tokio::spawn`]: crate::spawn
+/// [`Arc::try_unwrap`]: std::sync::Arc::try_unwrap
+/// [Arc]: std::sync::Arc
+/// [`shutdown_background`]: method@Runtime::shutdown_background
+/// [`shutdown_timeout`]: method@Runtime::shutdown_timeout
 </span><span class="attr">#[derive(Debug)]
 </span><span class="kw">pub struct </span>Runtime {
     <span class="doccomment">/// Task scheduler
@@ -529,6 +602,9 @@
     </span>CurrentThread,
     <span class="doccomment">/// The flavor that executes tasks across multiple threads.
     </span>MultiThread,
+    <span class="doccomment">/// The flavor that executes tasks across multiple threads.
+    </span><span class="attr">#[cfg(tokio_unstable)]
+    </span>MultiThreadAlt,
 }
 
 <span class="doccomment">/// The runtime scheduler is either a multi-thread or a current-thread executor.
@@ -538,8 +614,12 @@
     </span>CurrentThread(CurrentThread),
 
     <span class="doccomment">/// Execute tasks across multiple threads.
-    </span><span class="attr">#[cfg(all(feature = <span class="string">&quot;rt-multi-thread&quot;</span>, not(tokio_wasi)))]
+    </span><span class="attr">#[cfg(all(feature = <span class="string">&quot;rt-multi-thread&quot;</span>, not(target_os = <span class="string">&quot;wasi&quot;</span>)))]
     </span>MultiThread(MultiThread),
+
+    <span class="doccomment">/// Execute tasks across multiple threads.
+    </span><span class="attr">#[cfg(all(tokio_unstable, feature = <span class="string">&quot;rt-multi-thread&quot;</span>, not(target_os = <span class="string">&quot;wasi&quot;</span>)))]
+    </span>MultiThreadAlt(MultiThreadAlt),
 }
 
 <span class="kw">impl </span>Runtime {
@@ -754,8 +834,10 @@
 
         <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.scheduler {
             Scheduler::CurrentThread(exec) =&gt; exec.block_on(<span class="kw-2">&amp;</span><span class="self">self</span>.handle.inner, future),
-            <span class="attr">#[cfg(all(feature = <span class="string">&quot;rt-multi-thread&quot;</span>, not(tokio_wasi)))]
+            <span class="attr">#[cfg(all(feature = <span class="string">&quot;rt-multi-thread&quot;</span>, not(target_os = <span class="string">&quot;wasi&quot;</span>)))]
             </span>Scheduler::MultiThread(exec) =&gt; exec.block_on(<span class="kw-2">&amp;</span><span class="self">self</span>.handle.inner, future),
+            <span class="attr">#[cfg(all(tokio_unstable, feature = <span class="string">&quot;rt-multi-thread&quot;</span>, not(target_os = <span class="string">&quot;wasi&quot;</span>)))]
+            </span>Scheduler::MultiThreadAlt(exec) =&gt; exec.block_on(<span class="kw-2">&amp;</span><span class="self">self</span>.handle.inner, future),
         }
     }
 
@@ -870,8 +952,14 @@
                 </span><span class="kw">let </span>_guard = context::try_set_current(<span class="kw-2">&amp;</span><span class="self">self</span>.handle.inner);
                 current_thread.shutdown(<span class="kw-2">&amp;</span><span class="self">self</span>.handle.inner);
             }
-            <span class="attr">#[cfg(all(feature = <span class="string">&quot;rt-multi-thread&quot;</span>, not(tokio_wasi)))]
+            <span class="attr">#[cfg(all(feature = <span class="string">&quot;rt-multi-thread&quot;</span>, not(target_os = <span class="string">&quot;wasi&quot;</span>)))]
             </span>Scheduler::MultiThread(multi_thread) =&gt; {
+                <span class="comment">// The threaded scheduler drops its tasks on its worker threads, which is
+                // already in the runtime&#39;s context.
+                </span>multi_thread.shutdown(<span class="kw-2">&amp;</span><span class="self">self</span>.handle.inner);
+            }
+            <span class="attr">#[cfg(all(tokio_unstable, feature = <span class="string">&quot;rt-multi-thread&quot;</span>, not(target_os = <span class="string">&quot;wasi&quot;</span>)))]
+            </span>Scheduler::MultiThreadAlt(multi_thread) =&gt; {
                 <span class="comment">// The threaded scheduler drops its tasks on its worker threads, which is
                 // already in the runtime&#39;s context.
                 </span>multi_thread.shutdown(<span class="kw-2">&amp;</span><span class="self">self</span>.handle.inner);

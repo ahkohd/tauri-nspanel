@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_derive-1.0.171/src/internals/attr.rs`."><title>attr.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="serde_derive" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../serde_derive/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_derive-1.0.188/src/internals/attr.rs`."><title>attr.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9bb858ba049f1f21.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="serde_derive" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.0 (5680fa18f 2023-08-23)" data-channel="1.72.0" data-search-js="search-f6292fe389d70017.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ><script src="../../../static.files/storage-59fd9b8ccb335783.js"></script><script defer src="../../../static.files/source-script-106908c7a7964ba4.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../serde_derive/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1810,18 +1810,83 @@
 <a href="#1810" id="1810">1810</a>
 <a href="#1811" id="1811">1811</a>
 <a href="#1812" id="1812">1812</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>internals::symbol::<span class="kw-2">*</span>;
-<span class="kw">use </span>internals::{ungroup, Ctxt};
+<a href="#1813" id="1813">1813</a>
+<a href="#1814" id="1814">1814</a>
+<a href="#1815" id="1815">1815</a>
+<a href="#1816" id="1816">1816</a>
+<a href="#1817" id="1817">1817</a>
+<a href="#1818" id="1818">1818</a>
+<a href="#1819" id="1819">1819</a>
+<a href="#1820" id="1820">1820</a>
+<a href="#1821" id="1821">1821</a>
+<a href="#1822" id="1822">1822</a>
+<a href="#1823" id="1823">1823</a>
+<a href="#1824" id="1824">1824</a>
+<a href="#1825" id="1825">1825</a>
+<a href="#1826" id="1826">1826</a>
+<a href="#1827" id="1827">1827</a>
+<a href="#1828" id="1828">1828</a>
+<a href="#1829" id="1829">1829</a>
+<a href="#1830" id="1830">1830</a>
+<a href="#1831" id="1831">1831</a>
+<a href="#1832" id="1832">1832</a>
+<a href="#1833" id="1833">1833</a>
+<a href="#1834" id="1834">1834</a>
+<a href="#1835" id="1835">1835</a>
+<a href="#1836" id="1836">1836</a>
+<a href="#1837" id="1837">1837</a>
+<a href="#1838" id="1838">1838</a>
+<a href="#1839" id="1839">1839</a>
+<a href="#1840" id="1840">1840</a>
+<a href="#1841" id="1841">1841</a>
+<a href="#1842" id="1842">1842</a>
+<a href="#1843" id="1843">1843</a>
+<a href="#1844" id="1844">1844</a>
+<a href="#1845" id="1845">1845</a>
+<a href="#1846" id="1846">1846</a>
+<a href="#1847" id="1847">1847</a>
+<a href="#1848" id="1848">1848</a>
+<a href="#1849" id="1849">1849</a>
+<a href="#1850" id="1850">1850</a>
+<a href="#1851" id="1851">1851</a>
+<a href="#1852" id="1852">1852</a>
+<a href="#1853" id="1853">1853</a>
+<a href="#1854" id="1854">1854</a>
+<a href="#1855" id="1855">1855</a>
+<a href="#1856" id="1856">1856</a>
+<a href="#1857" id="1857">1857</a>
+<a href="#1858" id="1858">1858</a>
+<a href="#1859" id="1859">1859</a>
+<a href="#1860" id="1860">1860</a>
+<a href="#1861" id="1861">1861</a>
+<a href="#1862" id="1862">1862</a>
+<a href="#1863" id="1863">1863</a>
+<a href="#1864" id="1864">1864</a>
+<a href="#1865" id="1865">1865</a>
+<a href="#1866" id="1866">1866</a>
+<a href="#1867" id="1867">1867</a>
+<a href="#1868" id="1868">1868</a>
+<a href="#1869" id="1869">1869</a>
+<a href="#1870" id="1870">1870</a>
+<a href="#1871" id="1871">1871</a>
+<a href="#1872" id="1872">1872</a>
+<a href="#1873" id="1873">1873</a>
+<a href="#1874" id="1874">1874</a>
+<a href="#1875" id="1875">1875</a>
+<a href="#1876" id="1876">1876</a>
+<a href="#1877" id="1877">1877</a>
+<a href="#1878" id="1878">1878</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::internals::symbol::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::internals::{ungroup, Ctxt};
 <span class="kw">use </span>proc_macro2::{Spacing, Span, TokenStream, TokenTree};
 <span class="kw">use </span>quote::ToTokens;
 <span class="kw">use </span>std::borrow::Cow;
 <span class="kw">use </span>std::collections::BTreeSet;
 <span class="kw">use </span>std::iter::FromIterator;
-<span class="kw">use </span>syn;
 <span class="kw">use </span>syn::meta::ParseNestedMeta;
 <span class="kw">use </span>syn::parse::ParseStream;
 <span class="kw">use </span>syn::punctuated::Punctuated;
-<span class="kw">use </span>syn::{token, Ident, Lifetime};
+<span class="kw">use </span>syn::{parse_quote, token, Ident, Lifetime, Token};
 
 <span class="comment">// This module handles parsing of `#[serde(...)]` attributes. The entrypoints
 // are `attr::Container::from_ast`, `attr::Variant::from_ast`, and
@@ -1831,7 +1896,7 @@
 // user will see errors simultaneously for all bad attributes in the crate
 // rather than just the first.
 
-</span><span class="kw">pub use </span>internals::case::RenameRule;
+</span><span class="kw">pub use </span><span class="kw">crate</span>::internals::case::RenameRule;
 
 <span class="kw">struct </span>Attr&lt;<span class="lifetime">&#39;c</span>, T&gt; {
     cx: <span class="kw-2">&amp;</span><span class="lifetime">&#39;c </span>Ctxt,
@@ -1947,7 +2012,7 @@
     serialize_renamed: bool,
     deserialize: String,
     deserialize_renamed: bool,
-    deserialize_aliases: Vec&lt;String&gt;,
+    deserialize_aliases: BTreeSet&lt;String&gt;,
 }
 
 <span class="kw">fn </span>unraw(ident: <span class="kw-2">&amp;</span>Ident) -&gt; String {
@@ -1961,16 +2026,12 @@
         de_name: Attr&lt;String&gt;,
         de_aliases: <span class="prelude-ty">Option</span>&lt;VecAttr&lt;String&gt;&gt;,
     ) -&gt; Name {
-        <span class="kw">let </span>deserialize_aliases = <span class="kw">match </span>de_aliases {
-            <span class="prelude-val">Some</span>(de_aliases) =&gt; {
-                <span class="kw">let </span><span class="kw-2">mut </span>alias_list = BTreeSet::new();
-                <span class="kw">for </span>alias_name <span class="kw">in </span>de_aliases.get() {
-                    alias_list.insert(alias_name);
-                }
-                alias_list.into_iter().collect()
+        <span class="kw">let </span><span class="kw-2">mut </span>alias_set = BTreeSet::new();
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(de_aliases) = de_aliases {
+            <span class="kw">for </span>alias_name <span class="kw">in </span>de_aliases.get() {
+                alias_set.insert(alias_name);
             }
-            <span class="prelude-val">None </span>=&gt; Vec::new(),
-        };
+        }
 
         <span class="kw">let </span>ser_name = ser_name.get();
         <span class="kw">let </span>ser_renamed = ser_name.is_some();
@@ -1981,33 +2042,40 @@
             serialize_renamed: ser_renamed,
             deserialize: de_name.unwrap_or(source_name),
             deserialize_renamed: de_renamed,
-            deserialize_aliases,
+            deserialize_aliases: alias_set,
         }
     }
 
     <span class="doccomment">/// Return the container name for the container when serializing.
-    </span><span class="kw">pub fn </span>serialize_name(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
-        <span class="self">self</span>.serialize.clone()
+    </span><span class="kw">pub fn </span>serialize_name(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.serialize
     }
 
     <span class="doccomment">/// Return the container name for the container when deserializing.
-    </span><span class="kw">pub fn </span>deserialize_name(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
-        <span class="self">self</span>.deserialize.clone()
+    </span><span class="kw">pub fn </span>deserialize_name(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.deserialize
     }
 
-    <span class="kw">fn </span>deserialize_aliases(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;String&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>aliases = <span class="self">self</span>.deserialize_aliases.clone();
-        <span class="kw">let </span>main_name = <span class="self">self</span>.deserialize_name();
-        <span class="kw">if </span>!aliases.contains(<span class="kw-2">&amp;</span>main_name) {
-            aliases.push(main_name);
-        }
-        aliases
+    <span class="kw">fn </span>deserialize_aliases(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>BTreeSet&lt;String&gt; {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.deserialize_aliases
     }
 }
 
-<span class="kw">pub struct </span>RenameAllRules {
+<span class="attr">#[derive(Copy, Clone)]
+</span><span class="kw">pub struct </span>RenameAllRules {
     serialize: RenameRule,
     deserialize: RenameRule,
+}
+
+<span class="kw">impl </span>RenameAllRules {
+    <span class="doccomment">/// Returns a new `RenameAllRules` with the individual rules of `self` and
+    /// `other_rules` joined by `RenameRules::or`.
+    </span><span class="kw">pub fn </span>or(<span class="self">self</span>, other_rules: <span class="self">Self</span>) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            serialize: <span class="self">self</span>.serialize.or(other_rules.serialize),
+            deserialize: <span class="self">self</span>.deserialize.or(other_rules.deserialize),
+        }
+    }
 }
 
 <span class="doccomment">/// Represents struct or enum attribute information.
@@ -2017,6 +2085,7 @@
     deny_unknown_fields: bool,
     default: Default,
     rename_all_rules: RenameAllRules,
+    rename_all_fields_rules: RenameAllRules,
     ser_bound: <span class="prelude-ty">Option</span>&lt;Vec&lt;syn::WherePredicate&gt;&gt;,
     de_bound: <span class="prelude-ty">Option</span>&lt;Vec&lt;syn::WherePredicate&gt;&gt;,
     tag: TagType,
@@ -2030,6 +2099,7 @@
     is_packed: bool,
     <span class="doccomment">/// Error message generated when type can&#39;t be deserialized
     </span>expecting: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    non_exhaustive: bool,
 }
 
 <span class="doccomment">/// Styles of representing an enum.
@@ -2100,6 +2170,8 @@
         <span class="kw">let </span><span class="kw-2">mut </span>default = Attr::none(cx, DEFAULT);
         <span class="kw">let </span><span class="kw-2">mut </span>rename_all_ser_rule = Attr::none(cx, RENAME_ALL);
         <span class="kw">let </span><span class="kw-2">mut </span>rename_all_de_rule = Attr::none(cx, RENAME_ALL);
+        <span class="kw">let </span><span class="kw-2">mut </span>rename_all_fields_ser_rule = Attr::none(cx, RENAME_ALL_FIELDS);
+        <span class="kw">let </span><span class="kw-2">mut </span>rename_all_fields_de_rule = Attr::none(cx, RENAME_ALL_FIELDS);
         <span class="kw">let </span><span class="kw-2">mut </span>ser_bound = Attr::none(cx, BOUND);
         <span class="kw">let </span><span class="kw-2">mut </span>de_bound = Attr::none(cx, BOUND);
         <span class="kw">let </span><span class="kw-2">mut </span>untagged = BoolAttr::none(cx, UNTAGGED);
@@ -2113,9 +2185,12 @@
         <span class="kw">let </span><span class="kw-2">mut </span>variant_identifier = BoolAttr::none(cx, VARIANT_IDENTIFIER);
         <span class="kw">let </span><span class="kw-2">mut </span>serde_path = Attr::none(cx, CRATE);
         <span class="kw">let </span><span class="kw-2">mut </span>expecting = Attr::none(cx, EXPECTING);
+        <span class="kw">let </span><span class="kw-2">mut </span>non_exhaustive = <span class="bool-val">false</span>;
 
         <span class="kw">for </span>attr <span class="kw">in </span><span class="kw-2">&amp;</span>item.attrs {
             <span class="kw">if </span>attr.path() != SERDE {
+                non_exhaustive |=
+                    <span class="macro">matches!</span>(<span class="kw-2">&amp;</span>attr.meta, syn::Meta::Path(path) <span class="kw">if </span>path == NON_EXHAUSTIVE);
                 <span class="kw">continue</span>;
             }
 
@@ -2153,6 +2228,44 @@
                             }
                         }
                     }
+                } <span class="kw">else if </span>meta.path == RENAME_ALL_FIELDS {
+                    <span class="comment">// #[serde(rename_all_fields = &quot;foo&quot;)]
+                    // #[serde(rename_all_fields(serialize = &quot;foo&quot;, deserialize = &quot;bar&quot;))]
+                    </span><span class="kw">let </span>one_name = meta.input.peek(<span class="macro">Token!</span>[=]);
+                    <span class="kw">let </span>(ser, de) = get_renames(cx, RENAME_ALL_FIELDS, <span class="kw-2">&amp;</span>meta)<span class="question-mark">?</span>;
+
+                    <span class="kw">match </span>item.data {
+                        syn::Data::Enum(<span class="kw">_</span>) =&gt; {
+                            <span class="kw">if let </span><span class="prelude-val">Some</span>(ser) = ser {
+                                <span class="kw">match </span>RenameRule::from_str(<span class="kw-2">&amp;</span>ser.value()) {
+                                    <span class="prelude-val">Ok</span>(rename_rule) =&gt; {
+                                        rename_all_fields_ser_rule.set(<span class="kw-2">&amp;</span>meta.path, rename_rule);
+                                    }
+                                    <span class="prelude-val">Err</span>(err) =&gt; cx.error_spanned_by(ser, err),
+                                }
+                            }
+                            <span class="kw">if let </span><span class="prelude-val">Some</span>(de) = de {
+                                <span class="kw">match </span>RenameRule::from_str(<span class="kw-2">&amp;</span>de.value()) {
+                                    <span class="prelude-val">Ok</span>(rename_rule) =&gt; {
+                                        rename_all_fields_de_rule.set(<span class="kw-2">&amp;</span>meta.path, rename_rule);
+                                    }
+                                    <span class="prelude-val">Err</span>(err) =&gt; {
+                                        <span class="kw">if </span>!one_name {
+                                            cx.error_spanned_by(de, err);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        syn::Data::Struct(<span class="kw">_</span>) =&gt; {
+                            <span class="kw">let </span>msg = <span class="string">&quot;#[serde(rename_all_fields)] can only be used on enums&quot;</span>;
+                            cx.syn_error(meta.error(msg));
+                        }
+                        syn::Data::Union(<span class="kw">_</span>) =&gt; {
+                            <span class="kw">let </span>msg = <span class="string">&quot;#[serde(rename_all_fields)] can only be used on enums&quot;</span>;
+                            cx.syn_error(meta.error(msg));
+                        }
+                    }
                 } <span class="kw">else if </span>meta.path == TRANSPARENT {
                     <span class="comment">// #[serde(transparent)]
                     </span>transparent.set_true(meta.path);
@@ -2165,21 +2278,21 @@
                         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(path) = parse_lit_into_expr_path(cx, DEFAULT, <span class="kw-2">&amp;</span>meta)<span class="question-mark">? </span>{
                             <span class="kw">match </span><span class="kw-2">&amp;</span>item.data {
                                 syn::Data::Struct(syn::DataStruct { fields, .. }) =&gt; <span class="kw">match </span>fields {
-                                    syn::Fields::Named(<span class="kw">_</span>) =&gt; {
+                                    syn::Fields::Named(<span class="kw">_</span>) | syn::Fields::Unnamed(<span class="kw">_</span>) =&gt; {
                                         default.set(<span class="kw-2">&amp;</span>meta.path, Default::Path(path));
                                     }
-                                    syn::Fields::Unnamed(<span class="kw">_</span>) | syn::Fields::Unit =&gt; {
-                                        <span class="kw">let </span>msg = <span class="string">&quot;#[serde(default = \&quot;...\&quot;)] can only be used on structs with named fields&quot;</span>;
-                                        cx.error_spanned_by(fields, msg);
+                                    syn::Fields::Unit =&gt; {
+                                        <span class="kw">let </span>msg = <span class="string">&quot;#[serde(default = \&quot;...\&quot;)] can only be used on structs that have fields&quot;</span>;
+                                        cx.syn_error(meta.error(msg));
                                     }
                                 },
-                                syn::Data::Enum(syn::DataEnum { enum_token, .. }) =&gt; {
-                                    <span class="kw">let </span>msg = <span class="string">&quot;#[serde(default = \&quot;...\&quot;)] can only be used on structs with named fields&quot;</span>;
-                                    cx.error_spanned_by(enum_token, msg);
+                                syn::Data::Enum(<span class="kw">_</span>) =&gt; {
+                                    <span class="kw">let </span>msg = <span class="string">&quot;#[serde(default = \&quot;...\&quot;)] can only be used on structs&quot;</span>;
+                                    cx.syn_error(meta.error(msg));
                                 }
-                                syn::Data::Union(syn::DataUnion { union_token, .. }) =&gt; {
-                                    <span class="kw">let </span>msg = <span class="string">&quot;#[serde(default = \&quot;...\&quot;)] can only be used on structs with named fields&quot;</span>;
-                                    cx.error_spanned_by(union_token, msg);
+                                syn::Data::Union(<span class="kw">_</span>) =&gt; {
+                                    <span class="kw">let </span>msg = <span class="string">&quot;#[serde(default = \&quot;...\&quot;)] can only be used on structs&quot;</span>;
+                                    cx.syn_error(meta.error(msg));
                                 }
                             }
                         }
@@ -2187,21 +2300,21 @@
                         <span class="comment">// #[serde(default)]
                         </span><span class="kw">match </span><span class="kw-2">&amp;</span>item.data {
                             syn::Data::Struct(syn::DataStruct { fields, .. }) =&gt; <span class="kw">match </span>fields {
-                                syn::Fields::Named(<span class="kw">_</span>) =&gt; {
+                                syn::Fields::Named(<span class="kw">_</span>) | syn::Fields::Unnamed(<span class="kw">_</span>) =&gt; {
                                     default.set(meta.path, Default::Default);
                                 }
-                                syn::Fields::Unnamed(<span class="kw">_</span>) | syn::Fields::Unit =&gt; {
-                                    <span class="kw">let </span>msg = <span class="string">&quot;#[serde(default)] can only be used on structs with named fields&quot;</span>;
+                                syn::Fields::Unit =&gt; {
+                                    <span class="kw">let </span>msg = <span class="string">&quot;#[serde(default)] can only be used on structs that have fields&quot;</span>;
                                     cx.error_spanned_by(fields, msg);
                                 }
                             },
-                            syn::Data::Enum(syn::DataEnum { enum_token, .. }) =&gt; {
-                                <span class="kw">let </span>msg = <span class="string">&quot;#[serde(default)] can only be used on structs with named fields&quot;</span>;
-                                cx.error_spanned_by(enum_token, msg);
+                            syn::Data::Enum(<span class="kw">_</span>) =&gt; {
+                                <span class="kw">let </span>msg = <span class="string">&quot;#[serde(default)] can only be used on structs&quot;</span>;
+                                cx.syn_error(meta.error(msg));
                             }
-                            syn::Data::Union(syn::DataUnion { union_token, .. }) =&gt; {
-                                <span class="kw">let </span>msg = <span class="string">&quot;#[serde(default)] can only be used on structs with named fields&quot;</span>;
-                                cx.error_spanned_by(union_token, msg);
+                            syn::Data::Union(<span class="kw">_</span>) =&gt; {
+                                <span class="kw">let </span>msg = <span class="string">&quot;#[serde(default)] can only be used on structs&quot;</span>;
+                                cx.syn_error(meta.error(msg));
                             }
                         }
                     }
@@ -2217,13 +2330,13 @@
                         syn::Data::Enum(<span class="kw">_</span>) =&gt; {
                             untagged.set_true(<span class="kw-2">&amp;</span>meta.path);
                         }
-                        syn::Data::Struct(syn::DataStruct { struct_token, .. }) =&gt; {
+                        syn::Data::Struct(<span class="kw">_</span>) =&gt; {
                             <span class="kw">let </span>msg = <span class="string">&quot;#[serde(untagged)] can only be used on enums&quot;</span>;
-                            cx.error_spanned_by(struct_token, msg);
+                            cx.syn_error(meta.error(msg));
                         }
-                        syn::Data::Union(syn::DataUnion { union_token, .. }) =&gt; {
+                        syn::Data::Union(<span class="kw">_</span>) =&gt; {
                             <span class="kw">let </span>msg = <span class="string">&quot;#[serde(untagged)] can only be used on enums&quot;</span>;
-                            cx.error_spanned_by(union_token, msg);
+                            cx.syn_error(meta.error(msg));
                         }
                     }
                 } <span class="kw">else if </span>meta.path == TAG {
@@ -2239,12 +2352,12 @@
                                 }
                                 syn::Fields::Unnamed(<span class="kw">_</span>) | syn::Fields::Unit =&gt; {
                                     <span class="kw">let </span>msg = <span class="string">&quot;#[serde(tag = \&quot;...\&quot;)] can only be used on enums and structs with named fields&quot;</span>;
-                                    cx.error_spanned_by(fields, msg);
+                                    cx.syn_error(meta.error(msg));
                                 }
                             },
-                            syn::Data::Union(syn::DataUnion { union_token, .. }) =&gt; {
+                            syn::Data::Union(<span class="kw">_</span>) =&gt; {
                                 <span class="kw">let </span>msg = <span class="string">&quot;#[serde(tag = \&quot;...\&quot;)] can only be used on enums and structs with named fields&quot;</span>;
-                                cx.error_spanned_by(union_token, msg);
+                                cx.syn_error(meta.error(msg));
                             }
                         }
                     }
@@ -2255,13 +2368,13 @@
                             syn::Data::Enum(<span class="kw">_</span>) =&gt; {
                                 content.set(<span class="kw-2">&amp;</span>meta.path, s.value());
                             }
-                            syn::Data::Struct(syn::DataStruct { struct_token, .. }) =&gt; {
+                            syn::Data::Struct(<span class="kw">_</span>) =&gt; {
                                 <span class="kw">let </span>msg = <span class="string">&quot;#[serde(content = \&quot;...\&quot;)] can only be used on enums&quot;</span>;
-                                cx.error_spanned_by(struct_token, msg);
+                                cx.syn_error(meta.error(msg));
                             }
-                            syn::Data::Union(syn::DataUnion { union_token, .. }) =&gt; {
+                            syn::Data::Union(<span class="kw">_</span>) =&gt; {
                                 <span class="kw">let </span>msg = <span class="string">&quot;#[serde(content = \&quot;...\&quot;)] can only be used on enums&quot;</span>;
-                                cx.error_spanned_by(union_token, msg);
+                                cx.syn_error(meta.error(msg));
                             }
                         }
                     }
@@ -2340,6 +2453,10 @@
                 serialize: rename_all_ser_rule.get().unwrap_or(RenameRule::None),
                 deserialize: rename_all_de_rule.get().unwrap_or(RenameRule::None),
             },
+            rename_all_fields_rules: RenameAllRules {
+                serialize: rename_all_fields_ser_rule.get().unwrap_or(RenameRule::None),
+                deserialize: rename_all_fields_de_rule.get().unwrap_or(RenameRule::None),
+            },
             ser_bound: ser_bound.get(),
             de_bound: de_bound.get(),
             tag: decide_tag(cx, item, untagged, internal_tag, content),
@@ -2352,6 +2469,7 @@
             serde_path: serde_path.get(),
             is_packed,
             expecting: expecting.get(),
+            non_exhaustive,
         }
     }
 
@@ -2359,8 +2477,12 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>.name
     }
 
-    <span class="kw">pub fn </span>rename_all_rules(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>RenameAllRules {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.rename_all_rules
+    <span class="kw">pub fn </span>rename_all_rules(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RenameAllRules {
+        <span class="self">self</span>.rename_all_rules
+    }
+
+    <span class="kw">pub fn </span>rename_all_fields_rules(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RenameAllRules {
+        <span class="self">self</span>.rename_all_fields_rules
     }
 
     <span class="kw">pub fn </span>transparent(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
@@ -2433,6 +2555,10 @@
     </span><span class="kw">pub fn </span>expecting(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt; {
         <span class="self">self</span>.expecting.as_ref().map(String::as_ref)
     }
+
+    <span class="kw">pub fn </span>non_exhaustive(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.non_exhaustive
+    }
 }
 
 <span class="kw">fn </span>decide_tag(
@@ -2468,7 +2594,7 @@
             }
             TagType::Internal { tag }
         }
-        (<span class="prelude-val">Some</span>((untagged_tokens, <span class="kw">_</span>)), <span class="prelude-val">Some</span>((tag_tokens, <span class="kw">_</span>)), <span class="prelude-val">None</span>) =&gt; {
+        (<span class="prelude-val">Some</span>((untagged_tokens, ())), <span class="prelude-val">Some</span>((tag_tokens, <span class="kw">_</span>)), <span class="prelude-val">None</span>) =&gt; {
             <span class="kw">let </span>msg = <span class="string">&quot;enum cannot be both untagged and internally tagged&quot;</span>;
             cx.error_spanned_by(untagged_tokens, msg);
             cx.error_spanned_by(tag_tokens, msg);
@@ -2479,14 +2605,14 @@
             cx.error_spanned_by(content_tokens, msg);
             TagType::External
         }
-        (<span class="prelude-val">Some</span>((untagged_tokens, <span class="kw">_</span>)), <span class="prelude-val">None</span>, <span class="prelude-val">Some</span>((content_tokens, <span class="kw">_</span>))) =&gt; {
+        (<span class="prelude-val">Some</span>((untagged_tokens, ())), <span class="prelude-val">None</span>, <span class="prelude-val">Some</span>((content_tokens, <span class="kw">_</span>))) =&gt; {
             <span class="kw">let </span>msg = <span class="string">&quot;untagged enum cannot have #[serde(content = \&quot;...\&quot;)]&quot;</span>;
             cx.error_spanned_by(untagged_tokens, msg);
             cx.error_spanned_by(content_tokens, msg);
             TagType::External
         }
         (<span class="prelude-val">None</span>, <span class="prelude-val">Some</span>((<span class="kw">_</span>, tag)), <span class="prelude-val">Some</span>((<span class="kw">_</span>, content))) =&gt; TagType::Adjacent { tag, content },
-        (<span class="prelude-val">Some</span>((untagged_tokens, <span class="kw">_</span>)), <span class="prelude-val">Some</span>((tag_tokens, <span class="kw">_</span>)), <span class="prelude-val">Some</span>((content_tokens, <span class="kw">_</span>))) =&gt; {
+        (<span class="prelude-val">Some</span>((untagged_tokens, ())), <span class="prelude-val">Some</span>((tag_tokens, <span class="kw">_</span>)), <span class="prelude-val">Some</span>((content_tokens, <span class="kw">_</span>))) =&gt; {
             <span class="kw">let </span>msg = <span class="string">&quot;untagged enum cannot have #[serde(tag = \&quot;...\&quot;, content = \&quot;...\&quot;)]&quot;</span>;
             cx.error_spanned_by(untagged_tokens, msg);
             cx.error_spanned_by(tag_tokens, msg);
@@ -2508,7 +2634,7 @@
         variant_identifier.<span class="number">0</span>.get_with_tokens(),
     ) {
         (<span class="kw">_</span>, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>) =&gt; Identifier::No,
-        (<span class="kw">_</span>, <span class="prelude-val">Some</span>((field_identifier_tokens, <span class="kw">_</span>)), <span class="prelude-val">Some</span>((variant_identifier_tokens, <span class="kw">_</span>))) =&gt; {
+        (<span class="kw">_</span>, <span class="prelude-val">Some</span>((field_identifier_tokens, ())), <span class="prelude-val">Some</span>((variant_identifier_tokens, ()))) =&gt; {
             <span class="kw">let </span>msg =
                 <span class="string">&quot;#[serde(field_identifier)] and #[serde(variant_identifier)] cannot both be set&quot;</span>;
             cx.error_spanned_by(field_identifier_tokens, msg);
@@ -2729,21 +2855,24 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>.name
     }
 
-    <span class="kw">pub fn </span>aliases(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;String&gt; {
+    <span class="kw">pub fn </span>aliases(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>BTreeSet&lt;String&gt; {
         <span class="self">self</span>.name.deserialize_aliases()
     }
 
-    <span class="kw">pub fn </span>rename_by_rules(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rules: <span class="kw-2">&amp;</span>RenameAllRules) {
+    <span class="kw">pub fn </span>rename_by_rules(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rules: RenameAllRules) {
         <span class="kw">if </span>!<span class="self">self</span>.name.serialize_renamed {
             <span class="self">self</span>.name.serialize = rules.serialize.apply_to_variant(<span class="kw-2">&amp;</span><span class="self">self</span>.name.serialize);
         }
         <span class="kw">if </span>!<span class="self">self</span>.name.deserialize_renamed {
             <span class="self">self</span>.name.deserialize = rules.deserialize.apply_to_variant(<span class="kw-2">&amp;</span><span class="self">self</span>.name.deserialize);
         }
+        <span class="self">self</span>.name
+            .deserialize_aliases
+            .insert(<span class="self">self</span>.name.deserialize.clone());
     }
 
-    <span class="kw">pub fn </span>rename_all_rules(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>RenameAllRules {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.rename_all_rules
+    <span class="kw">pub fn </span>rename_all_rules(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RenameAllRules {
+        <span class="self">self</span>.rename_all_rules
     }
 
     <span class="kw">pub fn </span>ser_bound(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>[syn::WherePredicate]&gt; {
@@ -3068,17 +3197,20 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>.name
     }
 
-    <span class="kw">pub fn </span>aliases(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;String&gt; {
+    <span class="kw">pub fn </span>aliases(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>BTreeSet&lt;String&gt; {
         <span class="self">self</span>.name.deserialize_aliases()
     }
 
-    <span class="kw">pub fn </span>rename_by_rules(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rules: <span class="kw-2">&amp;</span>RenameAllRules) {
+    <span class="kw">pub fn </span>rename_by_rules(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rules: RenameAllRules) {
         <span class="kw">if </span>!<span class="self">self</span>.name.serialize_renamed {
             <span class="self">self</span>.name.serialize = rules.serialize.apply_to_field(<span class="kw-2">&amp;</span><span class="self">self</span>.name.serialize);
         }
         <span class="kw">if </span>!<span class="self">self</span>.name.deserialize_renamed {
             <span class="self">self</span>.name.deserialize = rules.deserialize.apply_to_field(<span class="kw-2">&amp;</span><span class="self">self</span>.name.deserialize);
         }
+        <span class="self">self</span>.name
+            .deserialize_aliases
+            .insert(<span class="self">self</span>.name.deserialize.clone());
     }
 
     <span class="kw">pub fn </span>skip_serializing(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {

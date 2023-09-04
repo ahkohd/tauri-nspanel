@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/regex-automata-0.3.3/src/meta/regex.rs`."><title>regex.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="regex_automata" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../regex_automata/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/regex-automata-0.3.8/src/meta/regex.rs`."><title>regex.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9bb858ba049f1f21.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="regex_automata" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.0 (5680fa18f 2023-08-23)" data-channel="1.72.0" data-search-js="search-f6292fe389d70017.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ><script src="../../../static.files/storage-59fd9b8ccb335783.js"></script><script defer src="../../../static.files/source-script-106908c7a7964ba4.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../regex_automata/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -3558,6 +3558,95 @@
 <a href="#3558" id="3558">3558</a>
 <a href="#3559" id="3559">3559</a>
 <a href="#3560" id="3560">3560</a>
+<a href="#3561" id="3561">3561</a>
+<a href="#3562" id="3562">3562</a>
+<a href="#3563" id="3563">3563</a>
+<a href="#3564" id="3564">3564</a>
+<a href="#3565" id="3565">3565</a>
+<a href="#3566" id="3566">3566</a>
+<a href="#3567" id="3567">3567</a>
+<a href="#3568" id="3568">3568</a>
+<a href="#3569" id="3569">3569</a>
+<a href="#3570" id="3570">3570</a>
+<a href="#3571" id="3571">3571</a>
+<a href="#3572" id="3572">3572</a>
+<a href="#3573" id="3573">3573</a>
+<a href="#3574" id="3574">3574</a>
+<a href="#3575" id="3575">3575</a>
+<a href="#3576" id="3576">3576</a>
+<a href="#3577" id="3577">3577</a>
+<a href="#3578" id="3578">3578</a>
+<a href="#3579" id="3579">3579</a>
+<a href="#3580" id="3580">3580</a>
+<a href="#3581" id="3581">3581</a>
+<a href="#3582" id="3582">3582</a>
+<a href="#3583" id="3583">3583</a>
+<a href="#3584" id="3584">3584</a>
+<a href="#3585" id="3585">3585</a>
+<a href="#3586" id="3586">3586</a>
+<a href="#3587" id="3587">3587</a>
+<a href="#3588" id="3588">3588</a>
+<a href="#3589" id="3589">3589</a>
+<a href="#3590" id="3590">3590</a>
+<a href="#3591" id="3591">3591</a>
+<a href="#3592" id="3592">3592</a>
+<a href="#3593" id="3593">3593</a>
+<a href="#3594" id="3594">3594</a>
+<a href="#3595" id="3595">3595</a>
+<a href="#3596" id="3596">3596</a>
+<a href="#3597" id="3597">3597</a>
+<a href="#3598" id="3598">3598</a>
+<a href="#3599" id="3599">3599</a>
+<a href="#3600" id="3600">3600</a>
+<a href="#3601" id="3601">3601</a>
+<a href="#3602" id="3602">3602</a>
+<a href="#3603" id="3603">3603</a>
+<a href="#3604" id="3604">3604</a>
+<a href="#3605" id="3605">3605</a>
+<a href="#3606" id="3606">3606</a>
+<a href="#3607" id="3607">3607</a>
+<a href="#3608" id="3608">3608</a>
+<a href="#3609" id="3609">3609</a>
+<a href="#3610" id="3610">3610</a>
+<a href="#3611" id="3611">3611</a>
+<a href="#3612" id="3612">3612</a>
+<a href="#3613" id="3613">3613</a>
+<a href="#3614" id="3614">3614</a>
+<a href="#3615" id="3615">3615</a>
+<a href="#3616" id="3616">3616</a>
+<a href="#3617" id="3617">3617</a>
+<a href="#3618" id="3618">3618</a>
+<a href="#3619" id="3619">3619</a>
+<a href="#3620" id="3620">3620</a>
+<a href="#3621" id="3621">3621</a>
+<a href="#3622" id="3622">3622</a>
+<a href="#3623" id="3623">3623</a>
+<a href="#3624" id="3624">3624</a>
+<a href="#3625" id="3625">3625</a>
+<a href="#3626" id="3626">3626</a>
+<a href="#3627" id="3627">3627</a>
+<a href="#3628" id="3628">3628</a>
+<a href="#3629" id="3629">3629</a>
+<a href="#3630" id="3630">3630</a>
+<a href="#3631" id="3631">3631</a>
+<a href="#3632" id="3632">3632</a>
+<a href="#3633" id="3633">3633</a>
+<a href="#3634" id="3634">3634</a>
+<a href="#3635" id="3635">3635</a>
+<a href="#3636" id="3636">3636</a>
+<a href="#3637" id="3637">3637</a>
+<a href="#3638" id="3638">3638</a>
+<a href="#3639" id="3639">3639</a>
+<a href="#3640" id="3640">3640</a>
+<a href="#3641" id="3641">3641</a>
+<a href="#3642" id="3642">3642</a>
+<a href="#3643" id="3643">3643</a>
+<a href="#3644" id="3644">3644</a>
+<a href="#3645" id="3645">3645</a>
+<a href="#3646" id="3646">3646</a>
+<a href="#3647" id="3647">3647</a>
+<a href="#3648" id="3648">3648</a>
+<a href="#3649" id="3649">3649</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>core::{
     borrow::Borrow,
     panic::{RefUnwindSafe, UnwindSafe},
@@ -3576,6 +3665,7 @@
         strategy::{<span class="self">self</span>, Strategy},
         wrappers,
     },
+    nfa::thompson::WhichCaptures,
     util::{
         captures::{Captures, GroupInfo},
         iter,
@@ -4088,7 +4178,14 @@
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>is_match&lt;<span class="lifetime">&#39;h</span>, I: Into&lt;Input&lt;<span class="lifetime">&#39;h</span>&gt;&gt;&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, input: I) -&gt; bool {
         <span class="kw">let </span>input = input.into().earliest(<span class="bool-val">true</span>);
-        <span class="self">self</span>.search_half(<span class="kw-2">&amp;</span>input).is_some()
+        <span class="kw">if </span><span class="self">self</span>.imp.info.is_impossible(<span class="kw-2">&amp;</span>input) {
+            <span class="kw">return </span><span class="bool-val">false</span>;
+        }
+        <span class="kw">let </span><span class="kw-2">mut </span>guard = <span class="self">self</span>.pool.get();
+        <span class="kw">let </span>result = <span class="self">self</span>.imp.strat.is_match(<span class="kw-2">&amp;mut </span>guard, <span class="kw-2">&amp;</span>input);
+        <span class="comment">// See &#39;Regex::search&#39; for why we put the guard back explicitly.
+        </span>PoolGuard::put(guard);
+        result
     }
 
     <span class="doccomment">/// Executes a leftmost search and returns the first match that is found,
@@ -5989,6 +6086,7 @@
     utf8_empty: <span class="prelude-ty">Option</span>&lt;bool&gt;,
     autopre: <span class="prelude-ty">Option</span>&lt;bool&gt;,
     pre: <span class="prelude-ty">Option</span>&lt;<span class="prelude-ty">Option</span>&lt;Prefilter&gt;&gt;,
+    which_captures: <span class="prelude-ty">Option</span>&lt;WhichCaptures&gt;,
     nfa_size_limit: <span class="prelude-ty">Option</span>&lt;<span class="prelude-ty">Option</span>&lt;usize&gt;&gt;,
     onepass_size_limit: <span class="prelude-ty">Option</span>&lt;<span class="prelude-ty">Option</span>&lt;usize&gt;&gt;,
     hybrid_cache_capacity: <span class="prelude-ty">Option</span>&lt;usize&gt;,
@@ -6178,6 +6276,77 @@
     </span><span class="kw">pub fn </span>prefilter(<span class="self">self</span>, pre: <span class="prelude-ty">Option</span>&lt;Prefilter&gt;) -&gt; Config {
         Config { pre: <span class="prelude-val">Some</span>(pre), ..<span class="self">self </span>}
     }
+
+    <span class="doccomment">/// Configures what kinds of groups are compiled as &quot;capturing&quot; in the
+    /// underlying regex engine.
+    ///
+    /// This is set to [`WhichCaptures::All`] by default. Callers may wish to
+    /// use [`WhichCaptures::Implicit`] in cases where one wants avoid the
+    /// overhead of capture states for explicit groups.
+    ///
+    /// Note that another approach to avoiding the overhead of capture groups
+    /// is by using non-capturing groups in the regex pattern. That is,
+    /// `(?:a)` instead of `(a)`. This option is useful when you can&#39;t control
+    /// the concrete syntax but know that you don&#39;t need the underlying capture
+    /// states. For example, using `WhichCaptures::Implicit` will behave as if
+    /// all explicit capturing groups in the pattern were non-capturing.
+    ///
+    /// Setting this to `WhichCaptures::None` is usually not the right thing to
+    /// do. When no capture states are compiled, some regex engines (such as
+    /// the `PikeVM`) won&#39;t be able to report match offsets. This will manifest
+    /// as no match being found.
+    ///
+    /// # Example
+    ///
+    /// This example demonstrates how the results of capture groups can change
+    /// based on this option. First we show the default (all capture groups in
+    /// the pattern are capturing):
+    ///
+    /// ```
+    /// use regex_automata::{meta::Regex, Match, Span};
+    ///
+    /// let re = Regex::new(r&quot;foo([0-9]+)bar&quot;)?;
+    /// let hay = &quot;foo123bar&quot;;
+    ///
+    /// let mut caps = re.create_captures();
+    /// re.captures(hay, &amp;mut caps);
+    /// assert_eq!(Some(Span::from(0..9)), caps.get_group(0));
+    /// assert_eq!(Some(Span::from(3..6)), caps.get_group(1));
+    ///
+    /// Ok::&lt;(), Box&lt;dyn std::error::Error&gt;&gt;(())
+    /// ```
+    ///
+    /// And now we show the behavior when we only include implicit capture
+    /// groups. In this case, we can only find the overall match span, but the
+    /// spans of any other explicit group don&#39;t exist because they are treated
+    /// as non-capturing. (In effect, when `WhichCaptures::Implicit` is used,
+    /// there is no real point in using [`Regex::captures`] since it will never
+    /// be able to report more information than [`Regex::find`].)
+    ///
+    /// ```
+    /// use regex_automata::{
+    ///     meta::Regex,
+    ///     nfa::thompson::WhichCaptures,
+    ///     Match,
+    ///     Span,
+    /// };
+    ///
+    /// let re = Regex::builder()
+    ///     .configure(Regex::config().which_captures(WhichCaptures::Implicit))
+    ///     .build(r&quot;foo([0-9]+)bar&quot;)?;
+    /// let hay = &quot;foo123bar&quot;;
+    ///
+    /// let mut caps = re.create_captures();
+    /// re.captures(hay, &amp;mut caps);
+    /// assert_eq!(Some(Span::from(0..9)), caps.get_group(0));
+    /// assert_eq!(None, caps.get_group(1));
+    ///
+    /// Ok::&lt;(), Box&lt;dyn std::error::Error&gt;&gt;(())
+    /// ```
+    </span><span class="kw">pub fn </span>which_captures(<span class="kw-2">mut </span><span class="self">self</span>, which_captures: WhichCaptures) -&gt; Config {
+        <span class="self">self</span>.which_captures = <span class="prelude-val">Some</span>(which_captures);
+        <span class="self">self
+    </span>}
 
     <span class="doccomment">/// Sets the size limit, in bytes, to enforce on the construction of every
     /// NFA build by the meta regex engine.
@@ -6543,6 +6712,14 @@
         <span class="self">self</span>.pre.as_ref().unwrap_or(<span class="kw-2">&amp;</span><span class="prelude-val">None</span>).as_ref()
     }
 
+    <span class="doccomment">/// Returns the capture configuration, as set by
+    /// [`Config::which_captures`].
+    ///
+    /// If it was not explicitly set, then a default value is returned.
+    </span><span class="kw">pub fn </span>get_which_captures(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; WhichCaptures {
+        <span class="self">self</span>.which_captures.unwrap_or(WhichCaptures::All)
+    }
+
     <span class="doccomment">/// Returns NFA size limit, as set by [`Config::nfa_size_limit`].
     ///
     /// If it was not explicitly set, then a default value is returned.
@@ -6686,6 +6863,7 @@
             utf8_empty: o.utf8_empty.or(<span class="self">self</span>.utf8_empty),
             autopre: o.autopre.or(<span class="self">self</span>.autopre),
             pre: o.pre.or_else(|| <span class="self">self</span>.pre.clone()),
+            which_captures: o.which_captures.or(<span class="self">self</span>.which_captures),
             nfa_size_limit: o.nfa_size_limit.or(<span class="self">self</span>.nfa_size_limit),
             onepass_size_limit: o
                 .onepass_size_limit

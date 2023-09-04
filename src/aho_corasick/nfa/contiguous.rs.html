@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/aho-corasick-1.0.2/src/nfa/contiguous.rs`."><title>contiguous.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="aho_corasick" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../aho_corasick/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/aho-corasick-1.0.5/src/nfa/contiguous.rs`."><title>contiguous.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9bb858ba049f1f21.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="aho_corasick" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.0 (5680fa18f 2023-08-23)" data-channel="1.72.0" data-search-js="search-f6292fe389d70017.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ><script src="../../../static.files/storage-59fd9b8ccb335783.js"></script><script defer src="../../../static.files/source-script-106908c7a7964ba4.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../aho_corasick/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1126,6 +1126,19 @@
 <a href="#1126" id="1126">1126</a>
 <a href="#1127" id="1127">1127</a>
 <a href="#1128" id="1128">1128</a>
+<a href="#1129" id="1129">1129</a>
+<a href="#1130" id="1130">1130</a>
+<a href="#1131" id="1131">1131</a>
+<a href="#1132" id="1132">1132</a>
+<a href="#1133" id="1133">1133</a>
+<a href="#1134" id="1134">1134</a>
+<a href="#1135" id="1135">1135</a>
+<a href="#1136" id="1136">1136</a>
+<a href="#1137" id="1137">1137</a>
+<a href="#1138" id="1138">1138</a>
+<a href="#1139" id="1139">1139</a>
+<a href="#1140" id="1140">1140</a>
+<a href="#1141" id="1141">1141</a>
 </pre></div><pre class="rust"><code><span class="doccomment">/*!
 Provides a contiguous NFA implementation of Aho-Corasick.
 
@@ -1812,6 +1825,8 @@ necessary when one needs access to the [`Automaton`] trait implementation.
     /// dense format. Otherwise, the choice between dense and sparse will be
     /// automatically chosen based on the old state.
     </span><span class="kw">fn </span>write(
+        nnfa: <span class="kw-2">&amp;</span>noncontiguous::NFA,
+        oldsid: StateID,
         old: <span class="kw-2">&amp;</span>noncontiguous::State,
         classes: <span class="kw-2">&amp;</span>ByteClasses,
         dst: <span class="kw-2">&amp;mut </span>Vec&lt;u32&gt;,
@@ -1820,45 +1835,46 @@ necessary when one needs access to the [`Automaton`] trait implementation.
         <span class="kw">let </span>sid = StateID::new(dst.len()).map_err(|e| {
             BuildError::state_id_overflow(StateID::MAX.as_u64(), e.attempted())
         })<span class="question-mark">?</span>;
+        <span class="kw">let </span>old_len = nnfa.iter_trans(oldsid).count();
         <span class="comment">// For states with a lot of transitions, we might as well just make
         // them dense. These kinds of hot states tend to be very rare, so we&#39;re
         // okay with it. This also gives us more sentinels in the state&#39;s
         // &#39;kind&#39;, which lets us create different state kinds to save on
         // space.
-        </span><span class="kw">let </span>kind = <span class="kw">if </span>force_dense
-            || old.trans.len() &gt; State::MAX_SPARSE_TRANSITIONS
-        {
+        </span><span class="kw">let </span>kind = <span class="kw">if </span>force_dense || old_len &gt; State::MAX_SPARSE_TRANSITIONS {
             State::KIND_DENSE
-        } <span class="kw">else if </span>old.trans.len() == <span class="number">1 </span>&amp;&amp; old.matches.is_empty() {
+        } <span class="kw">else if </span>old_len == <span class="number">1 </span>&amp;&amp; !old.is_match() {
             State::KIND_ONE
         } <span class="kw">else </span>{
             <span class="comment">// For a sparse state, the kind is just the number of transitions.
-            </span>u32::try_from(old.trans.len()).unwrap()
+            </span>u32::try_from(old_len).unwrap()
         };
         <span class="kw">if </span>kind == State::KIND_DENSE {
             dst.push(kind);
-            dst.push(old.fail.as_u32());
-            State::write_dense_trans(old, classes, dst)<span class="question-mark">?</span>;
+            dst.push(old.fail().as_u32());
+            State::write_dense_trans(nnfa, oldsid, classes, dst)<span class="question-mark">?</span>;
         } <span class="kw">else if </span>kind == State::KIND_ONE {
-            <span class="kw">let </span>class = u32::from(classes.get(old.trans[<span class="number">0</span>].<span class="number">0</span>));
+            <span class="kw">let </span>t = nnfa.iter_trans(oldsid).next().unwrap();
+            <span class="kw">let </span>class = u32::from(classes.get(t.byte()));
             dst.push(kind | (class &lt;&lt; <span class="number">8</span>));
-            dst.push(old.fail.as_u32());
-            dst.push(old.trans[<span class="number">0</span>].<span class="number">1</span>.as_u32());
+            dst.push(old.fail().as_u32());
+            dst.push(t.next().as_u32());
         } <span class="kw">else </span>{
             dst.push(kind);
-            dst.push(old.fail.as_u32());
-            State::write_sparse_trans(old, classes, dst)<span class="question-mark">?</span>;
+            dst.push(old.fail().as_u32());
+            State::write_sparse_trans(nnfa, oldsid, classes, dst)<span class="question-mark">?</span>;
         }
         <span class="comment">// Now finally write the number of matches and the matches themselves.
-        </span><span class="kw">if </span>!old.matches.is_empty() {
-            <span class="kw">if </span>old.matches.len() == <span class="number">1 </span>{
-                <span class="kw">let </span>pid = old.matches[<span class="number">0</span>].as_u32();
+        </span><span class="kw">if </span>old.is_match() {
+            <span class="kw">let </span>matches_len = nnfa.iter_matches(oldsid).count();
+            <span class="kw">if </span>matches_len == <span class="number">1 </span>{
+                <span class="kw">let </span>pid = nnfa.iter_matches(oldsid).next().unwrap().as_u32();
                 <span class="macro">assert_eq!</span>(<span class="number">0</span>, pid &amp; (<span class="number">1 </span>&lt;&lt; <span class="number">31</span>));
                 dst.push((<span class="number">1 </span>&lt;&lt; <span class="number">31</span>) | pid);
             } <span class="kw">else </span>{
-                <span class="macro">assert_eq!</span>(<span class="number">0</span>, old.matches.len() &amp; (<span class="number">1 </span>&lt;&lt; <span class="number">31</span>));
-                dst.push(old.matches.len().as_u32());
-                dst.extend(old.matches.iter().map(|pid| pid.as_u32()));
+                <span class="macro">assert_eq!</span>(<span class="number">0</span>, matches_len &amp; (<span class="number">1 </span>&lt;&lt; <span class="number">31</span>));
+                dst.push(matches_len.as_u32());
+                dst.extend(nnfa.iter_matches(oldsid).map(|pid| pid.as_u32()));
             }
         }
         <span class="prelude-val">Ok</span>(sid)
@@ -1872,13 +1888,14 @@ necessary when one needs access to the [`Automaton`] trait implementation.
     /// This returns an error if `dst` became so big that `StateID`s can no
     /// longer be created for new states.
     </span><span class="kw">fn </span>write_sparse_trans(
-        old: <span class="kw-2">&amp;</span>noncontiguous::State,
+        nnfa: <span class="kw-2">&amp;</span>noncontiguous::NFA,
+        oldsid: StateID,
         classes: <span class="kw-2">&amp;</span>ByteClasses,
         dst: <span class="kw-2">&amp;mut </span>Vec&lt;u32&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), BuildError&gt; {
         <span class="kw">let </span>(<span class="kw-2">mut </span>chunk, <span class="kw-2">mut </span>len) = ([<span class="number">0</span>; <span class="number">4</span>], <span class="number">0</span>);
-        <span class="kw">for </span><span class="kw-2">&amp;</span>(byte, <span class="kw">_</span>) <span class="kw">in </span>old.trans.iter() {
-            chunk[len] = classes.get(byte);
+        <span class="kw">for </span>t <span class="kw">in </span>nnfa.iter_trans(oldsid) {
+            chunk[len] = classes.get(t.byte());
             len += <span class="number">1</span>;
             <span class="kw">if </span>len == <span class="number">4 </span>{
                 dst.push(u32::from_ne_bytes(chunk));
@@ -1901,8 +1918,8 @@ necessary when one needs access to the [`Automaton`] trait implementation.
             }
             dst.push(u32::from_ne_bytes(chunk));
         }
-        <span class="kw">for </span><span class="kw-2">&amp;</span>(<span class="kw">_</span>, next) <span class="kw">in </span>old.trans.iter() {
-            dst.push(next.as_u32());
+        <span class="kw">for </span>t <span class="kw">in </span>nnfa.iter_trans(oldsid) {
+            dst.push(t.next().as_u32());
         }
         <span class="prelude-val">Ok</span>(())
     }
@@ -1915,7 +1932,8 @@ necessary when one needs access to the [`Automaton`] trait implementation.
     /// This returns an error if `dst` became so big that `StateID`s can no
     /// longer be created for new states.
     </span><span class="kw">fn </span>write_dense_trans(
-        old: <span class="kw-2">&amp;</span>noncontiguous::State,
+        nnfa: <span class="kw-2">&amp;</span>noncontiguous::NFA,
+        oldsid: StateID,
         classes: <span class="kw-2">&amp;</span>ByteClasses,
         dst: <span class="kw-2">&amp;mut </span>Vec&lt;u32&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), BuildError&gt; {
@@ -1935,8 +1953,9 @@ necessary when one needs access to the [`Automaton`] trait implementation.
                 .take(classes.alphabet_len()),
         );
         <span class="macro">assert!</span>(start &lt; dst.len(), <span class="string">&quot;equivalence classes are never empty&quot;</span>);
-        <span class="kw">for </span><span class="kw-2">&amp;</span>(byte, next) <span class="kw">in </span>old.trans.iter() {
-            dst[start + usize::from(classes.get(byte))] = next.as_u32();
+        <span class="kw">for </span>t <span class="kw">in </span>nnfa.iter_trans(oldsid) {
+            dst[start + usize::from(classes.get(t.byte()))] =
+                t.next().as_u32();
         }
         <span class="prelude-val">Ok</span>(())
     }
@@ -2088,8 +2107,10 @@ necessary when one needs access to the [`Automaton`] trait implementation.
                 index_to_state_id[oldsid] = NFA::FAIL;
                 <span class="kw">continue</span>;
             }
-            <span class="kw">let </span>force_dense = state.depth.as_usize() &lt; <span class="self">self</span>.dense_depth;
+            <span class="kw">let </span>force_dense = state.depth().as_usize() &lt; <span class="self">self</span>.dense_depth;
             <span class="kw">let </span>newsid = State::write(
+                nnfa,
+                oldsid,
                 state,
                 <span class="kw-2">&amp;</span>nfa.byte_classes,
                 <span class="kw-2">&amp;mut </span>nfa.repr,
@@ -2120,6 +2141,11 @@ necessary when one needs access to the [`Automaton`] trait implementation.
             nfa.memory_usage(),
             nfa.byte_classes.alphabet_len(),
         );
+        <span class="comment">// The vectors can grow ~twice as big during construction because a
+        // Vec amortizes growth. But here, let&#39;s shrink things back down to
+        // what we actually need since we&#39;re never going to add more to it.
+        </span>nfa.repr.shrink_to_fit();
+        nfa.pattern_lens.shrink_to_fit();
         <span class="prelude-val">Ok</span>(nfa)
     }
 

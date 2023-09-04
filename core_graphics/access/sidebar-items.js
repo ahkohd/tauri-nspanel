@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["ScreenCaptureAccess"],"type":["boolean_t"]};

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/regex-automata-0.3.3/src/nfa/thompson/compiler.rs`."><title>compiler.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="regex_automata" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../regex_automata/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/regex-automata-0.3.8/src/nfa/thompson/compiler.rs`."><title>compiler.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-9bb858ba049f1f21.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="regex_automata" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.0 (5680fa18f 2023-08-23)" data-channel="1.72.0" data-search-js="search-f6292fe389d70017.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ><script src="../../../../static.files/storage-59fd9b8ccb335783.js"></script><script defer src="../../../../static.files/source-script-106908c7a7964ba4.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../regex_automata/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2011,6 +2011,250 @@
 <a href="#2011" id="2011">2011</a>
 <a href="#2012" id="2012">2012</a>
 <a href="#2013" id="2013">2013</a>
+<a href="#2014" id="2014">2014</a>
+<a href="#2015" id="2015">2015</a>
+<a href="#2016" id="2016">2016</a>
+<a href="#2017" id="2017">2017</a>
+<a href="#2018" id="2018">2018</a>
+<a href="#2019" id="2019">2019</a>
+<a href="#2020" id="2020">2020</a>
+<a href="#2021" id="2021">2021</a>
+<a href="#2022" id="2022">2022</a>
+<a href="#2023" id="2023">2023</a>
+<a href="#2024" id="2024">2024</a>
+<a href="#2025" id="2025">2025</a>
+<a href="#2026" id="2026">2026</a>
+<a href="#2027" id="2027">2027</a>
+<a href="#2028" id="2028">2028</a>
+<a href="#2029" id="2029">2029</a>
+<a href="#2030" id="2030">2030</a>
+<a href="#2031" id="2031">2031</a>
+<a href="#2032" id="2032">2032</a>
+<a href="#2033" id="2033">2033</a>
+<a href="#2034" id="2034">2034</a>
+<a href="#2035" id="2035">2035</a>
+<a href="#2036" id="2036">2036</a>
+<a href="#2037" id="2037">2037</a>
+<a href="#2038" id="2038">2038</a>
+<a href="#2039" id="2039">2039</a>
+<a href="#2040" id="2040">2040</a>
+<a href="#2041" id="2041">2041</a>
+<a href="#2042" id="2042">2042</a>
+<a href="#2043" id="2043">2043</a>
+<a href="#2044" id="2044">2044</a>
+<a href="#2045" id="2045">2045</a>
+<a href="#2046" id="2046">2046</a>
+<a href="#2047" id="2047">2047</a>
+<a href="#2048" id="2048">2048</a>
+<a href="#2049" id="2049">2049</a>
+<a href="#2050" id="2050">2050</a>
+<a href="#2051" id="2051">2051</a>
+<a href="#2052" id="2052">2052</a>
+<a href="#2053" id="2053">2053</a>
+<a href="#2054" id="2054">2054</a>
+<a href="#2055" id="2055">2055</a>
+<a href="#2056" id="2056">2056</a>
+<a href="#2057" id="2057">2057</a>
+<a href="#2058" id="2058">2058</a>
+<a href="#2059" id="2059">2059</a>
+<a href="#2060" id="2060">2060</a>
+<a href="#2061" id="2061">2061</a>
+<a href="#2062" id="2062">2062</a>
+<a href="#2063" id="2063">2063</a>
+<a href="#2064" id="2064">2064</a>
+<a href="#2065" id="2065">2065</a>
+<a href="#2066" id="2066">2066</a>
+<a href="#2067" id="2067">2067</a>
+<a href="#2068" id="2068">2068</a>
+<a href="#2069" id="2069">2069</a>
+<a href="#2070" id="2070">2070</a>
+<a href="#2071" id="2071">2071</a>
+<a href="#2072" id="2072">2072</a>
+<a href="#2073" id="2073">2073</a>
+<a href="#2074" id="2074">2074</a>
+<a href="#2075" id="2075">2075</a>
+<a href="#2076" id="2076">2076</a>
+<a href="#2077" id="2077">2077</a>
+<a href="#2078" id="2078">2078</a>
+<a href="#2079" id="2079">2079</a>
+<a href="#2080" id="2080">2080</a>
+<a href="#2081" id="2081">2081</a>
+<a href="#2082" id="2082">2082</a>
+<a href="#2083" id="2083">2083</a>
+<a href="#2084" id="2084">2084</a>
+<a href="#2085" id="2085">2085</a>
+<a href="#2086" id="2086">2086</a>
+<a href="#2087" id="2087">2087</a>
+<a href="#2088" id="2088">2088</a>
+<a href="#2089" id="2089">2089</a>
+<a href="#2090" id="2090">2090</a>
+<a href="#2091" id="2091">2091</a>
+<a href="#2092" id="2092">2092</a>
+<a href="#2093" id="2093">2093</a>
+<a href="#2094" id="2094">2094</a>
+<a href="#2095" id="2095">2095</a>
+<a href="#2096" id="2096">2096</a>
+<a href="#2097" id="2097">2097</a>
+<a href="#2098" id="2098">2098</a>
+<a href="#2099" id="2099">2099</a>
+<a href="#2100" id="2100">2100</a>
+<a href="#2101" id="2101">2101</a>
+<a href="#2102" id="2102">2102</a>
+<a href="#2103" id="2103">2103</a>
+<a href="#2104" id="2104">2104</a>
+<a href="#2105" id="2105">2105</a>
+<a href="#2106" id="2106">2106</a>
+<a href="#2107" id="2107">2107</a>
+<a href="#2108" id="2108">2108</a>
+<a href="#2109" id="2109">2109</a>
+<a href="#2110" id="2110">2110</a>
+<a href="#2111" id="2111">2111</a>
+<a href="#2112" id="2112">2112</a>
+<a href="#2113" id="2113">2113</a>
+<a href="#2114" id="2114">2114</a>
+<a href="#2115" id="2115">2115</a>
+<a href="#2116" id="2116">2116</a>
+<a href="#2117" id="2117">2117</a>
+<a href="#2118" id="2118">2118</a>
+<a href="#2119" id="2119">2119</a>
+<a href="#2120" id="2120">2120</a>
+<a href="#2121" id="2121">2121</a>
+<a href="#2122" id="2122">2122</a>
+<a href="#2123" id="2123">2123</a>
+<a href="#2124" id="2124">2124</a>
+<a href="#2125" id="2125">2125</a>
+<a href="#2126" id="2126">2126</a>
+<a href="#2127" id="2127">2127</a>
+<a href="#2128" id="2128">2128</a>
+<a href="#2129" id="2129">2129</a>
+<a href="#2130" id="2130">2130</a>
+<a href="#2131" id="2131">2131</a>
+<a href="#2132" id="2132">2132</a>
+<a href="#2133" id="2133">2133</a>
+<a href="#2134" id="2134">2134</a>
+<a href="#2135" id="2135">2135</a>
+<a href="#2136" id="2136">2136</a>
+<a href="#2137" id="2137">2137</a>
+<a href="#2138" id="2138">2138</a>
+<a href="#2139" id="2139">2139</a>
+<a href="#2140" id="2140">2140</a>
+<a href="#2141" id="2141">2141</a>
+<a href="#2142" id="2142">2142</a>
+<a href="#2143" id="2143">2143</a>
+<a href="#2144" id="2144">2144</a>
+<a href="#2145" id="2145">2145</a>
+<a href="#2146" id="2146">2146</a>
+<a href="#2147" id="2147">2147</a>
+<a href="#2148" id="2148">2148</a>
+<a href="#2149" id="2149">2149</a>
+<a href="#2150" id="2150">2150</a>
+<a href="#2151" id="2151">2151</a>
+<a href="#2152" id="2152">2152</a>
+<a href="#2153" id="2153">2153</a>
+<a href="#2154" id="2154">2154</a>
+<a href="#2155" id="2155">2155</a>
+<a href="#2156" id="2156">2156</a>
+<a href="#2157" id="2157">2157</a>
+<a href="#2158" id="2158">2158</a>
+<a href="#2159" id="2159">2159</a>
+<a href="#2160" id="2160">2160</a>
+<a href="#2161" id="2161">2161</a>
+<a href="#2162" id="2162">2162</a>
+<a href="#2163" id="2163">2163</a>
+<a href="#2164" id="2164">2164</a>
+<a href="#2165" id="2165">2165</a>
+<a href="#2166" id="2166">2166</a>
+<a href="#2167" id="2167">2167</a>
+<a href="#2168" id="2168">2168</a>
+<a href="#2169" id="2169">2169</a>
+<a href="#2170" id="2170">2170</a>
+<a href="#2171" id="2171">2171</a>
+<a href="#2172" id="2172">2172</a>
+<a href="#2173" id="2173">2173</a>
+<a href="#2174" id="2174">2174</a>
+<a href="#2175" id="2175">2175</a>
+<a href="#2176" id="2176">2176</a>
+<a href="#2177" id="2177">2177</a>
+<a href="#2178" id="2178">2178</a>
+<a href="#2179" id="2179">2179</a>
+<a href="#2180" id="2180">2180</a>
+<a href="#2181" id="2181">2181</a>
+<a href="#2182" id="2182">2182</a>
+<a href="#2183" id="2183">2183</a>
+<a href="#2184" id="2184">2184</a>
+<a href="#2185" id="2185">2185</a>
+<a href="#2186" id="2186">2186</a>
+<a href="#2187" id="2187">2187</a>
+<a href="#2188" id="2188">2188</a>
+<a href="#2189" id="2189">2189</a>
+<a href="#2190" id="2190">2190</a>
+<a href="#2191" id="2191">2191</a>
+<a href="#2192" id="2192">2192</a>
+<a href="#2193" id="2193">2193</a>
+<a href="#2194" id="2194">2194</a>
+<a href="#2195" id="2195">2195</a>
+<a href="#2196" id="2196">2196</a>
+<a href="#2197" id="2197">2197</a>
+<a href="#2198" id="2198">2198</a>
+<a href="#2199" id="2199">2199</a>
+<a href="#2200" id="2200">2200</a>
+<a href="#2201" id="2201">2201</a>
+<a href="#2202" id="2202">2202</a>
+<a href="#2203" id="2203">2203</a>
+<a href="#2204" id="2204">2204</a>
+<a href="#2205" id="2205">2205</a>
+<a href="#2206" id="2206">2206</a>
+<a href="#2207" id="2207">2207</a>
+<a href="#2208" id="2208">2208</a>
+<a href="#2209" id="2209">2209</a>
+<a href="#2210" id="2210">2210</a>
+<a href="#2211" id="2211">2211</a>
+<a href="#2212" id="2212">2212</a>
+<a href="#2213" id="2213">2213</a>
+<a href="#2214" id="2214">2214</a>
+<a href="#2215" id="2215">2215</a>
+<a href="#2216" id="2216">2216</a>
+<a href="#2217" id="2217">2217</a>
+<a href="#2218" id="2218">2218</a>
+<a href="#2219" id="2219">2219</a>
+<a href="#2220" id="2220">2220</a>
+<a href="#2221" id="2221">2221</a>
+<a href="#2222" id="2222">2222</a>
+<a href="#2223" id="2223">2223</a>
+<a href="#2224" id="2224">2224</a>
+<a href="#2225" id="2225">2225</a>
+<a href="#2226" id="2226">2226</a>
+<a href="#2227" id="2227">2227</a>
+<a href="#2228" id="2228">2228</a>
+<a href="#2229" id="2229">2229</a>
+<a href="#2230" id="2230">2230</a>
+<a href="#2231" id="2231">2231</a>
+<a href="#2232" id="2232">2232</a>
+<a href="#2233" id="2233">2233</a>
+<a href="#2234" id="2234">2234</a>
+<a href="#2235" id="2235">2235</a>
+<a href="#2236" id="2236">2236</a>
+<a href="#2237" id="2237">2237</a>
+<a href="#2238" id="2238">2238</a>
+<a href="#2239" id="2239">2239</a>
+<a href="#2240" id="2240">2240</a>
+<a href="#2241" id="2241">2241</a>
+<a href="#2242" id="2242">2242</a>
+<a href="#2243" id="2243">2243</a>
+<a href="#2244" id="2244">2244</a>
+<a href="#2245" id="2245">2245</a>
+<a href="#2246" id="2246">2246</a>
+<a href="#2247" id="2247">2247</a>
+<a href="#2248" id="2248">2248</a>
+<a href="#2249" id="2249">2249</a>
+<a href="#2250" id="2250">2250</a>
+<a href="#2251" id="2251">2251</a>
+<a href="#2252" id="2252">2252</a>
+<a href="#2253" id="2253">2253</a>
+<a href="#2254" id="2254">2254</a>
+<a href="#2255" id="2255">2255</a>
+<a href="#2256" id="2256">2256</a>
+<a href="#2257" id="2257">2257</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>core::{borrow::Borrow, cell::RefCell};
 
 <span class="kw">use </span>alloc::{sync::Arc, vec, vec::Vec};
@@ -2043,7 +2287,7 @@
     reverse: <span class="prelude-ty">Option</span>&lt;bool&gt;,
     nfa_size_limit: <span class="prelude-ty">Option</span>&lt;<span class="prelude-ty">Option</span>&lt;usize&gt;&gt;,
     shrink: <span class="prelude-ty">Option</span>&lt;bool&gt;,
-    captures: <span class="prelude-ty">Option</span>&lt;bool&gt;,
+    which_captures: <span class="prelude-ty">Option</span>&lt;WhichCaptures&gt;,
     look_matcher: <span class="prelude-ty">Option</span>&lt;LookMatcher&gt;,
     <span class="attr">#[cfg(test)]
     </span>unanchored_prefix: <span class="prelude-ty">Option</span>&lt;bool&gt;,
@@ -2191,12 +2435,15 @@
     /// ```
     /// use regex_automata::{
     ///     dfa::{self, Automaton},
-    ///     nfa::thompson::NFA,
+    ///     nfa::thompson::{NFA, WhichCaptures},
     ///     HalfMatch, Input,
     /// };
     ///
     /// let dfa = dfa::dense::Builder::new()
-    ///     .thompson(NFA::config().captures(false).reverse(true))
+    ///     .thompson(NFA::config()
+    ///         .which_captures(WhichCaptures::None)
+    ///         .reverse(true)
+    ///     )
     ///     .build(&quot;baz[0-9]+&quot;)?;
     /// let expected = Some(HalfMatch::must(0, 3));
     /// assert_eq!(
@@ -2290,10 +2537,12 @@
     ///
     /// ```
     /// # if cfg!(miri) { return Ok(()); } // miri takes too long
-    /// use regex_automata::nfa::thompson::NFA;
+    /// use regex_automata::nfa::thompson::{NFA, WhichCaptures};
     ///
     /// // Currently we have to disable captures when enabling reverse NFA.
-    /// let config = NFA::config().captures(false).reverse(true);
+    /// let config = NFA::config()
+    ///     .which_captures(WhichCaptures::None)
+    ///     .reverse(true);
     /// let not_shrunk = NFA::compiler()
     ///     .configure(config.clone().shrink(false))
     ///     .build(r&quot;\w&quot;)?;
@@ -2324,21 +2573,99 @@
     /// # Example
     ///
     /// This example demonstrates that some regex engines, like the Pike VM,
-    /// require capturing groups to be present in the NFA. Building a Pike VM
-    /// with an NFA without capturing groups will result in an error.
+    /// require capturing states to be present in the NFA to report match
+    /// offsets.
+    ///
+    /// (Note that since this method is deprecated, the example below uses
+    /// [`Config::which_captures`] to disable capture states.)
     ///
     /// ```
-    /// use regex_automata::nfa::thompson::{pikevm::PikeVM, NFA};
+    /// use regex_automata::nfa::thompson::{
+    ///     pikevm::PikeVM,
+    ///     NFA,
+    ///     WhichCaptures,
+    /// };
     ///
-    /// let nfa = NFA::compiler()
-    ///     .configure(NFA::config().captures(false))
+    /// let re = PikeVM::builder()
+    ///     .thompson(NFA::config().which_captures(WhichCaptures::None))
     ///     .build(r&quot;[a-z]+&quot;)?;
-    /// assert!(PikeVM::new_from_nfa(nfa).is_err());
+    /// let mut cache = re.create_cache();
+    ///
+    /// assert!(re.is_match(&amp;mut cache, &quot;abc&quot;));
+    /// assert_eq!(None, re.find(&amp;mut cache, &quot;abc&quot;));
     ///
     /// # Ok::&lt;(), Box&lt;dyn std::error::Error&gt;&gt;(())
     /// ```
-    </span><span class="kw">pub fn </span>captures(<span class="kw-2">mut </span><span class="self">self</span>, yes: bool) -&gt; Config {
-        <span class="self">self</span>.captures = <span class="prelude-val">Some</span>(yes);
+    </span><span class="attr">#[deprecated(since = <span class="string">&quot;0.3.5&quot;</span>, note = <span class="string">&quot;use which_captures instead&quot;</span>)]
+    </span><span class="kw">pub fn </span>captures(<span class="self">self</span>, yes: bool) -&gt; Config {
+        <span class="self">self</span>.which_captures(<span class="kw">if </span>yes {
+            WhichCaptures::All
+        } <span class="kw">else </span>{
+            WhichCaptures::None
+        })
+    }
+
+    <span class="doccomment">/// Configures what kinds of capture groups are compiled into
+    /// [`State::Capture`](crate::nfa::thompson::State::Capture) states in a
+    /// Thompson NFA.
+    ///
+    /// Currently, using any option except for [`WhichCaptures::None`] requires
+    /// disabling the [`reverse`](Config::reverse) setting. If both are
+    /// enabled, then the compiler will return an error. It is expected that
+    /// this limitation will be lifted in the future.
+    ///
+    /// This is set to [`WhichCaptures::All`] by default. Callers may wish to
+    /// use [`WhichCaptures::Implicit`] in cases where one wants avoid the
+    /// overhead of capture states for explicit groups. Usually this occurs
+    /// when one wants to use the `PikeVM` only for determining the overall
+    /// match. Otherwise, the `PikeVM` could use much more memory than is
+    /// necessary.
+    ///
+    /// # Example
+    ///
+    /// This example demonstrates that some regex engines, like the Pike VM,
+    /// require capturing states to be present in the NFA to report match
+    /// offsets.
+    ///
+    /// ```
+    /// use regex_automata::nfa::thompson::{
+    ///     pikevm::PikeVM,
+    ///     NFA,
+    ///     WhichCaptures,
+    /// };
+    ///
+    /// let re = PikeVM::builder()
+    ///     .thompson(NFA::config().which_captures(WhichCaptures::None))
+    ///     .build(r&quot;[a-z]+&quot;)?;
+    /// let mut cache = re.create_cache();
+    ///
+    /// assert!(re.is_match(&amp;mut cache, &quot;abc&quot;));
+    /// assert_eq!(None, re.find(&amp;mut cache, &quot;abc&quot;));
+    ///
+    /// # Ok::&lt;(), Box&lt;dyn std::error::Error&gt;&gt;(())
+    /// ```
+    ///
+    /// The same applies to the bounded backtracker:
+    ///
+    /// ```
+    /// use regex_automata::nfa::thompson::{
+    ///     backtrack::BoundedBacktracker,
+    ///     NFA,
+    ///     WhichCaptures,
+    /// };
+    ///
+    /// let re = BoundedBacktracker::builder()
+    ///     .thompson(NFA::config().which_captures(WhichCaptures::None))
+    ///     .build(r&quot;[a-z]+&quot;)?;
+    /// let mut cache = re.create_cache();
+    ///
+    /// assert!(re.try_is_match(&amp;mut cache, &quot;abc&quot;)?);
+    /// assert_eq!(None, re.try_find(&amp;mut cache, &quot;abc&quot;)?);
+    ///
+    /// # Ok::&lt;(), Box&lt;dyn std::error::Error&gt;&gt;(())
+    /// ```
+    </span><span class="kw">pub fn </span>which_captures(<span class="kw-2">mut </span><span class="self">self</span>, which_captures: WhichCaptures) -&gt; Config {
+        <span class="self">self</span>.which_captures = <span class="prelude-val">Some</span>(which_captures);
         <span class="self">self
     </span>}
 
@@ -2418,8 +2745,14 @@
     }
 
     <span class="doccomment">/// Return whether NFA compilation is configured to produce capture states.
+    </span><span class="attr">#[deprecated(since = <span class="string">&quot;0.3.5&quot;</span>, note = <span class="string">&quot;use get_which_captures instead&quot;</span>)]
     </span><span class="kw">pub fn </span>get_captures(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.captures.unwrap_or(<span class="bool-val">true</span>)
+        <span class="self">self</span>.get_which_captures().is_any()
+    }
+
+    <span class="doccomment">/// Return what kinds of capture states will be compiled into an NFA.
+    </span><span class="kw">pub fn </span>get_which_captures(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; WhichCaptures {
+        <span class="self">self</span>.which_captures.unwrap_or(WhichCaptures::All)
     }
 
     <span class="doccomment">/// Return the look-around matcher for this NFA.
@@ -2452,11 +2785,62 @@
             reverse: o.reverse.or(<span class="self">self</span>.reverse),
             nfa_size_limit: o.nfa_size_limit.or(<span class="self">self</span>.nfa_size_limit),
             shrink: o.shrink.or(<span class="self">self</span>.shrink),
-            captures: o.captures.or(<span class="self">self</span>.captures),
+            which_captures: o.which_captures.or(<span class="self">self</span>.which_captures),
             look_matcher: o.look_matcher.or_else(|| <span class="self">self</span>.look_matcher.clone()),
             <span class="attr">#[cfg(test)]
             </span>unanchored_prefix: o.unanchored_prefix.or(<span class="self">self</span>.unanchored_prefix),
         }
+    }
+}
+
+<span class="doccomment">/// A configuration indicating which kinds of
+/// [`State::Capture`](crate::nfa::thompson::State::Capture) states to include.
+///
+/// This configuration can be used with [`Config::which_captures`] to control
+/// which capture states are compiled into a Thompson NFA.
+///
+/// The default configuration is [`WhichCaptures::All`].
+</span><span class="attr">#[derive(Clone, Copy, Debug)]
+</span><span class="kw">pub enum </span>WhichCaptures {
+    <span class="doccomment">/// All capture states, including those corresponding to both implicit and
+    /// explicit capture groups, are included in the Thompson NFA.
+    </span>All,
+    <span class="doccomment">/// Only capture states corresponding to implicit capture groups are
+    /// included. Implicit capture groups appear in every pattern implicitly
+    /// and correspond to the overall match of a pattern.
+    ///
+    /// This is useful when one only cares about the overall match of a
+    /// pattern. By excluding capture states from explicit capture groups,
+    /// one might be able to reduce the memory usage of a multi-pattern regex
+    /// substantially if it was otherwise written to have many explicit capture
+    /// groups.
+    </span>Implicit,
+    <span class="doccomment">/// No capture states are compiled into the Thompson NFA.
+    ///
+    /// This is useful when capture states are either not needed (for example,
+    /// if one is only trying to build a DFA) or if they aren&#39;t supported (for
+    /// example, a reverse NFA).
+    </span><span class="prelude-val">None</span>,
+}
+
+<span class="kw">impl </span>Default <span class="kw">for </span>WhichCaptures {
+    <span class="kw">fn </span>default() -&gt; WhichCaptures {
+        WhichCaptures::All
+    }
+}
+
+<span class="kw">impl </span>WhichCaptures {
+    <span class="doccomment">/// Returns true if this configuration indicates that no capture states
+    /// should be produced in an NFA.
+    </span><span class="kw">pub fn </span>is_none(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="macro">matches!</span>(<span class="kw-2">*</span><span class="self">self</span>, WhichCaptures::None)
+    }
+
+    <span class="doccomment">/// Returns true if this configuration indicates that some capture states
+    /// should be added to an NFA. Note that this might only include capture
+    /// states for implicit capture groups.
+    </span><span class="kw">pub fn </span>is_any(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        !<span class="self">self</span>.is_none()
     }
 }
 
@@ -2813,7 +3197,9 @@ mutably both inside and outside the closure at the same time.
         <span class="kw">if </span>exprs.len() &gt; PatternID::LIMIT {
             <span class="kw">return </span><span class="prelude-val">Err</span>(BuildError::too_many_patterns(exprs.len()));
         }
-        <span class="kw">if </span><span class="self">self</span>.config.get_reverse() &amp;&amp; <span class="self">self</span>.config.get_captures() {
+        <span class="kw">if </span><span class="self">self</span>.config.get_reverse()
+            &amp;&amp; <span class="self">self</span>.config.get_which_captures().is_any()
+        {
             <span class="kw">return </span><span class="prelude-val">Err</span>(BuildError::unsupported_captures());
         }
 
@@ -2991,8 +3377,13 @@ mutably both inside and outside the closure at the same time.
         name: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;,
         expr: <span class="kw-2">&amp;</span>Hir,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;ThompsonRef, BuildError&gt; {
-        <span class="kw">if </span>!<span class="self">self</span>.config.get_captures() {
-            <span class="kw">return </span><span class="self">self</span>.c(expr);
+        <span class="kw">match </span><span class="self">self</span>.config.get_which_captures() {
+            <span class="comment">// No capture states means we always skip them.
+            </span>WhichCaptures::None =&gt; <span class="kw">return </span><span class="self">self</span>.c(expr),
+            <span class="comment">// Implicit captures states means we only add when index==0 since
+            // index==0 implies the group is implicit.
+            </span>WhichCaptures::Implicit <span class="kw">if </span>index &gt; <span class="number">0 </span>=&gt; <span class="kw">return </span><span class="self">self</span>.c(expr),
+            <span class="kw">_ </span>=&gt; {}
         }
 
         <span class="kw">let </span>start = <span class="self">self</span>.add_capture_start(index, name)<span class="question-mark">?</span>;
@@ -3332,7 +3723,7 @@ mutably both inside and outside the closure at the same time.
         // compare and contrast performance of the Pike VM when the code below
         // is active vs the code above. Here&#39;s an example to try:
         //
-        //   regex-cli find nfa thompson pikevm -b @$smallishru &#39;(?m)^\w{20}&#39;
+        //   regex-cli find match pikevm -b -p &#39;(?m)^\w{20}&#39; -y &#39;@$smallishru&#39;
         //
         // With Unicode classes generated below, this search takes about 45s on
         // my machine. But with the compressed version above, the search takes
@@ -3351,7 +3742,7 @@ mutably both inside and outside the closure at the same time.
                     .map(|rng| self.c_range(rng.start, rng.end));
                 self.c_concat(it)
             });
-        self.c_alt(it)
+        self.c_alt_iter(it)
         */
     </span>}
 
@@ -3738,12 +4129,18 @@ mutably both inside and outside the closure at the same time.
 
     <span class="kw">use crate</span>::{
         nfa::thompson::{SparseTransitions, State, Transition, NFA},
-        util::primitives::{PatternID, StateID},
+        util::primitives::{PatternID, SmallIndex, StateID},
     };
+
+    <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
     <span class="kw">fn </span>build(pattern: <span class="kw-2">&amp;</span>str) -&gt; NFA {
         NFA::compiler()
-            .configure(NFA::config().captures(<span class="bool-val">false</span>).unanchored_prefix(<span class="bool-val">false</span>))
+            .configure(
+                NFA::config()
+                    .which_captures(WhichCaptures::None)
+                    .unanchored_prefix(<span class="bool-val">false</span>),
+            )
             .build(pattern)
             .unwrap()
     }
@@ -3794,6 +4191,15 @@ mutably both inside and outside the closure at the same time.
         }
     }
 
+    <span class="kw">fn </span>s_cap(next: usize, pattern: usize, index: usize, slot: usize) -&gt; State {
+        State::Capture {
+            next: sid(next),
+            pattern_id: pid(pattern),
+            group_index: SmallIndex::new(index).unwrap(),
+            slot: SmallIndex::new(slot).unwrap(),
+        }
+    }
+
     <span class="kw">fn </span>s_fail() -&gt; State {
         State::Fail
     }
@@ -3807,7 +4213,7 @@ mutably both inside and outside the closure at the same time.
     </span><span class="attr">#[test]
     </span><span class="kw">fn </span>compile_unanchored_prefix() {
         <span class="kw">let </span>nfa = NFA::compiler()
-            .configure(NFA::config().captures(<span class="bool-val">false</span>))
+            .configure(NFA::config().which_captures(WhichCaptures::None))
             .build(<span class="string">r&quot;a&quot;</span>)
             .unwrap();
         <span class="macro">assert_eq!</span>(
@@ -3840,7 +4246,11 @@ mutably both inside and outside the closure at the same time.
 
         <span class="comment">// Check that non-UTF-8 literals work.
         </span><span class="kw">let </span>nfa = NFA::compiler()
-            .configure(NFA::config().captures(<span class="bool-val">false</span>).unanchored_prefix(<span class="bool-val">false</span>))
+            .configure(
+                NFA::config()
+                    .which_captures(WhichCaptures::None)
+                    .unanchored_prefix(<span class="bool-val">false</span>),
+            )
             .syntax(<span class="kw">crate</span>::util::syntax::Config::new().utf8(<span class="bool-val">false</span>))
             .build(<span class="string">r&quot;(?-u)\xFF&quot;</span>)
             .unwrap();
@@ -3950,7 +4360,7 @@ mutably both inside and outside the closure at the same time.
         <span class="kw">let </span>nfa = NFA::compiler()
             .configure(
                 NFA::config()
-                    .captures(<span class="bool-val">false</span>)
+                    .which_captures(WhichCaptures::None)
                     .reverse(<span class="bool-val">true</span>)
                     .shrink(<span class="bool-val">false</span>)
                     .unanchored_prefix(<span class="bool-val">false</span>),
@@ -3978,7 +4388,11 @@ mutably both inside and outside the closure at the same time.
     <span class="attr">#[test]
     </span><span class="kw">fn </span>compile_many_start_pattern() {
         <span class="kw">let </span>nfa = NFA::compiler()
-            .configure(NFA::config().captures(<span class="bool-val">false</span>).unanchored_prefix(<span class="bool-val">false</span>))
+            .configure(
+                NFA::config()
+                    .which_captures(WhichCaptures::None)
+                    .unanchored_prefix(<span class="bool-val">false</span>),
+            )
             .build_many(<span class="kw-2">&amp;</span>[<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>])
             .unwrap();
         <span class="macro">assert_eq!</span>(
@@ -4006,7 +4420,9 @@ mutably both inside and outside the closure at the same time.
         <span class="kw">use </span>regex_syntax::hir::{Class, ClassBytes, Hir};
 
         <span class="kw">let </span>hir = Hir::class(Class::Bytes(ClassBytes::new(<span class="macro">vec!</span>[])));
-        <span class="kw">let </span>config = NFA::config().captures(<span class="bool-val">false</span>).unanchored_prefix(<span class="bool-val">false</span>);
+        <span class="kw">let </span>config = NFA::config()
+            .which_captures(WhichCaptures::None)
+            .unanchored_prefix(<span class="bool-val">false</span>);
         <span class="kw">let </span>nfa =
             NFA::compiler().configure(config).build_from_hir(<span class="kw-2">&amp;</span>hir).unwrap();
         <span class="macro">assert_eq!</span>(nfa.states(), <span class="kw-2">&amp;</span>[s_fail(), s_match(<span class="number">0</span>)]);
@@ -4018,10 +4434,82 @@ mutably both inside and outside the closure at the same time.
         <span class="kw">use </span>regex_syntax::hir::{Class, ClassUnicode, Hir};
 
         <span class="kw">let </span>hir = Hir::class(Class::Unicode(ClassUnicode::new(<span class="macro">vec!</span>[])));
-        <span class="kw">let </span>config = NFA::config().captures(<span class="bool-val">false</span>).unanchored_prefix(<span class="bool-val">false</span>);
+        <span class="kw">let </span>config = NFA::config()
+            .which_captures(WhichCaptures::None)
+            .unanchored_prefix(<span class="bool-val">false</span>);
         <span class="kw">let </span>nfa =
             NFA::compiler().configure(config).build_from_hir(<span class="kw-2">&amp;</span>hir).unwrap();
         <span class="macro">assert_eq!</span>(nfa.states(), <span class="kw-2">&amp;</span>[s_fail(), s_match(<span class="number">0</span>)]);
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>compile_captures_all() {
+        <span class="kw">let </span>nfa = NFA::compiler()
+            .configure(
+                NFA::config()
+                    .unanchored_prefix(<span class="bool-val">false</span>)
+                    .which_captures(WhichCaptures::All),
+            )
+            .build(<span class="string">&quot;a(b)c&quot;</span>)
+            .unwrap();
+        <span class="macro">assert_eq!</span>(
+            nfa.states(),
+            <span class="kw-2">&amp;</span>[
+                s_cap(<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>),
+                s_byte(<span class="string">b&#39;a&#39;</span>, <span class="number">2</span>),
+                s_cap(<span class="number">3</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>),
+                s_byte(<span class="string">b&#39;b&#39;</span>, <span class="number">4</span>),
+                s_cap(<span class="number">5</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">3</span>),
+                s_byte(<span class="string">b&#39;c&#39;</span>, <span class="number">6</span>),
+                s_cap(<span class="number">7</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>),
+                s_match(<span class="number">0</span>)
+            ]
+        );
+        <span class="kw">let </span>ginfo = nfa.group_info();
+        <span class="macro">assert_eq!</span>(<span class="number">2</span>, ginfo.all_group_len());
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>compile_captures_implicit() {
+        <span class="kw">let </span>nfa = NFA::compiler()
+            .configure(
+                NFA::config()
+                    .unanchored_prefix(<span class="bool-val">false</span>)
+                    .which_captures(WhichCaptures::Implicit),
+            )
+            .build(<span class="string">&quot;a(b)c&quot;</span>)
+            .unwrap();
+        <span class="macro">assert_eq!</span>(
+            nfa.states(),
+            <span class="kw-2">&amp;</span>[
+                s_cap(<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>),
+                s_byte(<span class="string">b&#39;a&#39;</span>, <span class="number">2</span>),
+                s_byte(<span class="string">b&#39;b&#39;</span>, <span class="number">3</span>),
+                s_byte(<span class="string">b&#39;c&#39;</span>, <span class="number">4</span>),
+                s_cap(<span class="number">5</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>),
+                s_match(<span class="number">0</span>)
+            ]
+        );
+        <span class="kw">let </span>ginfo = nfa.group_info();
+        <span class="macro">assert_eq!</span>(<span class="number">1</span>, ginfo.all_group_len());
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>compile_captures_none() {
+        <span class="kw">let </span>nfa = NFA::compiler()
+            .configure(
+                NFA::config()
+                    .unanchored_prefix(<span class="bool-val">false</span>)
+                    .which_captures(WhichCaptures::None),
+            )
+            .build(<span class="string">&quot;a(b)c&quot;</span>)
+            .unwrap();
+        <span class="macro">assert_eq!</span>(
+            nfa.states(),
+            <span class="kw-2">&amp;</span>[s_byte(<span class="string">b&#39;a&#39;</span>, <span class="number">1</span>), s_byte(<span class="string">b&#39;b&#39;</span>, <span class="number">2</span>), s_byte(<span class="string">b&#39;c&#39;</span>, <span class="number">3</span>), s_match(<span class="number">0</span>)]
+        );
+        <span class="kw">let </span>ginfo = nfa.group_info();
+        <span class="macro">assert_eq!</span>(<span class="number">0</span>, ginfo.all_group_len());
     }
 }
 </code></pre></div></section></main></body></html>

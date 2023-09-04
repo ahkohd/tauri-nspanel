@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/regex-automata-0.3.3/src/nfa/thompson/pikevm.rs`."><title>pikevm.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="regex_automata" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0 (8ede3aae2 2023-07-12)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../regex_automata/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/regex-automata-0.3.8/src/nfa/thompson/pikevm.rs`."><title>pikevm.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-9bb858ba049f1f21.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="regex_automata" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.0 (5680fa18f 2023-08-23)" data-channel="1.72.0" data-search-js="search-f6292fe389d70017.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ><script src="../../../../static.files/storage-59fd9b8ccb335783.js"></script><script defer src="../../../../static.files/source-script-106908c7a7964ba4.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../regex_automata/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2357,22 +2357,6 @@
 <a href="#2357" id="2357">2357</a>
 <a href="#2358" id="2358">2358</a>
 <a href="#2359" id="2359">2359</a>
-<a href="#2360" id="2360">2360</a>
-<a href="#2361" id="2361">2361</a>
-<a href="#2362" id="2362">2362</a>
-<a href="#2363" id="2363">2363</a>
-<a href="#2364" id="2364">2364</a>
-<a href="#2365" id="2365">2365</a>
-<a href="#2366" id="2366">2366</a>
-<a href="#2367" id="2367">2367</a>
-<a href="#2368" id="2368">2368</a>
-<a href="#2369" id="2369">2369</a>
-<a href="#2370" id="2370">2370</a>
-<a href="#2371" id="2371">2371</a>
-<a href="#2372" id="2372">2372</a>
-<a href="#2373" id="2373">2373</a>
-<a href="#2374" id="2374">2374</a>
-<a href="#2375" id="2375">2375</a>
 </pre></div><pre class="rust"><code><span class="doccomment">/*!
 An NFA backed Pike VM for executing regex searches with capturing groups.
 
@@ -2392,7 +2376,9 @@ resolving all spans of capturing groups that participate in a match.
         empty, iter,
         prefilter::Prefilter,
         primitives::{NonMaxUsize, PatternID, SmallIndex, StateID},
-        search::{Anchored, Input, Match, MatchKind, PatternSet, Span},
+        search::{
+            Anchored, HalfMatch, Input, Match, MatchKind, PatternSet, Span,
+        },
         sparse_set::SparseSet,
     },
 };
@@ -2650,15 +2636,6 @@ resolving all spans of capturing groups that participate in a match.
     /// construction of the NFA itself will of course be ignored, since the NFA
     /// given here is already built.
     </span><span class="kw">pub fn </span>build_from_nfa(<span class="kw-2">&amp;</span><span class="self">self</span>, nfa: NFA) -&gt; <span class="prelude-ty">Result</span>&lt;PikeVM, BuildError&gt; {
-        <span class="comment">// If the NFA has no captures, then the PikeVM doesn&#39;t work since it
-        // relies on them in order to report match locations. However, in
-        // the special case of an NFA with no patterns, it is allowed, since
-        // no matches can ever be produced. And importantly, an NFA with no
-        // patterns has no capturing groups anyway, so this is necessary to
-        // permit the PikeVM to work with regexes with zero patterns.
-        </span><span class="kw">if </span>!nfa.has_capture() &amp;&amp; nfa.pattern_len() &gt; <span class="number">0 </span>{
-            <span class="kw">return </span><span class="prelude-val">Err</span>(BuildError::missing_captures());
-        }
         nfa.look_set_any().available().map_err(BuildError::word)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(PikeVM { config: <span class="self">self</span>.config.clone(), nfa })
     }
@@ -3203,16 +3180,16 @@ resolving all spans of capturing groups that participate in a match.
         <span class="kw">if </span><span class="self">self</span>.get_nfa().pattern_len() == <span class="number">1 </span>{
             <span class="kw">let </span><span class="kw-2">mut </span>slots = [<span class="prelude-val">None</span>, <span class="prelude-val">None</span>];
             <span class="kw">let </span>pid = <span class="self">self</span>.search_slots(cache, <span class="kw-2">&amp;</span>input, <span class="kw-2">&amp;mut </span>slots)<span class="question-mark">?</span>;
-            <span class="kw">let </span>start = slots[<span class="number">0</span>].unwrap().get();
-            <span class="kw">let </span>end = slots[<span class="number">1</span>].unwrap().get();
+            <span class="kw">let </span>start = slots[<span class="number">0</span>]<span class="question-mark">?</span>.get();
+            <span class="kw">let </span>end = slots[<span class="number">1</span>]<span class="question-mark">?</span>.get();
             <span class="kw">return </span><span class="prelude-val">Some</span>(Match::new(pid, Span { start, end }));
         }
         <span class="kw">let </span>ginfo = <span class="self">self</span>.get_nfa().group_info();
         <span class="kw">let </span>slots_len = ginfo.implicit_slot_len();
         <span class="kw">let </span><span class="kw-2">mut </span>slots = <span class="macro">vec!</span>[<span class="prelude-val">None</span>; slots_len];
         <span class="kw">let </span>pid = <span class="self">self</span>.search_slots(cache, <span class="kw-2">&amp;</span>input, <span class="kw-2">&amp;mut </span>slots)<span class="question-mark">?</span>;
-        <span class="kw">let </span>start = slots[pid.as_usize() * <span class="number">2</span>].unwrap().get();
-        <span class="kw">let </span>end = slots[pid.as_usize() * <span class="number">2 </span>+ <span class="number">1</span>].unwrap().get();
+        <span class="kw">let </span>start = slots[pid.as_usize() * <span class="number">2</span>]<span class="question-mark">?</span>.get();
+        <span class="kw">let </span>end = slots[pid.as_usize() * <span class="number">2 </span>+ <span class="number">1</span>]<span class="question-mark">?</span>.get();
         <span class="prelude-val">Some</span>(Match::new(pid, Span { start, end }))
     }
 
@@ -3478,7 +3455,8 @@ resolving all spans of capturing groups that participate in a match.
     ) -&gt; <span class="prelude-ty">Option</span>&lt;PatternID&gt; {
         <span class="kw">let </span>utf8empty = <span class="self">self</span>.get_nfa().has_empty() &amp;&amp; <span class="self">self</span>.get_nfa().is_utf8();
         <span class="kw">if </span>!utf8empty {
-            <span class="kw">return </span><span class="self">self</span>.search_slots_imp(cache, input, slots);
+            <span class="kw">let </span>hm = <span class="self">self</span>.search_slots_imp(cache, input, slots)<span class="question-mark">?</span>;
+            <span class="kw">return </span><span class="prelude-val">Some</span>(hm.pattern());
         }
         <span class="comment">// There is an unfortunate special case where if the regex can
         // match the empty string and UTF-8 mode is enabled, the search
@@ -3493,22 +3471,23 @@ resolving all spans of capturing groups that participate in a match.
         // this case.
         </span><span class="kw">let </span>min = <span class="self">self</span>.get_nfa().group_info().implicit_slot_len();
         <span class="kw">if </span>slots.len() &gt;= min {
-            <span class="kw">return </span><span class="self">self</span>.search_slots_imp(cache, input, slots);
+            <span class="kw">let </span>hm = <span class="self">self</span>.search_slots_imp(cache, input, slots)<span class="question-mark">?</span>;
+            <span class="kw">return </span><span class="prelude-val">Some</span>(hm.pattern());
         }
         <span class="kw">if </span><span class="self">self</span>.get_nfa().pattern_len() == <span class="number">1 </span>{
             <span class="kw">let </span><span class="kw-2">mut </span>enough = [<span class="prelude-val">None</span>, <span class="prelude-val">None</span>];
             <span class="kw">let </span>got = <span class="self">self</span>.search_slots_imp(cache, input, <span class="kw-2">&amp;mut </span>enough);
-            <span class="comment">// This is OK because we know `enough_slots` is strictly bigger
-            // than `slots`, otherwise this special case isn&#39;t reached.
+            <span class="comment">// This is OK because we know `enough` is strictly bigger than
+            // `slots`, otherwise this special case isn&#39;t reached.
             </span>slots.copy_from_slice(<span class="kw-2">&amp;</span>enough[..slots.len()]);
-            <span class="kw">return </span>got;
+            <span class="kw">return </span>got.map(|hm| hm.pattern());
         }
         <span class="kw">let </span><span class="kw-2">mut </span>enough = <span class="macro">vec!</span>[<span class="prelude-val">None</span>; min];
         <span class="kw">let </span>got = <span class="self">self</span>.search_slots_imp(cache, input, <span class="kw-2">&amp;mut </span>enough);
-        <span class="comment">// This is OK because we know `enough_slots` is strictly bigger than
-        // `slots`, otherwise this special case isn&#39;t reached.
+        <span class="comment">// This is OK because we know `enough` is strictly bigger than `slots`,
+        // otherwise this special case isn&#39;t reached.
         </span>slots.copy_from_slice(<span class="kw-2">&amp;</span>enough[..slots.len()]);
-        got
+        got.map(|hm| hm.pattern())
     }
 
     <span class="doccomment">/// This is the actual implementation of `search_slots_imp` that
@@ -3521,30 +3500,17 @@ resolving all spans of capturing groups that participate in a match.
         cache: <span class="kw-2">&amp;mut </span>Cache,
         input: <span class="kw-2">&amp;</span>Input&lt;<span class="lifetime">&#39;_</span>&gt;,
         slots: <span class="kw-2">&amp;mut </span>[<span class="prelude-ty">Option</span>&lt;NonMaxUsize&gt;],
-    ) -&gt; <span class="prelude-ty">Option</span>&lt;PatternID&gt; {
+    ) -&gt; <span class="prelude-ty">Option</span>&lt;HalfMatch&gt; {
         <span class="kw">let </span>utf8empty = <span class="self">self</span>.get_nfa().has_empty() &amp;&amp; <span class="self">self</span>.get_nfa().is_utf8();
-        <span class="kw">let </span>(pid, end) = <span class="kw">match </span><span class="self">self</span>.search_imp(cache, input, slots) {
+        <span class="kw">let </span>hm = <span class="kw">match </span><span class="self">self</span>.search_imp(cache, input, slots) {
             <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
-            <span class="prelude-val">Some</span>(pid) <span class="kw">if </span>!utf8empty =&gt; <span class="kw">return </span><span class="prelude-val">Some</span>(pid),
-            <span class="prelude-val">Some</span>(pid) =&gt; {
-                <span class="kw">let </span>slot_start = pid.as_usize() * <span class="number">2</span>;
-                <span class="kw">let </span>slot_end = slot_start + <span class="number">1</span>;
-                <span class="comment">// OK because we know we have a match and we know our caller
-                // provided slots are big enough (which we make true above if
-                // the caller didn&#39;t). Namely, we&#39;re only here when &#39;utf8empty&#39;
-                // is true, and when that&#39;s true, we require slots for every
-                // pattern.
-                </span>(pid, slots[slot_end].unwrap().get())
-            }
+            <span class="prelude-val">Some</span>(hm) <span class="kw">if </span>!utf8empty =&gt; <span class="kw">return </span><span class="prelude-val">Some</span>(hm),
+            <span class="prelude-val">Some</span>(hm) =&gt; hm,
         };
-        empty::skip_splits_fwd(input, pid, end, |input| {
-            <span class="kw">let </span>pid = <span class="kw">match </span><span class="self">self</span>.search_imp(cache, input, slots) {
-                <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
-                <span class="prelude-val">Some</span>(pid) =&gt; pid,
-            };
-            <span class="kw">let </span>slot_start = pid.as_usize() * <span class="number">2</span>;
-            <span class="kw">let </span>slot_end = slot_start + <span class="number">1</span>;
-            <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>((pid, slots[slot_end].unwrap().get())))
+        empty::skip_splits_fwd(input, hm, hm.offset(), |input| {
+            <span class="prelude-val">Ok</span>(<span class="self">self
+                </span>.search_imp(cache, input, slots)
+                .map(|hm| (hm, hm.offset())))
         })
         <span class="comment">// OK because the PikeVM never errors.
         </span>.unwrap()
@@ -3619,7 +3585,7 @@ resolving all spans of capturing groups that participate in a match.
         cache: <span class="kw-2">&amp;mut </span>Cache,
         input: <span class="kw-2">&amp;</span>Input&lt;<span class="lifetime">&#39;_</span>&gt;,
         slots: <span class="kw-2">&amp;mut </span>[<span class="prelude-ty">Option</span>&lt;NonMaxUsize&gt;],
-    ) -&gt; <span class="prelude-ty">Option</span>&lt;PatternID&gt; {
+    ) -&gt; <span class="prelude-ty">Option</span>&lt;HalfMatch&gt; {
         cache.setup_search(slots.len());
         <span class="kw">if </span>input.is_done() {
             <span class="kw">return </span><span class="prelude-val">None</span>;
@@ -3648,7 +3614,7 @@ resolving all spans of capturing groups that participate in a match.
         <span class="kw">let </span>pre =
             <span class="kw">if </span>anchored { <span class="prelude-val">None </span>} <span class="kw">else </span>{ <span class="self">self</span>.get_config().get_prefilter() };
         <span class="kw">let </span>Cache { <span class="kw-2">ref mut </span>stack, <span class="kw-2">ref mut </span>curr, <span class="kw-2">ref mut </span>next } = cache;
-        <span class="kw">let </span><span class="kw-2">mut </span>pid = <span class="prelude-val">None</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>hm = <span class="prelude-val">None</span>;
         <span class="comment">// Yes, our search doesn&#39;t end at input.end(), but includes it. This
         // is necessary because matches are delayed by one byte, just like
         // how the DFA engines work. The delay is used to handle look-behind
@@ -3667,7 +3633,7 @@ resolving all spans of capturing groups that participate in a match.
             </span><span class="kw">if </span>curr.set.is_empty() {
                 <span class="comment">// We have a match and we haven&#39;t been instructed to continue
                 // on even after finding a match, so we can quit.
-                </span><span class="kw">if </span>pid.is_some() &amp;&amp; !allmatches {
+                </span><span class="kw">if </span>hm.is_some() &amp;&amp; !allmatches {
                     <span class="kw">break</span>;
                 }
                 <span class="comment">// If we&#39;re running an anchored search and we&#39;ve advanced
@@ -3737,7 +3703,7 @@ resolving all spans of capturing groups that participate in a match.
             // search. If we re-computed it at every position, we would be
             // simulating an unanchored search when we were tasked to perform
             // an anchored search.
-            </span><span class="kw">if </span>(!pid.is_some() || allmatches)
+            </span><span class="kw">if </span>(!hm.is_some() || allmatches)
                 &amp;&amp; (!anchored || at == input.start())
             {
                 <span class="comment">// Since we are adding to the &#39;curr&#39; active states and since
@@ -3756,14 +3722,15 @@ resolving all spans of capturing groups that participate in a match.
                 </span><span class="kw">let </span>slots = next.slot_table.all_absent();
                 <span class="self">self</span>.epsilon_closure(stack, slots, curr, input, at, start_id);
             }
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(x) = <span class="self">self</span>.nexts(stack, curr, next, input, at, slots) {
-                pid = <span class="prelude-val">Some</span>(x);
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(pid) = <span class="self">self</span>.nexts(stack, curr, next, input, at, slots)
+            {
+                hm = <span class="prelude-val">Some</span>(HalfMatch::new(pid, at));
             }
             <span class="comment">// Unless the caller asked us to return early, we need to mush on
             // to see if we can extend our match. (But note that &#39;nexts&#39; will
             // quit right after seeing a match when match_kind==LeftmostFirst,
             // as is consistent with leftmost-first match priority.)
-            </span><span class="kw">if </span>input.get_earliest() &amp;&amp; pid.is_some() {
+            </span><span class="kw">if </span>input.get_earliest() &amp;&amp; hm.is_some() {
                 <span class="kw">break</span>;
             }
             core::mem::swap(curr, next);
@@ -3771,7 +3738,7 @@ resolving all spans of capturing groups that participate in a match.
             at += <span class="number">1</span>;
         }
         <span class="macro">instrument!</span>(|c| c.eprint(<span class="kw-2">&amp;</span><span class="self">self</span>.nfa));
-        pid
+        hm
     }
 
     <span class="doccomment">/// The implementation for the &#39;which_overlapping_matches&#39; API. Basically,
@@ -4483,15 +4450,16 @@ resolving all spans of capturing groups that participate in a match.
         // if a &#39;Captures&#39; has fewer slots, e.g., none at all or only slots
         // for tracking the overall match instead of all slots for every
         // group.
-        </span><span class="self">self</span>.slots_for_captures = nfa.group_info().slot_len();
+        </span><span class="self">self</span>.slots_for_captures = core::cmp::max(
+            <span class="self">self</span>.slots_per_state,
+            nfa.pattern_len().checked_mul(<span class="number">2</span>).unwrap(),
+        );
         <span class="kw">let </span>len = nfa
             .states()
             .len()
-            <span class="comment">// We add 1 so that our last row is always empty. We use it as
-            // &quot;scratch&quot; space for computing the epsilon closure off of the
-            // starting state.
-            </span>.checked_add(<span class="number">1</span>)
-            .and_then(|x| x.checked_mul(<span class="self">self</span>.slots_per_state))
+            .checked_mul(<span class="self">self</span>.slots_per_state)
+            <span class="comment">// Add space to account for scratch space used during a search.
+            </span>.and_then(|x| x.checked_add(<span class="self">self</span>.slots_for_captures))
             <span class="comment">// It seems like this could actually panic on legitimate inputs on
             // 32-bit targets, and very likely to panic on 16-bit. Should we
             // somehow convert this to an error? What about something similar
@@ -4545,7 +4513,7 @@ resolving all spans of capturing groups that participate in a match.
     /// compute an epsilon closure outside of the user supplied regex, and thus
     /// never want it to have any capturing slots set.
     </span><span class="kw">fn </span>all_absent(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>[<span class="prelude-ty">Option</span>&lt;NonMaxUsize&gt;] {
-        <span class="kw">let </span>i = <span class="self">self</span>.table.len() - <span class="self">self</span>.slots_per_state;
+        <span class="kw">let </span>i = <span class="self">self</span>.table.len() - <span class="self">self</span>.slots_for_captures;
         <span class="kw-2">&amp;mut </span><span class="self">self</span>.table[i..i + <span class="self">self</span>.slots_for_captures]
     }
 }
