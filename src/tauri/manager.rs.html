@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-1.4.1/src/manager.rs`."><title>manager.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9bb858ba049f1f21.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tauri" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.0 (5680fa18f 2023-08-23)" data-channel="1.72.0" data-search-js="search-f6292fe389d70017.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ><script src="../../static.files/storage-59fd9b8ccb335783.js"></script><script defer src="../../static.files/source-script-106908c7a7964ba4.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../tauri/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-1.5.0/src/manager.rs`."><title>manager.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9bb858ba049f1f21.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tauri" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.1 (d5c2e9c34 2023-09-13)" data-channel="1.72.1" data-search-js="search-f6292fe389d70017.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ><script src="../../static.files/storage-59fd9b8ccb335783.js"></script><script defer src="../../static.files/source-script-106908c7a7964ba4.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../tauri/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1345,6 +1345,30 @@
 <a href="#1345" id="1345">1345</a>
 <a href="#1346" id="1346">1346</a>
 <a href="#1347" id="1347">1347</a>
+<a href="#1348" id="1348">1348</a>
+<a href="#1349" id="1349">1349</a>
+<a href="#1350" id="1350">1350</a>
+<a href="#1351" id="1351">1351</a>
+<a href="#1352" id="1352">1352</a>
+<a href="#1353" id="1353">1353</a>
+<a href="#1354" id="1354">1354</a>
+<a href="#1355" id="1355">1355</a>
+<a href="#1356" id="1356">1356</a>
+<a href="#1357" id="1357">1357</a>
+<a href="#1358" id="1358">1358</a>
+<a href="#1359" id="1359">1359</a>
+<a href="#1360" id="1360">1360</a>
+<a href="#1361" id="1361">1361</a>
+<a href="#1362" id="1362">1362</a>
+<a href="#1363" id="1363">1363</a>
+<a href="#1364" id="1364">1364</a>
+<a href="#1365" id="1365">1365</a>
+<a href="#1366" id="1366">1366</a>
+<a href="#1367" id="1367">1367</a>
+<a href="#1368" id="1368">1368</a>
+<a href="#1369" id="1369">1369</a>
+<a href="#1370" id="1370">1370</a>
+<a href="#1371" id="1371">1371</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright 2019-2023 Tauri Programme within The Commons Conservancy
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-License-Identifier: MIT
@@ -1372,7 +1396,6 @@
   html::{SCRIPT_NONCE_TOKEN, STYLE_NONCE_TOKEN},
 };
 
-<span class="kw">use </span><span class="kw">crate</span>::app::{GlobalMenuEventListener, WindowMenuEvent};
 <span class="kw">use </span><span class="kw">crate</span>::hooks::IpcJavascript;
 <span class="attr">#[cfg(feature = <span class="string">&quot;isolation&quot;</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::hooks::IsolationJavascript;
@@ -1397,6 +1420,10 @@
   },
   Context, EventLoopMessage, Icon, Invoke, Manager, Pattern, Runtime, Scopes, StateManager, Window,
   WindowEvent,
+};
+<span class="kw">use crate</span>::{
+  app::{GlobalMenuEventListener, WindowMenuEvent},
+  window::WindowEmitArgs,
 };
 
 <span class="attr">#[cfg(any(target_os = <span class="string">&quot;linux&quot;</span>, target_os = <span class="string">&quot;windows&quot;</span>))]
@@ -1486,7 +1513,10 @@
     <span class="kw">let </span>default_src = csp
       .entry(<span class="string">&quot;default-src&quot;</span>.into())
       .or_insert_with(Default::default);
-    default_src.push(<span class="kw">crate</span>::pattern::format_real_schema(schema));
+    default_src.push(<span class="kw">crate</span>::pattern::format_real_schema(
+      schema,
+      manager.config().tauri.security.dangerous_use_http_scheme,
+    ));
   }
 
   Csp::DirectiveMap(csp).to_string()
@@ -1566,7 +1596,7 @@
 
   package_info: PackageInfo,
   <span class="doccomment">/// The webview protocols available to all windows.
-  </span>uri_scheme_protocols: HashMap&lt;String, Arc&lt;CustomProtocol&lt;R&gt;&gt;&gt;,
+  </span>uri_scheme_protocols: Mutex&lt;HashMap&lt;String, Arc&lt;CustomProtocol&lt;R&gt;&gt;&gt;&gt;,
   <span class="doccomment">/// The menu set to all windows.
   </span>menu: <span class="prelude-ty">Option</span>&lt;Menu&gt;,
   <span class="doccomment">/// Menu event listeners to all windows.
@@ -1668,7 +1698,7 @@
         tray_icon: context.system_tray_icon,
         package_info: context.package_info,
         pattern: context.pattern,
-        uri_scheme_protocols,
+        uri_scheme_protocols: Mutex::new(uri_scheme_protocols),
         menu,
         menu_event_listeners: Arc::new(menu_event_listeners),
         window_event_listeners: Arc::new(window_event_listeners),
@@ -1697,6 +1727,20 @@
     <span class="self">self</span>.inner.invoke_responder.clone()
   }
 
+  <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>register_uri_scheme_protocol&lt;N: Into&lt;String&gt;&gt;(
+    <span class="kw-2">&amp;</span><span class="self">self</span>,
+    uri_scheme: N,
+    protocol: Arc&lt;CustomProtocol&lt;R&gt;&gt;,
+  ) {
+    <span class="kw">let </span>uri_scheme = uri_scheme.into();
+    <span class="self">self
+      </span>.inner
+      .uri_scheme_protocols
+      .lock()
+      .unwrap()
+      .insert(uri_scheme, protocol);
+  }
+
   <span class="doccomment">/// Get the base path to serve data from.
   ///
   /// * In dev mode, this will be based on the `devPath` configuration value.
@@ -1718,7 +1762,14 @@
     <span class="kw">match </span><span class="self">self</span>.base_path() {
       AppUrl::Url(WindowUrl::External(url)) =&gt; Cow::Borrowed(url),
       <span class="attr">#[cfg(windows)]
-      </span><span class="kw">_ </span>=&gt; Cow::Owned(Url::parse(<span class="string">&quot;https://tauri.localhost&quot;</span>).unwrap()),
+      </span><span class="kw">_ </span>=&gt; {
+        <span class="kw">let </span>scheme = <span class="kw">if </span><span class="self">self</span>.inner.config.tauri.security.dangerous_use_http_scheme {
+          <span class="string">&quot;http&quot;
+        </span>} <span class="kw">else </span>{
+          <span class="string">&quot;https&quot;
+        </span>};
+        Cow::Owned(Url::parse(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{scheme}://tauri.localhost&quot;</span>)).unwrap())
+      }
       <span class="attr">#[cfg(not(windows))]
       </span><span class="kw">_ </span>=&gt; Cow::Owned(Url::parse(<span class="string">&quot;tauri://localhost&quot;</span>).unwrap()),
     }
@@ -1759,16 +1810,18 @@
     }
     .render_default(<span class="kw-2">&amp;</span>Default::default())<span class="question-mark">?</span>;
 
+    <span class="kw">let </span><span class="kw-2">mut </span>webview_attributes = pending.webview_attributes;
+
     <span class="kw">let </span>ipc_init = IpcJavascript {
       isolation_origin: <span class="kw-2">&amp;</span><span class="kw">match </span><span class="self">self</span>.pattern() {
         <span class="attr">#[cfg(feature = <span class="string">&quot;isolation&quot;</span>)]
-        </span>Pattern::Isolation { schema, .. } =&gt; <span class="kw">crate</span>::pattern::format_real_schema(schema),
+        </span>Pattern::Isolation { schema, .. } =&gt; {
+          <span class="kw">crate</span>::pattern::format_real_schema(schema, pending.http_scheme)
+        }
         <span class="kw">_ </span>=&gt; <span class="string">&quot;&quot;</span>.to_string(),
       },
     }
     .render_default(<span class="kw-2">&amp;</span>Default::default())<span class="question-mark">?</span>;
-
-    <span class="kw">let </span><span class="kw-2">mut </span>webview_attributes = pending.webview_attributes;
 
     <span class="kw">let </span><span class="kw-2">mut </span>window_labels = window_labels.to_vec();
     <span class="kw">let </span>l = label.to_string();
@@ -1796,7 +1849,7 @@
     </span><span class="kw">if let </span>Pattern::Isolation { schema, .. } = <span class="self">self</span>.pattern() {
       webview_attributes = webview_attributes.initialization_script(
         <span class="kw-2">&amp;</span>IsolationJavascript {
-          isolation_src: <span class="kw-2">&amp;</span><span class="kw">crate</span>::pattern::format_real_schema(schema),
+          isolation_src: <span class="kw-2">&amp;</span><span class="kw">crate</span>::pattern::format_real_schema(schema, pending.http_scheme),
           style: tauri_utils::pattern::isolation::IFRAME_STYLE,
         }
         .render_default(<span class="kw-2">&amp;</span>Default::default())<span class="question-mark">?
@@ -1808,7 +1861,7 @@
 
     <span class="kw">let </span><span class="kw-2">mut </span>registered_scheme_protocols = Vec::new();
 
-    <span class="kw">for </span>(uri_scheme, protocol) <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.inner.uri_scheme_protocols {
+    <span class="kw">for </span>(uri_scheme, protocol) <span class="kw">in </span><span class="kw-2">&amp;*</span><span class="self">self</span>.inner.uri_scheme_protocols.lock().unwrap() {
       registered_scheme_protocols.push(uri_scheme.clone());
       <span class="kw">let </span>protocol = protocol.clone();
       <span class="kw">let </span>app_handle = Mutex::new(app_handle.clone());
@@ -1821,7 +1874,8 @@
     <span class="kw">let </span>window_origin = <span class="kw">if </span>window_url.scheme() == <span class="string">&quot;data&quot; </span>{
       <span class="string">&quot;null&quot;</span>.into()
     } <span class="kw">else if </span><span class="macro">cfg!</span>(windows) &amp;&amp; window_url.scheme() != <span class="string">&quot;http&quot; </span>&amp;&amp; window_url.scheme() != <span class="string">&quot;https&quot; </span>{
-      <span class="macro">format!</span>(<span class="string">&quot;https://{}.localhost&quot;</span>, window_url.scheme())
+      <span class="kw">let </span>scheme = <span class="kw">if </span>pending.http_scheme { <span class="string">&quot;http&quot; </span>} <span class="kw">else </span>{ <span class="string">&quot;https&quot; </span>};
+      <span class="macro">format!</span>(<span class="string">&quot;{scheme}://{}.localhost&quot;</span>, window_url.scheme())
     } <span class="kw">else </span>{
       <span class="macro">format!</span>(
         <span class="string">&quot;{}://{}{}&quot;</span>,
@@ -2112,6 +2166,13 @@
       </span>hotkeys: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str,
     }
 
+    <span class="attr">#[derive(Template)]
+    #[default_template(<span class="string">&quot;../scripts/core.js&quot;</span>)]
+    </span><span class="kw">struct </span>CoreJavascript&lt;<span class="lifetime">&#39;a</span>&gt; {
+      os_name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str,
+      protocol_scheme: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str,
+    }
+
     <span class="kw">let </span>bundle_script = <span class="kw">if </span>with_global_tauri {
       <span class="macro">include_str!</span>(<span class="string">&quot;../scripts/bundle.global.js&quot;</span>)
     } <span class="kw">else </span>{
@@ -2125,30 +2186,7 @@
     </span>};
 
     <span class="attr">#[cfg(any(debug_assertions, feature = <span class="string">&quot;devtools&quot;</span>))]
-    </span><span class="kw">let </span>hotkeys = <span class="kw-2">&amp;</span><span class="macro">format!</span>(
-      <span class="string">&quot;
-      {};
-      window.hotkeys(&#39;{}&#39;, () =&gt; {{
-        window.__TAURI_INVOKE__(&#39;tauri&#39;, {{
-          __tauriModule: &#39;Window&#39;,
-          message: {{
-            cmd: &#39;manage&#39;,
-            data: {{
-              cmd: {{
-                type: &#39;__toggleDevtools&#39;
-              }}
-            }}
-          }}
-        }});
-      }});
-    &quot;</span>,
-      <span class="macro">include_str!</span>(<span class="string">&quot;../scripts/hotkey.js&quot;</span>),
-      <span class="kw">if </span><span class="macro">cfg!</span>(target_os = <span class="string">&quot;macos&quot;</span>) {
-        <span class="string">&quot;command+option+i&quot;
-      </span>} <span class="kw">else </span>{
-        <span class="string">&quot;ctrl+shift+i&quot;
-      </span>}
-    );
+    </span><span class="kw">let </span>hotkeys = <span class="macro">include_str!</span>(<span class="string">&quot;../scripts/toggle-devtools.js&quot;</span>);
     <span class="attr">#[cfg(not(any(debug_assertions, feature = <span class="string">&quot;devtools&quot;</span>)))]
     </span><span class="kw">let </span>hotkeys = <span class="string">&quot;&quot;</span>;
 
@@ -2166,7 +2204,16 @@
           <span class="string">&quot;window[&#39;_&#39; + window.__TAURI__.transformCallback(cb) ]&quot;</span>.into()
         )
       ),
-      core_script: <span class="macro">include_str!</span>(<span class="string">&quot;../scripts/core.js&quot;</span>),
+      core_script: <span class="kw-2">&amp;</span>CoreJavascript {
+        os_name: std::env::consts::OS,
+        protocol_scheme: <span class="kw">if </span><span class="self">self</span>.inner.config.tauri.security.dangerous_use_http_scheme {
+          <span class="string">&quot;http&quot;
+        </span>} <span class="kw">else </span>{
+          <span class="string">&quot;https&quot;
+        </span>},
+      }
+      .render_default(<span class="kw-2">&amp;</span>Default::default())<span class="question-mark">?
+      </span>.into_string(),
       event_initialization_script: <span class="kw-2">&amp;</span><span class="self">self</span>.event_initialization_script(),
       plugin_initialization_script,
       freeze_prototype,
@@ -2458,12 +2505,13 @@
     </span>S: Serialize + Clone,
     F: Fn(<span class="kw-2">&amp;</span>Window&lt;R&gt;) -&gt; bool,
   {
+    <span class="kw">let </span>emit_args = WindowEmitArgs::from(event, source_window_label, payload)<span class="question-mark">?</span>;
     assert_event_name_is_valid(event);
     <span class="self">self
-      </span>.windows_lock()
+      </span>.windows()
       .values()
       .filter(|<span class="kw-2">&amp;</span>w| filter(w))
-      .try_for_each(|window| window.emit_internal(event, source_window_label, payload.clone()))
+      .try_for_each(|window| window.emit_internal(<span class="kw-2">&amp;</span>emit_args))
   }
 
   <span class="kw">pub fn </span>eval_script_all&lt;S: Into&lt;String&gt;&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, script: S) -&gt; <span class="kw">crate</span>::Result&lt;()&gt; {

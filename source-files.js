@@ -1,6 +1,6 @@
 var sourcesIndex = JSON.parse('{\
 "adler":["",[],["algo.rs","lib.rs"]],\
-"aho_corasick":["",[["nfa",[],["contiguous.rs","mod.rs","noncontiguous.rs"]],["packed",[["teddy",[],["compile.rs","mod.rs","runtime.rs"]]],["api.rs","mod.rs","pattern.rs","rabinkarp.rs","vector.rs"]],["util",[],["alphabet.rs","buffer.rs","byte_frequencies.rs","debug.rs","error.rs","int.rs","mod.rs","prefilter.rs","primitives.rs","remapper.rs","search.rs","special.rs"]]],["ahocorasick.rs","automaton.rs","dfa.rs","lib.rs","macros.rs"]],\
+"aho_corasick":["",[["nfa",[],["contiguous.rs","mod.rs","noncontiguous.rs"]],["packed",[["teddy",[],["builder.rs","generic.rs","mod.rs"]]],["api.rs","ext.rs","mod.rs","pattern.rs","rabinkarp.rs","vector.rs"]],["util",[],["alphabet.rs","buffer.rs","byte_frequencies.rs","debug.rs","error.rs","int.rs","mod.rs","prefilter.rs","primitives.rs","remapper.rs","search.rs","special.rs"]]],["ahocorasick.rs","automaton.rs","dfa.rs","lib.rs","macros.rs"]],\
 "alloc_no_stdlib":["",[["allocated_memory",[],["index_macro.rs","mod.rs"]]],["allocated_stack_memory.rs","init.rs","lib.rs","stack_allocator.rs"]],\
 "alloc_stdlib":["",[],["heap_alloc.rs","lib.rs","std_alloc.rs"]],\
 "anyhow":["",[],["backtrace.rs","chain.rs","context.rs","ensure.rs","error.rs","fmt.rs","kind.rs","lib.rs","macros.rs","ptr.rs","wrapper.rs"]],\
@@ -78,7 +78,7 @@ var sourcesIndex = JSON.parse('{\
 "instant":["",[],["lib.rs","native.rs"]],\
 "itoa":["",[],["lib.rs","udiv128.rs"]],\
 "json_patch":["",[],["diff.rs","lib.rs"]],\
-"kuchiki":["",[],["attributes.rs","cell_extras.rs","iter.rs","lib.rs","node_data_ref.rs","parser.rs","select.rs","serializer.rs","tree.rs"]],\
+"kuchikiki":["",[],["attributes.rs","cell_extras.rs","iter.rs","lib.rs","node_data_ref.rs","parser.rs","select.rs","serializer.rs","tree.rs"]],\
 "lazy_static":["",[],["inline_lazy.rs","lib.rs"]],\
 "libc":["",[["unix",[["bsd",[["apple",[["b64",[["x86_64",[],["align.rs","mod.rs"]]],["mod.rs"]]],["long_array.rs","mod.rs"]]],["mod.rs"]]],["align.rs","mod.rs"]]],["fixed_width_ints.rs","lib.rs","macros.rs"]],\
 "line_wrap":["",[],["lib.rs"]],\
@@ -159,7 +159,7 @@ var sourcesIndex = JSON.parse('{\
 "thiserror":["",[],["aserror.rs","display.rs","lib.rs"]],\
 "thiserror_impl":["",[],["ast.rs","attr.rs","expand.rs","fmt.rs","generics.rs","lib.rs","prop.rs","valid.rs"]],\
 "thread_local":["",[],["cached.rs","lib.rs","thread_id.rs","unreachable.rs"]],\
-"time":["",[["error",[],["component_range.rs","conversion_range.rs","different_variant.rs","format.rs","invalid_format_description.rs","invalid_variant.rs","mod.rs","parse.rs","parse_from_description.rs","try_from_parsed.rs"]],["format_description",[["parse",[],["ast.rs","format_item.rs","lexer.rs","mod.rs"]],["well_known",[["iso8601",[],["adt_hack.rs"]]],["iso8601.rs","rfc2822.rs","rfc3339.rs"]]],["borrowed_format_item.rs","component.rs","mod.rs","modifier.rs","owned_format_item.rs"]],["formatting",[],["formattable.rs","iso8601.rs","mod.rs"]],["parsing",[["combinator",[["rfc",[],["iso8601.rs","mod.rs","rfc2234.rs","rfc2822.rs"]]],["mod.rs"]]],["component.rs","iso8601.rs","mod.rs","parsable.rs","parsed.rs","shim.rs"]],["sys",[],["mod.rs"]]],["date.rs","date_time.rs","duration.rs","ext.rs","instant.rs","lib.rs","month.rs","offset_date_time.rs","primitive_date_time.rs","time.rs","utc_offset.rs","util.rs","weekday.rs"]],\
+"time":["",[["error",[],["component_range.rs","conversion_range.rs","different_variant.rs","format.rs","invalid_format_description.rs","invalid_variant.rs","mod.rs","parse.rs","parse_from_description.rs","try_from_parsed.rs"]],["format_description",[["parse",[],["ast.rs","format_item.rs","lexer.rs","mod.rs"]],["well_known",[["iso8601",[],["adt_hack.rs"]]],["iso8601.rs","rfc2822.rs","rfc3339.rs"]]],["borrowed_format_item.rs","component.rs","mod.rs","modifier.rs","owned_format_item.rs"]],["formatting",[],["formattable.rs","iso8601.rs","mod.rs"]],["parsing",[["combinator",[["rfc",[],["iso8601.rs","mod.rs","rfc2234.rs","rfc2822.rs"]]],["mod.rs"]]],["component.rs","iso8601.rs","mod.rs","parsable.rs","parsed.rs","shim.rs"]],["sys",[],["mod.rs"]]],["date.rs","date_time.rs","duration.rs","ext.rs","instant.rs","internal_macros.rs","lib.rs","month.rs","offset_date_time.rs","primitive_date_time.rs","time.rs","utc_offset.rs","util.rs","weekday.rs"]],\
 "time_core":["",[],["convert.rs","lib.rs","util.rs"]],\
 "tinyvec":["",[["array",[],["generated_impl.rs"]]],["array.rs","arrayvec.rs","arrayvec_drain.rs","lib.rs","slicevec.rs","tinyvec.rs"]],\
 "tinyvec_macros":["",[],["lib.rs"]],\
