@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rustix-0.38.14/src/backend/libc/io/errno.rs`."><title>errno.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-9bb858ba049f1f21.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="rustix" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.1 (d5c2e9c34 2023-09-13)" data-channel="1.72.1" data-search-js="search-f6292fe389d70017.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ><script src="../../../../../static.files/storage-59fd9b8ccb335783.js"></script><script defer src="../../../../../static.files/source-script-106908c7a7964ba4.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../rustix/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rustix-0.38.15/src/backend/libc/io/errno.rs`."><title>errno.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-9bb858ba049f1f21.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="rustix" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.1 (d5c2e9c34 2023-09-13)" data-channel="1.72.1" data-search-js="search-f6292fe389d70017.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ><script src="../../../../../static.files/storage-59fd9b8ccb335783.js"></script><script defer src="../../../../../static.files/source-script-106908c7a7964ba4.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../rustix/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -947,6 +947,50 @@
 <a href="#947" id="947">947</a>
 <a href="#948" id="948">948</a>
 <a href="#949" id="949">949</a>
+<a href="#950" id="950">950</a>
+<a href="#951" id="951">951</a>
+<a href="#952" id="952">952</a>
+<a href="#953" id="953">953</a>
+<a href="#954" id="954">954</a>
+<a href="#955" id="955">955</a>
+<a href="#956" id="956">956</a>
+<a href="#957" id="957">957</a>
+<a href="#958" id="958">958</a>
+<a href="#959" id="959">959</a>
+<a href="#960" id="960">960</a>
+<a href="#961" id="961">961</a>
+<a href="#962" id="962">962</a>
+<a href="#963" id="963">963</a>
+<a href="#964" id="964">964</a>
+<a href="#965" id="965">965</a>
+<a href="#966" id="966">966</a>
+<a href="#967" id="967">967</a>
+<a href="#968" id="968">968</a>
+<a href="#969" id="969">969</a>
+<a href="#970" id="970">970</a>
+<a href="#971" id="971">971</a>
+<a href="#972" id="972">972</a>
+<a href="#973" id="973">973</a>
+<a href="#974" id="974">974</a>
+<a href="#975" id="975">975</a>
+<a href="#976" id="976">976</a>
+<a href="#977" id="977">977</a>
+<a href="#978" id="978">978</a>
+<a href="#979" id="979">979</a>
+<a href="#980" id="980">980</a>
+<a href="#981" id="981">981</a>
+<a href="#982" id="982">982</a>
+<a href="#983" id="983">983</a>
+<a href="#984" id="984">984</a>
+<a href="#985" id="985">985</a>
+<a href="#986" id="986">986</a>
+<a href="#987" id="987">987</a>
+<a href="#988" id="988">988</a>
+<a href="#989" id="989">989</a>
+<a href="#990" id="990">990</a>
+<a href="#991" id="991">991</a>
+<a href="#992" id="992">992</a>
+<a href="#993" id="993">993</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! The `rustix` `Errno` type.
 //!
 //! This type holds an OS error code, which conceptually corresponds to an
@@ -1001,6 +1045,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
     )))]
@@ -1023,6 +1068,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
     )))]
@@ -1036,6 +1082,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
     )))]
@@ -1050,6 +1097,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
     )))]
@@ -1064,6 +1112,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
     )))]
@@ -1075,6 +1124,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
     )))]
@@ -1086,6 +1136,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
     )))]
@@ -1108,6 +1159,7 @@
         windows,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;
     </span>)))]
@@ -1119,6 +1171,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
     )))]
@@ -1140,6 +1193,7 @@
         target_os = <span class="string">&quot;android&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
     )))]
     </span><span class="kw">pub const </span>DEADLOCK: <span class="self">Self </span>= <span class="self">Self</span>(c::EDEADLOCK);
@@ -1163,6 +1217,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;nto&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
@@ -1195,6 +1250,7 @@
         target_os = <span class="string">&quot;android&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;nto&quot;</span>,
         target_os = <span class="string">&quot;redox&quot;</span>,
@@ -1242,6 +1298,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;nto&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
@@ -1255,6 +1312,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;nto&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
@@ -1268,6 +1326,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;nto&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
@@ -1281,6 +1340,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;nto&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
@@ -1292,6 +1352,7 @@
         windows,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;
     </span>)))]
@@ -1302,6 +1363,7 @@
         windows,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;
     </span>)))]
@@ -1312,6 +1374,7 @@
         windows,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;
     </span>)))]
@@ -1322,6 +1385,7 @@
         windows,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;
     </span>)))]
@@ -1333,6 +1397,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
     )))]
@@ -1344,6 +1409,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
     )))]
@@ -1366,6 +1432,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
     )))]
@@ -1377,6 +1444,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
     )))]
@@ -1387,6 +1455,7 @@
         windows,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;
     </span>)))]
@@ -1401,6 +1470,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;nto&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
@@ -1427,6 +1497,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;nto&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
@@ -1452,6 +1523,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
     )))]
@@ -1468,6 +1540,7 @@
         windows,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;
     </span>)))]
@@ -1498,6 +1571,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;nto&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
@@ -1517,6 +1591,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;nto&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
@@ -1538,6 +1613,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
     )))]
@@ -1549,6 +1625,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
     )))]
@@ -1603,6 +1680,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;nto&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
@@ -1633,6 +1711,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
     )))]
@@ -1700,6 +1779,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
     )))]
@@ -1720,6 +1800,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;nto&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
@@ -1731,6 +1812,7 @@
         windows,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;
     </span>)))]
@@ -1744,6 +1826,7 @@
         target_os = <span class="string">&quot;android&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;nto&quot;</span>,
         target_os = <span class="string">&quot;redox&quot;</span>,
@@ -1780,6 +1863,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
     )))]
@@ -1793,6 +1877,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
     )))]
@@ -1826,6 +1911,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;nto&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
@@ -1837,6 +1923,7 @@
         windows,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;
     </span>)))]
@@ -1861,6 +1948,7 @@
         target_os = <span class="string">&quot;aix&quot;</span>,
         target_os = <span class="string">&quot;espidf&quot;</span>,
         target_os = <span class="string">&quot;haiku&quot;</span>,
+        target_os = <span class="string">&quot;hurd&quot;</span>,
         target_os = <span class="string">&quot;l4re&quot;</span>,
         target_os = <span class="string">&quot;wasi&quot;</span>,
     )))]

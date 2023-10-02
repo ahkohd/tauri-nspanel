@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-decompressor-2.3.4/src/bit_reader/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9bb858ba049f1f21.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli_decompressor" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.1 (d5c2e9c34 2023-09-13)" data-channel="1.72.1" data-search-js="search-f6292fe389d70017.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ><script src="../../../static.files/storage-59fd9b8ccb335783.js"></script><script defer src="../../../static.files/source-script-106908c7a7964ba4.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../brotli_decompressor/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-decompressor-2.5.0/src/bit_reader/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9bb858ba049f1f21.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli_decompressor" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.1 (d5c2e9c34 2023-09-13)" data-channel="1.72.1" data-search-js="search-f6292fe389d70017.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ><script src="../../../static.files/storage-59fd9b8ccb335783.js"></script><script defer src="../../../static.files/source-script-106908c7a7964ba4.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../brotli_decompressor/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -629,17 +629,6 @@
 <a href="#629" id="629">629</a>
 <a href="#630" id="630">630</a>
 <a href="#631" id="631">631</a>
-<a href="#632" id="632">632</a>
-<a href="#633" id="633">633</a>
-<a href="#634" id="634">634</a>
-<a href="#635" id="635">635</a>
-<a href="#636" id="636">636</a>
-<a href="#637" id="637">637</a>
-<a href="#638" id="638">638</a>
-<a href="#639" id="639">639</a>
-<a href="#640" id="640">640</a>
-<a href="#641" id="641">641</a>
-<a href="#642" id="642">642</a>
 </pre></div><pre class="rust"><code><span class="attr">#![allow(non_snake_case)]
 </span><span class="kw">use </span>core::default::Default;
 <span class="macro">macro_rules! </span>xprintln (
@@ -776,22 +765,18 @@
 <span class="attr">#[inline(always)]
 </span><span class="kw">pub fn </span>BrotliFillBitWindow(br: <span class="kw-2">&amp;mut </span>BrotliBitReader, n_bits: u32, input: <span class="kw-2">&amp;</span>[u8]) {
   <span class="kw">if </span>::core::mem::size_of::&lt;reg_t&gt;() == <span class="number">8 </span>{
-    <span class="kw">if </span>(n_bits &lt;= <span class="number">8</span>) {
-      <span class="kw">if </span>(BROTLI_ALIGNED_READ == <span class="number">0 </span>&amp;&amp; br.bit_pos_ &gt;= <span class="number">56</span>) {
-        br.val_ &gt;&gt;= <span class="number">56</span>;
-        br.bit_pos_ ^= <span class="number">56</span>;  <span class="comment">// here same as -= 56 because of the if condition
-        </span>br.val_ |= BrotliLoad64LE(input, br.next_in) &lt;&lt; <span class="number">8</span>;
-        br.avail_in -= <span class="number">7</span>;
-        br.next_in += <span class="number">7</span>;
-      }
-    } <span class="kw">else if </span>(BROTLI_ALIGNED_READ == <span class="number">0 </span>&amp;&amp; n_bits &lt;= <span class="number">16</span>) {
-      <span class="kw">if </span>(br.bit_pos_ &gt;= <span class="number">48</span>) {
-        br.val_ &gt;&gt;= <span class="number">48</span>;
-        br.bit_pos_ ^= <span class="number">48</span>;  <span class="comment">// here same as -= 48 because of the if condition
-        </span>br.val_ |= BrotliLoad64LE(input, br.next_in) &lt;&lt; <span class="number">16</span>;
-        br.avail_in -= <span class="number">6</span>;
-        br.next_in += <span class="number">6</span>;
-      }
+    <span class="kw">if </span>(n_bits &lt;= <span class="number">8 </span>&amp;&amp; BROTLI_ALIGNED_READ == <span class="number">0 </span>&amp;&amp; br.bit_pos_ &gt;= <span class="number">56</span>) {
+      br.val_ &gt;&gt;= <span class="number">56</span>;
+      br.bit_pos_ ^= <span class="number">56</span>;  <span class="comment">// here same as -= 56 because of the if condition
+      </span>br.val_ |= BrotliLoad64LE(input, br.next_in) &lt;&lt; <span class="number">8</span>;
+      br.avail_in -= <span class="number">7</span>;
+      br.next_in += <span class="number">7</span>;
+    } <span class="kw">else if </span>(BROTLI_ALIGNED_READ == <span class="number">0 </span>&amp;&amp; n_bits &lt;= <span class="number">16 </span>&amp;&amp; br.bit_pos_ &gt;= <span class="number">48</span>) {
+      br.val_ &gt;&gt;= <span class="number">48</span>;
+      br.bit_pos_ ^= <span class="number">48</span>;  <span class="comment">// here same as -= 48 because of the if condition
+      </span>br.val_ |= BrotliLoad64LE(input, br.next_in) &lt;&lt; <span class="number">16</span>;
+      br.avail_in -= <span class="number">6</span>;
+      br.next_in += <span class="number">6</span>;
     } <span class="kw">else if </span>br.bit_pos_ &gt;= <span class="number">32 </span>{
       br.val_ &gt;&gt;= <span class="number">32</span>;
       br.bit_pos_ ^= <span class="number">32</span>;  <span class="comment">/* here same as -= 32 because of the if condition */
@@ -1214,16 +1199,9 @@
       };
       <span class="kw">let </span>ret = BrotliReadBits(<span class="kw-2">&amp;mut </span>bit_reader, <span class="number">8</span>, <span class="kw-2">&amp;</span>data[..]);
       <span class="macro">assert_eq!</span>(ret, <span class="number">0x83</span>);
-      <span class="kw">if </span><span class="kw">super</span>::BROTLI_ALIGNED_READ == <span class="number">0 </span>{
-        <span class="macro">assert_eq!</span>(bit_reader.bit_pos_, <span class="number">41</span>);
-        <span class="macro">assert_eq!</span>(bit_reader.avail_in, <span class="number">29</span>);
-        <span class="macro">assert_eq!</span>(bit_reader.next_in, <span class="number">3</span>);
-
-      } <span class="kw">else </span>{
-        <span class="macro">assert_eq!</span>(bit_reader.bit_pos_, <span class="number">9</span>);
-        <span class="macro">assert_eq!</span>(bit_reader.avail_in, <span class="number">25</span>);
-        <span class="macro">assert_eq!</span>(bit_reader.next_in, <span class="number">7</span>);
-      }
+      <span class="macro">assert_eq!</span>(bit_reader.bit_pos_, <span class="number">9</span>);
+      <span class="macro">assert_eq!</span>(bit_reader.avail_in, <span class="number">25</span>);
+      <span class="macro">assert_eq!</span>(bit_reader.next_in, <span class="number">7</span>);
     }
     {
       <span class="kw">let </span>data: [u8; <span class="number">28</span>] = [<span class="number">0xba</span>, <span class="number">0xaa</span>, <span class="number">0xaa</span>, <span class="number">0xad</span>, <span class="number">0x74</span>, <span class="number">0x40</span>, <span class="number">0x8e</span>, <span class="number">0xee</span>, <span class="number">0xd2</span>, <span class="number">0x38</span>, <span class="number">0xf1</span>,
