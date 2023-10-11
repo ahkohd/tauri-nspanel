@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.32.0/src/sync/watch.rs`."><title>watch.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9bb858ba049f1f21.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="tokio" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.1 (d5c2e9c34 2023-09-13)" data-channel="1.72.1" data-search-js="search-f6292fe389d70017.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ><script src="../../../static.files/storage-59fd9b8ccb335783.js"></script><script defer src="../../../static.files/source-script-106908c7a7964ba4.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../tokio/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.33.0/src/sync/watch.rs`."><title>watch.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="tokio" data-themes="" data-resource-suffix="" data-rustdoc-version="1.73.0 (cc66ad468 2023-10-03)" data-channel="1.73.0" data-search-js="search-6dfdfced5eff6596.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-1596385f77d47ef2.css" data-theme-dark-css="dark-0a43001d3fc2282c.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-1596385f77d47ef2.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-0a43001d3fc2282c.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../tokio/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1240,6 +1240,152 @@
 <a href="#1240" id="1240">1240</a>
 <a href="#1241" id="1241">1241</a>
 <a href="#1242" id="1242">1242</a>
+<a href="#1243" id="1243">1243</a>
+<a href="#1244" id="1244">1244</a>
+<a href="#1245" id="1245">1245</a>
+<a href="#1246" id="1246">1246</a>
+<a href="#1247" id="1247">1247</a>
+<a href="#1248" id="1248">1248</a>
+<a href="#1249" id="1249">1249</a>
+<a href="#1250" id="1250">1250</a>
+<a href="#1251" id="1251">1251</a>
+<a href="#1252" id="1252">1252</a>
+<a href="#1253" id="1253">1253</a>
+<a href="#1254" id="1254">1254</a>
+<a href="#1255" id="1255">1255</a>
+<a href="#1256" id="1256">1256</a>
+<a href="#1257" id="1257">1257</a>
+<a href="#1258" id="1258">1258</a>
+<a href="#1259" id="1259">1259</a>
+<a href="#1260" id="1260">1260</a>
+<a href="#1261" id="1261">1261</a>
+<a href="#1262" id="1262">1262</a>
+<a href="#1263" id="1263">1263</a>
+<a href="#1264" id="1264">1264</a>
+<a href="#1265" id="1265">1265</a>
+<a href="#1266" id="1266">1266</a>
+<a href="#1267" id="1267">1267</a>
+<a href="#1268" id="1268">1268</a>
+<a href="#1269" id="1269">1269</a>
+<a href="#1270" id="1270">1270</a>
+<a href="#1271" id="1271">1271</a>
+<a href="#1272" id="1272">1272</a>
+<a href="#1273" id="1273">1273</a>
+<a href="#1274" id="1274">1274</a>
+<a href="#1275" id="1275">1275</a>
+<a href="#1276" id="1276">1276</a>
+<a href="#1277" id="1277">1277</a>
+<a href="#1278" id="1278">1278</a>
+<a href="#1279" id="1279">1279</a>
+<a href="#1280" id="1280">1280</a>
+<a href="#1281" id="1281">1281</a>
+<a href="#1282" id="1282">1282</a>
+<a href="#1283" id="1283">1283</a>
+<a href="#1284" id="1284">1284</a>
+<a href="#1285" id="1285">1285</a>
+<a href="#1286" id="1286">1286</a>
+<a href="#1287" id="1287">1287</a>
+<a href="#1288" id="1288">1288</a>
+<a href="#1289" id="1289">1289</a>
+<a href="#1290" id="1290">1290</a>
+<a href="#1291" id="1291">1291</a>
+<a href="#1292" id="1292">1292</a>
+<a href="#1293" id="1293">1293</a>
+<a href="#1294" id="1294">1294</a>
+<a href="#1295" id="1295">1295</a>
+<a href="#1296" id="1296">1296</a>
+<a href="#1297" id="1297">1297</a>
+<a href="#1298" id="1298">1298</a>
+<a href="#1299" id="1299">1299</a>
+<a href="#1300" id="1300">1300</a>
+<a href="#1301" id="1301">1301</a>
+<a href="#1302" id="1302">1302</a>
+<a href="#1303" id="1303">1303</a>
+<a href="#1304" id="1304">1304</a>
+<a href="#1305" id="1305">1305</a>
+<a href="#1306" id="1306">1306</a>
+<a href="#1307" id="1307">1307</a>
+<a href="#1308" id="1308">1308</a>
+<a href="#1309" id="1309">1309</a>
+<a href="#1310" id="1310">1310</a>
+<a href="#1311" id="1311">1311</a>
+<a href="#1312" id="1312">1312</a>
+<a href="#1313" id="1313">1313</a>
+<a href="#1314" id="1314">1314</a>
+<a href="#1315" id="1315">1315</a>
+<a href="#1316" id="1316">1316</a>
+<a href="#1317" id="1317">1317</a>
+<a href="#1318" id="1318">1318</a>
+<a href="#1319" id="1319">1319</a>
+<a href="#1320" id="1320">1320</a>
+<a href="#1321" id="1321">1321</a>
+<a href="#1322" id="1322">1322</a>
+<a href="#1323" id="1323">1323</a>
+<a href="#1324" id="1324">1324</a>
+<a href="#1325" id="1325">1325</a>
+<a href="#1326" id="1326">1326</a>
+<a href="#1327" id="1327">1327</a>
+<a href="#1328" id="1328">1328</a>
+<a href="#1329" id="1329">1329</a>
+<a href="#1330" id="1330">1330</a>
+<a href="#1331" id="1331">1331</a>
+<a href="#1332" id="1332">1332</a>
+<a href="#1333" id="1333">1333</a>
+<a href="#1334" id="1334">1334</a>
+<a href="#1335" id="1335">1335</a>
+<a href="#1336" id="1336">1336</a>
+<a href="#1337" id="1337">1337</a>
+<a href="#1338" id="1338">1338</a>
+<a href="#1339" id="1339">1339</a>
+<a href="#1340" id="1340">1340</a>
+<a href="#1341" id="1341">1341</a>
+<a href="#1342" id="1342">1342</a>
+<a href="#1343" id="1343">1343</a>
+<a href="#1344" id="1344">1344</a>
+<a href="#1345" id="1345">1345</a>
+<a href="#1346" id="1346">1346</a>
+<a href="#1347" id="1347">1347</a>
+<a href="#1348" id="1348">1348</a>
+<a href="#1349" id="1349">1349</a>
+<a href="#1350" id="1350">1350</a>
+<a href="#1351" id="1351">1351</a>
+<a href="#1352" id="1352">1352</a>
+<a href="#1353" id="1353">1353</a>
+<a href="#1354" id="1354">1354</a>
+<a href="#1355" id="1355">1355</a>
+<a href="#1356" id="1356">1356</a>
+<a href="#1357" id="1357">1357</a>
+<a href="#1358" id="1358">1358</a>
+<a href="#1359" id="1359">1359</a>
+<a href="#1360" id="1360">1360</a>
+<a href="#1361" id="1361">1361</a>
+<a href="#1362" id="1362">1362</a>
+<a href="#1363" id="1363">1363</a>
+<a href="#1364" id="1364">1364</a>
+<a href="#1365" id="1365">1365</a>
+<a href="#1366" id="1366">1366</a>
+<a href="#1367" id="1367">1367</a>
+<a href="#1368" id="1368">1368</a>
+<a href="#1369" id="1369">1369</a>
+<a href="#1370" id="1370">1370</a>
+<a href="#1371" id="1371">1371</a>
+<a href="#1372" id="1372">1372</a>
+<a href="#1373" id="1373">1373</a>
+<a href="#1374" id="1374">1374</a>
+<a href="#1375" id="1375">1375</a>
+<a href="#1376" id="1376">1376</a>
+<a href="#1377" id="1377">1377</a>
+<a href="#1378" id="1378">1378</a>
+<a href="#1379" id="1379">1379</a>
+<a href="#1380" id="1380">1380</a>
+<a href="#1381" id="1381">1381</a>
+<a href="#1382" id="1382">1382</a>
+<a href="#1383" id="1383">1383</a>
+<a href="#1384" id="1384">1384</a>
+<a href="#1385" id="1385">1385</a>
+<a href="#1386" id="1386">1386</a>
+<a href="#1387" id="1387">1387</a>
+<a href="#1388" id="1388">1388</a>
 </pre></div><pre class="rust"><code><span class="attr">#![cfg_attr(not(feature = <span class="string">&quot;sync&quot;</span>), allow(dead_code, unreachable_pub))]
 
 </span><span class="doccomment">//! A single-producer, multi-consumer channel that only retains the *last* sent
@@ -1252,24 +1398,75 @@
 //!
 //! [`channel`] returns a [`Sender`] / [`Receiver`] pair. These are the producer
 //! and consumer halves of the channel. The channel is created with an initial
-//! value. The **latest** value stored in the channel is accessed with
-//! [`Receiver::borrow()`]. Awaiting [`Receiver::changed()`] waits for a new
-//! value to be sent by the [`Sender`] half.
+//! value.
+//!
+//! Each [`Receiver`] independently tracks the last value *seen* by its caller.
+//!
+//! To access the **current** value stored in the channel and mark it as *seen*
+//! by a given [`Receiver`], use [`Receiver::borrow_and_update()`].
+//!
+//! To access the current value **without** marking it as *seen*, use
+//! [`Receiver::borrow()`]. (If the value has already been marked *seen*,
+//! [`Receiver::borrow()`] is equivalent to [`Receiver::borrow_and_update()`].)
+//!
+//! For more information on when to use these methods, see
+//! [here](#borrow_and_update-versus-borrow).
+//!
+//! ## Change notifications
+//!
+//! The [`Receiver`] half provides an asynchronous [`changed`] method. This
+//! method is ready when a new, *unseen* value is sent via the [`Sender`] half.
+//!
+//! * [`Receiver::changed()`] returns `Ok(())` on receiving a new value, or
+//!   `Err(`[`error::RecvError`]`)` if the [`Sender`] has been dropped.
+//! * If the current value is *unseen* when calling [`changed`], then
+//!   [`changed`] will return immediately. If the current value is *seen*, then
+//!   it will sleep until either a new message is sent via the [`Sender`] half,
+//!   or the [`Sender`] is dropped.
+//! * On completion, the [`changed`] method marks the new value as *seen*.
+//! * At creation, the initial value is considered *seen*. In other words,
+//!   [`Receiver::changed()`] will not return until a subsequent value is sent.
+//! * New [`Receiver`] instances can be created with [`Sender::subscribe()`].
+//!   The current value at the time the [`Receiver`] is created is considered
+//!   *seen*.
+//!
+//! ## `borrow_and_update` versus `borrow`
+//!
+//! If the receiver intends to await notifications from [`changed`] in a loop,
+//! [`Receiver::borrow_and_update()`] should be preferred over
+//! [`Receiver::borrow()`].  This avoids a potential race where a new value is
+//! sent between [`changed`] being ready and the value being read. (If
+//! [`Receiver::borrow()`] is used, the loop may run twice with the same value.)
+//!
+//! If the receiver is only interested in the current value, and does not intend
+//! to wait for changes, then [`Receiver::borrow()`] can be used. It may be more
+//! convenient to use [`borrow`](Receiver::borrow) since it&#39;s an `&amp;self`
+//! method---[`borrow_and_update`](Receiver::borrow_and_update) requires `&amp;mut
+//! self`.
 //!
 //! # Examples
 //!
+//! The following example prints `hello! world! `.
+//!
 //! ```
 //! use tokio::sync::watch;
+//! use tokio::time::{Duration, sleep};
 //!
 //! # async fn dox() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
 //! let (tx, mut rx) = watch::channel(&quot;hello&quot;);
 //!
 //! tokio::spawn(async move {
-//!     while rx.changed().await.is_ok() {
-//!         println!(&quot;received = {:?}&quot;, *rx.borrow());
+//!     // Use the equivalent of a &quot;do-while&quot; loop so the initial value is
+//!     // processed before awaiting the `changed()` future.
+//!     loop {
+//!         println!(&quot;{}! &quot;, *rx.borrow_and_update());
+//!         if rx.changed().await.is_err() {
+//!             break;
+//!         }
 //!     }
 //! });
 //!
+//! sleep(Duration::from_millis(100)).await;
 //! tx.send(&quot;world&quot;)?;
 //! # Ok(())
 //! # }
@@ -1281,8 +1478,8 @@
 //! when all [`Receiver`] handles have been dropped. This indicates that there
 //! is no further interest in the values being produced and work can be stopped.
 //!
-//! The value in the channel will not be dropped until the sender and all receivers
-//! have been dropped.
+//! The value in the channel will not be dropped until the sender and all
+//! receivers have been dropped.
 //!
 //! # Thread safety
 //!
@@ -1292,11 +1489,15 @@
 //!
 //! [`Sender`]: crate::sync::watch::Sender
 //! [`Receiver`]: crate::sync::watch::Receiver
+//! [`changed`]: crate::sync::watch::Receiver::changed
 //! [`Receiver::changed()`]: crate::sync::watch::Receiver::changed
 //! [`Receiver::borrow()`]: crate::sync::watch::Receiver::borrow
+//! [`Receiver::borrow_and_update()`]:
+//!     crate::sync::watch::Receiver::borrow_and_update
 //! [`channel`]: crate::sync::watch::channel
 //! [`Sender::is_closed`]: crate::sync::watch::Sender::is_closed
 //! [`Sender::closed`]: crate::sync::watch::Sender::closed
+//! [`Sender::subscribe()`]: crate::sync::watch::Sender::subscribe
 
 </span><span class="kw">use </span><span class="kw">crate</span>::sync::notify::Notify;
 
@@ -1544,9 +1745,12 @@
 <span class="kw">use </span><span class="self">self</span>::state::{AtomicState, Version};
 <span class="kw">mod </span>state {
     <span class="kw">use </span><span class="kw">crate</span>::loom::sync::atomic::AtomicUsize;
-    <span class="kw">use </span><span class="kw">crate</span>::loom::sync::atomic::Ordering::SeqCst;
+    <span class="kw">use </span><span class="kw">crate</span>::loom::sync::atomic::Ordering;
 
-    <span class="kw">const </span>CLOSED: usize = <span class="number">1</span>;
+    <span class="kw">const </span>CLOSED_BIT: usize = <span class="number">1</span>;
+
+    <span class="comment">// Using 2 as the step size preserves the `CLOSED_BIT`.
+    </span><span class="kw">const </span>STEP_SIZE: usize = <span class="number">2</span>;
 
     <span class="doccomment">/// The version part of the state. The lowest bit is always zero.
     </span><span class="attr">#[derive(Copy, Clone, Debug, Eq, PartialEq)]
@@ -1561,49 +1765,69 @@
     </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">struct </span>StateSnapshot(usize);
 
     <span class="doccomment">/// The state stored in an atomic integer.
+    ///
+    /// The `Sender` uses `Release` ordering for storing a new state
+    /// and the `Receiver`s use `Acquire` ordering for loading the
+    /// current state. This ensures that written values are seen by
+    /// the `Receiver`s for a proper handover.
     </span><span class="attr">#[derive(Debug)]
     </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">struct </span>AtomicState(AtomicUsize);
 
     <span class="kw">impl </span>Version {
-        <span class="doccomment">/// Get the initial version when creating the channel.
-        </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>initial() -&gt; <span class="self">Self </span>{
-            Version(<span class="number">0</span>)
+        <span class="doccomment">/// Decrements the version.
+        </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>decrement(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+            <span class="comment">// Using a wrapping decrement here is required to ensure that the
+            // operation is consistent with `std::sync::atomic::AtomicUsize::fetch_add()`
+            // which wraps on overflow.
+            </span><span class="self">self</span>.<span class="number">0 </span>= <span class="self">self</span>.<span class="number">0</span>.wrapping_sub(STEP_SIZE);
         }
+
+        <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">const </span>INITIAL: <span class="self">Self </span>= Version(<span class="number">0</span>);
     }
 
     <span class="kw">impl </span>StateSnapshot {
         <span class="doccomment">/// Extract the version from the state.
         </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>version(<span class="self">self</span>) -&gt; Version {
-            Version(<span class="self">self</span>.<span class="number">0 </span>&amp; !CLOSED)
+            Version(<span class="self">self</span>.<span class="number">0 </span>&amp; !CLOSED_BIT)
         }
 
         <span class="doccomment">/// Is the closed bit set?
         </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>is_closed(<span class="self">self</span>) -&gt; bool {
-            (<span class="self">self</span>.<span class="number">0 </span>&amp; CLOSED) == CLOSED
+            (<span class="self">self</span>.<span class="number">0 </span>&amp; CLOSED_BIT) == CLOSED_BIT
         }
     }
 
     <span class="kw">impl </span>AtomicState {
         <span class="doccomment">/// Create a new `AtomicState` that is not closed and which has the
-        /// version set to `Version::initial()`.
+        /// version set to `Version::INITIAL`.
         </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>new() -&gt; <span class="self">Self </span>{
-            AtomicState(AtomicUsize::new(<span class="number">0</span>))
+            AtomicState(AtomicUsize::new(Version::INITIAL.<span class="number">0</span>))
         }
 
         <span class="doccomment">/// Load the current value of the state.
+        ///
+        /// Only used by the receiver and for debugging purposes.
+        ///
+        /// The receiver side (read-only) uses `Acquire` ordering for a proper handover
+        /// of the shared value with the sender side (single writer). The state is always
+        /// updated after modifying and before releasing the (exclusive) lock on the
+        /// shared value.
         </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>load(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; StateSnapshot {
-            StateSnapshot(<span class="self">self</span>.<span class="number">0</span>.load(SeqCst))
+            StateSnapshot(<span class="self">self</span>.<span class="number">0</span>.load(Ordering::Acquire))
         }
 
         <span class="doccomment">/// Increment the version counter.
-        </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>increment_version(<span class="kw-2">&amp;</span><span class="self">self</span>) {
-            <span class="comment">// Increment by two to avoid touching the CLOSED bit.
-            </span><span class="self">self</span>.<span class="number">0</span>.fetch_add(<span class="number">2</span>, SeqCst);
+        </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>increment_version_while_locked(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+            <span class="comment">// Use `Release` ordering to ensure that the shared value
+            // has been written before updating the version. The shared
+            // value is still protected by an exclusive lock during this
+            // method.
+            </span><span class="self">self</span>.<span class="number">0</span>.fetch_add(STEP_SIZE, Ordering::Release);
         }
 
         <span class="doccomment">/// Set the closed bit in the state.
         </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>set_closed(<span class="kw-2">&amp;</span><span class="self">self</span>) {
-            <span class="self">self</span>.<span class="number">0</span>.fetch_or(CLOSED, SeqCst);
+            <span class="self">self</span>.<span class="number">0</span>.fetch_or(CLOSED_BIT, Ordering::Release);
         }
     }
 }
@@ -1616,19 +1840,28 @@
 ///
 /// # Examples
 ///
+/// The following example prints `hello! world! `.
+///
 /// ```
 /// use tokio::sync::watch;
+/// use tokio::time::{Duration, sleep};
 ///
 /// # async fn dox() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
-///     let (tx, mut rx) = watch::channel(&quot;hello&quot;);
+/// let (tx, mut rx) = watch::channel(&quot;hello&quot;);
 ///
-///     tokio::spawn(async move {
-///         while rx.changed().await.is_ok() {
-///             println!(&quot;received = {:?}&quot;, *rx.borrow());
+/// tokio::spawn(async move {
+///     // Use the equivalent of a &quot;do-while&quot; loop so the initial value is
+///     // processed before awaiting the `changed()` future.
+///     loop {
+///         println!(&quot;{}! &quot;, *rx.borrow_and_update());
+///         if rx.changed().await.is_err() {
+///             break;
 ///         }
-///     });
+///     }
+/// });
 ///
-///     tx.send(&quot;world&quot;)?;
+/// sleep(Duration::from_millis(100)).await;
+/// tx.send(&quot;world&quot;)?;
 /// # Ok(())
 /// # }
 /// ```
@@ -1650,7 +1883,7 @@
 
     <span class="kw">let </span>rx = Receiver {
         shared,
-        version: Version::initial(),
+        version: Version::INITIAL,
     };
 
     (tx, rx)
@@ -1695,7 +1928,11 @@
     /// ```
     /// &lt;/details&gt;
     ///
+    /// For more information on when to use this method versus
+    /// [`borrow_and_update`], see [here](self#borrow_and_update-versus-borrow).
+    ///
     /// [`changed`]: Receiver::changed
+    /// [`borrow_and_update`]: Receiver::borrow_and_update
     ///
     /// # Examples
     ///
@@ -1747,7 +1984,11 @@
     /// ```
     /// &lt;/details&gt;
     ///
+    /// For more information on when to use this method versus [`borrow`], see
+    /// [here](self#borrow_and_update-versus-borrow).
+    ///
     /// [`changed`]: Receiver::changed
+    /// [`borrow`]: Receiver::borrow
     </span><span class="kw">pub fn </span>borrow_and_update(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Ref&lt;<span class="lifetime">&#39;_</span>, T&gt; {
         <span class="kw">let </span>inner = <span class="self">self</span>.shared.value.read().unwrap();
 
@@ -1804,6 +2045,18 @@
         <span class="prelude-val">Ok</span>(<span class="self">self</span>.version != new_version)
     }
 
+    <span class="doccomment">/// Marks the state as changed.
+    ///
+    /// After invoking this method [`has_changed()`](Self::has_changed)
+    /// returns `true` and [`changed()`](Self::changed) returns
+    /// immediately, regardless of whether a new value has been sent.
+    ///
+    /// This is useful for triggering an initial change notification after
+    /// subscribing to synchronize new receivers.
+    </span><span class="kw">pub fn </span>mark_changed(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="self">self</span>.version.decrement();
+    }
+
     <span class="doccomment">/// Waits for a change notification, then marks the newest value as seen.
     ///
     /// If the newest value in the channel has not yet been marked seen when
@@ -1813,6 +2066,9 @@
     /// this `Receiver`, or until the [`Sender`] is dropped.
     ///
     /// This method returns an error if and only if the [`Sender`] is dropped.
+    ///
+    /// For more information, see
+    /// [*Change notifications*](self#change-notifications) in the module-level documentation.
     ///
     /// # Cancel safety
     ///
@@ -1837,7 +2093,7 @@
     ///     });
     ///
     ///     assert!(rx.changed().await.is_ok());
-    ///     assert_eq!(*rx.borrow(), &quot;goodbye&quot;);
+    ///     assert_eq!(*rx.borrow_and_update(), &quot;goodbye&quot;);
     ///
     ///     // The `tx` handle has been dropped
     ///     assert!(rx.changed().await.is_err());
@@ -1847,7 +2103,7 @@
         changed_impl(<span class="kw-2">&amp;</span><span class="self">self</span>.shared, <span class="kw-2">&amp;mut </span><span class="self">self</span>.version).<span class="kw">await
     </span>}
 
-    <span class="doccomment">/// Waits for a value that satisifes the provided condition.
+    <span class="doccomment">/// Waits for a value that satisfies the provided condition.
     ///
     /// This method will call the provided closure whenever something is sent on
     /// the channel. Once the closure returns `true`, this method will return a
@@ -1920,8 +2176,23 @@
                 <span class="kw">let </span>has_changed = <span class="self">self</span>.version != new_version;
                 <span class="self">self</span>.version = new_version;
 
-                <span class="kw">if </span>(!closed || has_changed) &amp;&amp; f(<span class="kw-2">&amp;</span>inner) {
-                    <span class="kw">return </span><span class="prelude-val">Ok</span>(Ref { inner, has_changed });
+                <span class="kw">if </span>!closed || has_changed {
+                    <span class="kw">let </span>result = panic::catch_unwind(panic::AssertUnwindSafe(|| f(<span class="kw-2">&amp;</span>inner)));
+                    <span class="kw">match </span>result {
+                        <span class="prelude-val">Ok</span>(<span class="bool-val">true</span>) =&gt; {
+                            <span class="kw">return </span><span class="prelude-val">Ok</span>(Ref { inner, has_changed });
+                        }
+                        <span class="prelude-val">Ok</span>(<span class="bool-val">false</span>) =&gt; {
+                            <span class="comment">// Skip the value.
+                        </span>}
+                        <span class="prelude-val">Err</span>(panicked) =&gt; {
+                            <span class="comment">// Drop the read-lock to avoid poisoning it.
+                            </span>drop(inner);
+                            <span class="comment">// Forward the panic to the caller.
+                            </span>panic::resume_unwind(panicked);
+                            <span class="comment">// Unreachable
+                        </span>}
+                    };
                 }
             }
 
@@ -1972,7 +2243,7 @@
     }
 
     <span class="kw">if </span>state.is_closed() {
-        <span class="comment">// All receivers have dropped.
+        <span class="comment">// The sender has been dropped.
         </span><span class="kw">return </span><span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(error::RecvError(())));
     }
 
@@ -2021,6 +2292,27 @@
 }
 
 <span class="kw">impl</span>&lt;T&gt; Sender&lt;T&gt; {
+    <span class="doccomment">/// Creates the sending-half of the [`watch`] channel.
+    ///
+    /// See documentation of [`watch::channel`] for errors when calling this function.
+    /// Beware that attempting to send a value when there are no receivers will
+    /// return an error.
+    ///
+    /// [`watch`]: crate::sync::watch
+    /// [`watch::channel`]: crate::sync::watch
+    ///
+    /// # Examples
+    /// ```
+    /// let sender = tokio::sync::watch::Sender::new(0u8);
+    /// assert!(sender.send(3).is_err());
+    /// let _rec = sender.subscribe();
+    /// assert!(sender.send(4).is_ok());
+    /// ```
+    </span><span class="kw">pub fn </span>new(init: T) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>(tx, <span class="kw">_</span>) = channel(init);
+        tx
+    }
+
     <span class="doccomment">/// Sends a new value via the channel, notifying all receivers.
     ///
     /// This method fails if the channel is closed, which is the case when
@@ -2173,7 +2465,7 @@
                 </span>}
             };
 
-            <span class="self">self</span>.shared.state.increment_version();
+            <span class="self">self</span>.shared.state.increment_version_while_locked();
 
             <span class="comment">// Release the write lock.
             //
