@@ -106,6 +106,7 @@ var srcIndex = JSON.parse('{\
 "pin_utils":["",[],["lib.rs","projection.rs","stack_pin.rs"]],\
 "plist":["",[["stream",[],["binary_reader.rs","binary_writer.rs","mod.rs","xml_reader.rs","xml_writer.rs"]]],["data.rs","date.rs","de.rs","dictionary.rs","error.rs","integer.rs","lib.rs","ser.rs","uid.rs","value.rs"]],\
 "png":["",[["decoder",[],["mod.rs","stream.rs","zlib.rs"]]],["chunk.rs","common.rs","encoder.rs","filter.rs","lib.rs","srgb.rs","text_metadata.rs","traits.rs","utils.rs"]],\
+"powerfmt":["",[],["buf.rs","ext.rs","lib.rs","smart_display.rs","smart_display_impls.rs"]],\
 "ppv_lite86":["",[["x86_64",[],["mod.rs","sse2.rs"]]],["lib.rs","soft.rs","types.rs"]],\
 "precomputed_hash":["",[],["lib.rs"]],\
 "proc_macro2":["",[],["detection.rs","extra.rs","fallback.rs","lib.rs","marker.rs","parse.rs","rcvec.rs","wrapper.rs"]],\
