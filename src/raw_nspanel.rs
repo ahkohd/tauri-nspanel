@@ -82,6 +82,10 @@ impl RawNSPanel {
         let _: () = unsafe { msg_send![self, makeKeyWindow] };
     }
 
+    pub fn resign_key_window(&self) {
+        let _: () = unsafe { msg_send![self, resignKeyWindow] };
+    }
+
     pub fn make_key_and_order_front(&self, sender: Option<id>) {
         let _: () = unsafe { msg_send![self, makeKeyAndOrderFront: sender.unwrap_or(nil)] };
     }
