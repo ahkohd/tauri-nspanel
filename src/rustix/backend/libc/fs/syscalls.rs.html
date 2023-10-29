@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rustix-0.38.19/src/backend/libc/fs/syscalls.rs`."><title>syscalls.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="rustix" data-themes="" data-resource-suffix="" data-rustdoc-version="1.73.0 (cc66ad468 2023-10-03)" data-channel="1.73.0" data-search-js="search-6dfdfced5eff6596.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-1596385f77d47ef2.css" data-theme-dark-css="dark-0a43001d3fc2282c.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../static.files/light-1596385f77d47ef2.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../static.files/dark-0a43001d3fc2282c.css"><link rel="stylesheet" href="../../../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../rustix/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rustix-0.38.21/src/backend/libc/fs/syscalls.rs`."><title>syscalls.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="rustix" data-themes="" data-resource-suffix="" data-rustdoc-version="1.73.0 (cc66ad468 2023-10-03)" data-channel="1.73.0" data-search-js="search-6dfdfced5eff6596.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-1596385f77d47ef2.css" data-theme-dark-css="dark-0a43001d3fc2282c.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../static.files/light-1596385f77d47ef2.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../static.files/dark-0a43001d3fc2282c.css"><link rel="stylesheet" href="../../../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../rustix/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2456,6 +2456,66 @@
 <a href="#2456" id="2456">2456</a>
 <a href="#2457" id="2457">2457</a>
 <a href="#2458" id="2458">2458</a>
+<a href="#2459" id="2459">2459</a>
+<a href="#2460" id="2460">2460</a>
+<a href="#2461" id="2461">2461</a>
+<a href="#2462" id="2462">2462</a>
+<a href="#2463" id="2463">2463</a>
+<a href="#2464" id="2464">2464</a>
+<a href="#2465" id="2465">2465</a>
+<a href="#2466" id="2466">2466</a>
+<a href="#2467" id="2467">2467</a>
+<a href="#2468" id="2468">2468</a>
+<a href="#2469" id="2469">2469</a>
+<a href="#2470" id="2470">2470</a>
+<a href="#2471" id="2471">2471</a>
+<a href="#2472" id="2472">2472</a>
+<a href="#2473" id="2473">2473</a>
+<a href="#2474" id="2474">2474</a>
+<a href="#2475" id="2475">2475</a>
+<a href="#2476" id="2476">2476</a>
+<a href="#2477" id="2477">2477</a>
+<a href="#2478" id="2478">2478</a>
+<a href="#2479" id="2479">2479</a>
+<a href="#2480" id="2480">2480</a>
+<a href="#2481" id="2481">2481</a>
+<a href="#2482" id="2482">2482</a>
+<a href="#2483" id="2483">2483</a>
+<a href="#2484" id="2484">2484</a>
+<a href="#2485" id="2485">2485</a>
+<a href="#2486" id="2486">2486</a>
+<a href="#2487" id="2487">2487</a>
+<a href="#2488" id="2488">2488</a>
+<a href="#2489" id="2489">2489</a>
+<a href="#2490" id="2490">2490</a>
+<a href="#2491" id="2491">2491</a>
+<a href="#2492" id="2492">2492</a>
+<a href="#2493" id="2493">2493</a>
+<a href="#2494" id="2494">2494</a>
+<a href="#2495" id="2495">2495</a>
+<a href="#2496" id="2496">2496</a>
+<a href="#2497" id="2497">2497</a>
+<a href="#2498" id="2498">2498</a>
+<a href="#2499" id="2499">2499</a>
+<a href="#2500" id="2500">2500</a>
+<a href="#2501" id="2501">2501</a>
+<a href="#2502" id="2502">2502</a>
+<a href="#2503" id="2503">2503</a>
+<a href="#2504" id="2504">2504</a>
+<a href="#2505" id="2505">2505</a>
+<a href="#2506" id="2506">2506</a>
+<a href="#2507" id="2507">2507</a>
+<a href="#2508" id="2508">2508</a>
+<a href="#2509" id="2509">2509</a>
+<a href="#2510" id="2510">2510</a>
+<a href="#2511" id="2511">2511</a>
+<a href="#2512" id="2512">2512</a>
+<a href="#2513" id="2513">2513</a>
+<a href="#2514" id="2514">2514</a>
+<a href="#2515" id="2515">2515</a>
+<a href="#2516" id="2516">2516</a>
+<a href="#2517" id="2517">2517</a>
+<a href="#2518" id="2518">2518</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! libc syscalls supporting `rustix::fs`.
 
 </span><span class="kw">use </span><span class="kw">crate</span>::backend::c;
@@ -2471,6 +2531,8 @@
 <span class="kw">use </span><span class="kw">crate</span>::ffi::CStr;
 <span class="attr">#[cfg(apple)]
 </span><span class="kw">use </span><span class="kw">crate</span>::ffi::CString;
+<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;vita&quot;</span>)))]
+</span><span class="kw">use </span><span class="kw">crate</span>::fs::Access;
 <span class="attr">#[cfg(not(any(
     apple,
     netbsdlike,
@@ -2479,6 +2541,7 @@
     target_os = <span class="string">&quot;espidf&quot;</span>,
     target_os = <span class="string">&quot;haiku&quot;</span>,
     target_os = <span class="string">&quot;redox&quot;</span>,
+    target_os = <span class="string">&quot;vita&quot;</span>,
 )))]
 </span><span class="kw">use </span><span class="kw">crate</span>::fs::Advice;
 <span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>)))]
@@ -2491,9 +2554,10 @@
     target_os = <span class="string">&quot;espidf&quot;</span>,
     target_os = <span class="string">&quot;nto&quot;</span>,
     target_os = <span class="string">&quot;redox&quot;</span>,
+    target_os = <span class="string">&quot;vita&quot;</span>,
 )))]
 </span><span class="kw">use </span><span class="kw">crate</span>::fs::FallocateFlags;
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
+<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;vita&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
 </span><span class="kw">use </span><span class="kw">crate</span>::fs::FlockOperation;
 <span class="attr">#[cfg(any(linux_kernel, target_os = <span class="string">&quot;freebsd&quot;</span>))]
 </span><span class="kw">use </span><span class="kw">crate</span>::fs::MemfdFlags;
@@ -2506,12 +2570,19 @@
     target_os = <span class="string">&quot;netbsd&quot;</span>,
     target_os = <span class="string">&quot;nto&quot;</span>,
     target_os = <span class="string">&quot;redox&quot;</span>,
+    target_os = <span class="string">&quot;vita&quot;</span>,
     target_os = <span class="string">&quot;wasi&quot;</span>,
 )))]
 </span><span class="kw">use </span><span class="kw">crate</span>::fs::StatFs;
-<span class="attr">#[cfg(not(target_os = <span class="string">&quot;espidf&quot;</span>))]
-</span><span class="kw">use </span><span class="kw">crate</span>::fs::{Access, Timestamps};
-<span class="attr">#[cfg(not(any(apple, target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
+<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;vita&quot;</span>)))]
+</span><span class="kw">use </span><span class="kw">crate</span>::fs::Timestamps;
+<span class="attr">#[cfg(not(any(
+    apple,
+    target_os = <span class="string">&quot;espidf&quot;</span>,
+    target_os = <span class="string">&quot;redox&quot;</span>,
+    target_os = <span class="string">&quot;vita&quot;</span>,
+    target_os = <span class="string">&quot;wasi&quot;
+</span>)))]
 </span><span class="kw">use </span><span class="kw">crate</span>::fs::{Dev, FileType};
 <span class="kw">use </span><span class="kw">crate</span>::fs::{Mode, OFlags, SeekFrom, Stat};
 <span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;haiku&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
@@ -2690,6 +2761,7 @@
     target_os = <span class="string">&quot;netbsd&quot;</span>,
     target_os = <span class="string">&quot;nto&quot;</span>,
     target_os = <span class="string">&quot;redox&quot;</span>,
+    target_os = <span class="string">&quot;vita&quot;</span>,
     target_os = <span class="string">&quot;wasi&quot;</span>,
 )))]
 #[inline]
@@ -2967,9 +3039,7 @@
     }
 }
 
-<span class="doccomment">/// At present, `libc` only has `renameat2` defined for glibc. On other
-/// ABIs, `RenameFlags` has no flags defined, and we use plain `renameat`.
-</span><span class="attr">#[cfg(any(
+<span class="attr">#[cfg(any(
     target_os = <span class="string">&quot;android&quot;</span>,
     all(target_os = <span class="string">&quot;linux&quot;</span>, not(target_env = <span class="string">&quot;gnu&quot;</span>)),
 ))]
@@ -2981,8 +3051,32 @@
     new_path: <span class="kw-2">&amp;</span>CStr,
     flags: RenameFlags,
 ) -&gt; io::Result&lt;()&gt; {
-    <span class="macro">assert!</span>(flags.is_empty());
-    renameat(old_dirfd, old_path, new_dirfd, new_path)
+    <span class="comment">// At present, `libc` only has `renameat2` defined for glibc. If we have
+    // no flags, we can use plain `renameat`, but otherwise we use `syscall!`.
+    // to call `renameat2` ourselves.
+    </span><span class="kw">if </span>flags.is_empty() {
+        renameat(old_dirfd, old_path, new_dirfd, new_path)
+    } <span class="kw">else </span>{
+        <span class="macro">syscall! </span>{
+            <span class="kw">fn </span>renameat2(
+                olddirfd: c::c_int,
+                oldpath: <span class="kw-2">*const </span>c::c_char,
+                newdirfd: c::c_int,
+                newpath: <span class="kw-2">*const </span>c::c_char,
+                flags: c::c_uint
+            ) via SYS_renameat2 -&gt; c::c_int
+        }
+
+        <span class="kw">unsafe </span>{
+            ret(renameat2(
+                borrowed_fd(old_dirfd),
+                c_str(old_path),
+                borrowed_fd(new_dirfd),
+                c_str(new_path),
+                flags.bits(),
+            ))
+        }
+    }
 }
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>symlink(old_path: <span class="kw-2">&amp;</span>CStr, new_path: <span class="kw-2">&amp;</span>CStr) -&gt; io::Result&lt;()&gt; {
@@ -3146,12 +3240,17 @@
     }
 }
 
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;emscripten&quot;</span>)))]
+<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;emscripten&quot;</span>, target_os = <span class="string">&quot;vita&quot;</span>)))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>access(path: <span class="kw-2">&amp;</span>CStr, access: Access) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{ ret(c::access(c_str(path), access.bits())) }
 }
 
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;emscripten&quot;</span>, target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>)))]
+<span class="attr">#[cfg(not(any(
+    target_os = <span class="string">&quot;emscripten&quot;</span>,
+    target_os = <span class="string">&quot;espidf&quot;</span>,
+    target_os = <span class="string">&quot;redox&quot;</span>,
+    target_os = <span class="string">&quot;vita&quot;
+</span>)))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>accessat(
     dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
     path: <span class="kw-2">&amp;</span>CStr,
@@ -3217,7 +3316,7 @@
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>)))]
+<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;vita&quot;</span>)))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>utimensat(
     dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
     path: <span class="kw-2">&amp;</span>CStr,
@@ -3528,7 +3627,13 @@
     }
 }
 
-<span class="attr">#[cfg(not(any(apple, target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
+<span class="attr">#[cfg(not(any(
+    apple,
+    target_os = <span class="string">&quot;espidf&quot;</span>,
+    target_os = <span class="string">&quot;redox&quot;</span>,
+    target_os = <span class="string">&quot;vita&quot;</span>,
+    target_os = <span class="string">&quot;wasi&quot;
+</span>)))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>mknodat(
     dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
     path: <span class="kw-2">&amp;</span>CStr,
@@ -3607,6 +3712,7 @@
     target_os = <span class="string">&quot;espidf&quot;</span>,
     target_os = <span class="string">&quot;haiku&quot;</span>,
     target_os = <span class="string">&quot;redox&quot;</span>,
+    target_os = <span class="string">&quot;vita&quot;</span>,
 )))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fadvise(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, offset: u64, len: u64, advice: Advice) -&gt; io::Result&lt;()&gt; {
     <span class="kw">let </span>offset = offset <span class="kw">as </span>i64;
@@ -3663,6 +3769,7 @@
     target_os = <span class="string">&quot;espidf&quot;</span>,
     target_os = <span class="string">&quot;fuchsia&quot;</span>,
     target_os = <span class="string">&quot;redox&quot;</span>,
+    target_os = <span class="string">&quot;vita&quot;</span>,
     target_os = <span class="string">&quot;wasi&quot;
 </span>)))]
 #[inline]
@@ -3708,8 +3815,8 @@
         </span>SeekFrom::Hole(offset) =&gt; (c::SEEK_HOLE, offset),
     };
 
-    <span class="comment">// ESP-IDF doesn&#39;t support 64-bit offsets.
-    </span><span class="attr">#[cfg(target_os = <span class="string">&quot;espidf&quot;</span>)]
+    <span class="comment">// ESP-IDF and Vita don&#39;t support 64-bit offsets.
+    </span><span class="attr">#[cfg(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;vita&quot;</span>))]
     </span><span class="kw">let </span>offset: i32 = offset.try_into().map_err(|<span class="kw">_</span>| io::Errno::OVERFLOW)<span class="question-mark">?</span>;
 
     <span class="kw">let </span>offset = <span class="kw">unsafe </span>{ ret_off_t(c::lseek(borrowed_fd(fd), offset, whence))<span class="question-mark">? </span>};
@@ -3776,7 +3883,12 @@
     }
 }
 
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;solaris&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
+<span class="attr">#[cfg(not(any(
+    target_os = <span class="string">&quot;espidf&quot;</span>,
+    target_os = <span class="string">&quot;solaris&quot;</span>,
+    target_os = <span class="string">&quot;vita&quot;</span>,
+    target_os = <span class="string">&quot;wasi&quot;
+</span>)))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>flock(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, operation: FlockOperation) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{ ret(c::flock(borrowed_fd(fd), operation <span class="kw">as </span>c::c_int)) }
 }
@@ -3798,7 +3910,12 @@
     <span class="kw">unsafe </span>{ ret(syncfs(borrowed_fd(fd))) }
 }
 
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
+<span class="attr">#[cfg(not(any(
+    target_os = <span class="string">&quot;espidf&quot;</span>,
+    target_os = <span class="string">&quot;redox&quot;</span>,
+    target_os = <span class="string">&quot;vita&quot;</span>,
+    target_os = <span class="string">&quot;wasi&quot;
+</span>)))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>sync() {
     <span class="kw">unsafe </span>{ c::sync() }
 }
@@ -3866,6 +3983,7 @@
     target_os = <span class="string">&quot;netbsd&quot;</span>,
     target_os = <span class="string">&quot;nto&quot;</span>,
     target_os = <span class="string">&quot;redox&quot;</span>,
+    target_os = <span class="string">&quot;vita&quot;</span>,
     target_os = <span class="string">&quot;wasi&quot;</span>,
 )))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fstatfs(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; io::Result&lt;StatFs&gt; {
@@ -3905,7 +4023,7 @@
     }
 }
 
-<span class="attr">#[cfg(not(target_os = <span class="string">&quot;espidf&quot;</span>))]
+<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;vita&quot;</span>)))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>futimens(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, times: <span class="kw-2">&amp;</span>Timestamps) -&gt; io::Result&lt;()&gt; {
     <span class="comment">// Old 32-bit version: libc has `futimens` but it is not y2038 safe by
     // default. But there may be a `__futimens64` we can use.
@@ -4013,6 +4131,7 @@
     target_os = <span class="string">&quot;espidf&quot;</span>,
     target_os = <span class="string">&quot;nto&quot;</span>,
     target_os = <span class="string">&quot;redox&quot;</span>,
+    target_os = <span class="string">&quot;vita&quot;</span>,
 )))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fallocate(
     fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
@@ -4090,6 +4209,7 @@
     target_os = <span class="string">&quot;espidf&quot;</span>,
     target_os = <span class="string">&quot;haiku&quot;</span>,
     target_os = <span class="string">&quot;redox&quot;</span>,
+    target_os = <span class="string">&quot;vita&quot;</span>,
 )))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fdatasync(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{ ret(c::fdatasync(borrowed_fd(fd))) }
