@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/core-foundation-0.9.3/src/array.rs`."><title>array.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="core_foundation" data-themes="" data-resource-suffix="" data-rustdoc-version="1.73.0 (cc66ad468 2023-10-03)" data-channel="1.73.0" data-search-js="search-6dfdfced5eff6596.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-1596385f77d47ef2.css" data-theme-dark-css="dark-0a43001d3fc2282c.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-1596385f77d47ef2.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-0a43001d3fc2282c.css"><link rel="stylesheet" href="../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../core_foundation/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/core-foundation-0.9.4/src/array.rs`."><title>array.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-fa3bb1812debf86c.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="core_foundation" data-themes="" data-resource-suffix="" data-rustdoc-version="1.74.0 (79e9716c9 2023-11-13)" data-channel="1.74.0" data-search-js="search-8be46b629f5f14a8.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-c5bd66d33317d69f.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../core_foundation/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -284,6 +284,29 @@
 <a href="#284" id="284">284</a>
 <a href="#285" id="285">285</a>
 <a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright 2013 The Servo Project Developers. See the COPYRIGHT
 // file at the top-level directory of this distribution.
 //
@@ -295,17 +318,17 @@
 
 </span><span class="doccomment">//! Heterogeneous immutable arrays.
 
-</span><span class="kw">pub use </span>core_foundation_sys::array::<span class="kw-2">*</span>;
+</span><span class="kw">use </span><span class="kw">crate</span>::ConcreteCFType;
+<span class="kw">pub use </span>core_foundation_sys::array::<span class="kw-2">*</span>;
 <span class="kw">pub use </span>core_foundation_sys::base::CFIndex;
-<span class="kw">use </span>core_foundation_sys::base::{CFTypeRef, CFRelease, kCFAllocatorDefault};
-<span class="kw">use </span>std::mem;
+<span class="kw">use </span>core_foundation_sys::base::{kCFAllocatorDefault, CFRelease, CFTypeRef};
 <span class="kw">use </span>std::marker::PhantomData;
+<span class="kw">use </span>std::mem;
 <span class="kw">use </span>std::os::raw::c_void;
 <span class="kw">use </span>std::ptr;
-<span class="kw">use </span>ConcreteCFType;
 
-<span class="kw">use </span>base::{CFIndexConvertible, TCFType, CFRange};
-<span class="kw">use </span>base::{FromVoid, ItemRef};
+<span class="kw">use </span><span class="kw">crate</span>::base::{CFIndexConvertible, CFRange, TCFType};
+<span class="kw">use </span><span class="kw">crate</span>::base::{FromVoid, ItemRef};
 
 <span class="doccomment">/// A heterogeneous immutable array.
 </span><span class="kw">pub struct </span>CFArray&lt;T = <span class="kw-2">*const </span>c_void&gt;(CFArrayRef, PhantomData&lt;T&gt;);
@@ -349,24 +372,34 @@
 
 <span class="kw">impl</span>&lt;T&gt; CFArray&lt;T&gt; {
     <span class="doccomment">/// Creates a new `CFArray` with the given elements, which must implement `Copy`.
-    </span><span class="kw">pub fn </span>from_copyable(elems: <span class="kw-2">&amp;</span>[T]) -&gt; CFArray&lt;T&gt; <span class="kw">where </span>T: Copy {
+    </span><span class="kw">pub fn </span>from_copyable(elems: <span class="kw-2">&amp;</span>[T]) -&gt; CFArray&lt;T&gt;
+    <span class="kw">where
+        </span>T: Copy,
+    {
         <span class="kw">unsafe </span>{
-            <span class="kw">let </span>array_ref = CFArrayCreate(kCFAllocatorDefault,
-                                          elems.as_ptr() <span class="kw">as </span><span class="kw-2">*const *const </span>c_void,
-                                          elems.len().to_CFIndex(),
-                                          ptr::null());
+            <span class="kw">let </span>array_ref = CFArrayCreate(
+                kCFAllocatorDefault,
+                elems.as_ptr() <span class="kw">as </span><span class="kw-2">*const *const </span>c_void,
+                elems.len().to_CFIndex(),
+                ptr::null(),
+            );
             TCFType::wrap_under_create_rule(array_ref)
         }
     }
 
     <span class="doccomment">/// Creates a new `CFArray` with the given elements, which must be `CFType` objects.
-    </span><span class="kw">pub fn </span>from_CFTypes(elems: <span class="kw-2">&amp;</span>[T]) -&gt; CFArray&lt;T&gt; <span class="kw">where </span>T: TCFType {
+    </span><span class="kw">pub fn </span>from_CFTypes(elems: <span class="kw-2">&amp;</span>[T]) -&gt; CFArray&lt;T&gt;
+    <span class="kw">where
+        </span>T: TCFType,
+    {
         <span class="kw">unsafe </span>{
             <span class="kw">let </span>elems: Vec&lt;CFTypeRef&gt; = elems.iter().map(|elem| elem.as_CFTypeRef()).collect();
-            <span class="kw">let </span>array_ref = CFArrayCreate(kCFAllocatorDefault,
-                                          elems.as_ptr(),
-                                          elems.len().to_CFIndex(),
-                                          <span class="kw-2">&amp;</span>kCFTypeArrayCallBacks);
+            <span class="kw">let </span>array_ref = CFArrayCreate(
+                kCFAllocatorDefault,
+                elems.as_ptr(),
+                elems.len().to_CFIndex(),
+                <span class="kw-2">&amp;</span>kCFTypeArrayCallBacks,
+            );
             TCFType::wrap_under_create_rule(array_ref)
         }
     }
@@ -391,7 +424,7 @@
     /// Core Foundation objects (not always true), they need to be wrapped with
     /// `TCFType::wrap_under_get_rule()`.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>iter&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>) -&gt; CFArrayIterator&lt;<span class="lifetime">&#39;a</span>, T&gt; {
+    </span><span class="kw">pub fn </span>iter(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; CFArrayIterator&lt;<span class="lifetime">&#39;_</span>, T&gt; {
         CFArrayIterator {
             array: <span class="self">self</span>,
             index: <span class="number">0</span>,
@@ -401,20 +434,30 @@
 
     <span class="attr">#[inline]
     </span><span class="kw">pub fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; CFIndex {
-        <span class="kw">unsafe </span>{
-            CFArrayGetCount(<span class="self">self</span>.<span class="number">0</span>)
-        }
+        <span class="kw">unsafe </span>{ CFArrayGetCount(<span class="self">self</span>.<span class="number">0</span>) }
     }
 
+    <span class="doccomment">/// Returns `true` if the array contains no elements.
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub fn </span>is_empty(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.len() == <span class="number">0
+    </span>}
+
     <span class="attr">#[inline]
-    </span><span class="kw">pub unsafe fn </span>get_unchecked&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>, index: CFIndex) -&gt; ItemRef&lt;<span class="lifetime">&#39;a</span>, T&gt; <span class="kw">where </span>T: FromVoid {
+    </span><span class="kw">pub unsafe fn </span>get_unchecked(<span class="kw-2">&amp;</span><span class="self">self</span>, index: CFIndex) -&gt; ItemRef&lt;<span class="lifetime">&#39;_</span>, T&gt;
+    <span class="kw">where
+        </span>T: FromVoid,
+    {
         T::from_void(CFArrayGetValueAtIndex(<span class="self">self</span>.<span class="number">0</span>, index))
     }
 
     <span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>get&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>, index: CFIndex) -&gt; <span class="prelude-ty">Option</span>&lt;ItemRef&lt;<span class="lifetime">&#39;a</span>, T&gt;&gt; <span class="kw">where </span>T: FromVoid {
+    </span><span class="kw">pub fn </span>get(<span class="kw-2">&amp;</span><span class="self">self</span>, index: CFIndex) -&gt; <span class="prelude-ty">Option</span>&lt;ItemRef&lt;<span class="lifetime">&#39;_</span>, T&gt;&gt;
+    <span class="kw">where
+        </span>T: FromVoid,
+    {
         <span class="kw">if </span>index &lt; <span class="self">self</span>.len() {
-            <span class="prelude-val">Some</span>(<span class="kw">unsafe </span>{ T::from_void(CFArrayGetValueAtIndex(<span class="self">self</span>.<span class="number">0</span>, index)) } )
+            <span class="prelude-val">Some</span>(<span class="kw">unsafe </span>{ T::from_void(CFArrayGetValueAtIndex(<span class="self">self</span>.<span class="number">0</span>, index)) })
         } <span class="kw">else </span>{
             <span class="prelude-val">None
         </span>}
@@ -432,7 +475,7 @@
     <span class="kw">pub fn </span>get_all_values(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;<span class="kw-2">*const </span>c_void&gt; {
         <span class="self">self</span>.get_values(CFRange {
             location: <span class="number">0</span>,
-            length: <span class="self">self</span>.len()
+            length: <span class="self">self</span>.len(),
         })
     }
 }
@@ -448,13 +491,15 @@
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
+    <span class="kw">use </span><span class="kw">crate</span>::number::CFNumber;
+
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use </span><span class="kw">crate</span>::base::CFType;
     <span class="kw">use </span>std::mem;
-    <span class="kw">use </span>base::CFType;
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>to_untyped_correct_retain_count() {
-        <span class="kw">let </span>array = CFArray::&lt;CFType&gt;::from_CFTypes(<span class="kw-2">&amp;</span>[]);
+        <span class="kw">let </span>array = CFArray::&lt;CFType&gt;::from_CFTypes(<span class="kw-2">&amp;</span>[CFNumber::from(<span class="number">4</span>).as_CFType()]);
         <span class="macro">assert_eq!</span>(array.retain_count(), <span class="number">1</span>);
 
         <span class="kw">let </span>untyped_array = array.to_untyped();
@@ -467,7 +512,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>into_untyped() {
-        <span class="kw">let </span>array = CFArray::&lt;CFType&gt;::from_CFTypes(<span class="kw-2">&amp;</span>[]);
+        <span class="kw">let </span>array = CFArray::&lt;CFType&gt;::from_CFTypes(<span class="kw-2">&amp;</span>[CFNumber::from(<span class="number">4</span>).as_CFType()]);
         <span class="kw">let </span>array2 = array.to_untyped();
         <span class="macro">assert_eq!</span>(array.retain_count(), <span class="number">2</span>);
 
@@ -480,9 +525,9 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>borrow() {
-        <span class="kw">use </span>string::CFString;
+        <span class="kw">use </span><span class="kw">crate</span>::string::CFString;
 
-        <span class="kw">let </span>string = CFString::from_static_string(<span class="string">&quot;bar&quot;</span>);
+        <span class="kw">let </span>string = CFString::from_static_string(<span class="string">&quot;alongerstring&quot;</span>);
         <span class="macro">assert_eq!</span>(string.retain_count(), <span class="number">1</span>);
         <span class="kw">let </span>x;
         {
@@ -494,7 +539,7 @@
             {
                 x = arr.get(<span class="number">0</span>).unwrap().clone();
                 <span class="macro">assert_eq!</span>(x.retain_count(), <span class="number">2</span>);
-                <span class="macro">assert_eq!</span>(x.to_string(), <span class="string">&quot;bar&quot;</span>);
+                <span class="macro">assert_eq!</span>(x.to_string(), <span class="string">&quot;alongerstring&quot;</span>);
             }
         }
         <span class="macro">assert_eq!</span>(x.retain_count(), <span class="number">1</span>);
@@ -502,23 +547,24 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>iter_untyped_array() {
-        <span class="kw">use </span>string::{CFString, CFStringRef};
-        <span class="kw">use </span>base::TCFTypeRef;
+        <span class="kw">use </span><span class="kw">crate</span>::base::TCFTypeRef;
+        <span class="kw">use </span><span class="kw">crate</span>::string::{CFString, CFStringRef};
 
-        <span class="kw">let </span>cf_string = CFString::from_static_string(<span class="string">&quot;bar&quot;</span>);
+        <span class="kw">let </span>cf_string = CFString::from_static_string(<span class="string">&quot;alongerstring&quot;</span>);
         <span class="kw">let </span>array: CFArray = CFArray::from_CFTypes(<span class="kw-2">&amp;</span>[cf_string.clone()]).into_untyped();
 
-        <span class="kw">let </span>cf_strings = array.iter().map(|ptr| {
-            <span class="kw">unsafe </span>{ CFString::wrap_under_get_rule(CFStringRef::from_void_ptr(<span class="kw-2">*</span>ptr)) }
-        }).collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
+        <span class="kw">let </span>cf_strings = array
+            .iter()
+            .map(|ptr| <span class="kw">unsafe </span>{ CFString::wrap_under_get_rule(CFStringRef::from_void_ptr(<span class="kw-2">*</span>ptr)) })
+            .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
         <span class="kw">let </span>strings = cf_strings.iter().map(|s| s.to_string()).collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
         <span class="macro">assert_eq!</span>(cf_string.retain_count(), <span class="number">3</span>);
-        <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>strings[..], <span class="kw-2">&amp;</span>[<span class="string">&quot;bar&quot;</span>]);
+        <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>strings[..], <span class="kw-2">&amp;</span>[<span class="string">&quot;alongerstring&quot;</span>]);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>should_box_and_unbox() {
-        <span class="kw">use </span>number::CFNumber;
+        <span class="kw">use </span><span class="kw">crate</span>::number::CFNumber;
 
         <span class="kw">let </span>n0 = CFNumber::from(<span class="number">0</span>);
         <span class="kw">let </span>n1 = CFNumber::from(<span class="number">1</span>);

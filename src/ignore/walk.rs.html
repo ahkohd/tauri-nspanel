@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.20/src/walk.rs`."><title>walk.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="ignore" data-themes="" data-resource-suffix="" data-rustdoc-version="1.73.0 (cc66ad468 2023-10-03)" data-channel="1.73.0" data-search-js="search-6dfdfced5eff6596.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-1596385f77d47ef2.css" data-theme-dark-css="dark-0a43001d3fc2282c.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-1596385f77d47ef2.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-0a43001d3fc2282c.css"><link rel="stylesheet" href="../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../ignore/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/walk.rs`."><title>walk.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-fa3bb1812debf86c.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="ignore" data-themes="" data-resource-suffix="" data-rustdoc-version="1.74.0 (79e9716c9 2023-11-13)" data-channel="1.74.0" data-search-js="search-8be46b629f5f14a8.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-c5bd66d33317d69f.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../ignore/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2249,26 +2249,88 @@
 <a href="#2249" id="2249">2249</a>
 <a href="#2250" id="2250">2250</a>
 <a href="#2251" id="2251">2251</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>std::cmp;
-<span class="kw">use </span>std::ffi::OsStr;
-<span class="kw">use </span>std::fmt;
-<span class="kw">use </span>std::fs::{<span class="self">self</span>, FileType, Metadata};
-<span class="kw">use </span>std::io;
-<span class="kw">use </span>std::path::{Path, PathBuf};
-<span class="kw">use </span>std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
-<span class="kw">use </span>std::sync::{Arc, Mutex};
-<span class="kw">use </span>std::thread;
-<span class="kw">use </span>std::time::Duration;
-<span class="kw">use </span>std::vec;
+<a href="#2252" id="2252">2252</a>
+<a href="#2253" id="2253">2253</a>
+<a href="#2254" id="2254">2254</a>
+<a href="#2255" id="2255">2255</a>
+<a href="#2256" id="2256">2256</a>
+<a href="#2257" id="2257">2257</a>
+<a href="#2258" id="2258">2258</a>
+<a href="#2259" id="2259">2259</a>
+<a href="#2260" id="2260">2260</a>
+<a href="#2261" id="2261">2261</a>
+<a href="#2262" id="2262">2262</a>
+<a href="#2263" id="2263">2263</a>
+<a href="#2264" id="2264">2264</a>
+<a href="#2265" id="2265">2265</a>
+<a href="#2266" id="2266">2266</a>
+<a href="#2267" id="2267">2267</a>
+<a href="#2268" id="2268">2268</a>
+<a href="#2269" id="2269">2269</a>
+<a href="#2270" id="2270">2270</a>
+<a href="#2271" id="2271">2271</a>
+<a href="#2272" id="2272">2272</a>
+<a href="#2273" id="2273">2273</a>
+<a href="#2274" id="2274">2274</a>
+<a href="#2275" id="2275">2275</a>
+<a href="#2276" id="2276">2276</a>
+<a href="#2277" id="2277">2277</a>
+<a href="#2278" id="2278">2278</a>
+<a href="#2279" id="2279">2279</a>
+<a href="#2280" id="2280">2280</a>
+<a href="#2281" id="2281">2281</a>
+<a href="#2282" id="2282">2282</a>
+<a href="#2283" id="2283">2283</a>
+<a href="#2284" id="2284">2284</a>
+<a href="#2285" id="2285">2285</a>
+<a href="#2286" id="2286">2286</a>
+<a href="#2287" id="2287">2287</a>
+<a href="#2288" id="2288">2288</a>
+<a href="#2289" id="2289">2289</a>
+<a href="#2290" id="2290">2290</a>
+<a href="#2291" id="2291">2291</a>
+<a href="#2292" id="2292">2292</a>
+<a href="#2293" id="2293">2293</a>
+<a href="#2294" id="2294">2294</a>
+<a href="#2295" id="2295">2295</a>
+<a href="#2296" id="2296">2296</a>
+<a href="#2297" id="2297">2297</a>
+<a href="#2298" id="2298">2298</a>
+<a href="#2299" id="2299">2299</a>
+<a href="#2300" id="2300">2300</a>
+<a href="#2301" id="2301">2301</a>
+<a href="#2302" id="2302">2302</a>
+<a href="#2303" id="2303">2303</a>
+<a href="#2304" id="2304">2304</a>
+<a href="#2305" id="2305">2305</a>
+<a href="#2306" id="2306">2306</a>
+<a href="#2307" id="2307">2307</a>
+<a href="#2308" id="2308">2308</a>
+<a href="#2309" id="2309">2309</a>
+<a href="#2310" id="2310">2310</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>std::{
+    cmp::Ordering,
+    ffi::OsStr,
+    fs::{<span class="self">self</span>, FileType, Metadata},
+    io,
+    path::{Path, PathBuf},
+    sync::atomic::{AtomicBool, AtomicUsize, Ordering <span class="kw">as </span>AtomicOrdering},
+    sync::Arc,
+};
 
-<span class="kw">use </span>same_file::Handle;
-<span class="kw">use </span>walkdir::{<span class="self">self</span>, WalkDir};
+<span class="kw">use </span>{
+    crossbeam_deque::{Stealer, Worker <span class="kw">as </span>Deque},
+    same_file::Handle,
+    walkdir::{<span class="self">self</span>, WalkDir},
+};
 
-<span class="kw">use </span><span class="kw">crate</span>::dir::{Ignore, IgnoreBuilder};
-<span class="kw">use </span><span class="kw">crate</span>::gitignore::GitignoreBuilder;
-<span class="kw">use </span><span class="kw">crate</span>::overrides::Override;
-<span class="kw">use </span><span class="kw">crate</span>::types::Types;
-<span class="kw">use crate</span>::{Error, PartialErrorBuilder};
+<span class="kw">use crate</span>::{
+    dir::{Ignore, IgnoreBuilder},
+    gitignore::GitignoreBuilder,
+    overrides::Override,
+    types::Types,
+    Error, PartialErrorBuilder,
+};
 
 <span class="doccomment">/// A directory entry with a possible error attached.
 ///
@@ -2287,9 +2349,7 @@
     }
 
     <span class="doccomment">/// The full path that this entry represents.
-    /// Analogous to [`path`], but moves ownership of the path.
-    ///
-    /// [`path`]: struct.DirEntry.html#method.path
+    /// Analogous to [`DirEntry::path`], but moves ownership of the path.
     </span><span class="kw">pub fn </span>into_path(<span class="self">self</span>) -&gt; PathBuf {
         <span class="self">self</span>.dent.into_path()
     }
@@ -2358,11 +2418,11 @@
     }
 
     <span class="kw">fn </span>new_walkdir(dent: walkdir::DirEntry, err: <span class="prelude-ty">Option</span>&lt;Error&gt;) -&gt; DirEntry {
-        DirEntry { dent: DirEntryInner::Walkdir(dent), err: err }
+        DirEntry { dent: DirEntryInner::Walkdir(dent), err }
     }
 
     <span class="kw">fn </span>new_raw(dent: DirEntryRaw, err: <span class="prelude-ty">Option</span>&lt;Error&gt;) -&gt; DirEntry {
-        DirEntry { dent: DirEntryInner::Raw(dent), err: err }
+        DirEntry { dent: DirEntryInner::Raw(dent), err }
     }
 }
 
@@ -2502,8 +2562,8 @@
     </span>metadata: fs::Metadata,
 }
 
-<span class="kw">impl </span>fmt::Debug <span class="kw">for </span>DirEntryRaw {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+<span class="kw">impl </span>std::fmt::Debug <span class="kw">for </span>DirEntryRaw {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; std::fmt::Result {
         <span class="comment">// Leaving out FileType because it doesn&#39;t have a debug impl
         // in Rust 1.9. We could add it if we really wanted to by manually
         // querying each possibly file type. Meh. ---AG
@@ -2575,7 +2635,7 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;DirEntryRaw, Error&gt; {
         <span class="kw">let </span>ty = ent.file_type().map_err(|err| {
             <span class="kw">let </span>err = Error::Io(io::Error::from(err)).with_path(ent.path());
-            Error::WithDepth { depth: depth, err: Box::new(err) }
+            Error::WithDepth { depth, err: Box::new(err) }
         })<span class="question-mark">?</span>;
         DirEntryRaw::from_entry_os(depth, ent, ty)
     }
@@ -2588,13 +2648,13 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;DirEntryRaw, Error&gt; {
         <span class="kw">let </span>md = ent.metadata().map_err(|err| {
             <span class="kw">let </span>err = Error::Io(io::Error::from(err)).with_path(ent.path());
-            Error::WithDepth { depth: depth, err: Box::new(err) }
+            Error::WithDepth { depth, err: Box::new(err) }
         })<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(DirEntryRaw {
             path: ent.path(),
-            ty: ty,
+            ty,
             follow_link: <span class="bool-val">false</span>,
-            depth: depth,
+            depth,
             metadata: md,
         })
     }
@@ -2609,9 +2669,9 @@
 
         <span class="prelude-val">Ok</span>(DirEntryRaw {
             path: ent.path(),
-            ty: ty,
+            ty,
             follow_link: <span class="bool-val">false</span>,
-            depth: depth,
+            depth,
             ino: ent.ino(),
         })
     }
@@ -2642,7 +2702,7 @@
             path: pb,
             ty: md.file_type(),
             follow_link: link,
-            depth: depth,
+            depth,
             metadata: md,
         })
     }
@@ -2661,7 +2721,7 @@
             path: pb,
             ty: md.file_type(),
             follow_link: link,
-            depth: depth,
+            depth,
             ino: md.ino(),
         })
     }
@@ -2745,17 +2805,15 @@
 
 <span class="attr">#[derive(Clone)]
 </span><span class="kw">enum </span>Sorter {
-    ByName(
-        Arc&lt;<span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>OsStr, <span class="kw-2">&amp;</span>OsStr) -&gt; cmp::Ordering + Send + Sync + <span class="lifetime">&#39;static</span>&gt;,
-    ),
-    ByPath(Arc&lt;<span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>Path, <span class="kw-2">&amp;</span>Path) -&gt; cmp::Ordering + Send + Sync + <span class="lifetime">&#39;static</span>&gt;),
+    ByName(Arc&lt;<span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>OsStr, <span class="kw-2">&amp;</span>OsStr) -&gt; Ordering + Send + Sync + <span class="lifetime">&#39;static</span>&gt;),
+    ByPath(Arc&lt;<span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>Path, <span class="kw-2">&amp;</span>Path) -&gt; Ordering + Send + Sync + <span class="lifetime">&#39;static</span>&gt;),
 }
 
 <span class="attr">#[derive(Clone)]
 </span><span class="kw">struct </span>Filter(Arc&lt;<span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>DirEntry) -&gt; bool + Send + Sync + <span class="lifetime">&#39;static</span>&gt;);
 
-<span class="kw">impl </span>fmt::Debug <span class="kw">for </span>WalkBuilder {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+<span class="kw">impl </span>std::fmt::Debug <span class="kw">for </span>WalkBuilder {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; std::fmt::Result {
         f.debug_struct(<span class="string">&quot;WalkBuilder&quot;</span>)
             .field(<span class="string">&quot;paths&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.paths)
             .field(<span class="string">&quot;ig_builder&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.ig_builder)
@@ -2829,7 +2887,7 @@
             .into_iter();
         <span class="kw">let </span>ig_root = <span class="self">self</span>.ig_builder.build();
         Walk {
-            its: its,
+            its,
             it: <span class="prelude-val">None</span>,
             ig_root: ig_root.clone(),
             ig: ig_root.clone(),
@@ -3079,7 +3137,7 @@
     /// Note that this is not used in the parallel iterator.
     </span><span class="kw">pub fn </span>sort_by_file_path&lt;F&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cmp: F) -&gt; <span class="kw-2">&amp;mut </span>WalkBuilder
     <span class="kw">where
-        </span>F: Fn(<span class="kw-2">&amp;</span>Path, <span class="kw-2">&amp;</span>Path) -&gt; cmp::Ordering + Send + Sync + <span class="lifetime">&#39;static</span>,
+        </span>F: Fn(<span class="kw-2">&amp;</span>Path, <span class="kw-2">&amp;</span>Path) -&gt; Ordering + Send + Sync + <span class="lifetime">&#39;static</span>,
     {
         <span class="self">self</span>.sorter = <span class="prelude-val">Some</span>(Sorter::ByPath(Arc::new(cmp)));
         <span class="self">self
@@ -3098,7 +3156,7 @@
     /// Note that this is not used in the parallel iterator.
     </span><span class="kw">pub fn </span>sort_by_file_name&lt;F&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cmp: F) -&gt; <span class="kw-2">&amp;mut </span>WalkBuilder
     <span class="kw">where
-        </span>F: Fn(<span class="kw-2">&amp;</span>OsStr, <span class="kw-2">&amp;</span>OsStr) -&gt; cmp::Ordering + Send + Sync + <span class="lifetime">&#39;static</span>,
+        </span>F: Fn(<span class="kw-2">&amp;</span>OsStr, <span class="kw-2">&amp;</span>OsStr) -&gt; Ordering + Send + Sync + <span class="lifetime">&#39;static</span>,
     {
         <span class="self">self</span>.sorter = <span class="prelude-val">Some</span>(Sorter::ByName(Arc::new(cmp)));
         <span class="self">self
@@ -3162,7 +3220,7 @@
 /// ignore files like `.gitignore` are respected. The precise matching rules
 /// and precedence is explained in the documentation for `WalkBuilder`.
 </span><span class="kw">pub struct </span>Walk {
-    its: vec::IntoIter&lt;(PathBuf, <span class="prelude-ty">Option</span>&lt;WalkEventIter&gt;)&gt;,
+    its: std::vec::IntoIter&lt;(PathBuf, <span class="prelude-ty">Option</span>&lt;WalkEventIter&gt;)&gt;,
     it: <span class="prelude-ty">Option</span>&lt;WalkEventIter&gt;,
     ig_root: Ignore,
     ig: Ignore,
@@ -3291,6 +3349,8 @@
     }
 }
 
+<span class="kw">impl </span>std::iter::FusedIterator <span class="kw">for </span>Walk {}
+
 <span class="doccomment">/// WalkEventIter transforms a WalkDir iterator into an iterator that more
 /// accurately describes the directory tree. Namely, it emits events that are
 /// one of three types: directory, file or &quot;exit.&quot; An &quot;exit&quot; event means that
@@ -3374,10 +3434,10 @@
     }
 }
 
-<span class="doccomment">/// A builder for constructing a visitor when using
-/// [`WalkParallel::visit`](struct.WalkParallel.html#method.visit). The builder
-/// will be called for each thread started by `WalkParallel`. The visitor
-/// returned from each builder is then called for every directory entry.
+<span class="doccomment">/// A builder for constructing a visitor when using [`WalkParallel::visit`].
+/// The builder will be called for each thread started by `WalkParallel`. The
+/// visitor returned from each builder is then called for every directory
+/// entry.
 </span><span class="kw">pub trait </span>ParallelVisitorBuilder&lt;<span class="lifetime">&#39;s</span>&gt; {
     <span class="doccomment">/// Create per-thread `ParallelVisitor`s for `WalkParallel`.
     </span><span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Box&lt;<span class="kw">dyn </span>ParallelVisitor + <span class="lifetime">&#39;s</span>&gt;;
@@ -3394,9 +3454,8 @@
 <span class="doccomment">/// Receives files and directories for the current thread.
 ///
 /// Setup for the traversal can be implemented as part of
-/// [`ParallelVisitorBuilder::build`](trait.ParallelVisitorBuilder.html#tymethod.build).
-/// Teardown when traversal finishes can be implemented by implementing the
-/// `Drop` trait on your traversal type.
+/// [`ParallelVisitorBuilder::build`]. Teardown when traversal finishes can be
+/// implemented by implementing the `Drop` trait on your traversal type.
 </span><span class="kw">pub trait </span>ParallelVisitor: Send {
     <span class="doccomment">/// Receives files and directories for the current thread. This is called
     /// once for every directory entry visited by traversal.
@@ -3438,7 +3497,7 @@
 ///
 /// Unlike `Walk`, this uses multiple threads for traversing a directory.
 </span><span class="kw">pub struct </span>WalkParallel {
-    paths: vec::IntoIter&lt;PathBuf&gt;,
+    paths: std::vec::IntoIter&lt;PathBuf&gt;,
     ig_root: Ignore,
     max_filesize: <span class="prelude-ty">Option</span>&lt;u64&gt;,
     max_depth: <span class="prelude-ty">Option</span>&lt;usize&gt;,
@@ -3479,9 +3538,8 @@
     /// can be merged together into a single data structure.
     </span><span class="kw">pub fn </span>visit(<span class="kw-2">mut </span><span class="self">self</span>, builder: <span class="kw-2">&amp;mut </span><span class="kw">dyn </span>ParallelVisitorBuilder&lt;<span class="lifetime">&#39;_</span>&gt;) {
         <span class="kw">let </span>threads = <span class="self">self</span>.threads();
-        <span class="kw">let </span>stack = Arc::new(Mutex::new(<span class="macro">vec!</span>[]));
+        <span class="kw">let </span><span class="kw-2">mut </span>stack = <span class="macro">vec!</span>[];
         {
-            <span class="kw">let </span><span class="kw-2">mut </span>stack = stack.lock().unwrap();
             <span class="kw">let </span><span class="kw-2">mut </span>visitor = builder.build();
             <span class="kw">let </span><span class="kw-2">mut </span>paths = Vec::new().into_iter();
             std::mem::swap(<span class="kw-2">&amp;mut </span>paths, <span class="kw-2">&amp;mut </span><span class="self">self</span>.paths);
@@ -3519,9 +3577,9 @@
                     }
                 };
                 stack.push(Message::Work(Work {
-                    dent: dent,
+                    dent,
                     ignore: <span class="self">self</span>.ig_root.clone(),
-                    root_device: root_device,
+                    root_device,
                 }));
             }
             <span class="comment">// ... but there&#39;s no need to start workers if we don&#39;t need them.
@@ -3531,24 +3589,24 @@
         }
         <span class="comment">// Create the workers and then wait for them to finish.
         </span><span class="kw">let </span>quit_now = Arc::new(AtomicBool::new(<span class="bool-val">false</span>));
-        <span class="kw">let </span>num_pending =
-            Arc::new(AtomicUsize::new(stack.lock().unwrap().len()));
+        <span class="kw">let </span>active_workers = Arc::new(AtomicUsize::new(threads));
+        <span class="kw">let </span>stacks = Stack::new_for_each_thread(threads, stack);
         std::thread::scope(|s| {
-            <span class="kw">let </span><span class="kw-2">mut </span>handles = <span class="macro">vec!</span>[];
-            <span class="kw">for _ in </span><span class="number">0</span>..threads {
-                <span class="kw">let </span>worker = Worker {
+            <span class="kw">let </span>handles: Vec&lt;<span class="kw">_</span>&gt; = stacks
+                .into_iter()
+                .map(|stack| Worker {
                     visitor: builder.build(),
-                    stack: stack.clone(),
+                    stack,
                     quit_now: quit_now.clone(),
-                    num_pending: num_pending.clone(),
+                    active_workers: active_workers.clone(),
                     max_depth: <span class="self">self</span>.max_depth,
                     max_filesize: <span class="self">self</span>.max_filesize,
                     follow_links: <span class="self">self</span>.follow_links,
                     skip: <span class="self">self</span>.skip.clone(),
                     filter: <span class="self">self</span>.filter.clone(),
-                };
-                handles.push(s.spawn(|| worker.run()));
-            }
+                })
+                .map(|worker| s.spawn(|| worker.run()))
+                .collect();
             <span class="kw">for </span>handle <span class="kw">in </span>handles {
                 handle.join().unwrap();
             }
@@ -3638,6 +3696,73 @@
     }
 }
 
+<span class="doccomment">/// A work-stealing stack.
+</span><span class="attr">#[derive(Debug)]
+</span><span class="kw">struct </span>Stack {
+    <span class="doccomment">/// This thread&#39;s index.
+    </span>index: usize,
+    <span class="doccomment">/// The thread-local stack.
+    </span>deque: Deque&lt;Message&gt;,
+    <span class="doccomment">/// The work stealers.
+    </span>stealers: Arc&lt;[Stealer&lt;Message&gt;]&gt;,
+}
+
+<span class="kw">impl </span>Stack {
+    <span class="doccomment">/// Create a work-stealing stack for each thread. The given messages
+    /// correspond to the initial paths to start the search at. They will
+    /// be distributed automatically to each stack in a round-robin fashion.
+    </span><span class="kw">fn </span>new_for_each_thread(threads: usize, init: Vec&lt;Message&gt;) -&gt; Vec&lt;Stack&gt; {
+        <span class="comment">// Using new_lifo() ensures each worker operates depth-first, not
+        // breadth-first. We do depth-first because a breadth first traversal
+        // on wide directories with a lot of gitignores is disastrous (for
+        // example, searching a directory tree containing all of crates.io).
+        </span><span class="kw">let </span>deques: Vec&lt;Deque&lt;Message&gt;&gt; =
+            std::iter::repeat_with(Deque::new_lifo).take(threads).collect();
+        <span class="kw">let </span>stealers = Arc::&lt;[Stealer&lt;Message&gt;]&gt;::from(
+            deques.iter().map(Deque::stealer).collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;(),
+        );
+        <span class="kw">let </span>stacks: Vec&lt;Stack&gt; = deques
+            .into_iter()
+            .enumerate()
+            .map(|(index, deque)| Stack {
+                index,
+                deque,
+                stealers: stealers.clone(),
+            })
+            .collect();
+        <span class="comment">// Distribute the initial messages.
+        </span>init.into_iter()
+            .zip(stacks.iter().cycle())
+            .for_each(|(m, s)| s.push(m));
+        stacks
+    }
+
+    <span class="doccomment">/// Push a message.
+    </span><span class="kw">fn </span>push(<span class="kw-2">&amp;</span><span class="self">self</span>, msg: Message) {
+        <span class="self">self</span>.deque.push(msg);
+    }
+
+    <span class="doccomment">/// Pop a message.
+    </span><span class="kw">fn </span>pop(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Message&gt; {
+        <span class="self">self</span>.deque.pop().or_else(|| <span class="self">self</span>.steal())
+    }
+
+    <span class="doccomment">/// Steal a message from another queue.
+    </span><span class="kw">fn </span>steal(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Message&gt; {
+        <span class="comment">// For fairness, try to steal from index + 1, index + 2, ... len - 1,
+        // then wrap around to 0, 1, ... index - 1.
+        </span><span class="kw">let </span>(left, right) = <span class="self">self</span>.stealers.split_at(<span class="self">self</span>.index);
+        <span class="comment">// Don&#39;t steal from ourselves
+        </span><span class="kw">let </span>right = <span class="kw-2">&amp;</span>right[<span class="number">1</span>..];
+
+        right
+            .iter()
+            .chain(left.iter())
+            .map(|s| s.steal_batch_and_pop(<span class="kw-2">&amp;</span><span class="self">self</span>.deque))
+            .find_map(|s| s.success())
+    }
+}
+
 <span class="doccomment">/// A worker is responsible for descending into directories, updating the
 /// ignore matchers, producing new work and invoking the caller&#39;s callback.
 ///
@@ -3645,19 +3770,19 @@
 </span><span class="kw">struct </span>Worker&lt;<span class="lifetime">&#39;s</span>&gt; {
     <span class="doccomment">/// The caller&#39;s callback.
     </span>visitor: Box&lt;<span class="kw">dyn </span>ParallelVisitor + <span class="lifetime">&#39;s</span>&gt;,
-    <span class="doccomment">/// A stack of work to do.
+    <span class="doccomment">/// A work-stealing stack of work to do.
     ///
     /// We use a stack instead of a channel because a stack lets us visit
     /// directories in depth first order. This can substantially reduce peak
-    /// memory usage by keeping both the number of files path and gitignore
+    /// memory usage by keeping both the number of file paths and gitignore
     /// matchers in memory lower.
-    </span>stack: Arc&lt;Mutex&lt;Vec&lt;Message&gt;&gt;&gt;,
+    </span>stack: Stack,
     <span class="doccomment">/// Whether all workers should terminate at the next opportunity. Note
     /// that we need this because we don&#39;t want other `Work` to be done after
     /// we quit. We wouldn&#39;t need this if have a priority channel.
     </span>quit_now: Arc&lt;AtomicBool&gt;,
-    <span class="doccomment">/// The number of outstanding work items.
-    </span>num_pending: Arc&lt;AtomicUsize&gt;,
+    <span class="doccomment">/// The number of currently active workers.
+    </span>active_workers: Arc&lt;AtomicUsize&gt;,
     <span class="doccomment">/// The maximum depth of directories to descend. A value of `0` means no
     /// descension at all.
     </span>max_depth: <span class="prelude-ty">Option</span>&lt;usize&gt;,
@@ -3685,7 +3810,6 @@
             <span class="kw">if let </span>WalkState::Quit = <span class="self">self</span>.run_one(work) {
                 <span class="self">self</span>.quit_now();
             }
-            <span class="self">self</span>.work_done();
         }
     }
 
@@ -3867,23 +3991,20 @@
                     <span class="kw">return </span><span class="prelude-val">None</span>;
                 }
                 <span class="prelude-val">None </span>=&gt; {
-                    <span class="comment">// Once num_pending reaches 0, it is impossible for it to
-                    // ever increase again. Namely, it only reaches 0 once
-                    // all jobs have run such that no jobs have produced more
-                    // work. We have this guarantee because num_pending is
-                    // always incremented before each job is submitted and only
-                    // decremented once each job is completely finished.
-                    // Therefore, if this reaches zero, then there can be no
-                    // other job running.
-                    </span><span class="kw">if </span><span class="self">self</span>.num_pending() == <span class="number">0 </span>{
-                        <span class="comment">// Every other thread is blocked at the next recv().
-                        // Send the initial quit message and quit.
+                    <span class="kw">if </span><span class="self">self</span>.deactivate_worker() == <span class="number">0 </span>{
+                        <span class="comment">// If deactivate_worker() returns 0, every worker thread
+                        // is currently within the critical section between the
+                        // acquire in deactivate_worker() and the release in
+                        // activate_worker() below.  For this to happen, every
+                        // worker&#39;s local deque must be simultaneously empty,
+                        // meaning there is no more work left at all.
                         </span><span class="self">self</span>.send_quit();
                         <span class="kw">return </span><span class="prelude-val">None</span>;
                     }
                     <span class="comment">// Wait for next `Work` or `Quit` message.
                     </span><span class="kw">loop </span>{
                         <span class="kw">if let </span><span class="prelude-val">Some</span>(v) = <span class="self">self</span>.recv() {
+                            <span class="self">self</span>.activate_worker();
                             value = <span class="prelude-val">Some</span>(v);
                             <span class="kw">break</span>;
                         }
@@ -3891,7 +4012,8 @@
                         // CPU waiting, we let the thread sleep for a bit. In
                         // general, this tends to only occur once the search is
                         // approaching termination.
-                        </span>thread::sleep(Duration::from_millis(<span class="number">1</span>));
+                        </span><span class="kw">let </span>dur = std::time::Duration::from_millis(<span class="number">1</span>);
+                        std::thread::sleep(dur);
                     }
                 }
             }
@@ -3900,41 +4022,37 @@
 
     <span class="doccomment">/// Indicates that all workers should quit immediately.
     </span><span class="kw">fn </span>quit_now(<span class="kw-2">&amp;</span><span class="self">self</span>) {
-        <span class="self">self</span>.quit_now.store(<span class="bool-val">true</span>, Ordering::SeqCst);
+        <span class="self">self</span>.quit_now.store(<span class="bool-val">true</span>, AtomicOrdering::SeqCst);
     }
 
     <span class="doccomment">/// Returns true if this worker should quit immediately.
     </span><span class="kw">fn </span>is_quit_now(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.quit_now.load(Ordering::SeqCst)
-    }
-
-    <span class="doccomment">/// Returns the number of pending jobs.
-    </span><span class="kw">fn </span>num_pending(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
-        <span class="self">self</span>.num_pending.load(Ordering::SeqCst)
+        <span class="self">self</span>.quit_now.load(AtomicOrdering::SeqCst)
     }
 
     <span class="doccomment">/// Send work.
     </span><span class="kw">fn </span>send(<span class="kw-2">&amp;</span><span class="self">self</span>, work: Work) {
-        <span class="self">self</span>.num_pending.fetch_add(<span class="number">1</span>, Ordering::SeqCst);
-        <span class="kw">let </span><span class="kw-2">mut </span>stack = <span class="self">self</span>.stack.lock().unwrap();
-        stack.push(Message::Work(work));
+        <span class="self">self</span>.stack.push(Message::Work(work));
     }
 
     <span class="doccomment">/// Send a quit message.
     </span><span class="kw">fn </span>send_quit(<span class="kw-2">&amp;</span><span class="self">self</span>) {
-        <span class="kw">let </span><span class="kw-2">mut </span>stack = <span class="self">self</span>.stack.lock().unwrap();
-        stack.push(Message::Quit);
+        <span class="self">self</span>.stack.push(Message::Quit);
     }
 
     <span class="doccomment">/// Receive work.
     </span><span class="kw">fn </span>recv(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Message&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>stack = <span class="self">self</span>.stack.lock().unwrap();
-        stack.pop()
+        <span class="self">self</span>.stack.pop()
     }
 
-    <span class="doccomment">/// Signal that work has been received.
-    </span><span class="kw">fn </span>work_done(<span class="kw-2">&amp;</span><span class="self">self</span>) {
-        <span class="self">self</span>.num_pending.fetch_sub(<span class="number">1</span>, Ordering::SeqCst);
+    <span class="doccomment">/// Deactivates a worker and returns the number of currently active workers.
+    </span><span class="kw">fn </span>deactivate_worker(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+        <span class="self">self</span>.active_workers.fetch_sub(<span class="number">1</span>, AtomicOrdering::Acquire) - <span class="number">1
+    </span>}
+
+    <span class="doccomment">/// Reactivates a worker.
+    </span><span class="kw">fn </span>activate_worker(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+        <span class="self">self</span>.active_workers.fetch_add(<span class="number">1</span>, AtomicOrdering::Release);
     }
 }
 

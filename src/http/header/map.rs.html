@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/http-0.2.9/src/header/map.rs`."><title>map.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="http" data-themes="" data-resource-suffix="" data-rustdoc-version="1.73.0 (cc66ad468 2023-10-03)" data-channel="1.73.0" data-search-js="search-6dfdfced5eff6596.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-1596385f77d47ef2.css" data-theme-dark-css="dark-0a43001d3fc2282c.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-1596385f77d47ef2.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-0a43001d3fc2282c.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../http/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/http-0.2.11/src/header/map.rs`."><title>map.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-fa3bb1812debf86c.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="http" data-themes="" data-resource-suffix="" data-rustdoc-version="1.74.0 (79e9716c9 2023-11-13)" data-channel="1.74.0" data-search-js="search-8be46b629f5f14a8.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-c5bd66d33317d69f.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../http/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -3494,6 +3494,55 @@
 <a href="#3494" id="3494">3494</a>
 <a href="#3495" id="3495">3495</a>
 <a href="#3496" id="3496">3496</a>
+<a href="#3497" id="3497">3497</a>
+<a href="#3498" id="3498">3498</a>
+<a href="#3499" id="3499">3499</a>
+<a href="#3500" id="3500">3500</a>
+<a href="#3501" id="3501">3501</a>
+<a href="#3502" id="3502">3502</a>
+<a href="#3503" id="3503">3503</a>
+<a href="#3504" id="3504">3504</a>
+<a href="#3505" id="3505">3505</a>
+<a href="#3506" id="3506">3506</a>
+<a href="#3507" id="3507">3507</a>
+<a href="#3508" id="3508">3508</a>
+<a href="#3509" id="3509">3509</a>
+<a href="#3510" id="3510">3510</a>
+<a href="#3511" id="3511">3511</a>
+<a href="#3512" id="3512">3512</a>
+<a href="#3513" id="3513">3513</a>
+<a href="#3514" id="3514">3514</a>
+<a href="#3515" id="3515">3515</a>
+<a href="#3516" id="3516">3516</a>
+<a href="#3517" id="3517">3517</a>
+<a href="#3518" id="3518">3518</a>
+<a href="#3519" id="3519">3519</a>
+<a href="#3520" id="3520">3520</a>
+<a href="#3521" id="3521">3521</a>
+<a href="#3522" id="3522">3522</a>
+<a href="#3523" id="3523">3523</a>
+<a href="#3524" id="3524">3524</a>
+<a href="#3525" id="3525">3525</a>
+<a href="#3526" id="3526">3526</a>
+<a href="#3527" id="3527">3527</a>
+<a href="#3528" id="3528">3528</a>
+<a href="#3529" id="3529">3529</a>
+<a href="#3530" id="3530">3530</a>
+<a href="#3531" id="3531">3531</a>
+<a href="#3532" id="3532">3532</a>
+<a href="#3533" id="3533">3533</a>
+<a href="#3534" id="3534">3534</a>
+<a href="#3535" id="3535">3535</a>
+<a href="#3536" id="3536">3536</a>
+<a href="#3537" id="3537">3537</a>
+<a href="#3538" id="3538">3538</a>
+<a href="#3539" id="3539">3539</a>
+<a href="#3540" id="3540">3540</a>
+<a href="#3541" id="3541">3541</a>
+<a href="#3542" id="3542">3542</a>
+<a href="#3543" id="3543">3543</a>
+<a href="#3544" id="3544">3544</a>
+<a href="#3545" id="3545">3545</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
 <span class="kw">use </span>std::collections::hash_map::RandomState;
 <span class="kw">use </span>std::convert::TryFrom;
@@ -3578,7 +3627,9 @@
 /// more than once if it has more than one associated value.
 </span><span class="attr">#[derive(Debug)]
 </span><span class="kw">pub struct </span>Iter&lt;<span class="lifetime">&#39;a</span>, T&gt; {
-    inner: IterMut&lt;<span class="lifetime">&#39;a</span>, T&gt;,
+    map: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>HeaderMap&lt;T&gt;,
+    entry: usize,
+    cursor: <span class="prelude-ty">Option</span>&lt;Cursor&gt;,
 }
 
 <span class="doccomment">/// `HeaderMap` mutable entry iterator
@@ -3720,7 +3771,7 @@
 /// limit enables using `u16` to represent all offsets, which takes 2 bytes
 /// instead of 8 on 64 bit processors.
 ///
-/// Setting this limit is especially benificial for `indices`, making it more
+/// Setting this limit is especially beneficial for `indices`, making it more
 /// cache friendly. More hash codes can fit in a cache line.
 ///
 /// You may notice that `u16` may represent more than 32,768 values. This is
@@ -3948,6 +3999,10 @@
     /// allocations before `capacity` headers are stored in the map.
     ///
     /// More capacity than requested may be allocated.
+    /// 
+    /// # Panics
+    /// 
+    /// Requested capacity too large: would overflow `usize`.
     ///
     /// # Examples
     ///
@@ -3968,7 +4023,13 @@
                 danger: Danger::Green,
             }
         } <span class="kw">else </span>{
-            <span class="kw">let </span>raw_cap = to_raw_capacity(capacity).next_power_of_two();
+            <span class="kw">let </span>raw_cap = <span class="kw">match </span>to_raw_capacity(capacity).checked_next_power_of_two() {
+                <span class="prelude-val">Some</span>(c) =&gt; c,
+                <span class="prelude-val">None </span>=&gt; <span class="macro">panic!</span>(
+                    <span class="string">&quot;requested capacity {} too large: next power of two would overflow `usize`&quot;</span>,
+                    capacity
+                ),
+            };
             <span class="macro">assert!</span>(raw_cap &lt;= MAX_SIZE, <span class="string">&quot;requested capacity too large&quot;</span>);
             <span class="macro">debug_assert!</span>(raw_cap &gt; <span class="number">0</span>);
 
@@ -4297,12 +4358,9 @@
     /// ```
     </span><span class="kw">pub fn </span>iter(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Iter&lt;<span class="lifetime">&#39;_</span>, T&gt; {
         Iter {
-            inner: IterMut {
-                map: <span class="self">self </span><span class="kw">as </span><span class="kw-2">*const </span><span class="kw">_ as </span><span class="kw-2">*mut </span><span class="kw">_</span>,
-                entry: <span class="number">0</span>,
-                cursor: <span class="self">self</span>.entries.first().map(|<span class="kw">_</span>| Cursor::Head),
-                lt: PhantomData,
-            },
+            map: <span class="self">self</span>,
+            entry: <span class="number">0</span>,
+            cursor: <span class="self">self</span>.entries.first().map(|<span class="kw">_</span>| Cursor::Head),
         }
     }
 
@@ -4648,7 +4706,7 @@
             danger,
             <span class="comment">// Vacant
             </span>{
-                drop(danger); <span class="comment">// Make lint happy
+                <span class="kw">let _ </span>= danger; <span class="comment">// Make lint happy
                 </span><span class="kw">let </span>index = <span class="self">self</span>.entries.len();
                 <span class="self">self</span>.insert_entry(hash, key.into(), value);
                 <span class="self">self</span>.indices[probe] = Pos::new(index, hash);
@@ -4751,7 +4809,7 @@
             danger,
             <span class="comment">// Vacant
             </span>{
-                drop(danger);
+                <span class="kw">let _ </span>= danger;
                 <span class="kw">let </span>index = <span class="self">self</span>.entries.len();
                 <span class="self">self</span>.insert_entry(hash, key.into(), value);
                 <span class="self">self</span>.indices[probe] = Pos::new(index, hash);
@@ -5564,13 +5622,47 @@
     <span class="kw">type </span>Item = (<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>HeaderName, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T);
 
     <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
-        <span class="self">self</span>.inner
-            .next_unsafe()
-            .map(|(key, ptr)| (key, <span class="kw">unsafe </span>{ <span class="kw-2">&amp;*</span>ptr }))
+        <span class="kw">use </span><span class="self">self</span>::Cursor::<span class="kw-2">*</span>;
+
+        <span class="kw">if </span><span class="self">self</span>.cursor.is_none() {
+            <span class="kw">if </span>(<span class="self">self</span>.entry + <span class="number">1</span>) &gt;= <span class="self">self</span>.map.entries.len() {
+                <span class="kw">return </span><span class="prelude-val">None</span>;
+            }
+
+            <span class="self">self</span>.entry += <span class="number">1</span>;
+            <span class="self">self</span>.cursor = <span class="prelude-val">Some</span>(Cursor::Head);
+        }
+
+        <span class="kw">let </span>entry = <span class="kw-2">&amp;</span><span class="self">self</span>.map.entries[<span class="self">self</span>.entry];
+
+        <span class="kw">match </span><span class="self">self</span>.cursor.unwrap() {
+            Head =&gt; {
+                <span class="self">self</span>.cursor = entry.links.map(|l| Values(l.next));
+                <span class="prelude-val">Some</span>((<span class="kw-2">&amp;</span>entry.key, <span class="kw-2">&amp;</span>entry.value))
+            }
+            Values(idx) =&gt; {
+                <span class="kw">let </span>extra = <span class="kw-2">&amp;</span><span class="self">self</span>.map.extra_values[idx];
+
+                <span class="kw">match </span>extra.next {
+                    Link::Entry(<span class="kw">_</span>) =&gt; <span class="self">self</span>.cursor = <span class="prelude-val">None</span>,
+                    Link::Extra(i) =&gt; <span class="self">self</span>.cursor = <span class="prelude-val">Some</span>(Values(i)),
+                }
+
+                <span class="prelude-val">Some</span>((<span class="kw-2">&amp;</span>entry.key, <span class="kw-2">&amp;</span>extra.value))
+            }
+        }
     }
 
     <span class="kw">fn </span>size_hint(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (usize, <span class="prelude-ty">Option</span>&lt;usize&gt;) {
-        <span class="self">self</span>.inner.size_hint()
+        <span class="kw">let </span>map = <span class="self">self</span>.map;
+        <span class="macro">debug_assert!</span>(map.entries.len() &gt;= <span class="self">self</span>.entry);
+
+        <span class="kw">let </span>lower = map.entries.len() - <span class="self">self</span>.entry;
+        <span class="comment">// We could pessimistically guess at the upper bound, saying
+        // that its lower + map.extra_values.len(). That could be
+        // way over though, such as if we&#39;re near the end, and have
+        // already gone through several extra values...
+        </span>(lower, <span class="prelude-val">None</span>)
     }
 }
 
@@ -5594,22 +5686,22 @@
             <span class="self">self</span>.cursor = <span class="prelude-val">Some</span>(Cursor::Head);
         }
 
-        <span class="kw">let </span>entry = <span class="kw">unsafe </span>{ <span class="kw-2">&amp;</span>(<span class="kw-2">*</span><span class="self">self</span>.map).entries[<span class="self">self</span>.entry] };
+        <span class="kw">let </span>entry = <span class="kw">unsafe </span>{ <span class="kw-2">&amp;mut </span>(<span class="kw-2">*</span><span class="self">self</span>.map).entries[<span class="self">self</span>.entry] };
 
         <span class="kw">match </span><span class="self">self</span>.cursor.unwrap() {
             Head =&gt; {
                 <span class="self">self</span>.cursor = entry.links.map(|l| Values(l.next));
-                <span class="prelude-val">Some</span>((<span class="kw-2">&amp;</span>entry.key, <span class="kw-2">&amp;</span>entry.value <span class="kw">as </span><span class="kw-2">*const </span><span class="kw">_ as </span><span class="kw-2">*mut </span><span class="kw">_</span>))
+                <span class="prelude-val">Some</span>((<span class="kw-2">&amp;</span>entry.key, <span class="kw-2">&amp;mut </span>entry.value <span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">_</span>))
             }
             Values(idx) =&gt; {
-                <span class="kw">let </span>extra = <span class="kw">unsafe </span>{ <span class="kw-2">&amp;</span>(<span class="kw-2">*</span><span class="self">self</span>.map).extra_values[idx] };
+                <span class="kw">let </span>extra = <span class="kw">unsafe </span>{ <span class="kw-2">&amp;mut </span>(<span class="kw-2">*</span><span class="self">self</span>.map).extra_values[idx] };
 
                 <span class="kw">match </span>extra.next {
                     Link::Entry(<span class="kw">_</span>) =&gt; <span class="self">self</span>.cursor = <span class="prelude-val">None</span>,
                     Link::Extra(i) =&gt; <span class="self">self</span>.cursor = <span class="prelude-val">Some</span>(Values(i)),
                 }
 
-                <span class="prelude-val">Some</span>((<span class="kw-2">&amp;</span>entry.key, <span class="kw-2">&amp;</span>extra.value <span class="kw">as </span><span class="kw-2">*const </span><span class="kw">_ as </span><span class="kw-2">*mut </span><span class="kw">_</span>))
+                <span class="prelude-val">Some</span>((<span class="kw-2">&amp;</span>entry.key, <span class="kw-2">&amp;mut </span>extra.value <span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">_</span>))
             }
         }
     }
@@ -6714,8 +6806,14 @@
 
 <span class="attr">#[inline]
 </span><span class="kw">fn </span>to_raw_capacity(n: usize) -&gt; usize {
-    n + n / <span class="number">3
-</span>}
+    <span class="kw">match </span>n.checked_add(n / <span class="number">3</span>) {
+        <span class="prelude-val">Some</span>(n) =&gt; n,
+        <span class="prelude-val">None </span>=&gt; <span class="macro">panic!</span>(
+            <span class="string">&quot;requested capacity {} too large: overflow while converting to raw capacity&quot;</span>,
+            n
+        ),
+    }
+}
 
 <span class="attr">#[inline]
 </span><span class="kw">fn </span>desired_pos(mask: Size, hash: HashValue) -&gt; usize {

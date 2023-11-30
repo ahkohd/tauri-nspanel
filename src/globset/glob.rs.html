@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/globset-0.4.13/src/glob.rs`."><title>glob.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="globset" data-themes="" data-resource-suffix="" data-rustdoc-version="1.73.0 (cc66ad468 2023-10-03)" data-channel="1.73.0" data-search-js="search-6dfdfced5eff6596.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-1596385f77d47ef2.css" data-theme-dark-css="dark-0a43001d3fc2282c.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-1596385f77d47ef2.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-0a43001d3fc2282c.css"><link rel="stylesheet" href="../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../globset/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/globset-0.4.14/src/glob.rs`."><title>glob.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-fa3bb1812debf86c.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="globset" data-themes="" data-resource-suffix="" data-rustdoc-version="1.74.0 (79e9716c9 2023-11-13)" data-channel="1.74.0" data-search-js="search-8be46b629f5f14a8.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-c5bd66d33317d69f.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../globset/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1552,30 +1552,9 @@
 <a href="#1552" id="1552">1552</a>
 <a href="#1553" id="1553">1553</a>
 <a href="#1554" id="1554">1554</a>
-<a href="#1555" id="1555">1555</a>
-<a href="#1556" id="1556">1556</a>
-<a href="#1557" id="1557">1557</a>
-<a href="#1558" id="1558">1558</a>
-<a href="#1559" id="1559">1559</a>
-<a href="#1560" id="1560">1560</a>
-<a href="#1561" id="1561">1561</a>
-<a href="#1562" id="1562">1562</a>
-<a href="#1563" id="1563">1563</a>
-<a href="#1564" id="1564">1564</a>
-<a href="#1565" id="1565">1565</a>
-<a href="#1566" id="1566">1566</a>
-<a href="#1567" id="1567">1567</a>
-<a href="#1568" id="1568">1568</a>
-<a href="#1569" id="1569">1569</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>std::fmt;
-<span class="kw">use </span>std::hash;
-<span class="kw">use </span>std::iter;
-<span class="kw">use </span>std::ops::{Deref, DerefMut};
-<span class="kw">use </span>std::path::{is_separator, Path};
-<span class="kw">use </span>std::str;
+</pre></div><pre class="rust"><code><span class="kw">use </span>std::path::{is_separator, Path};
 
-<span class="kw">use </span>regex;
-<span class="kw">use </span>regex::bytes::Regex;
+<span class="kw">use </span>regex_automata::meta::Regex;
 
 <span class="kw">use crate</span>::{new_regex, Candidate, Error, ErrorKind};
 
@@ -1587,7 +1566,7 @@
 /// possible to test whether any of those patterns matches by looking up a
 /// file path&#39;s extension in a hash table.
 </span><span class="attr">#[derive(Clone, Debug, Eq, PartialEq)]
-</span><span class="kw">pub enum </span>MatchStrategy {
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">enum </span>MatchStrategy {
     <span class="doccomment">/// A pattern matches if and only if the entire file path matches this
     /// literal string.
     </span>Literal(String),
@@ -1622,7 +1601,7 @@
 
 <span class="kw">impl </span>MatchStrategy {
     <span class="doccomment">/// Returns a matching strategy for the given pattern.
-    </span><span class="kw">pub fn </span>new(pat: <span class="kw-2">&amp;</span>Glob) -&gt; MatchStrategy {
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(pat: <span class="kw-2">&amp;</span>Glob) -&gt; MatchStrategy {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(lit) = pat.basename_literal() {
             MatchStrategy::BasenameLiteral(lit)
         } <span class="kw">else if let </span><span class="prelude-val">Some</span>(lit) = pat.literal() {
@@ -1632,7 +1611,7 @@
         } <span class="kw">else if let </span><span class="prelude-val">Some</span>(prefix) = pat.prefix() {
             MatchStrategy::Prefix(prefix)
         } <span class="kw">else if let </span><span class="prelude-val">Some</span>((suffix, component)) = pat.suffix() {
-            MatchStrategy::Suffix { suffix: suffix, component: component }
+            MatchStrategy::Suffix { suffix, component }
         } <span class="kw">else if let </span><span class="prelude-val">Some</span>(ext) = pat.required_ext() {
             MatchStrategy::RequiredExtension(ext)
         } <span class="kw">else </span>{
@@ -1659,20 +1638,20 @@
     }
 }
 
-<span class="kw">impl </span>hash::Hash <span class="kw">for </span>Glob {
-    <span class="kw">fn </span>hash&lt;H: hash::Hasher&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H) {
+<span class="kw">impl </span>std::hash::Hash <span class="kw">for </span>Glob {
+    <span class="kw">fn </span>hash&lt;H: std::hash::Hasher&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H) {
         <span class="self">self</span>.glob.hash(state);
         <span class="self">self</span>.opts.hash(state);
     }
 }
 
-<span class="kw">impl </span>fmt::Display <span class="kw">for </span>Glob {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+<span class="kw">impl </span>std::fmt::Display <span class="kw">for </span>Glob {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; std::fmt::Result {
         <span class="self">self</span>.glob.fmt(f)
     }
 }
 
-<span class="kw">impl </span>str::FromStr <span class="kw">for </span>Glob {
+<span class="kw">impl </span>std::str::FromStr <span class="kw">for </span>Glob {
     <span class="kw">type </span><span class="prelude-val">Err </span>= Error;
 
     <span class="kw">fn </span>from_str(glob: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Err&gt; {
@@ -1796,14 +1775,14 @@
 <span class="attr">#[derive(Clone, Debug, Default, Eq, PartialEq)]
 </span><span class="kw">struct </span>Tokens(Vec&lt;Token&gt;);
 
-<span class="kw">impl </span>Deref <span class="kw">for </span>Tokens {
+<span class="kw">impl </span>std::ops::Deref <span class="kw">for </span>Tokens {
     <span class="kw">type </span>Target = Vec&lt;Token&gt;;
     <span class="kw">fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Vec&lt;Token&gt; {
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0
     </span>}
 }
 
-<span class="kw">impl </span>DerefMut <span class="kw">for </span>Tokens {
+<span class="kw">impl </span>std::ops::DerefMut <span class="kw">for </span>Tokens {
     <span class="kw">fn </span>deref_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>Vec&lt;Token&gt; {
         <span class="kw-2">&amp;mut </span><span class="self">self</span>.<span class="number">0
     </span>}
@@ -1831,7 +1810,7 @@
     </span><span class="kw">pub fn </span>compile_matcher(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; GlobMatcher {
         <span class="kw">let </span>re =
             new_regex(<span class="kw-2">&amp;</span><span class="self">self</span>.re).expect(<span class="string">&quot;regex compilation shouldn&#39;t fail&quot;</span>);
-        GlobMatcher { pat: <span class="self">self</span>.clone(), re: re }
+        GlobMatcher { pat: <span class="self">self</span>.clone(), re }
     }
 
     <span class="doccomment">/// Returns a strategic matcher.
@@ -1844,7 +1823,7 @@
         <span class="kw">let </span>strategy = MatchStrategy::new(<span class="self">self</span>);
         <span class="kw">let </span>re =
             new_regex(<span class="kw-2">&amp;</span><span class="self">self</span>.re).expect(<span class="string">&quot;regex compilation shouldn&#39;t fail&quot;</span>);
-        GlobStrategic { strategy: strategy, re: re }
+        GlobStrategic { strategy, re }
     }
 
     <span class="doccomment">/// Returns the original glob pattern used to build this pattern.
@@ -1880,10 +1859,8 @@
         }
         <span class="kw">let </span><span class="kw-2">mut </span>lit = String::new();
         <span class="kw">for </span>t <span class="kw">in </span><span class="kw-2">&amp;*</span><span class="self">self</span>.tokens {
-            <span class="kw">match </span><span class="kw-2">*</span>t {
-                Token::Literal(c) =&gt; lit.push(c),
-                <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
-            }
+            <span class="kw">let </span>Token::Literal(c) = <span class="kw-2">*</span>t <span class="kw">else </span>{ <span class="kw">return </span><span class="prelude-val">None </span>};
+            lit.push(c);
         }
         <span class="kw">if </span>lit.is_empty() {
             <span class="prelude-val">None
@@ -1903,13 +1880,12 @@
         <span class="kw">if </span><span class="self">self</span>.opts.case_insensitive {
             <span class="kw">return </span><span class="prelude-val">None</span>;
         }
-        <span class="kw">let </span>start = <span class="kw">match </span><span class="self">self</span>.tokens.get(<span class="number">0</span>) {
-            <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>Token::RecursivePrefix) =&gt; <span class="number">1</span>,
-            <span class="prelude-val">Some</span>(<span class="kw">_</span>) =&gt; <span class="number">0</span>,
-            <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
+        <span class="kw">let </span>start = <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.tokens.get(<span class="number">0</span>)<span class="question-mark">? </span>{
+            Token::RecursivePrefix =&gt; <span class="number">1</span>,
+            <span class="kw">_ </span>=&gt; <span class="number">0</span>,
         };
-        <span class="kw">match </span><span class="self">self</span>.tokens.get(start) {
-            <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>Token::ZeroOrMore) =&gt; {
+        <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.tokens.get(start)<span class="question-mark">? </span>{
+            Token::ZeroOrMore =&gt; {
                 <span class="comment">// If there was no recursive prefix, then we only permit
                 // `*` if `*` can match a `/`. For example, if `*` can&#39;t
                 // match `/`, then `*.c` doesn&#39;t match `foo/bar.c`.
@@ -1919,8 +1895,8 @@
             }
             <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
         }
-        <span class="kw">match </span><span class="self">self</span>.tokens.get(start + <span class="number">1</span>) {
-            <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>Token::Literal(<span class="string">&#39;.&#39;</span>)) =&gt; {}
+        <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.tokens.get(start + <span class="number">1</span>)<span class="question-mark">? </span>{
+            Token::Literal(<span class="string">&#39;.&#39;</span>) =&gt; {}
             <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
         }
         <span class="kw">let </span><span class="kw-2">mut </span>lit = <span class="string">&quot;.&quot;</span>.to_string();
@@ -1974,8 +1950,8 @@
         <span class="kw">if </span><span class="self">self</span>.opts.case_insensitive {
             <span class="kw">return </span><span class="prelude-val">None</span>;
         }
-        <span class="kw">let </span>(end, need_sep) = <span class="kw">match </span><span class="self">self</span>.tokens.last() {
-            <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>Token::ZeroOrMore) =&gt; {
+        <span class="kw">let </span>(end, need_sep) = <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.tokens.last()<span class="question-mark">? </span>{
+            Token::ZeroOrMore =&gt; {
                 <span class="kw">if </span><span class="self">self</span>.opts.literal_separator {
                     <span class="comment">// If a trailing `*` can&#39;t match a `/`, then we can&#39;t
                     // assume a match of the prefix corresponds to a match
@@ -1987,15 +1963,13 @@
                 }
                 (<span class="self">self</span>.tokens.len() - <span class="number">1</span>, <span class="bool-val">false</span>)
             }
-            <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>Token::RecursiveSuffix) =&gt; (<span class="self">self</span>.tokens.len() - <span class="number">1</span>, <span class="bool-val">true</span>),
+            Token::RecursiveSuffix =&gt; (<span class="self">self</span>.tokens.len() - <span class="number">1</span>, <span class="bool-val">true</span>),
             <span class="kw">_ </span>=&gt; (<span class="self">self</span>.tokens.len(), <span class="bool-val">false</span>),
         };
         <span class="kw">let </span><span class="kw-2">mut </span>lit = String::new();
         <span class="kw">for </span>t <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.tokens[<span class="number">0</span>..end] {
-            <span class="kw">match </span><span class="kw-2">*</span>t {
-                Token::Literal(c) =&gt; lit.push(c),
-                <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
-            }
+            <span class="kw">let </span>Token::Literal(c) = <span class="kw-2">*</span>t <span class="kw">else </span>{ <span class="kw">return </span><span class="prelude-val">None </span>};
+            lit.push(c);
         }
         <span class="kw">if </span>need_sep {
             lit.push(<span class="string">&#39;/&#39;</span>);
@@ -2024,8 +1998,8 @@
             <span class="kw">return </span><span class="prelude-val">None</span>;
         }
         <span class="kw">let </span><span class="kw-2">mut </span>lit = String::new();
-        <span class="kw">let </span>(start, entire) = <span class="kw">match </span><span class="self">self</span>.tokens.get(<span class="number">0</span>) {
-            <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>Token::RecursivePrefix) =&gt; {
+        <span class="kw">let </span>(start, entire) = <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.tokens.get(<span class="number">0</span>)<span class="question-mark">? </span>{
+            Token::RecursivePrefix =&gt; {
                 <span class="comment">// We only care if this follows a path component if the next
                 // token is a literal.
                 </span><span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>Token::Literal(<span class="kw">_</span>)) = <span class="self">self</span>.tokens.get(<span class="number">1</span>) {
@@ -2037,8 +2011,8 @@
             }
             <span class="kw">_ </span>=&gt; (<span class="number">0</span>, <span class="bool-val">false</span>),
         };
-        <span class="kw">let </span>start = <span class="kw">match </span><span class="self">self</span>.tokens.get(start) {
-            <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>Token::ZeroOrMore) =&gt; {
+        <span class="kw">let </span>start = <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.tokens.get(start)<span class="question-mark">? </span>{
+            Token::ZeroOrMore =&gt; {
                 <span class="comment">// If literal_separator is enabled, then a `*` can&#39;t
                 // necessarily match everything, so reporting a suffix match
                 // as a match of the pattern would be a false positive.
@@ -2050,10 +2024,8 @@
             <span class="kw">_ </span>=&gt; start,
         };
         <span class="kw">for </span>t <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.tokens[start..] {
-            <span class="kw">match </span><span class="kw-2">*</span>t {
-                Token::Literal(c) =&gt; lit.push(c),
-                <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
-            }
+            <span class="kw">let </span>Token::Literal(c) = <span class="kw-2">*</span>t <span class="kw">else </span>{ <span class="kw">return </span><span class="prelude-val">None </span>};
+            lit.push(c);
         }
         <span class="kw">if </span>lit.is_empty() || lit == <span class="string">&quot;/&quot; </span>{
             <span class="prelude-val">None
@@ -2077,8 +2049,8 @@
         <span class="kw">if </span><span class="self">self</span>.opts.case_insensitive {
             <span class="kw">return </span><span class="prelude-val">None</span>;
         }
-        <span class="kw">let </span>start = <span class="kw">match </span><span class="self">self</span>.tokens.get(<span class="number">0</span>) {
-            <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>Token::RecursivePrefix) =&gt; <span class="number">1</span>,
+        <span class="kw">let </span>start = <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.tokens.get(<span class="number">0</span>)<span class="question-mark">? </span>{
+            Token::RecursivePrefix =&gt; <span class="number">1</span>,
             <span class="kw">_ </span>=&gt; {
                 <span class="comment">// With nothing to gobble up the parent portion of a path,
                 // we can&#39;t assume that matching on only the basename is
@@ -2089,7 +2061,7 @@
         <span class="kw">if </span><span class="self">self</span>.tokens[start..].is_empty() {
             <span class="kw">return </span><span class="prelude-val">None</span>;
         }
-        <span class="kw">for </span>t <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.tokens[start..] {
+        <span class="kw">for </span>t <span class="kw">in </span><span class="self">self</span>.tokens[start..].iter() {
             <span class="kw">match </span><span class="kw-2">*</span>t {
                 Token::Literal(<span class="string">&#39;/&#39;</span>) =&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
                 Token::Literal(<span class="kw">_</span>) =&gt; {} <span class="comment">// OK
@@ -2123,16 +2095,11 @@
     /// The basic format of these patterns is `**/{literal}`, where `{literal}`
     /// does not contain a path separator.
     </span><span class="kw">fn </span>basename_literal(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;String&gt; {
-        <span class="kw">let </span>tokens = <span class="kw">match </span><span class="self">self</span>.basename_tokens() {
-            <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
-            <span class="prelude-val">Some</span>(tokens) =&gt; tokens,
-        };
+        <span class="kw">let </span>tokens = <span class="self">self</span>.basename_tokens()<span class="question-mark">?</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>lit = String::new();
         <span class="kw">for </span>t <span class="kw">in </span>tokens {
-            <span class="kw">match </span><span class="kw-2">*</span>t {
-                Token::Literal(c) =&gt; lit.push(c),
-                <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
-            }
+            <span class="kw">let </span>Token::Literal(c) = <span class="kw-2">*</span>t <span class="kw">else </span>{ <span class="kw">return </span><span class="prelude-val">None </span>};
+            lit.push(c);
         }
         <span class="prelude-val">Some</span>(lit)
     }
@@ -2143,7 +2110,7 @@
     ///
     /// The pattern is not compiled until `build` is called.
     </span><span class="kw">pub fn </span>new(glob: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str) -&gt; GlobBuilder&lt;<span class="lifetime">&#39;a</span>&gt; {
-        GlobBuilder { glob: glob, opts: GlobOptions::default() }
+        GlobBuilder { glob, opts: GlobOptions::default() }
     }
 
     <span class="doccomment">/// Parses and builds the pattern.
@@ -2173,7 +2140,7 @@
                 glob: <span class="self">self</span>.glob.to_string(),
                 re: tokens.to_regex_with(<span class="kw-2">&amp;</span><span class="self">self</span>.opts),
                 opts: <span class="self">self</span>.opts,
-                tokens: tokens,
+                tokens,
             })
         }
     }
@@ -2209,7 +2176,8 @@
 
     <span class="doccomment">/// Toggle whether an empty pattern in a list of alternates is accepted.
     ///
-    /// For example, if this is set then the glob `foo{,.txt}` will match both `foo` and `foo.txt`.
+    /// For example, if this is set then the glob `foo{,.txt}` will match both
+    /// `foo` and `foo.txt`.
     ///
     /// By default this is false.
     </span><span class="kw">pub fn </span>empty_alternates(<span class="kw-2">&amp;mut </span><span class="self">self</span>, yes: bool) -&gt; <span class="kw-2">&amp;mut </span>GlobBuilder&lt;<span class="lifetime">&#39;a</span>&gt; {
@@ -2247,7 +2215,7 @@
         tokens: <span class="kw-2">&amp;</span>[Token],
         re: <span class="kw-2">&amp;mut </span>String,
     ) {
-        <span class="kw">for </span>tok <span class="kw">in </span>tokens {
+        <span class="kw">for </span>tok <span class="kw">in </span>tokens.iter() {
             <span class="kw">match </span><span class="kw-2">*</span>tok {
                 Token::Literal(c) =&gt; {
                     re.push_str(<span class="kw-2">&amp;</span>char_to_escaped_literal(c));
@@ -2327,7 +2295,9 @@
     <span class="kw">let </span><span class="kw-2">mut </span>s = String::with_capacity(bs.len());
     <span class="kw">for </span><span class="kw-2">&amp;</span>b <span class="kw">in </span>bs {
         <span class="kw">if </span>b &lt;= <span class="number">0x7F </span>{
-            s.push_str(<span class="kw-2">&amp;</span>regex::escape(<span class="kw-2">&amp;</span>(b <span class="kw">as </span>char).to_string()));
+            s.push_str(<span class="kw-2">&amp;</span>regex_syntax::escape(
+                char::from(b).encode_utf8(<span class="kw-2">&amp;mut </span>[<span class="number">0</span>; <span class="number">4</span>]),
+            ));
         } <span class="kw">else </span>{
             s.push_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;\\x{:02x}&quot;</span>, b));
         }
@@ -2338,7 +2308,7 @@
 <span class="kw">struct </span>Parser&lt;<span class="lifetime">&#39;a</span>&gt; {
     glob: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str,
     stack: Vec&lt;Tokens&gt;,
-    chars: iter::Peekable&lt;str::Chars&lt;<span class="lifetime">&#39;a</span>&gt;&gt;,
+    chars: std::iter::Peekable&lt;std::str::Chars&lt;<span class="lifetime">&#39;a</span>&gt;&gt;,
     prev: <span class="prelude-ty">Option</span>&lt;char&gt;,
     cur: <span class="prelude-ty">Option</span>&lt;char&gt;,
     opts: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>GlobOptions,
@@ -2346,7 +2316,7 @@
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Parser&lt;<span class="lifetime">&#39;a</span>&gt; {
     <span class="kw">fn </span>error(<span class="kw-2">&amp;</span><span class="self">self</span>, kind: ErrorKind) -&gt; Error {
-        Error { glob: <span class="prelude-val">Some</span>(<span class="self">self</span>.glob.to_string()), kind: kind }
+        Error { glob: <span class="prelude-val">Some</span>(<span class="self">self</span>.glob.to_string()), kind }
     }
 
     <span class="kw">fn </span>parse(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
@@ -2565,7 +2535,7 @@
             // it as a literal.
             </span>ranges.push((<span class="string">&#39;-&#39;</span>, <span class="string">&#39;-&#39;</span>));
         }
-        <span class="self">self</span>.push_token(Token::Class { negated: negated, ranges: ranges })
+        <span class="self">self</span>.push_token(Token::Class { negated, ranges })
     }
 
     <span class="kw">fn </span>bump(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;char&gt; {

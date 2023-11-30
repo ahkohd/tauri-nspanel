@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["CFMachPortCreateRunLoopSource","CFMachPortGetTypeID"],"struct":["__CFMachPort"],"type":["CFMachPortRef"]};
+window.SIDEBAR_ITEMS = {"fn":["CFMachPortCreate","CFMachPortCreateRunLoopSource","CFMachPortCreateWithPort","CFMachPortGetContext","CFMachPortGetInvalidationCallBack","CFMachPortGetPort","CFMachPortGetTypeID","CFMachPortInvalidate","CFMachPortIsValid","CFMachPortSetInvalidationCallBack"],"struct":["CFMachPortContext","__CFMachPort"],"type":["CFMachPortCallBack","CFMachPortInvalidationCallBack","CFMachPortRef"]};
