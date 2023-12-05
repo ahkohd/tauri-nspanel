@@ -31,6 +31,20 @@ impl INSObject for RawNSPanel {
 }
 
 impl RawNSPanel {
+    /// Returns YES to ensure that RawNSPanel can become a key window
+    extern "C" fn can_become_key_window(_: &Object, _: Sel) -> BOOL {
+        YES
+    }
+
+    extern "C" fn dealloc(this: &mut Object, _cmd: Sel) {
+        unsafe {
+            let superclass = class!(NSObject);
+            let dealloc: extern "C" fn(&mut Object, Sel) =
+                msg_send![super(this, superclass), dealloc];
+            dealloc(this, _cmd);
+        }
+    }
+
     fn define_class() -> &'static Class {
         let mut cls = ClassDecl::new(CLS_NAME, class!(NSPanel))
             .unwrap_or_else(|| panic!("Unable to register {} class", CLS_NAME));
@@ -50,23 +64,6 @@ impl RawNSPanel {
         cls.register()
     }
 
-    /// Returns YES to ensure that RawNSPanel can become a key window
-    extern "C" fn can_become_key_window(_: &Object, _: Sel) -> BOOL {
-        YES
-    }
-
-    extern "C" fn dealloc(this: &mut Object, _cmd: Sel) {
-        println!("fuck don't dealloc");
-        unsafe {
-            let superclass = class!(NSObject);
-            let dealloc: extern "C" fn(&mut Object, Sel) =
-                msg_send![super(this, superclass), dealloc];
-            dealloc(this, _cmd);
-        }
-    }
-}
-
-impl RawNSPanel {
     pub fn show(&self) {
         self.make_first_responder(Some(self.content_view()));
         self.order_front_regardless();
