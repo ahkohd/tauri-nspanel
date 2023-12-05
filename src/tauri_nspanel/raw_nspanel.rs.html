@@ -151,9 +151,6 @@
 <a href="#151" id="151">151</a>
 <a href="#152" id="152">152</a>
 <a href="#153" id="153">153</a>
-<a href="#154" id="154">154</a>
-<a href="#155" id="155">155</a>
-<a href="#156" id="156">156</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>cocoa::{
     appkit::NSWindowCollectionBehavior,
     base::{id, nil, BOOL, NO, YES},
@@ -187,6 +184,20 @@
 }
 
 <span class="kw">impl </span>RawNSPanel {
+    <span class="doccomment">/// Returns YES to ensure that RawNSPanel can become a key window
+    </span><span class="kw">extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span>can_become_key_window(<span class="kw">_</span>: <span class="kw-2">&amp;</span>Object, <span class="kw">_</span>: Sel) -&gt; BOOL {
+        YES
+    }
+
+    <span class="kw">extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span>dealloc(this: <span class="kw-2">&amp;mut </span>Object, _cmd: Sel) {
+        <span class="kw">unsafe </span>{
+            <span class="kw">let </span>superclass = <span class="macro">class!</span>(NSObject);
+            <span class="kw">let </span>dealloc: <span class="kw">extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn</span>(<span class="kw-2">&amp;mut </span>Object, Sel) =
+                <span class="macro">msg_send!</span>[<span class="kw">super</span>(this, superclass), dealloc];
+            dealloc(this, _cmd);
+        }
+    }
+
     <span class="kw">fn </span>define_class() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>Class {
         <span class="kw">let </span><span class="kw-2">mut </span>cls = ClassDecl::new(CLS_NAME, <span class="macro">class!</span>(NSPanel))
             .unwrap_or_else(|| <span class="macro">panic!</span>(<span class="string">&quot;Unable to register {} class&quot;</span>, CLS_NAME));
@@ -206,23 +217,6 @@
         cls.register()
     }
 
-    <span class="doccomment">/// Returns YES to ensure that RawNSPanel can become a key window
-    </span><span class="kw">extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span>can_become_key_window(<span class="kw">_</span>: <span class="kw-2">&amp;</span>Object, <span class="kw">_</span>: Sel) -&gt; BOOL {
-        YES
-    }
-
-    <span class="kw">extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span>dealloc(this: <span class="kw-2">&amp;mut </span>Object, _cmd: Sel) {
-        <span class="macro">println!</span>(<span class="string">&quot;fuck don&#39;t dealloc&quot;</span>);
-        <span class="kw">unsafe </span>{
-            <span class="kw">let </span>superclass = <span class="macro">class!</span>(NSObject);
-            <span class="kw">let </span>dealloc: <span class="kw">extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn</span>(<span class="kw-2">&amp;mut </span>Object, Sel) =
-                <span class="macro">msg_send!</span>[<span class="kw">super</span>(this, superclass), dealloc];
-            dealloc(this, _cmd);
-        }
-    }
-}
-
-<span class="kw">impl </span>RawNSPanel {
     <span class="kw">pub fn </span>show(<span class="kw-2">&amp;</span><span class="self">self</span>) {
         <span class="self">self</span>.make_first_responder(<span class="prelude-val">Some</span>(<span class="self">self</span>.content_view()));
         <span class="self">self</span>.order_front_regardless();
