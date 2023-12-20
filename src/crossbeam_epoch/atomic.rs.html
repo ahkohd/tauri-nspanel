@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/crossbeam-epoch-0.9.15/src/atomic.rs`."><title>atomic.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-fa3bb1812debf86c.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="crossbeam_epoch" data-themes="" data-resource-suffix="" data-rustdoc-version="1.74.0 (79e9716c9 2023-11-13)" data-channel="1.74.0" data-search-js="search-8be46b629f5f14a8.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-c5bd66d33317d69f.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../crossbeam_epoch/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/crossbeam-epoch-0.9.16/src/atomic.rs`."><title>atomic.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-fa3bb1812debf86c.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="crossbeam_epoch" data-themes="" data-resource-suffix="" data-rustdoc-version="1.74.1 (a28077b28 2023-12-04)" data-channel="1.74.1" data-search-js="search-8be46b629f5f14a8.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-c5bd66d33317d69f.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../crossbeam_epoch/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1696,26 +1696,6 @@
 <a href="#1696" id="1696">1696</a>
 <a href="#1697" id="1697">1697</a>
 <a href="#1698" id="1698">1698</a>
-<a href="#1699" id="1699">1699</a>
-<a href="#1700" id="1700">1700</a>
-<a href="#1701" id="1701">1701</a>
-<a href="#1702" id="1702">1702</a>
-<a href="#1703" id="1703">1703</a>
-<a href="#1704" id="1704">1704</a>
-<a href="#1705" id="1705">1705</a>
-<a href="#1706" id="1706">1706</a>
-<a href="#1707" id="1707">1707</a>
-<a href="#1708" id="1708">1708</a>
-<a href="#1709" id="1709">1709</a>
-<a href="#1710" id="1710">1710</a>
-<a href="#1711" id="1711">1711</a>
-<a href="#1712" id="1712">1712</a>
-<a href="#1713" id="1713">1713</a>
-<a href="#1714" id="1714">1714</a>
-<a href="#1715" id="1715">1715</a>
-<a href="#1716" id="1716">1716</a>
-<a href="#1717" id="1717">1717</a>
-<a href="#1718" id="1718">1718</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>core::borrow::{Borrow, BorrowMut};
 <span class="kw">use </span>core::cmp;
 <span class="kw">use </span>core::fmt;
@@ -1723,12 +1703,11 @@
 <span class="kw">use </span>core::mem::{<span class="self">self</span>, MaybeUninit};
 <span class="kw">use </span>core::ops::{Deref, DerefMut};
 <span class="kw">use </span>core::slice;
-<span class="kw">use </span>core::sync::atomic::Ordering;
 
 <span class="kw">use </span><span class="kw">crate</span>::alloc::alloc;
 <span class="kw">use </span><span class="kw">crate</span>::alloc::boxed::Box;
 <span class="kw">use </span><span class="kw">crate</span>::guard::Guard;
-<span class="kw">use </span><span class="kw">crate</span>::primitive::sync::atomic::AtomicUsize;
+<span class="kw">use </span><span class="kw">crate</span>::primitive::sync::atomic::{AtomicUsize, Ordering};
 <span class="kw">use </span>crossbeam_utils::atomic::AtomicConsume;
 
 <span class="doccomment">/// Given ordering for the success case in a compare-exchange operation, returns the strongest
@@ -2062,16 +2041,15 @@
     ///
     /// let a = Atomic::&lt;i32&gt;::null();
     /// ```
-    </span><span class="attr">#[cfg(all(not(crossbeam_no_const_fn_trait_bound), not(crossbeam_loom)))]
+    </span><span class="attr">#[cfg(not(crossbeam_loom))]
     </span><span class="kw">pub const fn </span>null() -&gt; Atomic&lt;T&gt; {
         <span class="self">Self </span>{
             data: AtomicUsize::new(<span class="number">0</span>),
             _marker: PhantomData,
         }
     }
-
     <span class="doccomment">/// Returns a new null atomic pointer.
-    </span><span class="attr">#[cfg(not(all(not(crossbeam_no_const_fn_trait_bound), not(crossbeam_loom))))]
+    </span><span class="attr">#[cfg(crossbeam_loom)]
     </span><span class="kw">pub fn </span>null() -&gt; Atomic&lt;T&gt; {
         <span class="self">Self </span>{
             data: AtomicUsize::new(<span class="number">0</span>),
@@ -2597,17 +2575,7 @@
     /// }
     /// ```
     </span><span class="kw">pub unsafe fn </span>into_owned(<span class="self">self</span>) -&gt; Owned&lt;T&gt; {
-        <span class="attr">#[cfg(crossbeam_loom)]
-        </span>{
-            <span class="comment">// FIXME: loom does not yet support into_inner, so we use unsync_load for now,
-            // which should have the same synchronization properties:
-            // https://github.com/tokio-rs/loom/issues/117
-            </span>Owned::from_usize(<span class="self">self</span>.data.unsync_load())
-        }
-        <span class="attr">#[cfg(not(crossbeam_loom))]
-        </span>{
-            Owned::from_usize(<span class="self">self</span>.data.into_inner())
-        }
+        Owned::from_usize(<span class="self">self</span>.data.into_inner())
     }
 
     <span class="doccomment">/// Takes ownership of the pointee if it is non-null.
@@ -2644,11 +2612,7 @@
     /// }
     /// ```
     </span><span class="kw">pub unsafe fn </span>try_into_owned(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Owned&lt;T&gt;&gt; {
-        <span class="comment">// FIXME: See self.into_owned()
-        </span><span class="attr">#[cfg(crossbeam_loom)]
-        </span><span class="kw">let </span>data = <span class="self">self</span>.data.unsync_load();
-        <span class="attr">#[cfg(not(crossbeam_loom))]
-        </span><span class="kw">let </span>data = <span class="self">self</span>.data.into_inner();
+        <span class="kw">let </span>data = <span class="self">self</span>.data.into_inner();
         <span class="kw">if </span>decompose_tag::&lt;T&gt;(data).<span class="number">0 </span>== <span class="number">0 </span>{
             <span class="prelude-val">None
         </span>} <span class="kw">else </span>{
@@ -3031,11 +2995,8 @@
 
 <span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + Pointable&gt; Clone <span class="kw">for </span>Shared&lt;<span class="lifetime">&#39;_</span>, T&gt; {
     <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            data: <span class="self">self</span>.data,
-            _marker: PhantomData,
-        }
-    }
+        <span class="kw-2">*</span><span class="self">self
+    </span>}
 }
 
 <span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + Pointable&gt; Copy <span class="kw">for </span>Shared&lt;<span class="lifetime">&#39;_</span>, T&gt; {}
@@ -3420,8 +3381,7 @@
         Shared::&lt;i64&gt;::null().with_tag(<span class="number">7</span>);
     }
 
-    <span class="attr">#[rustversion::since(<span class="number">1.61</span>)]
-    #[test]
+    <span class="attr">#[test]
     </span><span class="kw">fn </span>const_atomic_null() {
         <span class="kw">use </span><span class="kw">super</span>::Atomic;
         <span class="kw">static </span>_U: Atomic&lt;u8&gt; = Atomic::&lt;u8&gt;::null();
