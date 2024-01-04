@@ -151,9 +151,6 @@ impl RawNSPanel {
     }
 
     fn add_tracking_area(&self) {
-        // Add a tracking area to the panel's content view.
-        // This is needed to receive mouse events on older macOS versions
-        // i.e macOS 12.3
         let view: id = self.content_view();
         let bounds: NSRect = unsafe { NSView::bounds(view) };
         let track_view: id = unsafe { msg_send![class!(NSTrackingArea), alloc] };
@@ -179,6 +176,9 @@ impl RawNSPanel {
         unsafe {
             object_setClass(nswindow, nspanel_class);
             let panel = Id::from_retained_ptr(nswindow as *mut RawNSPanel);
+            // Add a tracking area to the panel's content view.
+            // This is needed to receive mouse events on older macOS versions
+            // i.e macOS 12.3
             panel.add_tracking_area();
             panel
         }
