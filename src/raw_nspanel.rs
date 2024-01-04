@@ -176,10 +176,11 @@ impl RawNSPanel {
         unsafe {
             object_setClass(nswindow, nspanel_class);
             let panel = Id::from_retained_ptr(nswindow as *mut RawNSPanel);
-            // Add a tracking area to the panel's content view.
-            // This is needed to receive mouse events on older macOS versions
-            // i.e macOS 12.3
+
+            // Add a tracking area to the panel's content view,
+            // so that we can receive mouse events such as mouseEntered and mouseExited
             panel.add_tracking_area();
+
             panel
         }
     }
