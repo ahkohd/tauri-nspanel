@@ -339,7 +339,10 @@
     }
 
     <span class="kw">fn </span>add_tracking_area(<span class="kw-2">&amp;</span><span class="self">self</span>) {
-        <span class="kw">let </span>view: id = <span class="self">self</span>.content_view();
+        <span class="comment">// Add a tracking area to the panel&#39;s content view.
+        // This is needed to receive mouse events on older macOS versions
+        // i.e macOS 12.3
+        </span><span class="kw">let </span>view: id = <span class="self">self</span>.content_view();
         <span class="kw">let </span>bounds: NSRect = <span class="kw">unsafe </span>{ NSView::bounds(view) };
         <span class="kw">let </span>track_view: id = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="macro">class!</span>(NSTrackingArea), alloc] };
         <span class="kw">let </span>track_view: id = <span class="kw">unsafe </span>{
@@ -364,10 +367,7 @@
         <span class="kw">unsafe </span>{
             object_setClass(nswindow, nspanel_class);
             <span class="kw">let </span>panel = Id::from_retained_ptr(nswindow <span class="kw">as </span><span class="kw-2">*mut </span>RawNSPanel);
-            <span class="comment">// Add a tracking area to the panel&#39;s content view.
-            // This is needed to receive mouse events on older macOS versions
-            // i.e macOS 12.3
-            </span>panel.add_tracking_area();
+            panel.add_tracking_area();
             panel
         }
     }
