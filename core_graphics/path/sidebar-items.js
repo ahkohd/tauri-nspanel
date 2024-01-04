@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["CGPathElementType"],"struct":["CGPathElement","CGPathElementRef","CGPathRef"]};
+window.SIDEBAR_ITEMS = {"enum":["CGPathElementType"],"struct":["CGPath","CGPathElement","CGPathElementRef","CGPathRef"]};
