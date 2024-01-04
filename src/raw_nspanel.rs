@@ -1,6 +1,8 @@
+use bitflags::bitflags;
 use cocoa::{
-    appkit::NSWindowCollectionBehavior,
+    appkit::{NSView, NSWindowCollectionBehavior},
     base::{id, nil, BOOL, NO, YES},
+    foundation::NSRect,
 };
 use objc::{
     class,
@@ -12,6 +14,15 @@ use objc::{
 use objc_foundation::INSObject;
 use objc_id::{Id, ShareId};
 use tauri::{Runtime, Window};
+
+bitflags! {
+    struct NSTrackingAreaOptions: u32 {
+        const NSTrackingActiveAlways = 0x80;
+        const NSTrackingMouseEnteredAndExited = 0x01;
+        const NSTrackingMouseMoved = 0x02;
+        const NSTrackingCursorUpdate = 0x04;
+    }
+}
 
 extern "C" {
     pub fn object_setClass(obj: id, cls: id) -> id;
@@ -139,13 +150,37 @@ impl RawNSPanel {
         unsafe { ShareId::from_ptr(self as *mut Self) }
     }
 
+    fn add_tracking_area(&self) {
+        // Add a tracking area to the panel's content view.
+        // This is needed to receive mouse events on older macOS versions
+        // i.e macOS 12.3
+        let view: id = self.content_view();
+        let bounds: NSRect = unsafe { NSView::bounds(view) };
+        let track_view: id = unsafe { msg_send![class!(NSTrackingArea), alloc] };
+        let track_view: id = unsafe {
+            msg_send![
+            track_view,
+            initWithRect: bounds
+            options: NSTrackingAreaOptions::NSTrackingActiveAlways
+            | NSTrackingAreaOptions::NSTrackingMouseEnteredAndExited
+            | NSTrackingAreaOptions::NSTrackingMouseMoved
+            | NSTrackingAreaOptions::NSTrackingCursorUpdate
+            owner: view
+            userInfo: nil
+            ]
+        };
+        let () = unsafe { msg_send![view, addTrackingArea: track_view] };
+    }
+
     /// Create an NSPanel from a Tauri window
     pub fn from_window<R: Runtime>(window: Window<R>) -> Id<Self> {
         let nswindow: id = window.ns_window().unwrap() as _;
         let nspanel_class: id = unsafe { msg_send![Self::class(), class] };
         unsafe {
             object_setClass(nswindow, nspanel_class);
-            Id::from_retained_ptr(nswindow as *mut RawNSPanel)
+            let panel = Id::from_retained_ptr(nswindow as *mut RawNSPanel);
+            panel.add_tracking_area();
+            panel
         }
     }
 }
