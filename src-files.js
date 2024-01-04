@@ -91,7 +91,6 @@ var srcIndex = JSON.parse('{\
 "markup5ever":["",[["data",[],["mod.rs"]],["interface",[],["mod.rs","tree_builder.rs"]],["util",[],["buffer_queue.rs","smallcharset.rs"]]],["lib.rs","serialize.rs"]],\
 "matches":["",[],["lib.rs"]],\
 "memchr":["",[["arch",[["all",[["packedpair",[],["default_rank.rs","mod.rs"]]],["memchr.rs","mod.rs","rabinkarp.rs","shiftor.rs","twoway.rs"]],["generic",[],["memchr.rs","mod.rs","packedpair.rs"]],["x86_64",[["avx2",[],["memchr.rs","mod.rs","packedpair.rs"]],["sse2",[],["memchr.rs","mod.rs","packedpair.rs"]]],["memchr.rs","mod.rs"]]],["mod.rs"]],["memmem",[],["mod.rs","searcher.rs"]]],["cow.rs","ext.rs","lib.rs","macros.rs","memchr.rs","vector.rs"]],\
-"memoffset":["",[],["lib.rs","offset_of.rs","raw_field.rs","span_of.rs"]],\
 "miniz_oxide":["",[["deflate",[],["buffer.rs","core.rs","mod.rs","stream.rs"]],["inflate",[],["core.rs","mod.rs","output_buffer.rs","stream.rs"]]],["lib.rs","shared.rs"]],\
 "nodrop":["",[],["lib.rs"]],\
 "num_cpus":["",[],["lib.rs"]],\
