@@ -20,16 +20,9 @@ pub extern crate tauri;
 
 pub type Panel = ShareId<RawNSPanel>;
 
+#[derive(Default)]
 pub struct Store {
     panels: HashMap<String, ShareId<RawNSPanel>>,
-}
-
-impl Default for Store {
-    fn default() -> Self {
-        Self {
-            panels: HashMap::new(),
-        }
-    }
 }
 
 pub struct PanelManager(pub Mutex<Store>);
