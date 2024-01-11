@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/crossbeam-utils-0.8.18/src/thread.rs`."><title>thread.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="crossbeam_utils" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/crossbeam-utils-0.8.19/src/thread.rs`."><title>thread.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="crossbeam_utils" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -602,6 +602,10 @@
 <a href="#602" id="602">602</a>
 <a href="#603" id="603">603</a>
 <a href="#604" id="604">604</a>
+<a href="#605" id="605">605</a>
+<a href="#606" id="606">606</a>
+<a href="#607" id="607">607</a>
+<a href="#608" id="608">608</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Threads that can borrow variables from the stack.
 //!
 //! Create a scope when spawned threads need to access variables on the stack:
@@ -724,7 +728,6 @@
 <span class="kw">use </span>std::thread;
 
 <span class="kw">use </span><span class="kw">crate</span>::sync::WaitGroup;
-<span class="kw">use </span>cfg_if::cfg_if;
 
 <span class="kw">type </span>SharedVec&lt;T&gt; = Arc&lt;Mutex&lt;Vec&lt;T&gt;&gt;&gt;;
 <span class="kw">type </span>SharedOption&lt;T&gt; = Arc&lt;Mutex&lt;<span class="prelude-ty">Option</span>&lt;T&gt;&gt;&gt;;
@@ -1166,37 +1169,42 @@
     }
 }
 
-<span class="macro">cfg_if! </span>{
-    <span class="kw">if </span><span class="attr">#[cfg(unix)] </span>{
-        <span class="kw">use </span>std::os::unix::thread::{JoinHandleExt, RawPthread};
+<span class="doccomment">/// Unix-specific extensions.
+</span><span class="attr">#[cfg(unix)]
+</span><span class="kw">mod </span>unix {
+    <span class="kw">use </span><span class="kw">super</span>::ScopedJoinHandle;
+    <span class="kw">use </span>std::os::unix::thread::{JoinHandleExt, RawPthread};
 
-        <span class="kw">impl</span>&lt;T&gt; JoinHandleExt <span class="kw">for </span>ScopedJoinHandle&lt;<span class="lifetime">&#39;_</span>, T&gt; {
-            <span class="kw">fn </span>as_pthread_t(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RawPthread {
-                <span class="comment">// Borrow the handle. The handle will surely be available because the root scope waits
-                // for nested scopes before joining remaining threads.
-                </span><span class="kw">let </span>handle = <span class="self">self</span>.handle.lock().unwrap();
-                handle.as_ref().unwrap().as_pthread_t()
-            }
-            <span class="kw">fn </span>into_pthread_t(<span class="self">self</span>) -&gt; RawPthread {
-                <span class="self">self</span>.as_pthread_t()
-            }
+    <span class="kw">impl</span>&lt;T&gt; JoinHandleExt <span class="kw">for </span>ScopedJoinHandle&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+        <span class="kw">fn </span>as_pthread_t(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RawPthread {
+            <span class="comment">// Borrow the handle. The handle will surely be available because the root scope waits
+            // for nested scopes before joining remaining threads.
+            </span><span class="kw">let </span>handle = <span class="self">self</span>.handle.lock().unwrap();
+            handle.as_ref().unwrap().as_pthread_t()
         }
-    } <span class="kw">else if </span><span class="attr">#[cfg(windows)] </span>{
-        <span class="kw">use </span>std::os::windows::io::{AsRawHandle, IntoRawHandle, RawHandle};
-
-        <span class="kw">impl</span>&lt;T&gt; AsRawHandle <span class="kw">for </span>ScopedJoinHandle&lt;<span class="lifetime">&#39;_</span>, T&gt; {
-            <span class="kw">fn </span>as_raw_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RawHandle {
-                <span class="comment">// Borrow the handle. The handle will surely be available because the root scope waits
-                // for nested scopes before joining remaining threads.
-                </span><span class="kw">let </span>handle = <span class="self">self</span>.handle.lock().unwrap();
-                handle.as_ref().unwrap().as_raw_handle()
-            }
+        <span class="kw">fn </span>into_pthread_t(<span class="self">self</span>) -&gt; RawPthread {
+            <span class="self">self</span>.as_pthread_t()
         }
+    }
+}
+<span class="doccomment">/// Windows-specific extensions.
+</span><span class="attr">#[cfg(windows)]
+</span><span class="kw">mod </span>windows {
+    <span class="kw">use </span><span class="kw">super</span>::ScopedJoinHandle;
+    <span class="kw">use </span>std::os::windows::io::{AsRawHandle, IntoRawHandle, RawHandle};
 
-        <span class="kw">impl</span>&lt;T&gt; IntoRawHandle <span class="kw">for </span>ScopedJoinHandle&lt;<span class="lifetime">&#39;_</span>, T&gt; {
-            <span class="kw">fn </span>into_raw_handle(<span class="self">self</span>) -&gt; RawHandle {
-                <span class="self">self</span>.as_raw_handle()
-            }
+    <span class="kw">impl</span>&lt;T&gt; AsRawHandle <span class="kw">for </span>ScopedJoinHandle&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+        <span class="kw">fn </span>as_raw_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RawHandle {
+            <span class="comment">// Borrow the handle. The handle will surely be available because the root scope waits
+            // for nested scopes before joining remaining threads.
+            </span><span class="kw">let </span>handle = <span class="self">self</span>.handle.lock().unwrap();
+            handle.as_ref().unwrap().as_raw_handle()
+        }
+    }
+
+    <span class="kw">impl</span>&lt;T&gt; IntoRawHandle <span class="kw">for </span>ScopedJoinHandle&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+        <span class="kw">fn </span>into_raw_handle(<span class="self">self</span>) -&gt; RawHandle {
+            <span class="self">self</span>.as_raw_handle()
         }
     }
 }
