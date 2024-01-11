@@ -1,6 +1,6 @@
 use bitflags::bitflags;
 use cocoa::{
-    appkit::{NSView, NSWindowCollectionBehavior},
+    appkit::{NSView, NSViewHeightSizable, NSViewWidthSizable, NSWindowCollectionBehavior},
     base::{id, nil, BOOL, NO, YES},
     foundation::NSRect,
 };
@@ -166,6 +166,8 @@ impl RawNSPanel {
             userInfo: nil
             ]
         };
+        let autoresizing_mask = NSViewWidthSizable | NSViewHeightSizable;
+        let () = unsafe { msg_send![view, setAutoresizingMask: autoresizing_mask] };
         let () = unsafe { msg_send![view, addTrackingArea: track_view] };
     }
 
