@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/png-0.17.10/src/encoder.rs`."><title>encoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="png" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/png-0.17.11/src/encoder.rs`."><title>encoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="png" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2387,6 +2387,30 @@
 <a href="#2387" id="2387">2387</a>
 <a href="#2388" id="2388">2388</a>
 <a href="#2389" id="2389">2389</a>
+<a href="#2390" id="2390">2390</a>
+<a href="#2391" id="2391">2391</a>
+<a href="#2392" id="2392">2392</a>
+<a href="#2393" id="2393">2393</a>
+<a href="#2394" id="2394">2394</a>
+<a href="#2395" id="2395">2395</a>
+<a href="#2396" id="2396">2396</a>
+<a href="#2397" id="2397">2397</a>
+<a href="#2398" id="2398">2398</a>
+<a href="#2399" id="2399">2399</a>
+<a href="#2400" id="2400">2400</a>
+<a href="#2401" id="2401">2401</a>
+<a href="#2402" id="2402">2402</a>
+<a href="#2403" id="2403">2403</a>
+<a href="#2404" id="2404">2404</a>
+<a href="#2405" id="2405">2405</a>
+<a href="#2406" id="2406">2406</a>
+<a href="#2407" id="2407">2407</a>
+<a href="#2408" id="2408">2408</a>
+<a href="#2409" id="2409">2409</a>
+<a href="#2410" id="2410">2410</a>
+<a href="#2411" id="2411">2411</a>
+<a href="#2412" id="2412">2412</a>
+<a href="#2413" id="2413">2413</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>borrow::Cow;
 <span class="kw">use </span>io::{Read, Write};
 <span class="kw">use </span>ops::{Deref, DerefMut};
@@ -2556,6 +2580,24 @@
             info: Info::with_size(width, height),
             options: Options::default(),
         }
+    }
+
+    <span class="kw">pub fn </span>with_info(w: W, info: Info&lt;<span class="lifetime">&#39;a</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;Encoder&lt;<span class="lifetime">&#39;a</span>, W&gt;&gt; {
+        <span class="kw">if </span>info.animation_control.is_some() != info.frame_control.is_some() {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(EncodingError::Format(FormatErrorKind::NotAnimated.into()));
+        }
+
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(actl) = info.animation_control {
+            <span class="kw">if </span>actl.num_frames == <span class="number">0 </span>{
+                <span class="kw">return </span><span class="prelude-val">Err</span>(EncodingError::Format(FormatErrorKind::ZeroFrames.into()));
+            }
+        }
+
+        <span class="prelude-val">Ok</span>(Encoder {
+            w,
+            info,
+            options: Options::default(),
+        })
     }
 
     <span class="doccomment">/// Specify that the image is animated.
@@ -3914,7 +3956,13 @@
         }
     }
 
-    <span class="kw">pub fn </span>finish(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+    <span class="doccomment">/// Consume the stream writer with validation.
+    ///
+    /// Unlike a simple drop this ensures that the all data was written correctly. When other
+    /// validation options (chunk sequencing) had been turned on in the configuration of inner
+    /// [`Writer`], then it will also do a check on their correctness. Differently from
+    /// [`Writer::finish`], this just `flush`es, returns error if some data is abandoned.
+    </span><span class="kw">pub fn </span>finish(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">if </span><span class="self">self</span>.to_write &gt; <span class="number">0 </span>{
             <span class="kw">let </span>err = FormatErrorKind::MissingData(<span class="self">self</span>.to_write).into();
             <span class="kw">return </span><span class="prelude-val">Err</span>(EncodingError::Format(err));
@@ -4053,6 +4101,25 @@
 <span class="kw">impl</span>&lt;W: Write&gt; Drop <span class="kw">for </span>StreamWriter&lt;<span class="lifetime">&#39;_</span>, W&gt; {
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="kw">let _ </span>= <span class="self">self</span>.flush();
+    }
+}
+
+<span class="doccomment">/// Mod to encapsulate the converters depending on the `deflate` crate.
+///
+/// Since this only contains trait impls, there is no need to make this public, they are simply
+/// available when the mod is compiled as well.
+</span><span class="kw">impl </span>Compression {
+    <span class="kw">fn </span>to_options(<span class="self">self</span>) -&gt; flate2::Compression {
+        <span class="attr">#[allow(deprecated)]
+        </span><span class="kw">match </span><span class="self">self </span>{
+            Compression::Default =&gt; flate2::Compression::default(),
+            Compression::Fast =&gt; flate2::Compression::fast(),
+            Compression::Best =&gt; flate2::Compression::best(),
+            <span class="attr">#[allow(deprecated)]
+            </span>Compression::Huffman =&gt; flate2::Compression::none(),
+            <span class="attr">#[allow(deprecated)]
+            </span>Compression::Rle =&gt; flate2::Compression::none(),
+        }
     }
 }
 
@@ -4754,25 +4821,6 @@
 
         <span class="kw">fn </span>flush(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; io::Result&lt;()&gt; {
             <span class="self">self</span>.w.flush()
-        }
-    }
-}
-
-<span class="doccomment">/// Mod to encapsulate the converters depending on the `deflate` crate.
-///
-/// Since this only contains trait impls, there is no need to make this public, they are simply
-/// available when the mod is compiled as well.
-</span><span class="kw">impl </span>Compression {
-    <span class="kw">fn </span>to_options(<span class="self">self</span>) -&gt; flate2::Compression {
-        <span class="attr">#[allow(deprecated)]
-        </span><span class="kw">match </span><span class="self">self </span>{
-            Compression::Default =&gt; flate2::Compression::default(),
-            Compression::Fast =&gt; flate2::Compression::fast(),
-            Compression::Best =&gt; flate2::Compression::best(),
-            <span class="attr">#[allow(deprecated)]
-            </span>Compression::Huffman =&gt; flate2::Compression::none(),
-            <span class="attr">#[allow(deprecated)]
-            </span>Compression::Rle =&gt; flate2::Compression::none(),
         }
     }
 }
