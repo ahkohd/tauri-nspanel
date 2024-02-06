@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.35.1/src/runtime/scheduler/multi_thread/worker.rs`."><title>worker.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="tokio" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.36.0/src/runtime/scheduler/multi_thread/worker.rs`."><title>worker.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="tokio" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1243,19 +1243,19 @@
 //! Shutting down the runtime involves the following steps:
 //!
 //!  1. The Shared::close method is called. This closes the inject queue and
-//!     OwnedTasks instance and wakes up all worker threads.
+//!     `OwnedTasks` instance and wakes up all worker threads.
 //!
 //!  2. Each worker thread observes the close signal next time it runs
 //!     Core::maintenance by checking whether the inject queue is closed.
-//!     The Core::is_shutdown flag is set to true.
+//!     The `Core::is_shutdown` flag is set to true.
 //!
 //!  3. The worker thread calls `pre_shutdown` in parallel. Here, the worker
-//!     will keep removing tasks from OwnedTasks until it is empty. No new
-//!     tasks can be pushed to the OwnedTasks during or after this step as it
+//!     will keep removing tasks from `OwnedTasks` until it is empty. No new
+//!     tasks can be pushed to the `OwnedTasks` during or after this step as it
 //!     was closed in step 1.
 //!
 //!  5. The workers call Shared::shutdown to enter the single-threaded phase of
-//!     shutdown. These calls will push their core to Shared::shutdown_cores,
+//!     shutdown. These calls will push their core to `Shared::shutdown_cores`,
 //!     and the last thread to push its core will finish the shutdown procedure.
 //!
 //!  6. The local run queue of each core is emptied, then the inject queue is
@@ -1269,22 +1269,22 @@
 //!
 //! When spawning tasks during shutdown, there are two cases:
 //!
-//!  * The spawner observes the OwnedTasks being open, and the inject queue is
+//!  * The spawner observes the `OwnedTasks` being open, and the inject queue is
 //!    closed.
-//!  * The spawner observes the OwnedTasks being closed and doesn&#39;t check the
+//!  * The spawner observes the `OwnedTasks` being closed and doesn&#39;t check the
 //!    inject queue.
 //!
-//! The first case can only happen if the OwnedTasks::bind call happens before
+//! The first case can only happen if the `OwnedTasks::bind` call happens before
 //! or during step 1 of shutdown. In this case, the runtime will clean up the
 //! task in step 3 of shutdown.
 //!
 //! In the latter case, the task was not spawned and the task is immediately
 //! cancelled by the spawner.
 //!
-//! The correctness of shutdown requires both the inject queue and OwnedTasks
+//! The correctness of shutdown requires both the inject queue and `OwnedTasks`
 //! collection to have a closed bit. With a close bit on only the inject queue,
 //! spawning could run in to a situation where a task is successfully bound long
-//! after the runtime has shut down. With a close bit on only the OwnedTasks,
+//! after the runtime has shut down. With a close bit on only the `OwnedTasks`,
 //! the first spawning situation could result in the notification being pushed
 //! to the inject queue after step 6 of shutdown, which would leave a task in
 //! the inject queue indefinitely. This would be a ref-count cycle and a memory
@@ -1418,7 +1418,7 @@
     <span class="doccomment">/// Only held to trigger some code on drop. This is used to get internal
     /// runtime metrics that can be useful when doing performance
     /// investigations. This does nothing (empty struct, no drop impl) unless
-    /// the `tokio_internal_mt_counters` cfg flag is set.
+    /// the `tokio_internal_mt_counters` `cfg` flag is set.
     </span>_counters: Counters,
 }
 
@@ -1468,7 +1468,7 @@
 </span><span class="kw">type </span>Notified = task::Notified&lt;Arc&lt;Handle&gt;&gt;;
 
 <span class="doccomment">/// Value picked out of thin-air. Running the LIFO slot a handful of times
-/// seemms sufficient to benefit from locality. More than 3 times probably is
+/// seems sufficient to benefit from locality. More than 3 times probably is
 /// overweighing. The value can be tuned in the future with data that shows
 /// improvements.
 </span><span class="kw">const </span>MAX_LIFO_POLLS_PER_TICK: usize = <span class="number">3</span>;
@@ -1911,7 +1911,7 @@
     /// Also important to notice that, before parking, the worker thread will try to take
     /// ownership of the Driver (IO/Time) and dispatch any events that might have fired.
     /// Whenever a worker thread executes the Driver loop, all waken tasks are scheduled
-    /// in its own local queue until the queue saturates (ntasks &gt; LOCAL_QUEUE_CAPACITY).
+    /// in its own local queue until the queue saturates (ntasks &gt; `LOCAL_QUEUE_CAPACITY`).
     /// When the local queue is saturated, the overflow tasks are added to the injection queue
     /// from where other workers can pick them up.
     /// Also, we rely on the workstealing algorithm to spread the tasks amongst workers
