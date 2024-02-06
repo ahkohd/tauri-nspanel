@@ -122,7 +122,7 @@ impl RawNSPanel {
         let _: () = unsafe { msg_send![self, setLevel: level] };
     }
 
-    pub fn set_alpha_value(&self, value: f32) {
+    pub fn set_alpha_value(&self, value: f64) {
         let _: () = unsafe { msg_send![self, setAlphaValue: value] };
     }
 
