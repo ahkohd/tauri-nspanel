@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-3.4.0/src/enc/encode.rs`."><title>encode.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-3.4.0/src/enc/encode.rs`."><title>encode.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -3145,11 +3146,11 @@
     TinyBuf(u32),
     <span class="prelude-val">None</span>,
 }
-<span class="kw">fn </span>GetNextOutInternal&lt;<span class="lifetime">&#39;a</span>&gt;(
+<span class="kw">fn </span>GetNextOutInternal&lt;<span class="lifetime">'a</span>&gt;(
     next_out :<span class="kw-2">&amp;</span>NextOut,
-    storage : <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>[u8],
-    tiny_buf : <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>[u8;<span class="number">16</span>],
-) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut</span>[u8]{
+    storage : <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>[u8],
+    tiny_buf : <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>[u8;<span class="number">16</span>],
+) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut</span>[u8]{
     <span class="kw">match </span>next_out {
         <span class="kw-2">&amp;</span>NextOut::DynamicStorage(offset) =&gt;
             <span class="kw">return </span><span class="kw-2">&amp;mut </span>storage[offset <span class="kw">as </span>usize..],
@@ -3391,7 +3392,7 @@ value: u32) -&gt; i32 {
   }
   set_parameter(<span class="kw-2">&amp;mut </span>state.params, p, value)
 }
-<span class="comment">/* &quot;Large Window Brotli&quot; */
+<span class="comment">/* "Large Window Brotli" */
 </span><span class="kw">pub const </span>BROTLI_LARGE_MAX_DISTANCE_BITS: u32 = <span class="number">62</span>;
 <span class="kw">pub const </span>BROTLI_LARGE_MIN_WBITS: u32 = <span class="number">10</span>;
 <span class="kw">pub const </span>BROTLI_LARGE_MAX_WBITS: u32 = <span class="number">30</span>;
@@ -3635,11 +3636,11 @@ m16: &amp;mut AllocU16, m32:&amp;mut AllocU32, handle: &amp;mut UnionHasher&lt;A
   <span class="kw">if </span>a &gt; b { a } <span class="kw">else </span>{ b }
 }
 
-<span class="attr">#[cfg(not(feature=<span class="string">&quot;disallow_large_window_size&quot;</span>))]
+<span class="attr">#[cfg(not(feature=<span class="string">"disallow_large_window_size"</span>))]
 </span><span class="kw">fn </span>check_large_window_ok() -&gt; bool {
   <span class="bool-val">true
 </span>}
-<span class="attr">#[cfg(feature=<span class="string">&quot;disallow_large_window_size&quot;</span>)]
+<span class="attr">#[cfg(feature=<span class="string">"disallow_large_window_size"</span>)]
 </span><span class="kw">fn </span>check_large_window_ok() -&gt; bool {
   <span class="bool-val">false
 </span>}
@@ -3914,7 +3915,7 @@ m16: &amp;mut AllocU16, m32:&amp;mut AllocU32, handle: &amp;mut UnionHasher&lt;A
   <span class="kw">let </span>hparams = <span class="kw-2">&amp;mut </span>params.hasher;
   <span class="kw">if </span>(<span class="kw-2">*</span>params).quality &gt;= <span class="number">10 </span>&amp;&amp; !params.q9_5{
       (<span class="kw-2">*</span>hparams).type_ = <span class="number">10</span>;
-  } <span class="kw">else if </span>(<span class="kw-2">*</span>params).quality == <span class="number">10 </span>{ <span class="comment">// we are using quality 10 as a proxy for &quot;9.5&quot;
+  } <span class="kw">else if </span>(<span class="kw-2">*</span>params).quality == <span class="number">10 </span>{ <span class="comment">// we are using quality 10 as a proxy for "9.5"
       </span>(<span class="kw-2">*</span>hparams).type_ = <span class="number">9</span>;
       (<span class="kw-2">*</span>hparams).num_last_distances_to_check = H9_NUM_LAST_DISTANCES_TO_CHECK <span class="kw">as </span>i32;
       (<span class="kw-2">*</span>hparams).block_bits = H9_BLOCK_BITS <span class="kw">as </span>i32;
@@ -4156,7 +4157,7 @@ m16: &amp;mut AllocU16, m32:&amp;mut AllocU32, handle: &amp;mut UnionHasher&lt;A
     <span class="kw">if </span>hasher_type == <span class="number">10i32 </span>{
       <span class="kw">return </span>UnionHasher::H10(InitializeH10(m, <span class="bool-val">false</span>, params, <span class="number">0</span>));
   }
-  <span class="comment">// since we don&#39;t support all of these, fall back to something sane
+  <span class="comment">// since we don't support all of these, fall back to something sane
   </span><span class="kw">return </span>InitializeH6(m, params);
       
 <span class="comment">//  return UnionHasher::Uninit;
@@ -4226,7 +4227,7 @@ m16: &amp;mut AllocU16, m32:&amp;mut AllocU32, handle: &amp;mut UnionHasher&lt;A
     <span class="kw-2">&amp;mut </span>UnionHasher::H9(<span class="kw-2">ref mut </span>hasher) =&gt; StoreLookaheadThenStore(hasher, size, dict),
     <span class="kw-2">&amp;mut </span>UnionHasher::H54(<span class="kw-2">ref mut </span>hasher) =&gt; StoreLookaheadThenStore(hasher, size, dict),
     <span class="kw-2">&amp;mut </span>UnionHasher::H10(<span class="kw-2">ref mut </span>hasher) =&gt; StoreLookaheadThenStore(hasher, size, dict),
-    <span class="kw-2">&amp;mut </span>UnionHasher::Uninit =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Uninitialized&quot;</span>),
+    <span class="kw-2">&amp;mut </span>UnionHasher::Uninit =&gt; <span class="macro">panic!</span>(<span class="string">"Uninitialized"</span>),
   }
 }
 
@@ -4252,8 +4253,8 @@ m16: &amp;mut AllocU16, m32:&amp;mut AllocU32, handle: &amp;mut UnionHasher&lt;A
     <span class="kw">return</span>;
   }
   <span class="kw">if </span>dict_size == <span class="number">0usize </span>|| (<span class="kw-2">*</span>s).params.quality == <span class="number">0i32 </span>|| (<span class="kw-2">*</span>s).params.quality == <span class="number">1i32 </span>|| size &lt;= <span class="number">1 </span>{
-    (<span class="kw-2">*</span>s).params.catable = <span class="bool-val">true</span>; <span class="comment">// don&#39;t risk a too-short dictionary
-    </span>(<span class="kw-2">*</span>s).params.appendable = <span class="bool-val">true</span>; <span class="comment">// don&#39;t risk a too-short dictionary
+    (<span class="kw-2">*</span>s).params.catable = <span class="bool-val">true</span>; <span class="comment">// don't risk a too-short dictionary
+    </span>(<span class="kw-2">*</span>s).params.appendable = <span class="bool-val">true</span>; <span class="comment">// don't risk a too-short dictionary
     </span><span class="kw">return</span>;
   }
   s.custom_dictionary = <span class="bool-val">true</span>;
@@ -4525,7 +4526,7 @@ m16: &amp;mut AllocU16, m32:&amp;mut AllocU32, handle: &amp;mut UnionHasher&lt;A
   }
   <span class="kw">let </span><span class="kw-2">mut </span>is_fallback: i32 = <span class="number">0i32</span>;
   <span class="kw">if </span>quality == <span class="number">10i32 </span>{
-    <span class="macro">panic!</span>(<span class="string">&quot;Unimplemented: need to set 9.5 here&quot;</span>);
+    <span class="macro">panic!</span>(<span class="string">"Unimplemented: need to set 9.5 here"</span>);
   }
   <span class="kw">if </span>is_fallback == <span class="number">0 </span>{
     
@@ -4713,13 +4714,13 @@ m16: &amp;mut AllocU16, m32:&amp;mut AllocU32, handle: &amp;mut UnionHasher&lt;A
                              <span class="macro-nonterminal">$quality</span>, <span class="macro-nonterminal">$input_size</span>, <span class="macro-nonterminal">$table_size</span>)
     };
 }
-<span class="kw">fn </span>GetHashTableInternal&lt;<span class="lifetime">&#39;a</span>, AllocI32: alloc::Allocator&lt;i32&gt;&gt;(mi32: <span class="kw-2">&amp;mut </span>AllocI32,
-                                                             small_table_: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>[i32; <span class="number">1024</span>],
-                                                             large_table_: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>AllocI32::AllocatedMemory,
+<span class="kw">fn </span>GetHashTableInternal&lt;<span class="lifetime">'a</span>, AllocI32: alloc::Allocator&lt;i32&gt;&gt;(mi32: <span class="kw-2">&amp;mut </span>AllocI32,
+                                                             small_table_: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>[i32; <span class="number">1024</span>],
+                                                             large_table_: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>AllocI32::AllocatedMemory,
                                                              quality: i32,
                                                              input_size: usize,
                                                              table_size: <span class="kw-2">&amp;mut </span>usize)
-                                                                 -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>[i32] {
+                                                                 -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>[i32] {
   <span class="kw">let </span>max_table_size: usize = MaxHashTableSize(quality);
   <span class="kw">let </span><span class="kw-2">mut </span>htsize: usize = HashTableSize(max_table_size, input_size);
   <span class="kw">let </span>table: <span class="kw-2">&amp;mut </span>[i32];
@@ -4859,7 +4860,7 @@ m16: &amp;mut AllocU16, m32:&amp;mut AllocU32, handle: &amp;mut UnionHasher&lt;A
     </span><span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="comment">/* 4 lf */
     </span><span class="number">1</span>, <span class="number">1</span>, <span class="number">9</span>, <span class="number">9</span>, <span class="comment">/* 8 space */
     </span><span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="comment">/* !, first after space/lf and after something else. */
-    </span><span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="comment">/* &quot; */
+    </span><span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="comment">/* " */
     </span><span class="number">8</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="comment">/* % */
     </span><span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="comment">/* ({[ */
     </span><span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="comment">/* }]) */
@@ -5242,7 +5243,7 @@ m16: &amp;mut AllocU16, m32:&amp;mut AllocU32, handle: &amp;mut UnionHasher&lt;A
     force_flush: i32,
     out_size: <span class="kw-2">&amp;mut </span>usize,
     callback: <span class="kw-2">&amp;mut </span>MetablockCallback
-<span class="comment">//              mut output: &amp;&#39;a mut &amp;&#39;a mut [u8]
+<span class="comment">//              mut output: &amp;'a mut &amp;'a mut [u8]
 </span>) -&gt; i32 <span class="kw">where </span>MetablockCallback: FnMut(<span class="kw-2">&amp;mut </span>interface::PredictionModeContextMap&lt;InputReferenceMut&gt;,
                                         <span class="kw-2">&amp;mut </span>[interface::StaticCommand],
                                         interface::InputPair, <span class="kw-2">&amp;mut </span>Alloc){
@@ -5419,8 +5420,8 @@ m16: &amp;mut AllocU16, m32:&amp;mut AllocU32, handle: &amp;mut UnionHasher&lt;A
   <span class="kw">if </span>s.num_commands_ != <span class="number">0 </span>&amp;&amp; s.last_insert_len_ == <span class="number">0 </span>{
       ExtendLastCommand(s, <span class="kw-2">&amp;mut </span>bytes, <span class="kw-2">&amp;mut </span>wrapped_last_processed_pos);
   }
-  <span class="kw">if </span><span class="bool-val">false </span>{ <span class="comment">// we are remapping 10 as quality=9.5 since Zopfli doesn&#39;t seem to offer much benefits here
-    </span><span class="macro">panic!</span>(<span class="string">r####&quot;
+  <span class="kw">if </span><span class="bool-val">false </span>{ <span class="comment">// we are remapping 10 as quality=9.5 since Zopfli doesn't seem to offer much benefits here
+    </span><span class="macro">panic!</span>(<span class="string">r####"
     BrotliCreateZopfliBackwardReferences(m,
                                          dictionary,
                                          bytes as (usize),
@@ -5433,9 +5434,9 @@ m16: &amp;mut AllocU16, m32:&amp;mut AllocU32, handle: &amp;mut UnionHasher&lt;A
                                          &amp;mut (*s).last_insert_len_,
                                          &amp;mut *(*s).commands_[((*s).num_commands_ as (usize))..],
                                          &amp;mut (*s).num_commands_,
-                                         &amp;mut (*s).num_literals_);&quot;####</span>);
+                                         &amp;mut (*s).num_literals_);"####</span>);
   } <span class="kw">else if </span><span class="bool-val">false </span>&amp;&amp; (<span class="kw-2">*</span>s).params.quality == <span class="number">11i32 </span>{
-    <span class="macro">panic!</span>(<span class="string">r####&quot;BrotliCreateHqZopfliBackwardReferences(m,
+    <span class="macro">panic!</span>(<span class="string">r####"BrotliCreateHqZopfliBackwardReferences(m,
                                            dictionary,
                                            bytes as (usize),
                                            wrapped_last_processed_pos as (usize),
@@ -5447,7 +5448,7 @@ m16: &amp;mut AllocU16, m32:&amp;mut AllocU32, handle: &amp;mut UnionHasher&lt;A
                                            &amp;mut (*s).last_insert_len_,
                                            &amp;mut *(*s).commands_[((*s).num_commands_ as (usize))..],
                                            &amp;mut (*s).num_commands_,
-                                           &amp;mut (*s).num_literals_);&quot;####</span>);
+                                           &amp;mut (*s).num_literals_);"####</span>);
   } <span class="kw">else </span>{
     BrotliCreateBackwardReferences(<span class="kw-2">&amp;mut </span>(<span class="kw-2">*</span>s).m8, <span class="kw-2">&amp;</span>dictionary,
                                    bytes <span class="kw">as </span>(usize),
@@ -6018,9 +6019,9 @@ m16: &amp;mut AllocU16, m32:&amp;mut AllocU32, handle: &amp;mut UnionHasher&lt;A
 }
 
 
-<span class="kw">pub fn </span>BrotliEncoderTakeOutput&lt;<span class="lifetime">&#39;a</span>, Alloc:BrotliAlloc&gt;(s: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>BrotliEncoderStateStruct&lt;Alloc&gt;,
+<span class="kw">pub fn </span>BrotliEncoderTakeOutput&lt;<span class="lifetime">'a</span>, Alloc:BrotliAlloc&gt;(s: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>BrotliEncoderStateStruct&lt;Alloc&gt;,
                                size: <span class="kw-2">&amp;mut </span>usize)
-                               -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8] {
+                               -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8] {
   <span class="kw">let </span><span class="kw-2">mut </span>consumed_size: usize = (<span class="kw-2">*</span>s).available_out_;
   <span class="kw">let </span><span class="kw-2">mut </span>result: <span class="kw-2">&amp;</span>[u8] = <span class="macro">GetNextOut!</span>(<span class="kw-2">*</span>s);
   <span class="kw">if </span><span class="kw-2">*</span>size != <span class="number">0 </span>{
@@ -6059,15 +6060,15 @@ m16: &amp;mut AllocU16, m32:&amp;mut AllocU32, handle: &amp;mut UnionHasher&lt;A
 }
 
 
-<span class="kw">pub fn </span>BrotliEncoderWriteData&lt;<span class="lifetime">&#39;a</span>, Alloc: BrotliAlloc,
+<span class="kw">pub fn </span>BrotliEncoderWriteData&lt;<span class="lifetime">'a</span>, Alloc: BrotliAlloc,
                               MetablockCallback:FnMut(<span class="kw-2">&amp;mut </span>interface::PredictionModeContextMap&lt;InputReferenceMut&gt;,
                                                        <span class="kw-2">&amp;mut </span>[interface::StaticCommand],
                                                        interface::InputPair, <span class="kw-2">&amp;mut </span>Alloc)&gt;(
-    s: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>BrotliEncoderStateStruct&lt;Alloc&gt;,
+    s: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>BrotliEncoderStateStruct&lt;Alloc&gt;,
     is_last: i32,
     force_flush: i32,
     out_size: <span class="kw-2">&amp;mut </span>usize,
-    output: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut &amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>[u8],
+    output: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut &amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>[u8],
     metablock_callback: <span class="kw-2">&amp;mut </span>MetablockCallback)
                               -&gt; i32 {
     <span class="kw">let </span>ret = EncodeData(s, is_last, force_flush, out_size, metablock_callback);

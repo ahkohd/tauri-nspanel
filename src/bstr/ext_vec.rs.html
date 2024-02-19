@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bstr-1.9.0/src/ext_vec.rs`."><title>ext_vec.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bstr" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bstr-1.9.0/src/ext_vec.rs`."><title>ext_vec.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bstr" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1230,7 +1231,7 @@
 
 <span class="kw">use </span>alloc::{borrow::Cow, string::String, vec, vec::Vec};
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
 </span><span class="kw">use </span>std::{
     error,
     ffi::{OsStr, OsString},
@@ -1255,8 +1256,8 @@
 /// ```
 /// use bstr;
 ///
-/// let s = bstr::concat(&amp;[&quot;foo&quot;, &quot;bar&quot;, &quot;baz&quot;]);
-/// assert_eq!(s, &quot;foobarbaz&quot;.as_bytes());
+/// let s = bstr::concat(&amp;["foo", "bar", "baz"]);
+/// assert_eq!(s, "foobarbaz".as_bytes());
 /// ```
 </span><span class="attr">#[inline]
 </span><span class="kw">pub fn </span>concat&lt;T, I&gt;(elements: I) -&gt; Vec&lt;u8&gt;
@@ -1285,8 +1286,8 @@
 /// ```
 /// use bstr;
 ///
-/// let s = bstr::join(&quot;,&quot;, &amp;[&quot;foo&quot;, &quot;bar&quot;, &quot;baz&quot;]);
-/// assert_eq!(s, &quot;foo,bar,baz&quot;.as_bytes());
+/// let s = bstr::join(",", &amp;["foo", "bar", "baz"]);
+/// assert_eq!(s, "foo,bar,baz".as_bytes());
 /// ```
 </span><span class="attr">#[inline]
 </span><span class="kw">pub fn </span>join&lt;B, T, I&gt;(separator: B, elements: I) -&gt; Vec&lt;u8&gt;
@@ -1343,26 +1344,26 @@
 /// ```
 /// use bstr::{B, ByteVec};
 ///
-/// let s = Vec::from_slice(b&quot;abc&quot;); // NOT ByteVec::from_slice(&quot;...&quot;)
-/// assert_eq!(s, B(&quot;abc&quot;));
+/// let s = Vec::from_slice(b"abc"); // NOT ByteVec::from_slice("...")
+/// assert_eq!(s, B("abc"));
 /// ```
 ///
 /// This trait is sealed and cannot be implemented outside of `bstr`.
 </span><span class="kw">pub trait </span>ByteVec: private::Sealed {
     <span class="doccomment">/// A method for accessing the raw vector bytes of this type. This is
-    /// always a no-op and callers shouldn&#39;t care about it. This only exists
+    /// always a no-op and callers shouldn't care about it. This only exists
     /// for making the extension trait work.
     </span><span class="attr">#[doc(hidden)]
     </span><span class="kw">fn </span>as_vec(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Vec&lt;u8&gt;;
 
     <span class="doccomment">/// A method for accessing the raw vector bytes of this type, mutably. This
-    /// is always a no-op and callers shouldn&#39;t care about it. This only exists
+    /// is always a no-op and callers shouldn't care about it. This only exists
     /// for making the extension trait work.
     </span><span class="attr">#[doc(hidden)]
     </span><span class="kw">fn </span>as_vec_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>Vec&lt;u8&gt;;
 
     <span class="doccomment">/// A method for consuming ownership of this vector. This is always a no-op
-    /// and callers shouldn&#39;t care about it. This only exists for making the
+    /// and callers shouldn't care about it. This only exists for making the
     /// extension trait work.
     </span><span class="attr">#[doc(hidden)]
     </span><span class="kw">fn </span>into_vec(<span class="self">self</span>) -&gt; Vec&lt;u8&gt;
@@ -1378,8 +1379,8 @@
     /// ```
     /// use bstr::{B, ByteVec};
     ///
-    /// let s = Vec::from_slice(b&quot;abc&quot;);
-    /// assert_eq!(s, B(&quot;abc&quot;));
+    /// let s = Vec::from_slice(b"abc");
+    /// assert_eq!(s, B("abc"));
     /// ```
     </span><span class="attr">#[inline]
     </span><span class="kw">fn </span>from_slice&lt;B: AsRef&lt;[u8]&gt;&gt;(bytes: B) -&gt; Vec&lt;u8&gt; {
@@ -1401,12 +1402,12 @@
     ///
     /// use bstr::{B, ByteVec};
     ///
-    /// let os_str = OsString::from(&quot;foo&quot;);
-    /// let bs = Vec::from_os_string(os_str).expect(&quot;valid UTF-8&quot;);
-    /// assert_eq!(bs, B(&quot;foo&quot;));
+    /// let os_str = OsString::from("foo");
+    /// let bs = Vec::from_os_string(os_str).expect("valid UTF-8");
+    /// assert_eq!(bs, B("foo"));
     /// ```
     </span><span class="attr">#[inline]
-    #[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+    #[cfg(feature = <span class="string">"std"</span>)]
     </span><span class="kw">fn </span>from_os_string(os_str: OsString) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;u8&gt;, OsString&gt; {
         <span class="attr">#[cfg(unix)]
         #[inline]
@@ -1442,16 +1443,16 @@
     ///
     /// use bstr::{B, ByteVec};
     ///
-    /// let os_str = OsStr::new(&quot;foo&quot;);
+    /// let os_str = OsStr::new("foo");
     /// let bs = Vec::from_os_str_lossy(os_str);
-    /// assert_eq!(bs, B(&quot;foo&quot;));
+    /// assert_eq!(bs, B("foo"));
     /// ```
     </span><span class="attr">#[inline]
-    #[cfg(feature = <span class="string">&quot;std&quot;</span>)]
-    </span><span class="kw">fn </span>from_os_str_lossy&lt;<span class="lifetime">&#39;a</span>&gt;(os_str: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>OsStr) -&gt; Cow&lt;<span class="lifetime">&#39;a</span>, [u8]&gt; {
+    #[cfg(feature = <span class="string">"std"</span>)]
+    </span><span class="kw">fn </span>from_os_str_lossy&lt;<span class="lifetime">'a</span>&gt;(os_str: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>OsStr) -&gt; Cow&lt;<span class="lifetime">'a</span>, [u8]&gt; {
         <span class="attr">#[cfg(unix)]
         #[inline]
-        </span><span class="kw">fn </span>imp&lt;<span class="lifetime">&#39;a</span>&gt;(os_str: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>OsStr) -&gt; Cow&lt;<span class="lifetime">&#39;a</span>, [u8]&gt; {
+        </span><span class="kw">fn </span>imp&lt;<span class="lifetime">'a</span>&gt;(os_str: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>OsStr) -&gt; Cow&lt;<span class="lifetime">'a</span>, [u8]&gt; {
             <span class="kw">use </span>std::os::unix::ffi::OsStrExt;
 
             Cow::Borrowed(os_str.as_bytes())
@@ -1459,7 +1460,7 @@
 
         <span class="attr">#[cfg(not(unix))]
         #[inline]
-        </span><span class="kw">fn </span>imp&lt;<span class="lifetime">&#39;a</span>&gt;(os_str: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>OsStr) -&gt; Cow&lt;<span class="lifetime">&#39;a</span>, [u8]&gt; {
+        </span><span class="kw">fn </span>imp&lt;<span class="lifetime">'a</span>&gt;(os_str: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>OsStr) -&gt; Cow&lt;<span class="lifetime">'a</span>, [u8]&gt; {
             <span class="kw">match </span>os_str.to_string_lossy() {
                 Cow::Borrowed(x) =&gt; Cow::Borrowed(x.as_bytes()),
                 Cow::Owned(x) =&gt; Cow::Owned(Vec::from(x)),
@@ -1484,12 +1485,12 @@
     ///
     /// use bstr::{B, ByteVec};
     ///
-    /// let path = PathBuf::from(&quot;foo&quot;);
-    /// let bs = Vec::from_path_buf(path).expect(&quot;must be valid UTF-8&quot;);
-    /// assert_eq!(bs, B(&quot;foo&quot;));
+    /// let path = PathBuf::from("foo");
+    /// let bs = Vec::from_path_buf(path).expect("must be valid UTF-8");
+    /// assert_eq!(bs, B("foo"));
     /// ```
     </span><span class="attr">#[inline]
-    #[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+    #[cfg(feature = <span class="string">"std"</span>)]
     </span><span class="kw">fn </span>from_path_buf(path: PathBuf) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;u8&gt;, PathBuf&gt; {
         Vec::from_os_string(path.into_os_string()).map_err(PathBuf::from)
     }
@@ -1511,13 +1512,13 @@
     ///
     /// use bstr::{B, ByteVec};
     ///
-    /// let path = Path::new(&quot;foo&quot;);
+    /// let path = Path::new("foo");
     /// let bs = Vec::from_path_lossy(path);
-    /// assert_eq!(bs, B(&quot;foo&quot;));
+    /// assert_eq!(bs, B("foo"));
     /// ```
     </span><span class="attr">#[inline]
-    #[cfg(feature = <span class="string">&quot;std&quot;</span>)]
-    </span><span class="kw">fn </span>from_path_lossy&lt;<span class="lifetime">&#39;a</span>&gt;(path: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Path) -&gt; Cow&lt;<span class="lifetime">&#39;a</span>, [u8]&gt; {
+    #[cfg(feature = <span class="string">"std"</span>)]
+    </span><span class="kw">fn </span>from_path_lossy&lt;<span class="lifetime">'a</span>&gt;(path: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Path) -&gt; Cow&lt;<span class="lifetime">'a</span>, [u8]&gt; {
         Vec::from_os_str_lossy(path.as_os_str())
     }
 
@@ -1539,84 +1540,84 @@
     /// This shows basic usage:
     ///
     /// ```
-    /// # #[cfg(feature = &quot;alloc&quot;)] {
+    /// # #[cfg(feature = "alloc")] {
     /// use bstr::{B, BString, ByteVec};
     ///
     /// assert_eq!(
-    ///     BString::from(b&quot;foo\xFFbar&quot;),
-    ///     Vec::unescape_bytes(r&quot;foo\xFFbar&quot;),
+    ///     BString::from(b"foo\xFFbar"),
+    ///     Vec::unescape_bytes(r"foo\xFFbar"),
     /// );
     /// assert_eq!(
-    ///     BString::from(b&quot;foo\nbar&quot;),
-    ///     Vec::unescape_bytes(r&quot;foo\nbar&quot;),
+    ///     BString::from(b"foo\nbar"),
+    ///     Vec::unescape_bytes(r"foo\nbar"),
     /// );
     /// assert_eq!(
-    ///     BString::from(b&quot;foo\tbar&quot;),
-    ///     Vec::unescape_bytes(r&quot;foo\tbar&quot;),
+    ///     BString::from(b"foo\tbar"),
+    ///     Vec::unescape_bytes(r"foo\tbar"),
     /// );
     /// assert_eq!(
-    ///     BString::from(b&quot;foo\\bar&quot;),
-    ///     Vec::unescape_bytes(r&quot;foo\\bar&quot;),
+    ///     BString::from(b"foo\\bar"),
+    ///     Vec::unescape_bytes(r"foo\\bar"),
     /// );
     /// assert_eq!(
-    ///     BString::from(&quot;foo☃bar&quot;),
-    ///     Vec::unescape_bytes(r&quot;foo☃bar&quot;),
+    ///     BString::from("foo☃bar"),
+    ///     Vec::unescape_bytes(r"foo☃bar"),
     /// );
     ///
     /// # }
     /// ```
     ///
-    /// This shows some examples of how incomplete or &quot;incorrect&quot; escape
+    /// This shows some examples of how incomplete or "incorrect" escape
     /// sequences get passed through literally.
     ///
     /// ```
-    /// # #[cfg(feature = &quot;alloc&quot;)] {
+    /// # #[cfg(feature = "alloc")] {
     /// use bstr::{B, BString, ByteVec};
     ///
     /// // Show some incomplete escape sequences.
     /// assert_eq!(
-    ///     BString::from(br&quot;\&quot;),
-    ///     Vec::unescape_bytes(r&quot;\&quot;),
+    ///     BString::from(br"\"),
+    ///     Vec::unescape_bytes(r"\"),
     /// );
     /// assert_eq!(
-    ///     BString::from(br&quot;\&quot;),
-    ///     Vec::unescape_bytes(r&quot;\\&quot;),
+    ///     BString::from(br"\"),
+    ///     Vec::unescape_bytes(r"\\"),
     /// );
     /// assert_eq!(
-    ///     BString::from(br&quot;\x&quot;),
-    ///     Vec::unescape_bytes(r&quot;\x&quot;),
+    ///     BString::from(br"\x"),
+    ///     Vec::unescape_bytes(r"\x"),
     /// );
     /// assert_eq!(
-    ///     BString::from(br&quot;\xA&quot;),
-    ///     Vec::unescape_bytes(r&quot;\xA&quot;),
+    ///     BString::from(br"\xA"),
+    ///     Vec::unescape_bytes(r"\xA"),
     /// );
     /// // And now some that kind of look like escape
-    /// // sequences, but aren&#39;t.
+    /// // sequences, but aren't.
     /// assert_eq!(
-    ///     BString::from(br&quot;\xZ&quot;),
-    ///     Vec::unescape_bytes(r&quot;\xZ&quot;),
+    ///     BString::from(br"\xZ"),
+    ///     Vec::unescape_bytes(r"\xZ"),
     /// );
     /// assert_eq!(
-    ///     BString::from(br&quot;\xZZ&quot;),
-    ///     Vec::unescape_bytes(r&quot;\xZZ&quot;),
+    ///     BString::from(br"\xZZ"),
+    ///     Vec::unescape_bytes(r"\xZZ"),
     /// );
     /// assert_eq!(
-    ///     BString::from(br&quot;\i&quot;),
-    ///     Vec::unescape_bytes(r&quot;\i&quot;),
+    ///     BString::from(br"\i"),
+    ///     Vec::unescape_bytes(r"\i"),
     /// );
     /// assert_eq!(
-    ///     BString::from(br&quot;\u&quot;),
-    ///     Vec::unescape_bytes(r&quot;\u&quot;),
+    ///     BString::from(br"\u"),
+    ///     Vec::unescape_bytes(r"\u"),
     /// );
     /// assert_eq!(
-    ///     BString::from(br&quot;\u{2603}&quot;),
-    ///     Vec::unescape_bytes(r&quot;\u{2603}&quot;),
+    ///     BString::from(br"\u{2603}"),
+    ///     Vec::unescape_bytes(r"\u{2603}"),
     /// );
     ///
     /// # }
     /// ```
     </span><span class="attr">#[inline]
-    #[cfg(feature = <span class="string">&quot;alloc&quot;</span>)]
+    #[cfg(feature = <span class="string">"alloc"</span>)]
     </span><span class="kw">fn </span>unescape_bytes&lt;S: AsRef&lt;str&gt;&gt;(escaped: S) -&gt; Vec&lt;u8&gt; {
         <span class="kw">let </span>s = escaped.as_ref();
         <span class="kw">crate</span>::escape_bytes::UnescapeBytes::new(s.chars()).collect()
@@ -1635,11 +1636,11 @@
     /// ```
     /// use bstr::ByteVec;
     ///
-    /// let mut s = &lt;Vec&lt;u8&gt;&gt;::from(&quot;abc&quot;);
-    /// s.push_byte(b&#39;\xE2&#39;);
-    /// s.push_byte(b&#39;\x98&#39;);
-    /// s.push_byte(b&#39;\x83&#39;);
-    /// assert_eq!(s, &quot;abc☃&quot;.as_bytes());
+    /// let mut s = &lt;Vec&lt;u8&gt;&gt;::from("abc");
+    /// s.push_byte(b'\xE2');
+    /// s.push_byte(b'\x98');
+    /// s.push_byte(b'\x83');
+    /// assert_eq!(s, "abc☃".as_bytes());
     /// ```
     </span><span class="attr">#[inline]
     </span><span class="kw">fn </span>push_byte(<span class="kw-2">&amp;mut </span><span class="self">self</span>, byte: u8) {
@@ -1655,11 +1656,11 @@
     /// ```
     /// use bstr::ByteVec;
     ///
-    /// let mut s = &lt;Vec&lt;u8&gt;&gt;::from(&quot;abc&quot;);
-    /// s.push_char(&#39;1&#39;);
-    /// s.push_char(&#39;2&#39;);
-    /// s.push_char(&#39;3&#39;);
-    /// assert_eq!(s, &quot;abc123&quot;.as_bytes());
+    /// let mut s = &lt;Vec&lt;u8&gt;&gt;::from("abc");
+    /// s.push_char('1');
+    /// s.push_char('2');
+    /// s.push_char('3');
+    /// assert_eq!(s, "abc123".as_bytes());
     /// ```
     </span><span class="attr">#[inline]
     </span><span class="kw">fn </span>push_char(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ch: char) {
@@ -1682,9 +1683,9 @@
     /// ```
     /// use bstr::ByteVec;
     ///
-    /// let mut s = &lt;Vec&lt;u8&gt;&gt;::from(&quot;abc&quot;);
-    /// s.push_str(b&quot;123&quot;);
-    /// assert_eq!(s, &quot;abc123&quot;.as_bytes());
+    /// let mut s = &lt;Vec&lt;u8&gt;&gt;::from("abc");
+    /// s.push_str(b"123");
+    /// assert_eq!(s, "abc123".as_bytes());
     /// ```
     </span><span class="attr">#[inline]
     </span><span class="kw">fn </span>push_str&lt;B: AsRef&lt;[u8]&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, bytes: B) {
@@ -1706,10 +1707,10 @@
     /// ```
     /// use bstr::ByteVec;
     ///
-    /// let bytes = Vec::from(&quot;hello&quot;);
+    /// let bytes = Vec::from("hello");
     /// let string = bytes.into_string().unwrap();
     ///
-    /// assert_eq!(&quot;hello&quot;, string);
+    /// assert_eq!("hello", string);
     /// ```
     ///
     /// If this byte string is not valid UTF-8, then an error will be returned.
@@ -1719,7 +1720,7 @@
     /// ```
     /// use bstr::{B, ByteVec};
     ///
-    /// let bytes = Vec::from_slice(b&quot;foo\xFFbar&quot;);
+    /// let bytes = Vec::from_slice(b"foo\xFFbar");
     /// let err = bytes.into_string().unwrap_err();
     ///
     /// assert_eq!(err.utf8_error().valid_up_to(), 3);
@@ -1727,7 +1728,7 @@
     ///
     /// // At no point in this example is an allocation performed.
     /// let bytes = Vec::from(err.into_vec());
-    /// assert_eq!(bytes, B(b&quot;foo\xFFbar&quot;));
+    /// assert_eq!(bytes, B(b"foo\xFFbar"));
     /// ```
     </span><span class="attr">#[inline]
     </span><span class="kw">fn </span>into_string(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;String, FromUtf8Error&gt;
@@ -1755,9 +1756,9 @@
     /// ```
     /// use bstr::ByteVec;
     ///
-    /// let bytes = Vec::from_slice(b&quot;foo\xFFbar&quot;);
+    /// let bytes = Vec::from_slice(b"foo\xFFbar");
     /// let string = bytes.into_string_lossy();
-    /// assert_eq!(string, &quot;foo\u{FFFD}bar&quot;);
+    /// assert_eq!(string, "foo\u{FFFD}bar");
     /// ```
     </span><span class="attr">#[inline]
     </span><span class="kw">fn </span>into_string_lossy(<span class="self">self</span>) -&gt; String
@@ -1797,8 +1798,8 @@
     ///
     /// // SAFETY: This is safe because string literals are guaranteed to be
     /// // valid UTF-8 by the Rust compiler.
-    /// let s = unsafe { Vec::from(&quot;☃βツ&quot;).into_string_unchecked() };
-    /// assert_eq!(&quot;☃βツ&quot;, s);
+    /// let s = unsafe { Vec::from("☃βツ").into_string_unchecked() };
+    /// assert_eq!("☃βツ", s);
     /// ```
     </span><span class="attr">#[inline]
     </span><span class="kw">unsafe fn </span>into_string_unchecked(<span class="self">self</span>) -&gt; String
@@ -1823,11 +1824,11 @@
     ///
     /// use bstr::ByteVec;
     ///
-    /// let bs = Vec::from(&quot;foo&quot;);
-    /// let os_str = bs.into_os_string().expect(&quot;should be valid UTF-8&quot;);
-    /// assert_eq!(os_str, OsStr::new(&quot;foo&quot;));
+    /// let bs = Vec::from("foo");
+    /// let os_str = bs.into_os_string().expect("should be valid UTF-8");
+    /// assert_eq!(os_str, OsStr::new("foo"));
     /// ```
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
     #[inline]
     </span><span class="kw">fn </span>into_os_string(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;OsString, FromUtf8Error&gt;
     <span class="kw">where
@@ -1867,12 +1868,12 @@
     /// ```
     /// use bstr::ByteVec;
     ///
-    /// let bs = Vec::from_slice(b&quot;foo\xFFbar&quot;);
+    /// let bs = Vec::from_slice(b"foo\xFFbar");
     /// let os_str = bs.into_os_string_lossy();
-    /// assert_eq!(os_str.to_string_lossy(), &quot;foo\u{FFFD}bar&quot;);
+    /// assert_eq!(os_str.to_string_lossy(), "foo\u{FFFD}bar");
     /// ```
     </span><span class="attr">#[inline]
-    #[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+    #[cfg(feature = <span class="string">"std"</span>)]
     </span><span class="kw">fn </span>into_os_string_lossy(<span class="self">self</span>) -&gt; OsString
     <span class="kw">where
         </span><span class="self">Self</span>: Sized,
@@ -1907,11 +1908,11 @@
     /// ```
     /// use bstr::ByteVec;
     ///
-    /// let bs = Vec::from(&quot;foo&quot;);
-    /// let path = bs.into_path_buf().expect(&quot;should be valid UTF-8&quot;);
-    /// assert_eq!(path.as_os_str(), &quot;foo&quot;);
+    /// let bs = Vec::from("foo");
+    /// let path = bs.into_path_buf().expect("should be valid UTF-8");
+    /// assert_eq!(path.as_os_str(), "foo");
     /// ```
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
     #[inline]
     </span><span class="kw">fn </span>into_path_buf(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;PathBuf, FromUtf8Error&gt;
     <span class="kw">where
@@ -1937,12 +1938,12 @@
     /// ```
     /// use bstr::ByteVec;
     ///
-    /// let bs = Vec::from_slice(b&quot;foo\xFFbar&quot;);
+    /// let bs = Vec::from_slice(b"foo\xFFbar");
     /// let path = bs.into_path_buf_lossy();
-    /// assert_eq!(path.to_string_lossy(), &quot;foo\u{FFFD}bar&quot;);
+    /// assert_eq!(path.to_string_lossy(), "foo\u{FFFD}bar");
     /// ```
     </span><span class="attr">#[inline]
-    #[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+    #[cfg(feature = <span class="string">"std"</span>)]
     </span><span class="kw">fn </span>into_path_buf_lossy(<span class="self">self</span>) -&gt; PathBuf
     <span class="kw">where
         </span><span class="self">Self</span>: Sized,
@@ -1968,10 +1969,10 @@
     /// ```
     /// use bstr::ByteVec;
     ///
-    /// let mut s = Vec::from(&quot;foo&quot;);
-    /// assert_eq!(s.pop_byte(), Some(b&#39;o&#39;));
-    /// assert_eq!(s.pop_byte(), Some(b&#39;o&#39;));
-    /// assert_eq!(s.pop_byte(), Some(b&#39;f&#39;));
+    /// let mut s = Vec::from("foo");
+    /// assert_eq!(s.pop_byte(), Some(b'o'));
+    /// assert_eq!(s.pop_byte(), Some(b'o'));
+    /// assert_eq!(s.pop_byte(), Some(b'f'));
     /// assert_eq!(s.pop_byte(), None);
     /// ```
     </span><span class="attr">#[inline]
@@ -1994,10 +1995,10 @@
     /// ```
     /// use bstr::ByteVec;
     ///
-    /// let mut s = Vec::from(&quot;foo&quot;);
-    /// assert_eq!(s.pop_char(), Some(&#39;o&#39;));
-    /// assert_eq!(s.pop_char(), Some(&#39;o&#39;));
-    /// assert_eq!(s.pop_char(), Some(&#39;f&#39;));
+    /// let mut s = Vec::from("foo");
+    /// assert_eq!(s.pop_char(), Some('o'));
+    /// assert_eq!(s.pop_char(), Some('o'));
+    /// assert_eq!(s.pop_char(), Some('f'));
     /// assert_eq!(s.pop_char(), None);
     /// ```
     ///
@@ -2010,14 +2011,14 @@
     /// ```
     /// use bstr::ByteVec;
     ///
-    /// let mut s = Vec::from_slice(b&quot;f\xFF\xFF\xFFoo\xE2\x98&quot;);
-    /// assert_eq!(s.pop_char(), Some(&#39;\u{FFFD}&#39;));
-    /// assert_eq!(s.pop_char(), Some(&#39;o&#39;));
-    /// assert_eq!(s.pop_char(), Some(&#39;o&#39;));
-    /// assert_eq!(s.pop_char(), Some(&#39;\u{FFFD}&#39;));
-    /// assert_eq!(s.pop_char(), Some(&#39;\u{FFFD}&#39;));
-    /// assert_eq!(s.pop_char(), Some(&#39;\u{FFFD}&#39;));
-    /// assert_eq!(s.pop_char(), Some(&#39;f&#39;));
+    /// let mut s = Vec::from_slice(b"f\xFF\xFF\xFFoo\xE2\x98");
+    /// assert_eq!(s.pop_char(), Some('\u{FFFD}'));
+    /// assert_eq!(s.pop_char(), Some('o'));
+    /// assert_eq!(s.pop_char(), Some('o'));
+    /// assert_eq!(s.pop_char(), Some('\u{FFFD}'));
+    /// assert_eq!(s.pop_char(), Some('\u{FFFD}'));
+    /// assert_eq!(s.pop_char(), Some('\u{FFFD}'));
+    /// assert_eq!(s.pop_char(), Some('f'));
     /// assert_eq!(s.pop_char(), None);
     /// ```
     </span><span class="attr">#[inline]
@@ -2040,7 +2041,7 @@
     ///
     /// # Panics
     ///
-    /// Panics if `at` is larger than or equal to this byte string&#39;s length.
+    /// Panics if `at` is larger than or equal to this byte string's length.
     ///
     /// # Examples
     ///
@@ -2049,9 +2050,9 @@
     /// ```
     /// use bstr::ByteVec;
     ///
-    /// let mut s = Vec::from(&quot;foo☃bar&quot;);
-    /// assert_eq!(s.remove_char(3), &#39;☃&#39;);
-    /// assert_eq!(s, b&quot;foobar&quot;);
+    /// let mut s = Vec::from("foo☃bar");
+    /// assert_eq!(s.remove_char(3), '☃');
+    /// assert_eq!(s, b"foobar");
     /// ```
     ///
     /// This example shows how the Unicode replacement codepoint policy is
@@ -2060,16 +2061,16 @@
     /// ```
     /// use bstr::ByteVec;
     ///
-    /// let mut s = Vec::from_slice(b&quot;foo\xFFbar&quot;);
-    /// assert_eq!(s.remove_char(3), &#39;\u{FFFD}&#39;);
-    /// assert_eq!(s, b&quot;foobar&quot;);
+    /// let mut s = Vec::from_slice(b"foo\xFFbar");
+    /// assert_eq!(s.remove_char(3), '\u{FFFD}');
+    /// assert_eq!(s, b"foobar");
     /// ```
     </span><span class="attr">#[inline]
     </span><span class="kw">fn </span>remove_char(<span class="kw-2">&amp;mut </span><span class="self">self</span>, at: usize) -&gt; char {
         <span class="kw">let </span>(ch, size) = utf8::decode_lossy(<span class="kw-2">&amp;</span><span class="self">self</span>.as_vec()[at..]);
         <span class="macro">assert!</span>(
             size &gt; <span class="number">0</span>,
-            <span class="string">&quot;expected {} to be less than {}&quot;</span>,
+            <span class="string">"expected {} to be less than {}"</span>,
             at,
             <span class="self">self</span>.as_vec().len(),
         );
@@ -2085,7 +2086,7 @@
     ///
     /// # Panics
     ///
-    /// Panics if `at` is larger than the byte string&#39;s length.
+    /// Panics if `at` is larger than the byte string's length.
     ///
     /// # Examples
     ///
@@ -2094,9 +2095,9 @@
     /// ```
     /// use bstr::ByteVec;
     ///
-    /// let mut s = Vec::from(&quot;foobar&quot;);
-    /// s.insert_char(3, &#39;☃&#39;);
-    /// assert_eq!(s, &quot;foo☃bar&quot;.as_bytes());
+    /// let mut s = Vec::from("foobar");
+    /// s.insert_char(3, '☃');
+    /// assert_eq!(s, "foo☃bar".as_bytes());
     /// ```
     </span><span class="attr">#[inline]
     </span><span class="kw">fn </span>insert_char(<span class="kw-2">&amp;mut </span><span class="self">self</span>, at: usize, ch: char) {
@@ -2115,7 +2116,7 @@
     ///
     /// # Panics
     ///
-    /// Panics if `at` is larger than the byte string&#39;s length.
+    /// Panics if `at` is larger than the byte string's length.
     ///
     /// # Examples
     ///
@@ -2124,17 +2125,17 @@
     /// ```
     /// use bstr::ByteVec;
     ///
-    /// let mut s = Vec::from(&quot;foobar&quot;);
-    /// s.insert_str(3, &quot;☃☃☃&quot;);
-    /// assert_eq!(s, &quot;foo☃☃☃bar&quot;.as_bytes());
+    /// let mut s = Vec::from("foobar");
+    /// s.insert_str(3, "☃☃☃");
+    /// assert_eq!(s, "foo☃☃☃bar".as_bytes());
     /// ```
     </span><span class="attr">#[inline]
     </span><span class="kw">fn </span>insert_str&lt;B: AsRef&lt;[u8]&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, at: usize, bytes: B) {
         <span class="kw">let </span>bytes = bytes.as_ref();
         <span class="kw">let </span>len = <span class="self">self</span>.as_vec().len();
-        <span class="macro">assert!</span>(at &lt;= len, <span class="string">&quot;expected {} to be &lt;= {}&quot;</span>, at, len);
+        <span class="macro">assert!</span>(at &lt;= len, <span class="string">"expected {} to be &lt;= {}"</span>, at, len);
 
-        <span class="comment">// SAFETY: We&#39;d like to efficiently splice in the given bytes into
+        <span class="comment">// SAFETY: We'd like to efficiently splice in the given bytes into
         // this byte string. Since we are only working with `u8` elements here,
         // we only need to consider whether our bounds are correct and whether
         // our byte string has enough space.
@@ -2176,9 +2177,9 @@
     /// ```
     /// use bstr::ByteVec;
     ///
-    /// let mut s = Vec::from(&quot;foobar&quot;);
-    /// s.replace_range(2..4, &quot;xxxxx&quot;);
-    /// assert_eq!(s, &quot;foxxxxxar&quot;.as_bytes());
+    /// let mut s = Vec::from("foobar");
+    /// s.replace_range(2..4, "xxxxx");
+    /// assert_eq!(s, "foxxxxxar".as_bytes());
     /// ```
     </span><span class="attr">#[inline]
     </span><span class="kw">fn </span>replace_range&lt;R, B&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, range: R, replace_with: B)
@@ -2209,17 +2210,17 @@
     /// ```
     /// use bstr::ByteVec;
     ///
-    /// let mut s = Vec::from(&quot;foobar&quot;);
+    /// let mut s = Vec::from("foobar");
     /// {
     ///     let mut drainer = s.drain_bytes(2..4);
-    ///     assert_eq!(drainer.next(), Some(b&#39;o&#39;));
-    ///     assert_eq!(drainer.next(), Some(b&#39;b&#39;));
+    ///     assert_eq!(drainer.next(), Some(b'o'));
+    ///     assert_eq!(drainer.next(), Some(b'b'));
     ///     assert_eq!(drainer.next(), None);
     /// }
-    /// assert_eq!(s, &quot;foar&quot;.as_bytes());
+    /// assert_eq!(s, "foar".as_bytes());
     /// ```
     </span><span class="attr">#[inline]
-    </span><span class="kw">fn </span>drain_bytes&lt;R&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, range: R) -&gt; DrainBytes&lt;<span class="lifetime">&#39;_</span>&gt;
+    </span><span class="kw">fn </span>drain_bytes&lt;R&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, range: R) -&gt; DrainBytes&lt;<span class="lifetime">'_</span>&gt;
     <span class="kw">where
         </span>R: ops::RangeBounds&lt;usize&gt;,
     {
@@ -2239,23 +2240,23 @@
 /// ```
 /// use bstr::ByteVec;
 ///
-/// let mut s = Vec::from(&quot;foobar&quot;);
+/// let mut s = Vec::from("foobar");
 /// {
 ///     let mut drainer = s.drain_bytes(2..4);
-///     assert_eq!(drainer.next(), Some(b&#39;o&#39;));
-///     assert_eq!(drainer.next(), Some(b&#39;b&#39;));
+///     assert_eq!(drainer.next(), Some(b'o'));
+///     assert_eq!(drainer.next(), Some(b'b'));
 ///     assert_eq!(drainer.next(), None);
 /// }
-/// assert_eq!(s, &quot;foar&quot;.as_bytes());
+/// assert_eq!(s, "foar".as_bytes());
 /// ```
 </span><span class="attr">#[derive(Debug)]
-</span><span class="kw">pub struct </span>DrainBytes&lt;<span class="lifetime">&#39;a</span>&gt; {
-    it: vec::Drain&lt;<span class="lifetime">&#39;a</span>, u8&gt;,
+</span><span class="kw">pub struct </span>DrainBytes&lt;<span class="lifetime">'a</span>&gt; {
+    it: vec::Drain&lt;<span class="lifetime">'a</span>, u8&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; iter::FusedIterator <span class="kw">for </span>DrainBytes&lt;<span class="lifetime">&#39;a</span>&gt; {}
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; iter::FusedIterator <span class="kw">for </span>DrainBytes&lt;<span class="lifetime">'a</span>&gt; {}
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Iterator <span class="kw">for </span>DrainBytes&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Iterator <span class="kw">for </span>DrainBytes&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">type </span>Item = u8;
 
     <span class="attr">#[inline]
@@ -2264,14 +2265,14 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; DoubleEndedIterator <span class="kw">for </span>DrainBytes&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; DoubleEndedIterator <span class="kw">for </span>DrainBytes&lt;<span class="lifetime">'a</span>&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next_back(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;u8&gt; {
         <span class="self">self</span>.it.next_back()
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; ExactSizeIterator <span class="kw">for </span>DrainBytes&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; ExactSizeIterator <span class="kw">for </span>DrainBytes&lt;<span class="lifetime">'a</span>&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.it.len()
@@ -2291,7 +2292,7 @@
 /// ```
 /// use bstr::{B, ByteVec};
 ///
-/// let bytes = Vec::from_slice(b&quot;foo\xFFbar&quot;);
+/// let bytes = Vec::from_slice(b"foo\xFFbar");
 /// let err = bytes.into_string().unwrap_err();
 ///
 /// assert_eq!(err.utf8_error().valid_up_to(), 3);
@@ -2299,7 +2300,7 @@
 ///
 /// // At no point in this example is an allocation performed.
 /// let bytes = Vec::from(err.into_vec());
-/// assert_eq!(bytes, B(b&quot;foo\xFFbar&quot;));
+/// assert_eq!(bytes, B(b"foo\xFFbar"));
 /// ```
 </span><span class="attr">#[derive(Debug, Eq, PartialEq)]
 </span><span class="kw">pub struct </span>FromUtf8Error {
@@ -2318,11 +2319,11 @@
     /// ```
     /// use bstr::{B, ByteVec};
     ///
-    /// let bytes = Vec::from_slice(b&quot;foo\xFFbar&quot;);
+    /// let bytes = Vec::from_slice(b"foo\xFFbar");
     /// let err = bytes.into_string().unwrap_err();
     ///
     /// // At no point in this example is an allocation performed.
-    /// assert_eq!(err.as_bytes(), B(b&quot;foo\xFFbar&quot;));
+    /// assert_eq!(err.as_bytes(), B(b"foo\xFFbar"));
     /// ```
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>as_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[u8] {
@@ -2339,12 +2340,12 @@
     /// ```
     /// use bstr::{B, ByteVec};
     ///
-    /// let bytes = Vec::from_slice(b&quot;foo\xFFbar&quot;);
+    /// let bytes = Vec::from_slice(b"foo\xFFbar");
     /// let err = bytes.into_string().unwrap_err();
     /// let original = err.into_vec();
     ///
     /// // At no point in this example is an allocation performed.
-    /// assert_eq!(original, B(b&quot;foo\xFFbar&quot;));
+    /// assert_eq!(original, B(b"foo\xFFbar"));
     /// ```
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>into_vec(<span class="self">self</span>) -&gt; Vec&lt;u8&gt; {
@@ -2361,7 +2362,7 @@
     /// ```
     /// use bstr::{B, ByteVec};
     ///
-    /// let bytes = Vec::from_slice(b&quot;foo\xFFbar&quot;);
+    /// let bytes = Vec::from_slice(b"foo\xFFbar");
     /// let err = bytes.into_string().unwrap_err();
     ///
     /// assert_eq!(err.utf8_error().valid_up_to(), 3);
@@ -2373,79 +2374,79 @@
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
 </span><span class="kw">impl </span>error::Error <span class="kw">for </span>FromUtf8Error {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>description(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
-        <span class="string">&quot;invalid UTF-8 vector&quot;
+        <span class="string">"invalid UTF-8 vector"
     </span>}
 }
 
 <span class="kw">impl </span>fmt::Display <span class="kw">for </span>FromUtf8Error {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        <span class="macro">write!</span>(f, <span class="string">&quot;{}&quot;</span>, <span class="self">self</span>.err)
+    </span><span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
+        <span class="macro">write!</span>(f, <span class="string">"{}"</span>, <span class="self">self</span>.err)
     }
 }
 
-<span class="attr">#[cfg(all(test, feature = <span class="string">&quot;std&quot;</span>))]
+<span class="attr">#[cfg(all(test, feature = <span class="string">"std"</span>))]
 </span><span class="kw">mod </span>tests {
     <span class="kw">use </span><span class="kw">crate</span>::ext_vec::ByteVec;
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>insert() {
         <span class="kw">let </span><span class="kw-2">mut </span>s = <span class="macro">vec!</span>[];
-        s.insert_str(<span class="number">0</span>, <span class="string">&quot;foo&quot;</span>);
-        <span class="macro">assert_eq!</span>(s, <span class="string">&quot;foo&quot;</span>.as_bytes());
+        s.insert_str(<span class="number">0</span>, <span class="string">"foo"</span>);
+        <span class="macro">assert_eq!</span>(s, <span class="string">"foo"</span>.as_bytes());
 
-        <span class="kw">let </span><span class="kw-2">mut </span>s = Vec::from(<span class="string">&quot;a&quot;</span>);
-        s.insert_str(<span class="number">0</span>, <span class="string">&quot;foo&quot;</span>);
-        <span class="macro">assert_eq!</span>(s, <span class="string">&quot;fooa&quot;</span>.as_bytes());
+        <span class="kw">let </span><span class="kw-2">mut </span>s = Vec::from(<span class="string">"a"</span>);
+        s.insert_str(<span class="number">0</span>, <span class="string">"foo"</span>);
+        <span class="macro">assert_eq!</span>(s, <span class="string">"fooa"</span>.as_bytes());
 
-        <span class="kw">let </span><span class="kw-2">mut </span>s = Vec::from(<span class="string">&quot;a&quot;</span>);
-        s.insert_str(<span class="number">1</span>, <span class="string">&quot;foo&quot;</span>);
-        <span class="macro">assert_eq!</span>(s, <span class="string">&quot;afoo&quot;</span>.as_bytes());
+        <span class="kw">let </span><span class="kw-2">mut </span>s = Vec::from(<span class="string">"a"</span>);
+        s.insert_str(<span class="number">1</span>, <span class="string">"foo"</span>);
+        <span class="macro">assert_eq!</span>(s, <span class="string">"afoo"</span>.as_bytes());
 
-        <span class="kw">let </span><span class="kw-2">mut </span>s = Vec::from(<span class="string">&quot;foobar&quot;</span>);
-        s.insert_str(<span class="number">3</span>, <span class="string">&quot;quux&quot;</span>);
-        <span class="macro">assert_eq!</span>(s, <span class="string">&quot;fooquuxbar&quot;</span>.as_bytes());
+        <span class="kw">let </span><span class="kw-2">mut </span>s = Vec::from(<span class="string">"foobar"</span>);
+        s.insert_str(<span class="number">3</span>, <span class="string">"quux"</span>);
+        <span class="macro">assert_eq!</span>(s, <span class="string">"fooquuxbar"</span>.as_bytes());
 
-        <span class="kw">let </span><span class="kw-2">mut </span>s = Vec::from(<span class="string">&quot;foobar&quot;</span>);
-        s.insert_str(<span class="number">3</span>, <span class="string">&quot;x&quot;</span>);
-        <span class="macro">assert_eq!</span>(s, <span class="string">&quot;fooxbar&quot;</span>.as_bytes());
+        <span class="kw">let </span><span class="kw-2">mut </span>s = Vec::from(<span class="string">"foobar"</span>);
+        s.insert_str(<span class="number">3</span>, <span class="string">"x"</span>);
+        <span class="macro">assert_eq!</span>(s, <span class="string">"fooxbar"</span>.as_bytes());
 
-        <span class="kw">let </span><span class="kw-2">mut </span>s = Vec::from(<span class="string">&quot;foobar&quot;</span>);
-        s.insert_str(<span class="number">0</span>, <span class="string">&quot;x&quot;</span>);
-        <span class="macro">assert_eq!</span>(s, <span class="string">&quot;xfoobar&quot;</span>.as_bytes());
+        <span class="kw">let </span><span class="kw-2">mut </span>s = Vec::from(<span class="string">"foobar"</span>);
+        s.insert_str(<span class="number">0</span>, <span class="string">"x"</span>);
+        <span class="macro">assert_eq!</span>(s, <span class="string">"xfoobar"</span>.as_bytes());
 
-        <span class="kw">let </span><span class="kw-2">mut </span>s = Vec::from(<span class="string">&quot;foobar&quot;</span>);
-        s.insert_str(<span class="number">6</span>, <span class="string">&quot;x&quot;</span>);
-        <span class="macro">assert_eq!</span>(s, <span class="string">&quot;foobarx&quot;</span>.as_bytes());
+        <span class="kw">let </span><span class="kw-2">mut </span>s = Vec::from(<span class="string">"foobar"</span>);
+        s.insert_str(<span class="number">6</span>, <span class="string">"x"</span>);
+        <span class="macro">assert_eq!</span>(s, <span class="string">"foobarx"</span>.as_bytes());
 
-        <span class="kw">let </span><span class="kw-2">mut </span>s = Vec::from(<span class="string">&quot;foobar&quot;</span>);
-        s.insert_str(<span class="number">3</span>, <span class="string">&quot;quuxbazquux&quot;</span>);
-        <span class="macro">assert_eq!</span>(s, <span class="string">&quot;fooquuxbazquuxbar&quot;</span>.as_bytes());
+        <span class="kw">let </span><span class="kw-2">mut </span>s = Vec::from(<span class="string">"foobar"</span>);
+        s.insert_str(<span class="number">3</span>, <span class="string">"quuxbazquux"</span>);
+        <span class="macro">assert_eq!</span>(s, <span class="string">"fooquuxbazquuxbar"</span>.as_bytes());
     }
 
     <span class="attr">#[test]
     #[should_panic]
     </span><span class="kw">fn </span>insert_fail1() {
         <span class="kw">let </span><span class="kw-2">mut </span>s = <span class="macro">vec!</span>[];
-        s.insert_str(<span class="number">1</span>, <span class="string">&quot;foo&quot;</span>);
+        s.insert_str(<span class="number">1</span>, <span class="string">"foo"</span>);
     }
 
     <span class="attr">#[test]
     #[should_panic]
     </span><span class="kw">fn </span>insert_fail2() {
-        <span class="kw">let </span><span class="kw-2">mut </span>s = Vec::from(<span class="string">&quot;a&quot;</span>);
-        s.insert_str(<span class="number">2</span>, <span class="string">&quot;foo&quot;</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>s = Vec::from(<span class="string">"a"</span>);
+        s.insert_str(<span class="number">2</span>, <span class="string">"foo"</span>);
     }
 
     <span class="attr">#[test]
     #[should_panic]
     </span><span class="kw">fn </span>insert_fail3() {
-        <span class="kw">let </span><span class="kw-2">mut </span>s = Vec::from(<span class="string">&quot;foobar&quot;</span>);
-        s.insert_str(<span class="number">7</span>, <span class="string">&quot;foo&quot;</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>s = Vec::from(<span class="string">"foobar"</span>);
+        s.insert_str(<span class="number">7</span>, <span class="string">"foo"</span>);
     }
 }
 </code></pre></div></section></main></body></html>

@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-3.4.0/src/enc/static_dict.rs`."><title>static_dict.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-3.4.0/src/enc/static_dict.rs`."><title>static_dict.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1200,9 +1201,9 @@
                                          <span class="number">64i32 </span><span class="kw">as </span>(u8)];
 
 <span class="kw">pub struct </span>BrotliDictionary {
-  <span class="kw">pub </span>size_bits_by_length: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[u8; <span class="number">25</span>],
-  <span class="kw">pub </span>offsets_by_length: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[u32; <span class="number">25</span>],
-  <span class="kw">pub </span>data: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[u8; <span class="number">122784</span>],
+  <span class="kw">pub </span>size_bits_by_length: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>[u8; <span class="number">25</span>],
+  <span class="kw">pub </span>offsets_by_length: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>[u32; <span class="number">25</span>],
+  <span class="kw">pub </span>data: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>[u8; <span class="number">122784</span>],
 }
 
 <span class="kw">pub static </span>kBrotliEncDictionary: BrotliDictionary = BrotliDictionary {
@@ -1212,7 +1213,7 @@
 };
 
 <span class="attr">#[inline(always)]
-</span><span class="kw">pub fn </span>BrotliGetDictionary() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>BrotliDictionary {
+</span><span class="kw">pub fn </span>BrotliGetDictionary() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>BrotliDictionary {
   <span class="kw">return </span><span class="kw-2">&amp;</span>kBrotliEncDictionary;
 }
 <span class="attr">#[inline(always)]
@@ -1447,8 +1448,8 @@
         <span class="number">0i32
       </span>}
     } <span class="kw">else if </span>w.transform() <span class="kw">as </span>(i32) == <span class="number">10i32 </span>{
-      <span class="kw">if </span>!!(dict[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) &gt;= <span class="string">b&#39;a&#39; </span><span class="kw">as </span>(i32) &amp;&amp;
-            (dict[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) &lt;= <span class="string">b&#39;z&#39; </span><span class="kw">as </span>(i32)) &amp;&amp;
+      <span class="kw">if </span>!!(dict[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) &gt;= <span class="string">b'a' </span><span class="kw">as </span>(i32) &amp;&amp;
+            (dict[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) &lt;= <span class="string">b'z' </span><span class="kw">as </span>(i32)) &amp;&amp;
             (dict[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) ^ <span class="number">32i32 </span>== data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32)) &amp;&amp;
             (FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>dict.split_at(<span class="number">1</span>).<span class="number">1</span>,
                                       <span class="kw-2">&amp;</span>data.split_at(<span class="number">1</span>).<span class="number">1</span>,
@@ -1463,8 +1464,8 @@
       i = <span class="number">0usize</span>;
       <span class="kw">while </span>i &lt; w.len() <span class="kw">as </span>(usize) {
         {
-          <span class="kw">if </span>dict[(i <span class="kw">as </span>(usize))] <span class="kw">as </span>(i32) &gt;= <span class="string">b&#39;a&#39; </span><span class="kw">as </span>(i32) &amp;&amp;
-             (dict[(i <span class="kw">as </span>(usize))] <span class="kw">as </span>(i32) &lt;= <span class="string">b&#39;z&#39; </span><span class="kw">as </span>(i32)) {
+          <span class="kw">if </span>dict[(i <span class="kw">as </span>(usize))] <span class="kw">as </span>(i32) &gt;= <span class="string">b'a' </span><span class="kw">as </span>(i32) &amp;&amp;
+             (dict[(i <span class="kw">as </span>(usize))] <span class="kw">as </span>(i32) &lt;= <span class="string">b'z' </span><span class="kw">as </span>(i32)) {
             <span class="kw">if </span>dict[(i <span class="kw">as </span>(usize))] <span class="kw">as </span>(i32) ^ <span class="number">32i32 </span>!= data[(i <span class="kw">as </span>(usize))] <span class="kw">as </span>(i32) {
               <span class="kw">return </span><span class="number">0i32</span>;
             }
@@ -1543,22 +1544,22 @@
         <span class="kw">let </span>maxlen: usize;
         <span class="kw">let </span><span class="kw-2">mut </span>len: usize;
         <span class="kw">if </span>matchlen == l {
-          <span class="comment">//eprint!(&quot;Adding match {} {} {}\n&quot;, w.len(), w.transform(), w.idx());
+          <span class="comment">//eprint!("Adding match {} {} {}\n", w.len(), w.transform(), w.idx());
           </span>AddMatch(id, l, l, matches);
           has_found_match = <span class="number">1i32</span>;
         }
         <span class="kw">if </span>matchlen &gt;= l.wrapping_sub(<span class="number">1usize</span>) {
-          <span class="comment">//eprint!(&quot;Bdding match {} {} {}\n&quot;, w.len(), w.transform(), w.idx());
+          <span class="comment">//eprint!("Bdding match {} {} {}\n", w.len(), w.transform(), w.idx());
           </span>AddMatch(id.wrapping_add((<span class="number">12usize</span>).wrapping_mul(n)),
                    l.wrapping_sub(<span class="number">1usize</span>),
                    l,
                    matches);
           <span class="kw">if </span>l.wrapping_add(<span class="number">2usize</span>) &lt; max_length &amp;&amp;
-             (data[(l.wrapping_sub(<span class="number">1usize</span>) <span class="kw">as </span>(usize))] <span class="kw">as </span>(i32) == <span class="string">b&#39;i&#39; </span><span class="kw">as </span>(i32)) &amp;&amp;
-             (data[(l <span class="kw">as </span>(usize))] <span class="kw">as </span>(i32) == <span class="string">b&#39;n&#39; </span><span class="kw">as </span>(i32)) &amp;&amp;
-             (data[(l.wrapping_add(<span class="number">1usize</span>) <span class="kw">as </span>(usize))] <span class="kw">as </span>(i32) == <span class="string">b&#39;g&#39; </span><span class="kw">as </span>(i32)) &amp;&amp;
-             (data[(l.wrapping_add(<span class="number">2usize</span>) <span class="kw">as </span>(usize))] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32)) {
-          <span class="comment">//eprint!(&quot;Cdding match {} {} {}\n&quot;, w.len(), w.transform(), w.idx());
+             (data[(l.wrapping_sub(<span class="number">1usize</span>) <span class="kw">as </span>(usize))] <span class="kw">as </span>(i32) == <span class="string">b'i' </span><span class="kw">as </span>(i32)) &amp;&amp;
+             (data[(l <span class="kw">as </span>(usize))] <span class="kw">as </span>(i32) == <span class="string">b'n' </span><span class="kw">as </span>(i32)) &amp;&amp;
+             (data[(l.wrapping_add(<span class="number">1usize</span>) <span class="kw">as </span>(usize))] <span class="kw">as </span>(i32) == <span class="string">b'g' </span><span class="kw">as </span>(i32)) &amp;&amp;
+             (data[(l.wrapping_add(<span class="number">2usize</span>) <span class="kw">as </span>(usize))] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32)) {
+          <span class="comment">//eprint!("Cdding match {} {} {}\n", w.len(), w.transform(), w.idx());
              </span>AddMatch(id.wrapping_add((<span class="number">49usize</span>).wrapping_mul(n)),
                      l.wrapping_add(<span class="number">3usize</span>),
                      l,
@@ -1574,7 +1575,7 @@
         len = minlen;
         <span class="kw">while </span>len &lt;= maxlen {
           {
-              <span class="comment">//eprint!(&quot;Ddding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+              <span class="comment">//eprint!("Ddding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
               </span>AddMatch(id.wrapping_add((kOmitLastNTransforms[l.wrapping_sub(len)] <span class="kw">as </span>(usize))
                                        .wrapping_mul(n)),
                      len,
@@ -1590,191 +1591,191 @@
           }
         }
         s = <span class="kw-2">&amp;</span>data.split_at(l <span class="kw">as </span>(usize)).<span class="number">1</span>;
-        <span class="kw">if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-          <span class="comment">//eprint!(&quot;Edding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+        <span class="kw">if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+          <span class="comment">//eprint!("Edding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
           </span>AddMatch(id.wrapping_add(n), l.wrapping_add(<span class="number">1usize</span>), l, matches);
-          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;a&#39; </span><span class="kw">as </span>(i32) {
-            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-              <span class="comment">//eprint!(&quot;Fdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'a' </span><span class="kw">as </span>(i32) {
+            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+              <span class="comment">//eprint!("Fdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
               </span>AddMatch(id.wrapping_add((<span class="number">28usize</span>).wrapping_mul(n)),
                        l.wrapping_add(<span class="number">3usize</span>),
                        l,
                        matches);
-            } <span class="kw">else if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;s&#39; </span><span class="kw">as </span>(i32) {
-                <span class="kw">if </span>s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;Gdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+            } <span class="kw">else if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b's' </span><span class="kw">as </span>(i32) {
+                <span class="kw">if </span>s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("Gdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
                 </span>AddMatch(id.wrapping_add((<span class="number">46usize</span>).wrapping_mul(n)),
                          l.wrapping_add(<span class="number">4usize</span>),
                          l,
                          matches);
               }
-            } <span class="kw">else if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;t&#39; </span><span class="kw">as </span>(i32) {
-              <span class="kw">if </span>s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;Hdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+            } <span class="kw">else if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b't' </span><span class="kw">as </span>(i32) {
+              <span class="kw">if </span>s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("Hdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
                 </span>AddMatch(id.wrapping_add((<span class="number">60usize</span>).wrapping_mul(n)),
                          l.wrapping_add(<span class="number">4usize</span>),
                          l,
                          matches);
               }
-            } <span class="kw">else if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;n&#39; </span><span class="kw">as </span>(i32) {
-              <span class="kw">if </span>s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;d&#39; </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32)) {
-                <span class="comment">//eprint!(&quot;Idding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+            } <span class="kw">else if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'n' </span><span class="kw">as </span>(i32) {
+              <span class="kw">if </span>s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'd' </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32)) {
+                <span class="comment">//eprint!("Idding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
                 </span>AddMatch(id.wrapping_add((<span class="number">10usize</span>).wrapping_mul(n)),
                          l.wrapping_add(<span class="number">5usize</span>),
                          l,
                          matches);
               }
             }
-          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;b&#39; </span><span class="kw">as </span>(i32) {
-            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;y&#39; </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32)) {
-                <span class="comment">//eprint!(&quot;Jdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'b' </span><span class="kw">as </span>(i32) {
+            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'y' </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32)) {
+                <span class="comment">//eprint!("Jdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
               </span>AddMatch(id.wrapping_add((<span class="number">38usize</span>).wrapping_mul(n)),
                        l.wrapping_add(<span class="number">4usize</span>),
                        l,
                        matches);
             }
-          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;i&#39; </span><span class="kw">as </span>(i32) {
-            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;n&#39; </span><span class="kw">as </span>(i32) {
-              <span class="kw">if </span>s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;Kdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'i' </span><span class="kw">as </span>(i32) {
+            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'n' </span><span class="kw">as </span>(i32) {
+              <span class="kw">if </span>s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("Kdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
                 </span>AddMatch(id.wrapping_add((<span class="number">16usize</span>).wrapping_mul(n)),
                          l.wrapping_add(<span class="number">4usize</span>),
                          l,
                          matches);
               }
-            } <span class="kw">else if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;s&#39; </span><span class="kw">as </span>(i32) {
-              <span class="kw">if </span>s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;Ldding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+            } <span class="kw">else if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b's' </span><span class="kw">as </span>(i32) {
+              <span class="kw">if </span>s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("Ldding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
                 </span>AddMatch(id.wrapping_add((<span class="number">47usize</span>).wrapping_mul(n)),
                          l.wrapping_add(<span class="number">4usize</span>),
                          l,
                          matches);
               }
             }
-          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;f&#39; </span><span class="kw">as </span>(i32) {
-            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;o&#39; </span><span class="kw">as </span>(i32) {
-              <span class="kw">if </span>s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;r&#39; </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32)) {
-                <span class="comment">//eprint!(&quot;Mdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'f' </span><span class="kw">as </span>(i32) {
+            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'o' </span><span class="kw">as </span>(i32) {
+              <span class="kw">if </span>s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'r' </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32)) {
+                <span class="comment">//eprint!("Mdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
                 </span>AddMatch(id.wrapping_add((<span class="number">25usize</span>).wrapping_mul(n)),
                          l.wrapping_add(<span class="number">5usize</span>),
                          l,
                          matches);
               }
-            } <span class="kw">else if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;r&#39; </span><span class="kw">as </span>(i32) {
-              <span class="kw">if </span>s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;o&#39; </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;m&#39; </span><span class="kw">as </span>(i32)) &amp;&amp;
-                 (s[(<span class="number">5usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32)) {
-                <span class="comment">//eprint!(&quot;Ndding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+            } <span class="kw">else if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'r' </span><span class="kw">as </span>(i32) {
+              <span class="kw">if </span>s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'o' </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'm' </span><span class="kw">as </span>(i32)) &amp;&amp;
+                 (s[(<span class="number">5usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32)) {
+                <span class="comment">//eprint!("Ndding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
                 </span>AddMatch(id.wrapping_add((<span class="number">37usize</span>).wrapping_mul(n)),
                          l.wrapping_add(<span class="number">6usize</span>),
                          l,
                          matches);
               }
             }
-          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;o&#39; </span><span class="kw">as </span>(i32) {
-            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;f&#39; </span><span class="kw">as </span>(i32) {
-              <span class="kw">if </span>s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;Odding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'o' </span><span class="kw">as </span>(i32) {
+            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'f' </span><span class="kw">as </span>(i32) {
+              <span class="kw">if </span>s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("Odding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
                 </span>AddMatch(id.wrapping_add((<span class="number">8usize</span>).wrapping_mul(n)),
                          l.wrapping_add(<span class="number">4usize</span>),
                          l,
                          matches);
               }
-            } <span class="kw">else if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;n&#39; </span><span class="kw">as </span>(i32) {
-              <span class="kw">if </span>s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;Pdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+            } <span class="kw">else if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'n' </span><span class="kw">as </span>(i32) {
+              <span class="kw">if </span>s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("Pdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
                 </span>AddMatch(id.wrapping_add((<span class="number">45usize</span>).wrapping_mul(n)),
                          l.wrapping_add(<span class="number">4usize</span>),
                          l,
                          matches);
               }
             }
-          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;n&#39; </span><span class="kw">as </span>(i32) {
-            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;o&#39; </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;t&#39; </span><span class="kw">as </span>(i32)) &amp;&amp;
-               (s[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32)) {
-                <span class="comment">//eprint!(&quot;Qdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'n' </span><span class="kw">as </span>(i32) {
+            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'o' </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b't' </span><span class="kw">as </span>(i32)) &amp;&amp;
+               (s[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32)) {
+                <span class="comment">//eprint!("Qdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
               </span>AddMatch(id.wrapping_add((<span class="number">80usize</span>).wrapping_mul(n)),
                        l.wrapping_add(<span class="number">5usize</span>),
                        l,
                        matches);
             }
-          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;t&#39; </span><span class="kw">as </span>(i32) {
-            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;h&#39; </span><span class="kw">as </span>(i32) {
-              <span class="kw">if </span>s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;e&#39; </span><span class="kw">as </span>(i32) {
-                <span class="kw">if </span>s[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;Rdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b't' </span><span class="kw">as </span>(i32) {
+            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'h' </span><span class="kw">as </span>(i32) {
+              <span class="kw">if </span>s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'e' </span><span class="kw">as </span>(i32) {
+                <span class="kw">if </span>s[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("Rdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
                   </span>AddMatch(id.wrapping_add((<span class="number">5usize</span>).wrapping_mul(n)),
                            l.wrapping_add(<span class="number">5usize</span>),
                            l,
                            matches);
                 }
-              } <span class="kw">else if </span>s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;a&#39; </span><span class="kw">as </span>(i32) {
-                <span class="kw">if </span>s[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;t&#39; </span><span class="kw">as </span>(i32) &amp;&amp;
-                   (s[(<span class="number">5usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32)) {
-                <span class="comment">//eprint!(&quot;Sdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+              } <span class="kw">else if </span>s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'a' </span><span class="kw">as </span>(i32) {
+                <span class="kw">if </span>s[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b't' </span><span class="kw">as </span>(i32) &amp;&amp;
+                   (s[(<span class="number">5usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32)) {
+                <span class="comment">//eprint!("Sdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
                   </span>AddMatch(id.wrapping_add((<span class="number">29usize</span>).wrapping_mul(n)),
                            l.wrapping_add(<span class="number">6usize</span>),
                            l,
                            matches);
                 }
               }
-            } <span class="kw">else if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;o&#39; </span><span class="kw">as </span>(i32) {
-              <span class="kw">if </span>s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;Tdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+            } <span class="kw">else if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'o' </span><span class="kw">as </span>(i32) {
+              <span class="kw">if </span>s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("Tdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
                 </span>AddMatch(id.wrapping_add((<span class="number">17usize</span>).wrapping_mul(n)),
                          l.wrapping_add(<span class="number">4usize</span>),
                          l,
                          matches);
               }
             }
-          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;w&#39; </span><span class="kw">as </span>(i32) {
-            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;i&#39; </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;t&#39; </span><span class="kw">as </span>(i32)) &amp;&amp;
-               (s[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;h&#39; </span><span class="kw">as </span>(i32)) &amp;&amp;
-               (s[(<span class="number">5usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32)) {
-                <span class="comment">//eprint!(&quot;Udding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'w' </span><span class="kw">as </span>(i32) {
+            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'i' </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b't' </span><span class="kw">as </span>(i32)) &amp;&amp;
+               (s[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'h' </span><span class="kw">as </span>(i32)) &amp;&amp;
+               (s[(<span class="number">5usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32)) {
+                <span class="comment">//eprint!("Udding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
               </span>AddMatch(id.wrapping_add((<span class="number">35usize</span>).wrapping_mul(n)),
                        l.wrapping_add(<span class="number">6usize</span>),
                        l,
                        matches);
             }
           }
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;\&quot;&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;Vdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'\"' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("Vdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
           </span>AddMatch(id.wrapping_add((<span class="number">19usize</span>).wrapping_mul(n)),
                    l.wrapping_add(<span class="number">1usize</span>),
                    l,
                    matches);
-          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;&gt;&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;Wdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'&gt;' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("Wdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
             </span>AddMatch(id.wrapping_add((<span class="number">21usize</span>).wrapping_mul(n)),
                      l.wrapping_add(<span class="number">2usize</span>),
                      l,
                      matches);
           }
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;.&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;Xdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'.' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("Xdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
           </span>AddMatch(id.wrapping_add((<span class="number">20usize</span>).wrapping_mul(n)),
                    l.wrapping_add(<span class="number">1usize</span>),
                    l,
                    matches);
-          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;Ydding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("Ydding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
             </span>AddMatch(id.wrapping_add((<span class="number">31usize</span>).wrapping_mul(n)),
                      l.wrapping_add(<span class="number">2usize</span>),
                      l,
                      matches);
-            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;T&#39; </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;h&#39; </span><span class="kw">as </span>(i32)) {
-              <span class="kw">if </span>s[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;e&#39; </span><span class="kw">as </span>(i32) {
-                <span class="kw">if </span>s[(<span class="number">5usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;Zdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'T' </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'h' </span><span class="kw">as </span>(i32)) {
+              <span class="kw">if </span>s[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'e' </span><span class="kw">as </span>(i32) {
+                <span class="kw">if </span>s[(<span class="number">5usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("Zdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
                   </span>AddMatch(id.wrapping_add((<span class="number">43usize</span>).wrapping_mul(n)),
                            l.wrapping_add(<span class="number">6usize</span>),
                            l,
                            matches);
                 }
-              } <span class="kw">else if </span>s[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;i&#39; </span><span class="kw">as </span>(i32) {
-                <span class="kw">if </span>s[(<span class="number">5usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;s&#39; </span><span class="kw">as </span>(i32) &amp;&amp;
-                   (s[(<span class="number">6usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32)) {
-                <span class="comment">//eprint!(&quot;AAdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+              } <span class="kw">else if </span>s[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'i' </span><span class="kw">as </span>(i32) {
+                <span class="kw">if </span>s[(<span class="number">5usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b's' </span><span class="kw">as </span>(i32) &amp;&amp;
+                   (s[(<span class="number">6usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32)) {
+                <span class="comment">//eprint!("AAdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
                   </span>AddMatch(id.wrapping_add((<span class="number">75usize</span>).wrapping_mul(n)),
                            l.wrapping_add(<span class="number">7usize</span>),
                            l,
@@ -1783,154 +1784,154 @@
               }
             }
           }
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;,&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;ABdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b',' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("ABdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
           </span>AddMatch(id.wrapping_add((<span class="number">76usize</span>).wrapping_mul(n)),
                    l.wrapping_add(<span class="number">1usize</span>),
                    l,
                    matches);
-          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;ACdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("ACdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
             </span>AddMatch(id.wrapping_add((<span class="number">14usize</span>).wrapping_mul(n)),
                      l.wrapping_add(<span class="number">2usize</span>),
                      l,
                      matches);
           }
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;\n&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;ADdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'\n' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("ADdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
           </span>AddMatch(id.wrapping_add((<span class="number">22usize</span>).wrapping_mul(n)),
                    l.wrapping_add(<span class="number">1usize</span>),
                    l,
                    matches);
-          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;\t&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;AEdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'\t' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("AEdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
             </span>AddMatch(id.wrapping_add((<span class="number">50usize</span>).wrapping_mul(n)),
                      l.wrapping_add(<span class="number">2usize</span>),
                      l,
                      matches);
           }
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;]&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;AFdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b']' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("AFdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
           </span>AddMatch(id.wrapping_add((<span class="number">24usize</span>).wrapping_mul(n)),
                    l.wrapping_add(<span class="number">1usize</span>),
                    l,
                    matches);
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;\&#39;&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;AGdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'\'' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("AGdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
           </span>AddMatch(id.wrapping_add((<span class="number">36usize</span>).wrapping_mul(n)),
                    l.wrapping_add(<span class="number">1usize</span>),
                    l,
                    matches);
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;:&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;AHdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b':' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("AHdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
           </span>AddMatch(id.wrapping_add((<span class="number">51usize</span>).wrapping_mul(n)),
                    l.wrapping_add(<span class="number">1usize</span>),
                    l,
                    matches);
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;(&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;AIdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'(' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("AIdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
           </span>AddMatch(id.wrapping_add((<span class="number">57usize</span>).wrapping_mul(n)),
                    l.wrapping_add(<span class="number">1usize</span>),
                    l,
                    matches);
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;=&#39; </span><span class="kw">as </span>(i32) {
-          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;\&quot;&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;AJdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'=' </span><span class="kw">as </span>(i32) {
+          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'\"' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("AJdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
             </span>AddMatch(id.wrapping_add((<span class="number">70usize</span>).wrapping_mul(n)),
                      l.wrapping_add(<span class="number">2usize</span>),
                      l,
                      matches);
-          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;\&#39;&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;AKdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'\'' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("AKdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
             </span>AddMatch(id.wrapping_add((<span class="number">86usize</span>).wrapping_mul(n)),
                      l.wrapping_add(<span class="number">2usize</span>),
                      l,
                      matches);
           }
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;a&#39; </span><span class="kw">as </span>(i32) {
-          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;l&#39; </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32)) {
-                <span class="comment">//eprint!(&quot;ALdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'a' </span><span class="kw">as </span>(i32) {
+          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'l' </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32)) {
+                <span class="comment">//eprint!("ALdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
             </span>AddMatch(id.wrapping_add((<span class="number">84usize</span>).wrapping_mul(n)),
                      l.wrapping_add(<span class="number">3usize</span>),
                      l,
                      matches);
           }
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;e&#39; </span><span class="kw">as </span>(i32) {
-          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;d&#39; </span><span class="kw">as </span>(i32) {
-            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;AMdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'e' </span><span class="kw">as </span>(i32) {
+          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'd' </span><span class="kw">as </span>(i32) {
+            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("AMdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
               </span>AddMatch(id.wrapping_add((<span class="number">53usize</span>).wrapping_mul(n)),
                        l.wrapping_add(<span class="number">3usize</span>),
                        l,
                        matches);
             }
-          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;r&#39; </span><span class="kw">as </span>(i32) {
-            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;ANdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'r' </span><span class="kw">as </span>(i32) {
+            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("ANdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
               </span>AddMatch(id.wrapping_add((<span class="number">82usize</span>).wrapping_mul(n)),
                        l.wrapping_add(<span class="number">3usize</span>),
                        l,
                        matches);
             }
-          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;s&#39; </span><span class="kw">as </span>(i32) {
-            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;t&#39; </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32)) {
-                <span class="comment">//eprint!(&quot;AOdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b's' </span><span class="kw">as </span>(i32) {
+            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b't' </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32)) {
+                <span class="comment">//eprint!("AOdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
               </span>AddMatch(id.wrapping_add((<span class="number">95usize</span>).wrapping_mul(n)),
                        l.wrapping_add(<span class="number">4usize</span>),
                        l,
                        matches);
             }
           }
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;f&#39; </span><span class="kw">as </span>(i32) {
-          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;u&#39; </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;l&#39; </span><span class="kw">as </span>(i32)) &amp;&amp;
-             (s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32)) {
-                <span class="comment">//eprint!(&quot;APdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'f' </span><span class="kw">as </span>(i32) {
+          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'u' </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'l' </span><span class="kw">as </span>(i32)) &amp;&amp;
+             (s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32)) {
+                <span class="comment">//eprint!("APdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
             </span>AddMatch(id.wrapping_add((<span class="number">90usize</span>).wrapping_mul(n)),
                      l.wrapping_add(<span class="number">4usize</span>),
                      l,
                      matches);
           }
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;i&#39; </span><span class="kw">as </span>(i32) {
-          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;v&#39; </span><span class="kw">as </span>(i32) {
-            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;e&#39; </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32)) {
-                <span class="comment">//eprint!(&quot;AQdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'i' </span><span class="kw">as </span>(i32) {
+          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'v' </span><span class="kw">as </span>(i32) {
+            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'e' </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32)) {
+                <span class="comment">//eprint!("AQdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
               </span>AddMatch(id.wrapping_add((<span class="number">92usize</span>).wrapping_mul(n)),
                        l.wrapping_add(<span class="number">4usize</span>),
                        l,
                        matches);
             }
-          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;z&#39; </span><span class="kw">as </span>(i32) {
-            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;e&#39; </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32)) {
-                <span class="comment">//eprint!(&quot;ARdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'z' </span><span class="kw">as </span>(i32) {
+            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'e' </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32)) {
+                <span class="comment">//eprint!("ARdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
               </span>AddMatch(id.wrapping_add((<span class="number">100usize</span>).wrapping_mul(n)),
                        l.wrapping_add(<span class="number">4usize</span>),
                        l,
                        matches);
             }
           }
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;l&#39; </span><span class="kw">as </span>(i32) {
-          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;e&#39; </span><span class="kw">as </span>(i32) {
-            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;s&#39; </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;s&#39; </span><span class="kw">as </span>(i32)) &amp;&amp;
-               (s[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32)) {
-                <span class="comment">//eprint!(&quot;ASdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'l' </span><span class="kw">as </span>(i32) {
+          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'e' </span><span class="kw">as </span>(i32) {
+            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b's' </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b's' </span><span class="kw">as </span>(i32)) &amp;&amp;
+               (s[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32)) {
+                <span class="comment">//eprint!("ASdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
               </span>AddMatch(id.wrapping_add((<span class="number">93usize</span>).wrapping_mul(n)),
                        l.wrapping_add(<span class="number">5usize</span>),
                        l,
                        matches);
             }
-          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;y&#39; </span><span class="kw">as </span>(i32) {
-            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;ATdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'y' </span><span class="kw">as </span>(i32) {
+            <span class="kw">if </span>s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("ATdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
               </span>AddMatch(id.wrapping_add((<span class="number">61usize</span>).wrapping_mul(n)),
                        l.wrapping_add(<span class="number">3usize</span>),
                        l,
                        matches);
             }
           }
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;o&#39; </span><span class="kw">as </span>(i32) {
-          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;u&#39; </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;s&#39; </span><span class="kw">as </span>(i32)) &amp;&amp;
-             (s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32)) {
-                <span class="comment">//eprint!(&quot;AUdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), len);
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'o' </span><span class="kw">as </span>(i32) {
+          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'u' </span><span class="kw">as </span>(i32) &amp;&amp; (s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b's' </span><span class="kw">as </span>(i32)) &amp;&amp;
+             (s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32)) {
+                <span class="comment">//eprint!("AUdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
             </span>AddMatch(id.wrapping_add((<span class="number">106usize</span>).wrapping_mul(n)),
                      l.wrapping_add(<span class="number">4usize</span>),
                      l,
@@ -1949,7 +1950,7 @@
             <span class="kw">continue</span>;
           }
         }
-                <span class="comment">//eprint!(&quot;AVdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+                <span class="comment">//eprint!("AVdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
         </span>AddMatch(id.wrapping_add((<span class="kw">if </span>is_all_caps != <span class="number">0 </span>{ <span class="number">44i32 </span>} <span class="kw">else </span>{ <span class="number">9i32 </span>} <span class="kw">as </span>(usize))
                                    .wrapping_mul(n)),
                  l,
@@ -1962,82 +1963,82 @@
           }
         }
         s = <span class="kw-2">&amp;</span>data.split_at(l <span class="kw">as </span>(usize)).<span class="number">1</span>;
-        <span class="kw">if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;AWdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+        <span class="kw">if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("AWdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
           </span>AddMatch(id.wrapping_add((<span class="kw">if </span>is_all_caps != <span class="number">0 </span>{ <span class="number">68i32 </span>} <span class="kw">else </span>{ <span class="number">4i32 </span>} <span class="kw">as </span>(usize))
                                      .wrapping_mul(n)),
                    l.wrapping_add(<span class="number">1usize</span>),
                    l,
                    matches);
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;\&quot;&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;AXdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'\"' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("AXdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
           </span>AddMatch(id.wrapping_add((<span class="kw">if </span>is_all_caps != <span class="number">0 </span>{ <span class="number">87i32 </span>} <span class="kw">else </span>{ <span class="number">66i32 </span>} <span class="kw">as </span>(usize))
                                      .wrapping_mul(n)),
                    l.wrapping_add(<span class="number">1usize</span>),
                    l,
                    matches);
-          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;&gt;&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;AYdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'&gt;' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("AYdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
             </span>AddMatch(id.wrapping_add((<span class="kw">if </span>is_all_caps != <span class="number">0 </span>{ <span class="number">97i32 </span>} <span class="kw">else </span>{ <span class="number">69i32 </span>} <span class="kw">as </span>(usize))
                                        .wrapping_mul(n)),
                      l.wrapping_add(<span class="number">2usize</span>),
                      l,
                      matches);
           }
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;.&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;AZdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'.' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("AZdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
           </span>AddMatch(id.wrapping_add((<span class="kw">if </span>is_all_caps != <span class="number">0 </span>{ <span class="number">101i32 </span>} <span class="kw">else </span>{ <span class="number">79i32 </span>} <span class="kw">as </span>(usize))
                                      .wrapping_mul(n)),
                    l.wrapping_add(<span class="number">1usize</span>),
                    l,
                    matches);
-          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;BAdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("BAdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
             </span>AddMatch(id.wrapping_add((<span class="kw">if </span>is_all_caps != <span class="number">0 </span>{ <span class="number">114i32 </span>} <span class="kw">else </span>{ <span class="number">88i32 </span>} <span class="kw">as </span>(usize))
                                        .wrapping_mul(n)),
                      l.wrapping_add(<span class="number">2usize</span>),
                      l,
                      matches);
           }
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;,&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;BBdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b',' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("BBdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
           </span>AddMatch(id.wrapping_add((<span class="kw">if </span>is_all_caps != <span class="number">0 </span>{ <span class="number">112i32 </span>} <span class="kw">else </span>{ <span class="number">99i32 </span>} <span class="kw">as </span>(usize))
                                      .wrapping_mul(n)),
                    l.wrapping_add(<span class="number">1usize</span>),
                    l,
                    matches);
-          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;BCdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("BCdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
             </span>AddMatch(id.wrapping_add((<span class="kw">if </span>is_all_caps != <span class="number">0 </span>{ <span class="number">107i32 </span>} <span class="kw">else </span>{ <span class="number">58i32 </span>} <span class="kw">as </span>(usize))
                                        .wrapping_mul(n)),
                      l.wrapping_add(<span class="number">2usize</span>),
                      l,
                      matches);
           }
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;\&#39;&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;BDdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'\'' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("BDdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
           </span>AddMatch(id.wrapping_add((<span class="kw">if </span>is_all_caps != <span class="number">0 </span>{ <span class="number">94i32 </span>} <span class="kw">else </span>{ <span class="number">74i32 </span>} <span class="kw">as </span>(usize))
                                      .wrapping_mul(n)),
                    l.wrapping_add(<span class="number">1usize</span>),
                    l,
                    matches);
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;(&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;BEdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'(' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("BEdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
           </span>AddMatch(id.wrapping_add((<span class="kw">if </span>is_all_caps != <span class="number">0 </span>{ <span class="number">113i32 </span>} <span class="kw">else </span>{ <span class="number">78i32 </span>} <span class="kw">as </span>(usize))
                                      .wrapping_mul(n)),
                    l.wrapping_add(<span class="number">1usize</span>),
                    l,
                    matches);
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;=&#39; </span><span class="kw">as </span>(i32) {
-          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;\&quot;&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;BFdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'=' </span><span class="kw">as </span>(i32) {
+          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'\"' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("BFdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
             </span>AddMatch(id.wrapping_add((<span class="kw">if </span>is_all_caps != <span class="number">0 </span>{ <span class="number">105i32 </span>} <span class="kw">else </span>{ <span class="number">104i32 </span>} <span class="kw">as </span>(usize))
                                        .wrapping_mul(n)),
                      l.wrapping_add(<span class="number">2usize</span>),
                      l,
                      matches);
-          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;\&#39;&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;BGdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'\'' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("BGdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
             </span>AddMatch(id.wrapping_add((<span class="kw">if </span>is_all_caps != <span class="number">0 </span>{ <span class="number">116i32 </span>} <span class="kw">else </span>{ <span class="number">108i32 </span>} <span class="kw">as </span>(usize))
                                        .wrapping_mul(n)),
                      l.wrapping_add(<span class="number">2usize</span>),
@@ -2049,8 +2050,8 @@
     }
   }
   <span class="kw">if </span>max_length &gt;= <span class="number">5usize </span>&amp;&amp;
-     (data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) || data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;.&#39; </span><span class="kw">as </span>(i32)) {
-    <span class="kw">let </span>is_space: i32 = <span class="kw">if </span>!!(data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32)) {
+     (data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) || data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'.' </span><span class="kw">as </span>(i32)) {
+    <span class="kw">let </span>is_space: i32 = <span class="kw">if </span>!!(data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32)) {
       <span class="number">1i32
     </span>} <span class="kw">else </span>{
       <span class="number">0i32
@@ -2078,7 +2079,7 @@
             <span class="kw">continue</span>;
           }
         }
-                <span class="comment">//eprint!(&quot;BHdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+                <span class="comment">//eprint!("BHdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
         </span>AddMatch(id.wrapping_add((<span class="kw">if </span>is_space != <span class="number">0 </span>{ <span class="number">6i32 </span>} <span class="kw">else </span>{ <span class="number">32i32 </span>} <span class="kw">as </span>(usize))
                                    .wrapping_mul(n)),
                  l.wrapping_add(<span class="number">1usize</span>),
@@ -2091,56 +2092,56 @@
           }
         }
         s = <span class="kw-2">&amp;</span>data.split_at(l.wrapping_add(<span class="number">1usize</span>) <span class="kw">as </span>(usize)).<span class="number">1</span>;
-        <span class="kw">if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;BIdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+        <span class="kw">if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("BIdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
           </span>AddMatch(id.wrapping_add((<span class="kw">if </span>is_space != <span class="number">0 </span>{ <span class="number">2i32 </span>} <span class="kw">else </span>{ <span class="number">77i32 </span>} <span class="kw">as </span>(usize))
                                      .wrapping_mul(n)),
                    l.wrapping_add(<span class="number">2usize</span>),
                    l,
                    matches);
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;(&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;BJdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'(' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("BJdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
           </span>AddMatch(id.wrapping_add((<span class="kw">if </span>is_space != <span class="number">0 </span>{ <span class="number">89i32 </span>} <span class="kw">else </span>{ <span class="number">67i32 </span>} <span class="kw">as </span>(usize))
                                      .wrapping_mul(n)),
                    l.wrapping_add(<span class="number">2usize</span>),
                    l,
                    matches);
         } <span class="kw">else if </span>is_space != <span class="number">0 </span>{
-          <span class="kw">if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;,&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;BKdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+          <span class="kw">if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b',' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("BKdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
             </span>AddMatch(id.wrapping_add((<span class="number">103usize</span>).wrapping_mul(n)),
                      l.wrapping_add(<span class="number">2usize</span>),
                      l,
                      matches);
-            <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;BLdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+            <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("BLdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
               </span>AddMatch(id.wrapping_add((<span class="number">33usize</span>).wrapping_mul(n)),
                        l.wrapping_add(<span class="number">3usize</span>),
                        l,
                        matches);
             }
-          } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;.&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;BMdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+          } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'.' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("BMdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
             </span>AddMatch(id.wrapping_add((<span class="number">71usize</span>).wrapping_mul(n)),
                      l.wrapping_add(<span class="number">2usize</span>),
                      l,
                      matches);
-            <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;BNdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+            <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("BNdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
               </span>AddMatch(id.wrapping_add((<span class="number">52usize</span>).wrapping_mul(n)),
                        l.wrapping_add(<span class="number">3usize</span>),
                        l,
                        matches);
             }
-          } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;=&#39; </span><span class="kw">as </span>(i32) {
-            <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;\&quot;&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;BOdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+          } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'=' </span><span class="kw">as </span>(i32) {
+            <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'\"' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("BOdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
               </span>AddMatch(id.wrapping_add((<span class="number">81usize</span>).wrapping_mul(n)),
                        l.wrapping_add(<span class="number">3usize</span>),
                        l,
                        matches);
-            } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;\&#39;&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;BPdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+            } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'\'' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("BPdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
               </span>AddMatch(id.wrapping_add((<span class="number">98usize</span>).wrapping_mul(n)),
                        l.wrapping_add(<span class="number">3usize</span>),
                        l,
@@ -2163,7 +2164,7 @@
             <span class="kw">continue</span>;
           }
         }
-                <span class="comment">//eprint!(&quot;CAdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+                <span class="comment">//eprint!("CAdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
         </span>AddMatch(id.wrapping_add((<span class="kw">if </span>is_all_caps != <span class="number">0 </span>{ <span class="number">85i32 </span>} <span class="kw">else </span>{ <span class="number">30i32 </span>} <span class="kw">as </span>(usize))
                                    .wrapping_mul(n)),
                  l.wrapping_add(<span class="number">1usize</span>),
@@ -2176,54 +2177,54 @@
           }
         }
         s = <span class="kw-2">&amp;</span>data.split_at(l.wrapping_add(<span class="number">1</span>)).<span class="number">1</span>;
-        <span class="kw">if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;CBdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+        <span class="kw">if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("CBdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
           </span>AddMatch(id.wrapping_add((<span class="kw">if </span>is_all_caps != <span class="number">0 </span>{ <span class="number">83i32 </span>} <span class="kw">else </span>{ <span class="number">15i32 </span>} <span class="kw">as </span>(usize))
                                      .wrapping_mul(n)),
                    l.wrapping_add(<span class="number">2usize</span>),
                    l,
                    matches);
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;,&#39; </span><span class="kw">as </span>(i32) {
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b',' </span><span class="kw">as </span>(i32) {
           <span class="kw">if </span>is_all_caps == <span class="number">0 </span>{
-                <span class="comment">//eprint!(&quot;CCdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+                <span class="comment">//eprint!("CCdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
             </span>AddMatch(id.wrapping_add((<span class="number">109usize</span>).wrapping_mul(n)),
                      l.wrapping_add(<span class="number">2usize</span>),
                      l,
                      matches);
           }
-          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;CDdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("CDdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
             </span>AddMatch(id.wrapping_add((<span class="kw">if </span>is_all_caps != <span class="number">0 </span>{ <span class="number">111i32 </span>} <span class="kw">else </span>{ <span class="number">65i32 </span>} <span class="kw">as </span>(usize))
                                        .wrapping_mul(n)),
                      l.wrapping_add(<span class="number">3usize</span>),
                      l,
                      matches);
           }
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;.&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;CEdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'.' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("CEdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
           </span>AddMatch(id.wrapping_add((<span class="kw">if </span>is_all_caps != <span class="number">0 </span>{ <span class="number">115i32 </span>} <span class="kw">else </span>{ <span class="number">96i32 </span>} <span class="kw">as </span>(usize))
                                      .wrapping_mul(n)),
                    l.wrapping_add(<span class="number">2usize</span>),
                    l,
                    matches);
-          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;CFdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("CFdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
             </span>AddMatch(id.wrapping_add((<span class="kw">if </span>is_all_caps != <span class="number">0 </span>{ <span class="number">117i32 </span>} <span class="kw">else </span>{ <span class="number">91i32 </span>} <span class="kw">as </span>(usize))
                                        .wrapping_mul(n)),
                      l.wrapping_add(<span class="number">3usize</span>),
                      l,
                      matches);
           }
-        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;=&#39; </span><span class="kw">as </span>(i32) {
-          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;\&quot;&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;CGdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+        } <span class="kw">else if </span>s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'=' </span><span class="kw">as </span>(i32) {
+          <span class="kw">if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'\"' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("CGdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
             </span>AddMatch(id.wrapping_add((<span class="kw">if </span>is_all_caps != <span class="number">0 </span>{ <span class="number">110i32 </span>} <span class="kw">else </span>{ <span class="number">118i32 </span>} <span class="kw">as </span>(usize))
                                        .wrapping_mul(n)),
                      l.wrapping_add(<span class="number">3usize</span>),
                      l,
                      matches);
-          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;\&#39;&#39; </span><span class="kw">as </span>(i32) {
-                <span class="comment">//eprint!(&quot;CHdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+          } <span class="kw">else if </span>s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'\'' </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("CHdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
             </span>AddMatch(id.wrapping_add((<span class="kw">if </span>is_all_caps != <span class="number">0 </span>{ <span class="number">119i32 </span>} <span class="kw">else </span>{ <span class="number">120i32 </span>} <span class="kw">as </span>(usize))
                                        .wrapping_mul(n)),
                      l.wrapping_add(<span class="number">3usize</span>),
@@ -2235,9 +2236,9 @@
     }
   }
   <span class="kw">if </span>max_length &gt;= <span class="number">6usize </span>{
-    <span class="kw">if </span>data[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) &amp;&amp;
-       (data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;e&#39; </span><span class="kw">as </span>(i32) || data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;s&#39; </span><span class="kw">as </span>(i32) ||
-        data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;,&#39; </span><span class="kw">as </span>(i32)) ||
+    <span class="kw">if </span>data[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) &amp;&amp;
+       (data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'e' </span><span class="kw">as </span>(i32) || data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b's' </span><span class="kw">as </span>(i32) ||
+        data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b',' </span><span class="kw">as </span>(i32)) ||
        data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="number">0xc2i32 </span>&amp;&amp; (data[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="number">0xa0i32</span>) {
       <span class="kw">let </span><span class="kw-2">mut </span>offset: usize = kStaticDictionaryBuckets[Hash(<span class="kw-2">&amp;</span>data.split_at(<span class="number">2</span>).<span class="number">1</span>) <span class="kw">as </span>(usize)] <span class="kw">as
                               </span>(usize);
@@ -2259,22 +2260,22 @@
                     <span class="kw-2">&amp;</span>data.split_at(<span class="number">2</span>).<span class="number">1</span>,
                     max_length.wrapping_sub(<span class="number">2usize</span>)) != <span class="number">0</span>) {
           <span class="kw">if </span>data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="number">0xc2i32 </span>{
-                <span class="comment">//eprint!(&quot;CIdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+                <span class="comment">//eprint!("CIdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
             </span>AddMatch(id.wrapping_add((<span class="number">102usize</span>).wrapping_mul(n)),
                      l.wrapping_add(<span class="number">2usize</span>),
                      l,
                      matches);
             has_found_match = <span class="number">1i32</span>;
           } <span class="kw">else if </span>l.wrapping_add(<span class="number">2usize</span>) &lt; max_length &amp;&amp;
-                    (data[(l.wrapping_add(<span class="number">2usize</span>) <span class="kw">as </span>(usize))] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32)) {
-            <span class="kw">let </span>t: usize = (<span class="kw">if </span>data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;e&#39; </span><span class="kw">as </span>(i32) {
+                    (data[(l.wrapping_add(<span class="number">2usize</span>) <span class="kw">as </span>(usize))] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32)) {
+            <span class="kw">let </span>t: usize = (<span class="kw">if </span>data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'e' </span><span class="kw">as </span>(i32) {
                               <span class="number">18i32
-                            </span>} <span class="kw">else if </span>data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;s&#39; </span><span class="kw">as </span>(i32) {
+                            </span>} <span class="kw">else if </span>data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b's' </span><span class="kw">as </span>(i32) {
               <span class="number">7i32
             </span>} <span class="kw">else </span>{
               <span class="number">13i32
             </span>}) <span class="kw">as </span>(usize);
-                <span class="comment">//eprint!(&quot;CJdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+                <span class="comment">//eprint!("CJdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
             </span>AddMatch(id.wrapping_add(t.wrapping_mul(n)),
                      l.wrapping_add(<span class="number">3usize</span>),
                      l,
@@ -2286,14 +2287,14 @@
     }
   }
   <span class="kw">if </span>max_length &gt;= <span class="number">9usize </span>{
-    <span class="kw">if </span>data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) &amp;&amp; (data[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;t&#39; </span><span class="kw">as </span>(i32)) &amp;&amp;
-       (data[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;h&#39; </span><span class="kw">as </span>(i32)) &amp;&amp;
-       (data[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;e&#39; </span><span class="kw">as </span>(i32)) &amp;&amp;
-       (data[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32)) ||
-       data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;.&#39; </span><span class="kw">as </span>(i32) &amp;&amp; (data[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;c&#39; </span><span class="kw">as </span>(i32)) &amp;&amp;
-       (data[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;o&#39; </span><span class="kw">as </span>(i32)) &amp;&amp;
-       (data[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;m&#39; </span><span class="kw">as </span>(i32)) &amp;&amp;
-       (data[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;/&#39; </span><span class="kw">as </span>(i32)) {
+    <span class="kw">if </span>data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) &amp;&amp; (data[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b't' </span><span class="kw">as </span>(i32)) &amp;&amp;
+       (data[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'h' </span><span class="kw">as </span>(i32)) &amp;&amp;
+       (data[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'e' </span><span class="kw">as </span>(i32)) &amp;&amp;
+       (data[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32)) ||
+       data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'.' </span><span class="kw">as </span>(i32) &amp;&amp; (data[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'c' </span><span class="kw">as </span>(i32)) &amp;&amp;
+       (data[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'o' </span><span class="kw">as </span>(i32)) &amp;&amp;
+       (data[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'm' </span><span class="kw">as </span>(i32)) &amp;&amp;
+       (data[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'/' </span><span class="kw">as </span>(i32)) {
       <span class="kw">let </span><span class="kw-2">mut </span>offset: usize = kStaticDictionaryBuckets[Hash(<span class="kw-2">&amp;</span>data.split_at(<span class="number">5</span>).<span class="number">1</span>) <span class="kw">as </span>(usize)] <span class="kw">as
                               </span>(usize);
       <span class="kw">let </span><span class="kw-2">mut </span>end: i32 = (offset == <span class="number">0</span>) <span class="kw">as </span>(i32);
@@ -2313,8 +2314,8 @@
                     w,
                     <span class="kw-2">&amp;</span>data.split_at(<span class="number">5</span>).<span class="number">1</span>,
                     max_length.wrapping_sub(<span class="number">5usize</span>)) != <span class="number">0</span>) {
-                <span class="comment">//eprint!(&quot;CKdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
-          </span>AddMatch(id.wrapping_add((<span class="kw">if </span>data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
+                <span class="comment">//eprint!("CKdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
+          </span>AddMatch(id.wrapping_add((<span class="kw">if </span>data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
                                       <span class="number">41i32
                                     </span>} <span class="kw">else </span>{
                                       <span class="number">72i32
@@ -2326,22 +2327,22 @@
           has_found_match = <span class="number">1i32</span>;
           <span class="kw">if </span>l.wrapping_add(<span class="number">5usize</span>) &lt; max_length {
             <span class="kw">let </span>s: <span class="kw-2">&amp;</span>[u8] = <span class="kw-2">&amp;</span>data.split_at(l.wrapping_add(<span class="number">5usize</span>) <span class="kw">as </span>(usize)).<span class="number">1</span>;
-            <span class="kw">if </span>data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32) {
-              <span class="kw">if </span>l.wrapping_add(<span class="number">8usize</span>) &lt; max_length &amp;&amp; (s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32)) &amp;&amp;
-                 (s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;o&#39; </span><span class="kw">as </span>(i32)) &amp;&amp;
-                 (s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;f&#39; </span><span class="kw">as </span>(i32)) &amp;&amp;
-                 (s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32)) {
-                <span class="comment">//eprint!(&quot;CLdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+            <span class="kw">if </span>data[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32) {
+              <span class="kw">if </span>l.wrapping_add(<span class="number">8usize</span>) &lt; max_length &amp;&amp; (s[(<span class="number">0usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32)) &amp;&amp;
+                 (s[(<span class="number">1usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'o' </span><span class="kw">as </span>(i32)) &amp;&amp;
+                 (s[(<span class="number">2usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'f' </span><span class="kw">as </span>(i32)) &amp;&amp;
+                 (s[(<span class="number">3usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32)) {
+                <span class="comment">//eprint!("CLdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
                 </span>AddMatch(id.wrapping_add((<span class="number">62usize</span>).wrapping_mul(n)),
                          l.wrapping_add(<span class="number">9usize</span>),
                          l,
                          matches);
                 <span class="kw">if </span>l.wrapping_add(<span class="number">12usize</span>) &lt; max_length &amp;&amp;
-                   (s[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;t&#39; </span><span class="kw">as </span>(i32)) &amp;&amp;
-                   (s[(<span class="number">5usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;h&#39; </span><span class="kw">as </span>(i32)) &amp;&amp;
-                   (s[(<span class="number">6usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39;e&#39; </span><span class="kw">as </span>(i32)) &amp;&amp;
-                   (s[(<span class="number">7usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b&#39; &#39; </span><span class="kw">as </span>(i32)) {
-                <span class="comment">//eprint!(&quot;BQdding match {} {} {} {}\n&quot;, w.len(), w.transform(), w.idx(), 666);
+                   (s[(<span class="number">4usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b't' </span><span class="kw">as </span>(i32)) &amp;&amp;
+                   (s[(<span class="number">5usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'h' </span><span class="kw">as </span>(i32)) &amp;&amp;
+                   (s[(<span class="number">6usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b'e' </span><span class="kw">as </span>(i32)) &amp;&amp;
+                   (s[(<span class="number">7usize</span>)] <span class="kw">as </span>(i32) == <span class="string">b' ' </span><span class="kw">as </span>(i32)) {
+                <span class="comment">//eprint!("BQdding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), 666);
                   </span>AddMatch(id.wrapping_add((<span class="number">73usize</span>).wrapping_mul(n)),
                            l.wrapping_add(<span class="number">13usize</span>),
                            l,

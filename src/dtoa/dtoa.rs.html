@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/dtoa-1.0.9/src/dtoa.rs`."><title>dtoa.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="dtoa" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/dtoa-1.0.9/src/dtoa.rs`."><title>dtoa.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="dtoa" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -537,20 +538,20 @@
 // Copyright (C) 2015 THL A29 Limited, a Tencent company, and Milo Yip. All
 // rights reserved.
 //
-// Licensed under the MIT License (the &quot;License&quot;); you may not use this file
+// Licensed under the MIT License (the "License"); you may not use this file
 // except in compliance with the License. You may obtain a copy of the License
 // at
 //
 // http://opensource.org/licenses/MIT
 //
 // Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 // WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 // License for the specific language governing permissions and limitations under
 // the License.
 
 </span><span class="kw">use </span>core::ptr;
-<span class="attr">#[cfg(feature = <span class="string">&quot;no-panic&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"no-panic"</span>)]
 </span><span class="kw">use </span>no_panic::no_panic;
 
 <span class="comment">/*
@@ -572,7 +573,7 @@ inline unsigned CountDecimalDigit32(uint32_t n) {
 */
 
 </span><span class="attr">#[inline]
-#[cfg_attr(feature = <span class="string">&quot;no-panic&quot;</span>, no_panic)]
+#[cfg_attr(feature = <span class="string">"no-panic"</span>, no_panic)]
 </span><span class="kw">pub fn </span>count_decimal_digit32(n: u32) -&gt; usize {
     <span class="kw">if </span>n &lt; <span class="number">10 </span>{
         <span class="number">1
@@ -600,12 +601,12 @@ inline unsigned CountDecimalDigit32(uint32_t n) {
 <span class="comment">/*
 inline char* WriteExponent(int K, char* buffer) {
     if (K &lt; 0) {
-        *buffer++ = &#39;-&#39;;
+        *buffer++ = '-';
         K = -K;
     }
 
     if (K &gt;= 100) {
-        *buffer++ = static_cast&lt;char&gt;(&#39;0&#39; + static_cast&lt;char&gt;(K / 100));
+        *buffer++ = static_cast&lt;char&gt;('0' + static_cast&lt;char&gt;(K / 100));
         K %= 100;
         const char* d = GetDigitsLut() + K * 2;
         *buffer++ = d[0];
@@ -617,23 +618,23 @@ inline char* WriteExponent(int K, char* buffer) {
         *buffer++ = d[1];
     }
     else
-        *buffer++ = static_cast&lt;char&gt;(&#39;0&#39; + static_cast&lt;char&gt;(K));
+        *buffer++ = static_cast&lt;char&gt;('0' + static_cast&lt;char&gt;(K));
 
     return buffer;
 }
 */
 
 </span><span class="attr">#[inline]
-#[cfg_attr(feature = <span class="string">&quot;no-panic&quot;</span>, no_panic)]
+#[cfg_attr(feature = <span class="string">"no-panic"</span>, no_panic)]
 </span><span class="kw">unsafe fn </span>write_exponent(<span class="kw-2">mut </span>k: isize, <span class="kw-2">mut </span>buffer: <span class="kw-2">*mut </span>u8) -&gt; <span class="kw-2">*mut </span>u8 {
     <span class="kw">if </span>k &lt; <span class="number">0 </span>{
-        <span class="kw-2">*</span>buffer = <span class="string">b&#39;-&#39;</span>;
+        <span class="kw-2">*</span>buffer = <span class="string">b'-'</span>;
         buffer = buffer.offset(<span class="number">1</span>);
         k = -k;
     }
 
     <span class="kw">if </span>k &gt;= <span class="number">100 </span>{
-        <span class="kw-2">*</span>buffer = <span class="string">b&#39;0&#39; </span>+ (k / <span class="number">100</span>) <span class="kw">as </span>u8;
+        <span class="kw-2">*</span>buffer = <span class="string">b'0' </span>+ (k / <span class="number">100</span>) <span class="kw">as </span>u8;
         k %= <span class="number">100</span>;
         <span class="kw">let </span>d = <span class="kw">crate</span>::DEC_DIGITS_LUT.as_ptr().offset(k * <span class="number">2</span>);
         ptr::copy_nonoverlapping(d, buffer.offset(<span class="number">1</span>), <span class="number">2</span>);
@@ -643,7 +644,7 @@ inline char* WriteExponent(int K, char* buffer) {
         ptr::copy_nonoverlapping(d, buffer, <span class="number">2</span>);
         buffer.offset(<span class="number">2</span>)
     } <span class="kw">else </span>{
-        <span class="kw-2">*</span>buffer = <span class="string">b&#39;0&#39; </span>+ k <span class="kw">as </span>u8;
+        <span class="kw-2">*</span>buffer = <span class="string">b'0' </span>+ k <span class="kw">as </span>u8;
         buffer.offset(<span class="number">1</span>)
     }
 }
@@ -654,7 +655,7 @@ inline char* Prettify(char* buffer, int length, int k, int maxDecimalPlaces) {
 */
 
 </span><span class="attr">#[inline]
-#[cfg_attr(feature = <span class="string">&quot;no-panic&quot;</span>, no_panic)]
+#[cfg_attr(feature = <span class="string">"no-panic"</span>, no_panic)]
 </span><span class="kw">pub unsafe fn </span>prettify(buffer: <span class="kw-2">*mut </span>u8, length: isize, k: isize) -&gt; <span class="kw-2">*mut </span>u8 {
     <span class="kw">let </span>kk = length + k; <span class="comment">// 10^(kk-1) &lt;= v &lt; 10^kk
 
@@ -662,31 +663,31 @@ inline char* Prettify(char* buffer, int length, int k, int maxDecimalPlaces) {
     if (0 &lt;= k &amp;&amp; kk &lt;= 21) {
         // 1234e7 -&gt; 12340000000
         for (int i = length; i &lt; kk; i++)
-            buffer[i] = &#39;0&#39;;
-        buffer[kk] = &#39;.&#39;;
-        buffer[kk + 1] = &#39;0&#39;;
+            buffer[i] = '0';
+        buffer[kk] = '.';
+        buffer[kk + 1] = '0';
         return &amp;buffer[kk + 2];
     }
     */
     </span><span class="kw">if </span><span class="number">0 </span>&lt;= k &amp;&amp; kk &lt;= <span class="number">21 </span>{
         <span class="comment">// 1234e7 -&gt; 12340000000
         </span><span class="kw">for </span>i <span class="kw">in </span>length..kk {
-            <span class="kw-2">*</span>buffer.offset(i) = <span class="string">b&#39;0&#39;</span>;
+            <span class="kw-2">*</span>buffer.offset(i) = <span class="string">b'0'</span>;
         }
-        <span class="kw-2">*</span>buffer.offset(kk) = <span class="string">b&#39;.&#39;</span>;
-        <span class="kw-2">*</span>buffer.offset(kk + <span class="number">1</span>) = <span class="string">b&#39;0&#39;</span>;
+        <span class="kw-2">*</span>buffer.offset(kk) = <span class="string">b'.'</span>;
+        <span class="kw-2">*</span>buffer.offset(kk + <span class="number">1</span>) = <span class="string">b'0'</span>;
         buffer.offset(kk + <span class="number">2</span>)
     }
     <span class="comment">/*
     else if (0 &lt; kk &amp;&amp; kk &lt;= 21) {
         // 1234e-2 -&gt; 12.34
         std::memmove(&amp;buffer[kk + 1], &amp;buffer[kk], static_cast&lt;size_t&gt;(length - kk));
-        buffer[kk] = &#39;.&#39;;
+        buffer[kk] = '.';
         if (0 &gt; k + maxDecimalPlaces) {
             // When maxDecimalPlaces = 2, 1.2345 -&gt; 1.23, 1.102 -&gt; 1.1
             // Remove extra trailing zeros (at least one) after truncation.
             for (int i = kk + maxDecimalPlaces; i &gt; kk + 1; i--)
-                if (buffer[i] != &#39;0&#39;)
+                if (buffer[i] != '0')
                     return &amp;buffer[i + 1];
             return &amp;buffer[kk + 2]; // Reserve one zero
         }
@@ -701,12 +702,12 @@ inline char* Prettify(char* buffer, int length, int k, int maxDecimalPlaces) {
             buffer.offset(kk + <span class="number">1</span>),
             (length - kk) <span class="kw">as </span>usize,
         );
-        <span class="kw-2">*</span>buffer.offset(kk) = <span class="string">b&#39;.&#39;</span>;
+        <span class="kw-2">*</span>buffer.offset(kk) = <span class="string">b'.'</span>;
         <span class="kw">if </span><span class="number">0 </span>&gt; k + <span class="kw">crate</span>::MAX_DECIMAL_PLACES {
             <span class="comment">// When MAX_DECIMAL_PLACES = 2, 1.2345 -&gt; 1.23, 1.102 -&gt; 1.1
             // Remove extra trailing zeros (at least one) after truncation.
             </span><span class="kw">for </span>i <span class="kw">in </span>(kk + <span class="number">2</span>..kk + <span class="kw">crate</span>::MAX_DECIMAL_PLACES + <span class="number">1</span>).rev() {
-                <span class="kw">if </span><span class="kw-2">*</span>buffer.offset(i) != <span class="string">b&#39;0&#39; </span>{
+                <span class="kw">if </span><span class="kw-2">*</span>buffer.offset(i) != <span class="string">b'0' </span>{
                     <span class="kw">return </span>buffer.offset(i + <span class="number">1</span>);
                 }
             }
@@ -720,15 +721,15 @@ inline char* Prettify(char* buffer, int length, int k, int maxDecimalPlaces) {
         // 1234e-6 -&gt; 0.001234
         const int offset = 2 - kk;
         std::memmove(&amp;buffer[offset], &amp;buffer[0], static_cast&lt;size_t&gt;(length));
-        buffer[0] = &#39;0&#39;;
-        buffer[1] = &#39;.&#39;;
+        buffer[0] = '0';
+        buffer[1] = '.';
         for (int i = 2; i &lt; offset; i++)
-            buffer[i] = &#39;0&#39;;
+            buffer[i] = '0';
         if (length - kk &gt; maxDecimalPlaces) {
             // When maxDecimalPlaces = 2, 0.123 -&gt; 0.12, 0.102 -&gt; 0.1
             // Remove extra trailing zeros (at least one) after truncation.
             for (int i = maxDecimalPlaces + 1; i &gt; 2; i--)
-                if (buffer[i] != &#39;0&#39;)
+                if (buffer[i] != '0')
                     return &amp;buffer[i + 1];
             return &amp;buffer[3]; // Reserve one zero
         }
@@ -740,16 +741,16 @@ inline char* Prettify(char* buffer, int length, int k, int maxDecimalPlaces) {
         <span class="comment">// 1234e-6 -&gt; 0.001234
         </span><span class="kw">let </span>offset = <span class="number">2 </span>- kk;
         ptr::copy(buffer, buffer.offset(offset), length <span class="kw">as </span>usize);
-        <span class="kw-2">*</span>buffer = <span class="string">b&#39;0&#39;</span>;
-        <span class="kw-2">*</span>buffer.offset(<span class="number">1</span>) = <span class="string">b&#39;.&#39;</span>;
+        <span class="kw-2">*</span>buffer = <span class="string">b'0'</span>;
+        <span class="kw-2">*</span>buffer.offset(<span class="number">1</span>) = <span class="string">b'.'</span>;
         <span class="kw">for </span>i <span class="kw">in </span><span class="number">2</span>..offset {
-            <span class="kw-2">*</span>buffer.offset(i) = <span class="string">b&#39;0&#39;</span>;
+            <span class="kw-2">*</span>buffer.offset(i) = <span class="string">b'0'</span>;
         }
         <span class="kw">if </span>length - kk &gt; <span class="kw">crate</span>::MAX_DECIMAL_PLACES {
             <span class="comment">// When MAX_DECIMAL_PLACES = 2, 0.123 -&gt; 0.12, 0.102 -&gt; 0.1
             // Remove extra trailing zeros (at least one) after truncation.
             </span><span class="kw">for </span>i <span class="kw">in </span>(<span class="number">3</span>..<span class="kw">crate</span>::MAX_DECIMAL_PLACES + <span class="number">2</span>).rev() {
-                <span class="kw">if </span><span class="kw-2">*</span>buffer.offset(i) != <span class="string">b&#39;0&#39; </span>{
+                <span class="kw">if </span><span class="kw-2">*</span>buffer.offset(i) != <span class="string">b'0' </span>{
                     <span class="kw">return </span>buffer.offset(i + <span class="number">1</span>);
                 }
             }
@@ -761,44 +762,44 @@ inline char* Prettify(char* buffer, int length, int k, int maxDecimalPlaces) {
     <span class="comment">/*
     else if (kk &lt; -maxDecimalPlaces) {
         // Truncate to zero
-        buffer[0] = &#39;0&#39;;
-        buffer[1] = &#39;.&#39;;
-        buffer[2] = &#39;0&#39;;
+        buffer[0] = '0';
+        buffer[1] = '.';
+        buffer[2] = '0';
         return &amp;buffer[3];
     }
     */
     </span><span class="kw">else if </span>kk &lt; -<span class="kw">crate</span>::MAX_DECIMAL_PLACES {
-        <span class="kw-2">*</span>buffer = <span class="string">b&#39;0&#39;</span>;
-        <span class="kw-2">*</span>buffer.offset(<span class="number">1</span>) = <span class="string">b&#39;.&#39;</span>;
-        <span class="kw-2">*</span>buffer.offset(<span class="number">2</span>) = <span class="string">b&#39;0&#39;</span>;
+        <span class="kw-2">*</span>buffer = <span class="string">b'0'</span>;
+        <span class="kw-2">*</span>buffer.offset(<span class="number">1</span>) = <span class="string">b'.'</span>;
+        <span class="kw-2">*</span>buffer.offset(<span class="number">2</span>) = <span class="string">b'0'</span>;
         buffer.offset(<span class="number">3</span>)
     }
     <span class="comment">/*
     else if (length == 1) {
         // 1e30
-        buffer[1] = &#39;e&#39;;
+        buffer[1] = 'e';
         return WriteExponent(kk - 1, &amp;buffer[2]);
     }
     */
     </span><span class="kw">else if </span>length == <span class="number">1 </span>{
         <span class="comment">// 1e30
-        </span><span class="kw-2">*</span>buffer.offset(<span class="number">1</span>) = <span class="string">b&#39;e&#39;</span>;
+        </span><span class="kw-2">*</span>buffer.offset(<span class="number">1</span>) = <span class="string">b'e'</span>;
         write_exponent(kk - <span class="number">1</span>, buffer.offset(<span class="number">2</span>))
     }
     <span class="comment">/*
     else {
         // 1234e30 -&gt; 1.234e33
         std::memmove(&amp;buffer[2], &amp;buffer[1], static_cast&lt;size_t&gt;(length - 1));
-        buffer[1] = &#39;.&#39;;
-        buffer[length + 1] = &#39;e&#39;;
+        buffer[1] = '.';
+        buffer[length + 1] = 'e';
         return WriteExponent(kk - 1, &amp;buffer[0 + length + 2]);
     }
     */
     </span><span class="kw">else </span>{
         <span class="comment">// 1234e30 -&gt; 1.234e33
         </span>ptr::copy(buffer.offset(<span class="number">1</span>), buffer.offset(<span class="number">2</span>), (length - <span class="number">1</span>) <span class="kw">as </span>usize);
-        <span class="kw-2">*</span>buffer.offset(<span class="number">1</span>) = <span class="string">b&#39;.&#39;</span>;
-        <span class="kw-2">*</span>buffer.offset(length + <span class="number">1</span>) = <span class="string">b&#39;e&#39;</span>;
+        <span class="kw-2">*</span>buffer.offset(<span class="number">1</span>) = <span class="string">b'.'</span>;
+        <span class="kw-2">*</span>buffer.offset(length + <span class="number">1</span>) = <span class="string">b'e'</span>;
         write_exponent(kk - <span class="number">1</span>, buffer.offset(length + <span class="number">2</span>))
     }
 }
@@ -829,7 +830,7 @@ inline char* Prettify(char* buffer, int length, int k, int maxDecimalPlaces) {
         */
 
         </span><span class="attr">#[inline]
-        #[cfg_attr(feature = <span class="string">&quot;no-panic&quot;</span>, no_panic)]
+        #[cfg_attr(feature = <span class="string">"no-panic"</span>, no_panic)]
         </span><span class="kw">unsafe fn </span>grisu_round(buffer: <span class="kw-2">*mut </span>u8, len: isize, delta: <span class="macro-nonterminal">$sigty</span>, <span class="kw-2">mut </span>rest: <span class="macro-nonterminal">$sigty</span>, ten_kappa: <span class="macro-nonterminal">$sigty</span>, wp_w: <span class="macro-nonterminal">$sigty</span>) {
             <span class="kw">while </span>rest &lt; wp_w &amp;&amp; delta - rest &gt;= ten_kappa &amp;&amp;
                 (rest + ten_kappa &lt; wp_w || <span class="comment">// closer
@@ -852,7 +853,7 @@ inline char* Prettify(char* buffer, int length, int k, int maxDecimalPlaces) {
 
         // Returns length and k.
         </span><span class="attr">#[inline]
-        #[cfg_attr(feature = <span class="string">&quot;no-panic&quot;</span>, no_panic)]
+        #[cfg_attr(feature = <span class="string">"no-panic"</span>, no_panic)]
         </span><span class="kw">unsafe fn </span>digit_gen(w: DiyFp, mp: DiyFp, <span class="kw-2">mut </span>delta: <span class="macro-nonterminal">$sigty</span>, buffer: <span class="kw-2">*mut </span>u8, <span class="kw-2">mut </span>k: isize) -&gt; (isize, isize) {
             <span class="kw">static </span>POW10: [<span class="macro-nonterminal">$sigty</span>; <span class="number">10</span>] = [ <span class="number">1</span>, <span class="number">10</span>, <span class="number">100</span>, <span class="number">1000</span>, <span class="number">10000</span>, <span class="number">100000</span>, <span class="number">1000000</span>, <span class="number">10000000</span>, <span class="number">100000000</span>, <span class="number">1000000000 </span>];
             <span class="kw">let </span>one = DiyFp::new(<span class="number">1 </span>&lt;&lt; -mp.e, mp.e);
@@ -878,7 +879,7 @@ inline char* Prettify(char* buffer, int length, int k, int maxDecimalPlaces) {
                     default:;
                 }
                 if (d || *len)
-                    buffer[(*len)++] = static_cast&lt;char&gt;(&#39;0&#39; + static_cast&lt;char&gt;(d));
+                    buffer[(*len)++] = static_cast&lt;char&gt;('0' + static_cast&lt;char&gt;(d));
                 kappa--;
                 uint64_t tmp = (static_cast&lt;uint64_t&gt;(p1) &lt;&lt; -one.e) + p2;
                 if (tmp &lt;= delta) {
@@ -903,7 +904,7 @@ inline char* Prettify(char* buffer, int length, int k, int maxDecimalPlaces) {
                     <span class="kw">_ </span>=&gt; {}
                 }
                 <span class="kw">if </span>d != <span class="number">0 </span>|| len != <span class="number">0 </span>{
-                    <span class="kw-2">*</span>buffer.offset(len) = <span class="string">b&#39;0&#39; </span>+ d <span class="kw">as </span>u8;
+                    <span class="kw-2">*</span>buffer.offset(len) = <span class="string">b'0' </span>+ d <span class="kw">as </span>u8;
                     len += <span class="number">1</span>;
                 }
                 kappa -= <span class="number">1</span>;
@@ -922,7 +923,7 @@ inline char* Prettify(char* buffer, int length, int k, int maxDecimalPlaces) {
                 delta *= 10;
                 char d = static_cast&lt;char&gt;(p2 &gt;&gt; -one.e);
                 if (d || *len)
-                    buffer[(*len)++] = static_cast&lt;char&gt;(&#39;0&#39; + d);
+                    buffer[(*len)++] = static_cast&lt;char&gt;('0' + d);
                 p2 &amp;= one.f - 1;
                 kappa--;
                 if (p2 &lt; delta) {
@@ -938,7 +939,7 @@ inline char* Prettify(char* buffer, int length, int k, int maxDecimalPlaces) {
                 delta <span class="kw-2">*</span>= <span class="number">10</span>;
                 <span class="kw">let </span>d = (p2 &gt;&gt; -one.e) <span class="kw">as </span>u8;
                 <span class="kw">if </span>d != <span class="number">0 </span>|| len != <span class="number">0 </span>{
-                    <span class="kw-2">*</span>buffer.offset(len) = <span class="string">b&#39;0&#39; </span>+ d;
+                    <span class="kw-2">*</span>buffer.offset(len) = <span class="string">b'0' </span>+ d;
                     len += <span class="number">1</span>;
                 }
                 p2 &amp;= one.f - <span class="number">1</span>;
@@ -981,7 +982,7 @@ inline char* Prettify(char* buffer, int length, int k, int maxDecimalPlaces) {
 
         // Returns length and k.
         </span><span class="attr">#[inline]
-        #[cfg_attr(feature = <span class="string">&quot;no-panic&quot;</span>, no_panic)]
+        #[cfg_attr(feature = <span class="string">"no-panic"</span>, no_panic)]
         </span><span class="kw">unsafe fn </span>grisu2(value: <span class="macro-nonterminal">$fty</span>, buffer: <span class="kw-2">*mut </span>u8) -&gt; (isize, isize) {
             <span class="kw">let </span>v = DiyFp::from(value);
             <span class="kw">let </span>(w_m, w_p) = v.normalized_boundaries();
@@ -1001,15 +1002,15 @@ inline char* Prettify(char* buffer, int length, int k, int maxDecimalPlaces) {
             Double d(value);
             if (d.IsZero()) {
                 if (d.Sign())
-                    *buffer++ = &#39;-&#39;;     // -0.0, Issue #289
-                buffer[0] = &#39;0&#39;;
-                buffer[1] = &#39;.&#39;;
-                buffer[2] = &#39;0&#39;;
+                    *buffer++ = '-';     // -0.0, Issue #289
+                buffer[0] = '0';
+                buffer[1] = '.';
+                buffer[2] = '0';
                 return &amp;buffer[3];
             }
             else {
                 if (value &lt; 0) {
-                    *buffer++ = &#39;-&#39;;
+                    *buffer++ = '-';
                     value = -value;
                 }
                 int length, K;
@@ -1020,19 +1021,19 @@ inline char* Prettify(char* buffer, int length, int k, int maxDecimalPlaces) {
         */
 
         </span><span class="attr">#[inline]
-        #[cfg_attr(feature = <span class="string">&quot;no-panic&quot;</span>, no_panic)]
+        #[cfg_attr(feature = <span class="string">"no-panic"</span>, no_panic)]
         </span><span class="kw">unsafe fn </span>dtoa(buf: <span class="kw-2">&amp;mut </span>Buffer, <span class="kw-2">mut </span>value: <span class="macro-nonterminal">$fty</span>) -&gt; <span class="kw-2">&amp;</span>str {
             <span class="kw">if </span>value == <span class="number">0.0 </span>{
                 <span class="kw">if </span>value.is_sign_negative() {
-                    <span class="string">&quot;-0.0&quot;
+                    <span class="string">"-0.0"
                 </span>} <span class="kw">else </span>{
-                    <span class="string">&quot;0.0&quot;
+                    <span class="string">"0.0"
                 </span>}
             } <span class="kw">else </span>{
                 <span class="kw">let </span>start = buf.bytes.as_mut_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>u8;
                 <span class="kw">let </span><span class="kw-2">mut </span>buf_ptr = start;
                 <span class="kw">if </span>value &lt; <span class="number">0.0 </span>{
-                    <span class="kw-2">*</span>buf_ptr = <span class="string">b&#39;-&#39;</span>;
+                    <span class="kw-2">*</span>buf_ptr = <span class="string">b'-'</span>;
                     buf_ptr = buf_ptr.offset(<span class="number">1</span>);
                     value = -value;
                 }

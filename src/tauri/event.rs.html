@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-1.5.4/src/event.rs`."><title>event.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tauri" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-1.6.0/src/event.rs`."><title>event.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tauri" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -367,13 +368,13 @@
 </span><span class="kw">pub fn </span>is_event_name_valid(event: <span class="kw-2">&amp;</span>str) -&gt; bool {
   event
     .chars()
-    .all(|c| c.is_alphanumeric() || c == <span class="string">&#39;-&#39; </span>|| c == <span class="string">&#39;/&#39; </span>|| c == <span class="string">&#39;:&#39; </span>|| c == <span class="string">&#39;_&#39;</span>)
+    .all(|c| c.is_alphanumeric() || c == <span class="string">'-' </span>|| c == <span class="string">'/' </span>|| c == <span class="string">':' </span>|| c == <span class="string">'_'</span>)
 }
 
 <span class="kw">pub fn </span>assert_event_name_is_valid(event: <span class="kw-2">&amp;</span>str) {
   <span class="macro">assert!</span>(
     is_event_name_valid(event),
-    <span class="string">&quot;Event name must include only alphanumeric characters, `-`, `/`, `:` and `_`.&quot;
+    <span class="string">"Event name must include only alphanumeric characters, `-`, `/`, `:` and `_`."
   </span>);
 }
 
@@ -382,7 +383,7 @@
 </span><span class="kw">pub struct </span>EventHandler(Uuid);
 
 <span class="kw">impl </span>fmt::Display <span class="kw">for </span>EventHandler {
-  <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+  <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
     <span class="self">self</span>.<span class="number">0</span>.fmt(f)
   }
 }
@@ -470,7 +471,7 @@
       </span>.inner
       .pending
       .lock()
-      .expect(<span class="string">&quot;poisoned pending event queue&quot;</span>)
+      .expect(<span class="string">"poisoned pending event queue"</span>)
       .push(action)
   }
 
@@ -481,7 +482,7 @@
         </span>.inner
         .pending
         .lock()
-        .expect(<span class="string">&quot;poisoned pending event queue&quot;</span>);
+        .expect(<span class="string">"poisoned pending event queue"</span>);
       std::mem::take(<span class="kw-2">&amp;mut *</span>lock)
     };
 
@@ -504,7 +505,7 @@
   }
 
   <span class="doccomment">/// Adds an event listener for JS events.
-  </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>listen&lt;F: Fn(Event) + Send + <span class="lifetime">&#39;static</span>&gt;(
+  </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>listen&lt;F: Fn(Event) + Send + <span class="lifetime">'static</span>&gt;(
     <span class="kw-2">&amp;</span><span class="self">self</span>,
     event: String,
     window: <span class="prelude-ty">Option</span>&lt;String&gt;,
@@ -522,7 +523,7 @@
   }
 
   <span class="doccomment">/// Listen to a JS event and immediately unlisten.
-  </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>once&lt;F: FnOnce(Event) + Send + <span class="lifetime">&#39;static</span>&gt;(
+  </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>once&lt;F: FnOnce(Event) + Send + <span class="lifetime">'static</span>&gt;(
     <span class="kw-2">&amp;</span><span class="self">self</span>,
     event: String,
     window: <span class="prelude-ty">Option</span>&lt;String&gt;,
@@ -535,7 +536,7 @@
       self_.unlisten(event.id);
       <span class="kw">let </span>handler = handler
         .take()
-        .expect(<span class="string">&quot;attempted to call handler more than once&quot;</span>);
+        .expect(<span class="string">"attempted to call handler more than once"</span>);
       handler(event)
     })
   }
@@ -576,6 +577,57 @@
   }
 }
 
+<span class="kw">pub fn </span>unlisten_js(listeners_object_name: String, event_name: String, event_id: u32) -&gt; String {
+  <span class="macro">format!</span>(
+    <span class="string">"
+      (function () {{
+        const listeners = (window['{listeners_object_name}'] || {{}})['{event_name}']
+        if (listeners) {{
+          const index = window['{listeners_object_name}']['{event_name}'].findIndex(e =&gt; e.id === {event_id})
+          if (index &gt; -1) {{
+            window['{listeners_object_name}']['{event_name}'].splice(index, 1)
+          }}
+        }}
+      }})()
+    "</span>,
+  )
+}
+
+<span class="kw">pub fn </span>listen_js(
+  listeners_object_name: String,
+  event: String,
+  event_id: u32,
+  window_label: <span class="prelude-ty">Option</span>&lt;String&gt;,
+  handler: String,
+) -&gt; String {
+  <span class="macro">format!</span>(
+    <span class="string">"
+    (function () {{
+      if (window['{listeners}'] === void 0) {{
+        Object.defineProperty(window, '{listeners}', {{ value: Object.create(null) }});
+      }}
+      if (window['{listeners}'][{event}] === void 0) {{
+        Object.defineProperty(window['{listeners}'], {event}, {{ value: [] }});
+      }}
+      const eventListeners = window['{listeners}'][{event}]
+      const listener = {{
+        id: {event_id},
+        windowLabel: {window_label},
+        handler: {handler}
+      }};
+      eventListeners.push(listener);
+    }})()
+  "</span>,
+    listeners = listeners_object_name,
+    window_label = <span class="kw">if let </span><span class="prelude-val">Some</span>(l) = window_label {
+      <span class="kw">crate</span>::runtime::window::assert_label_is_valid(<span class="kw-2">&amp;</span>l);
+      <span class="macro">format!</span>(<span class="string">"'{l}'"</span>)
+    } <span class="kw">else </span>{
+      <span class="string">"null"</span>.to_owned()
+    },
+  )
+}
+
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>test {
   <span class="kw">use super</span>::<span class="kw-2">*</span>;
@@ -583,7 +635,7 @@
 
   <span class="comment">// dummy event handler function
   </span><span class="kw">fn </span>event_fn(s: Event) {
-    <span class="macro">println!</span>(<span class="string">&quot;{s:?}&quot;</span>);
+    <span class="macro">println!</span>(<span class="string">"{s:?}"</span>);
   }
 
   <span class="macro">proptest! </span>{
@@ -591,7 +643,7 @@
 
     </span><span class="comment">// check to see if listen() is properly passing keys into the LISTENERS map
     </span><span class="attr">#[test]
-    </span><span class="kw">fn </span>listeners_check_key(e <span class="kw">in </span><span class="string">&quot;[a-z]+&quot;</span>) {
+    </span><span class="kw">fn </span>listeners_check_key(e <span class="kw">in </span><span class="string">"[a-z]+"</span>) {
       <span class="kw">let </span>listeners: Listeners = Default::default();
       <span class="comment">// clone e as the key
       </span><span class="kw">let </span>key = e.clone();
@@ -607,7 +659,7 @@
 
     <span class="comment">// check to see if listen inputs a handler function properly into the LISTENERS map.
     </span><span class="attr">#[test]
-    </span><span class="kw">fn </span>listeners_check_fn(e <span class="kw">in </span><span class="string">&quot;[a-z]+&quot;</span>) {
+    </span><span class="kw">fn </span>listeners_check_fn(e <span class="kw">in </span><span class="string">"[a-z]+"</span>) {
        <span class="kw">let </span>listeners: Listeners = Default::default();
        <span class="comment">// clone e as the key
        </span><span class="kw">let </span>key = e.clone();
@@ -626,14 +678,14 @@
           <span class="comment">// pass on Some(handler)
           </span><span class="prelude-val">Some</span>(<span class="kw">_</span>) =&gt; {},
           <span class="comment">// Fail on None
-          </span><span class="prelude-val">None </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;handler is None&quot;</span>)
+          </span><span class="prelude-val">None </span>=&gt; <span class="macro">panic!</span>(<span class="string">"handler is None"</span>)
         }
       }
     }
 
     <span class="comment">// check to see if on_event properly grabs the stored function from listen.
     </span><span class="attr">#[test]
-    </span><span class="kw">fn </span>check_on_event(key <span class="kw">in </span><span class="string">&quot;[a-z]+&quot;</span>, d <span class="kw">in </span><span class="string">&quot;[a-z]+&quot;</span>) {
+    </span><span class="kw">fn </span>check_on_event(key <span class="kw">in </span><span class="string">"[a-z]+"</span>, d <span class="kw">in </span><span class="string">"[a-z]+"</span>) {
       <span class="kw">let </span>listeners: Listeners = Default::default();
 
       <span class="comment">// call listen with e and the event_fn dummy func
@@ -648,56 +700,5 @@
       </span><span class="macro">assert!</span>(l.contains_key(<span class="kw-2">&amp;</span>key));
     }
   }
-}
-
-<span class="kw">pub fn </span>unlisten_js(listeners_object_name: String, event_name: String, event_id: u32) -&gt; String {
-  <span class="macro">format!</span>(
-    <span class="string">&quot;
-      (function () {{
-        const listeners = (window[&#39;{listeners_object_name}&#39;] || {{}})[&#39;{event_name}&#39;]
-        if (listeners) {{
-          const index = window[&#39;{listeners_object_name}&#39;][&#39;{event_name}&#39;].findIndex(e =&gt; e.id === {event_id})
-          if (index &gt; -1) {{
-            window[&#39;{listeners_object_name}&#39;][&#39;{event_name}&#39;].splice(index, 1)
-          }}
-        }}
-      }})()
-    &quot;</span>,
-  )
-}
-
-<span class="kw">pub fn </span>listen_js(
-  listeners_object_name: String,
-  event: String,
-  event_id: u32,
-  window_label: <span class="prelude-ty">Option</span>&lt;String&gt;,
-  handler: String,
-) -&gt; String {
-  <span class="macro">format!</span>(
-    <span class="string">&quot;
-    (function () {{
-      if (window[&#39;{listeners}&#39;] === void 0) {{
-        Object.defineProperty(window, &#39;{listeners}&#39;, {{ value: Object.create(null) }});
-      }}
-      if (window[&#39;{listeners}&#39;][{event}] === void 0) {{
-        Object.defineProperty(window[&#39;{listeners}&#39;], {event}, {{ value: [] }});
-      }}
-      const eventListeners = window[&#39;{listeners}&#39;][{event}]
-      const listener = {{
-        id: {event_id},
-        windowLabel: {window_label},
-        handler: {handler}
-      }};
-      eventListeners.push(listener);
-    }})()
-  &quot;</span>,
-    listeners = listeners_object_name,
-    window_label = <span class="kw">if let </span><span class="prelude-val">Some</span>(l) = window_label {
-      <span class="kw">crate</span>::runtime::window::assert_label_is_valid(<span class="kw-2">&amp;</span>l);
-      <span class="macro">format!</span>(<span class="string">&quot;&#39;{l}&#39;&quot;</span>)
-    } <span class="kw">else </span>{
-      <span class="string">&quot;null&quot;</span>.to_owned()
-    },
-  )
 }
 </code></pre></div></section></main></body></html>

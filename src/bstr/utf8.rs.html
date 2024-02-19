@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bstr-1.9.0/src/utf8.rs`."><title>utf8.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bstr" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bstr-1.9.0/src/utf8.rs`."><title>utf8.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bstr" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1369,7 +1370,7 @@
 <a href="#1369" id="1369">1369</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>core::{char, cmp, fmt, str};
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
 </span><span class="kw">use </span>std::error;
 
 <span class="kw">use crate</span>::{ascii, bstr::BStr, ext_slice::ByteSlice};
@@ -1379,17 +1380,17 @@
 //
 // We *could* have done UTF-8 decoding by using a DFA generated by `\p{any}`
 // using regex-automata that is roughly the same size. The real benefit of
-// Hoehrmann&#39;s formulation is that the byte class mapping below is manually
-// tailored such that each byte&#39;s class doubles as a shift to mask out the
+// Hoehrmann's formulation is that the byte class mapping below is manually
+// tailored such that each byte's class doubles as a shift to mask out the
 // bits necessary for constructing the leading bits of each codepoint value
 // from the initial byte.
 //
-// There are some minor differences between this implementation and Hoehrmann&#39;s
+// There are some minor differences between this implementation and Hoehrmann's
 // formulation.
 //
 // Firstly, we make REJECT have state ID 0, since it makes the state table
 // itself a little easier to read and is consistent with the notion that 0
-// means &quot;false&quot; or &quot;bad.&quot;
+// means "false" or "bad."
 //
 // Secondly, when doing bulk decoding, we add a SIMD accelerated ASCII fast
 // path.
@@ -1399,7 +1400,7 @@
 // default.)
 //
 // Fourthly, we split the byte class mapping and transition table into two
-// arrays because it&#39;s clearer.
+// arrays because it's clearer.
 //
 // It is unlikely that this is the fastest way to do UTF-8 decoding, however,
 // it is fairly simple.
@@ -1424,7 +1425,7 @@
 <span class="doccomment">/// SAFETY: The decode below function relies on the correctness of this state
 /// machine.
 </span><span class="attr">#[cfg_attr(rustfmt, rustfmt::skip)]
-</span><span class="kw">const </span>STATES_FORWARD: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[u8] = <span class="kw-2">&amp;</span>[
+</span><span class="kw">const </span>STATES_FORWARD: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>[u8] = <span class="kw-2">&amp;</span>[
   <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>,
   <span class="number">12</span>, <span class="number">0</span>, <span class="number">24</span>, <span class="number">36</span>, <span class="number">60</span>, <span class="number">96</span>, <span class="number">84</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">48</span>, <span class="number">72</span>,
   <span class="number">0</span>, <span class="number">12</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">12</span>, <span class="number">0</span>, <span class="number">12</span>, <span class="number">0</span>, <span class="number">0</span>,
@@ -1440,18 +1441,18 @@
 ///
 /// When invalid UTF-8 byte sequences are found, they are substituted with the
 /// Unicode replacement codepoint (`U+FFFD`) using the
-/// [&quot;maximal subpart&quot; strategy](https://www.unicode.org/review/pr-121.html).
+/// ["maximal subpart" strategy](https://www.unicode.org/review/pr-121.html).
 ///
 /// This iterator is created by the
 /// [`chars`](trait.ByteSlice.html#method.chars) method provided by the
 /// [`ByteSlice`](trait.ByteSlice.html) extension trait for `&amp;[u8]`.
 </span><span class="attr">#[derive(Clone, Debug)]
-</span><span class="kw">pub struct </span>Chars&lt;<span class="lifetime">&#39;a</span>&gt; {
-    bs: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8],
+</span><span class="kw">pub struct </span>Chars&lt;<span class="lifetime">'a</span>&gt; {
+    bs: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8],
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Chars&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(bs: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8]) -&gt; Chars&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Chars&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(bs: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8]) -&gt; Chars&lt;<span class="lifetime">'a</span>&gt; {
         Chars { bs }
     }
 
@@ -1465,22 +1466,22 @@
     /// ```
     /// use bstr::ByteSlice;
     ///
-    /// let mut chars = b&quot;abc&quot;.chars();
+    /// let mut chars = b"abc".chars();
     ///
-    /// assert_eq!(b&quot;abc&quot;, chars.as_bytes());
+    /// assert_eq!(b"abc", chars.as_bytes());
     /// chars.next();
-    /// assert_eq!(b&quot;bc&quot;, chars.as_bytes());
+    /// assert_eq!(b"bc", chars.as_bytes());
     /// chars.next();
     /// chars.next();
-    /// assert_eq!(b&quot;&quot;, chars.as_bytes());
+    /// assert_eq!(b"", chars.as_bytes());
     /// ```
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>as_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8] {
+    </span><span class="kw">pub fn </span>as_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8] {
         <span class="self">self</span>.bs
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Iterator <span class="kw">for </span>Chars&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Iterator <span class="kw">for </span>Chars&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">type </span>Item = char;
 
     <span class="attr">#[inline]
@@ -1494,7 +1495,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; DoubleEndedIterator <span class="kw">for </span>Chars&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; DoubleEndedIterator <span class="kw">for </span>Chars&lt;<span class="lifetime">'a</span>&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next_back(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;char&gt; {
         <span class="kw">let </span>(ch, size) = decode_last_lossy(<span class="self">self</span>.bs);
@@ -1511,7 +1512,7 @@
 ///
 /// When invalid UTF-8 byte sequences are found, they are substituted with the
 /// Unicode replacement codepoint (`U+FFFD`) using the
-/// [&quot;maximal subpart&quot; strategy](https://www.unicode.org/review/pr-121.html).
+/// ["maximal subpart" strategy](https://www.unicode.org/review/pr-121.html).
 ///
 /// Note that this is slightly different from the `CharIndices` iterator
 /// provided by the standard library. Aside from working on possibly invalid
@@ -1525,14 +1526,14 @@
 /// [`char_indices`](trait.ByteSlice.html#method.char_indices) method provided
 /// by the [`ByteSlice`](trait.ByteSlice.html) extension trait for `&amp;[u8]`.
 </span><span class="attr">#[derive(Clone, Debug)]
-</span><span class="kw">pub struct </span>CharIndices&lt;<span class="lifetime">&#39;a</span>&gt; {
-    bs: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8],
+</span><span class="kw">pub struct </span>CharIndices&lt;<span class="lifetime">'a</span>&gt; {
+    bs: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8],
     forward_index: usize,
     reverse_index: usize,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; CharIndices&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(bs: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8]) -&gt; CharIndices&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; CharIndices&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(bs: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8]) -&gt; CharIndices&lt;<span class="lifetime">'a</span>&gt; {
         CharIndices { bs, forward_index: <span class="number">0</span>, reverse_index: bs.len() }
     }
 
@@ -1546,22 +1547,22 @@
     /// ```
     /// use bstr::ByteSlice;
     ///
-    /// let mut it = b&quot;abc&quot;.char_indices();
+    /// let mut it = b"abc".char_indices();
     ///
-    /// assert_eq!(b&quot;abc&quot;, it.as_bytes());
+    /// assert_eq!(b"abc", it.as_bytes());
     /// it.next();
-    /// assert_eq!(b&quot;bc&quot;, it.as_bytes());
+    /// assert_eq!(b"bc", it.as_bytes());
     /// it.next();
     /// it.next();
-    /// assert_eq!(b&quot;&quot;, it.as_bytes());
+    /// assert_eq!(b"", it.as_bytes());
     /// ```
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>as_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8] {
+    </span><span class="kw">pub fn </span>as_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8] {
         <span class="self">self</span>.bs
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Iterator <span class="kw">for </span>CharIndices&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Iterator <span class="kw">for </span>CharIndices&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">type </span>Item = (usize, usize, char);
 
     <span class="attr">#[inline]
@@ -1577,7 +1578,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; DoubleEndedIterator <span class="kw">for </span>CharIndices&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; DoubleEndedIterator <span class="kw">for </span>CharIndices&lt;<span class="lifetime">'a</span>&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next_back(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(usize, usize, char)&gt; {
         <span class="kw">let </span>(ch, size) = decode_last_lossy(<span class="self">self</span>.bs);
@@ -1590,14 +1591,14 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; ::core::iter::FusedIterator <span class="kw">for </span>CharIndices&lt;<span class="lifetime">&#39;a</span>&gt; {}
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; ::core::iter::FusedIterator <span class="kw">for </span>CharIndices&lt;<span class="lifetime">'a</span>&gt; {}
 
 <span class="doccomment">/// An iterator over chunks of valid UTF-8 in a byte slice.
 ///
 /// See [`utf8_chunks`](trait.ByteSlice.html#method.utf8_chunks).
 </span><span class="attr">#[derive(Clone, Debug)]
-</span><span class="kw">pub struct </span>Utf8Chunks&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">pub</span>(<span class="kw">super</span>) bytes: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8],
+</span><span class="kw">pub struct </span>Utf8Chunks&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">pub</span>(<span class="kw">super</span>) bytes: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8],
 }
 
 <span class="doccomment">/// A chunk of valid UTF-8, possibly followed by invalid UTF-8 bytes.
@@ -1608,35 +1609,35 @@
 /// [`ByteSlice::utf8_chunks`](trait.ByteSlice.html#method.utf8_chunks)
 /// method.
 ///
-/// The `&#39;a` lifetime parameter corresponds to the lifetime of the bytes that
+/// The `'a` lifetime parameter corresponds to the lifetime of the bytes that
 /// are being iterated over.
 </span><span class="attr">#[cfg_attr(test, derive(Debug, PartialEq))]
-</span><span class="kw">pub struct </span>Utf8Chunk&lt;<span class="lifetime">&#39;a</span>&gt; {
+</span><span class="kw">pub struct </span>Utf8Chunk&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// A valid UTF-8 piece, at the start, end, or between invalid UTF-8 bytes.
     ///
     /// This is empty between adjacent invalid UTF-8 byte sequences.
-    </span>valid: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str,
+    </span>valid: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str,
     <span class="doccomment">/// A sequence of invalid UTF-8 bytes.
     ///
     /// Can only be empty in the last chunk.
     ///
     /// Should be replaced by a single unicode replacement character, if not
     /// empty.
-    </span>invalid: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>BStr,
-    <span class="doccomment">/// Indicates whether the invalid sequence could&#39;ve been valid if there
+    </span>invalid: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>BStr,
+    <span class="doccomment">/// Indicates whether the invalid sequence could've been valid if there
     /// were more bytes.
     ///
     /// Can only be true in the last chunk.
     </span>incomplete: bool,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Utf8Chunk&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Utf8Chunk&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// Returns the (possibly empty) valid UTF-8 bytes in this chunk.
     ///
     /// This may be empty if there are consecutive sequences of invalid UTF-8
     /// bytes.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>valid(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str {
+    </span><span class="kw">pub fn </span>valid(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str {
         <span class="self">self</span>.valid
     }
 
@@ -1648,13 +1649,13 @@
     ///
     /// The maximum length of this slice is 3. That is, invalid UTF-8 byte
     /// sequences greater than 1 always correspond to a valid _prefix_ of
-    /// a valid UTF-8 encoded codepoint. This corresponds to the &quot;substitution
-    /// of maximal subparts&quot; strategy that is described in more detail in the
+    /// a valid UTF-8 encoded codepoint. This corresponds to the "substitution
+    /// of maximal subparts" strategy that is described in more detail in the
     /// docs for the
     /// [`ByteSlice::to_str_lossy`](trait.ByteSlice.html#method.to_str_lossy)
     /// method.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>invalid(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8] {
+    </span><span class="kw">pub fn </span>invalid(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8] {
         <span class="self">self</span>.invalid.as_bytes()
     }
 
@@ -1671,11 +1672,11 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Iterator <span class="kw">for </span>Utf8Chunks&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">type </span>Item = Utf8Chunk&lt;<span class="lifetime">&#39;a</span>&gt;;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Iterator <span class="kw">for </span>Utf8Chunks&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">type </span>Item = Utf8Chunk&lt;<span class="lifetime">'a</span>&gt;;
 
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Utf8Chunk&lt;<span class="lifetime">&#39;a</span>&gt;&gt; {
+    </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Utf8Chunk&lt;<span class="lifetime">'a</span>&gt;&gt; {
         <span class="kw">if </span><span class="self">self</span>.bytes.is_empty() {
             <span class="kw">return </span><span class="prelude-val">None</span>;
         }
@@ -1721,7 +1722,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; ::core::iter::FusedIterator <span class="kw">for </span>Utf8Chunks&lt;<span class="lifetime">&#39;a</span>&gt; {}
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; ::core::iter::FusedIterator <span class="kw">for </span>Utf8Chunks&lt;<span class="lifetime">'a</span>&gt; {}
 
 <span class="doccomment">/// An error that occurs when UTF-8 decoding fails.
 ///
@@ -1737,7 +1738,7 @@
 /// ```
 /// use bstr::{B, ByteSlice};
 ///
-/// let s = B(b&quot;foobar\xF1\x80\x80&quot;);
+/// let s = B(b"foobar\xF1\x80\x80");
 /// let err = s.to_str().unwrap_err();
 /// assert_eq!(err.valid_up_to(), 6);
 /// assert_eq!(err.error_len(), None);
@@ -1749,7 +1750,7 @@
 /// ```
 /// use bstr::ByteSlice;
 ///
-/// let s = b&quot;foobar\xF1\x80\x80quux&quot;;
+/// let s = b"foobar\xF1\x80\x80quux";
 /// let err = s.to_str().unwrap_err();
 /// assert_eq!(err.valid_up_to(), 6);
 /// // The error length reports the maximum number of bytes that correspond to
@@ -1759,14 +1760,14 @@
 /// // In contrast to the above which contains a single invalid prefix,
 /// // consider the case of multiple individual bytes that are never valid
 /// // prefixes. Note how the value of error_len changes!
-/// let s = b&quot;foobar\xFF\xFFquux&quot;;
+/// let s = b"foobar\xFF\xFFquux";
 /// let err = s.to_str().unwrap_err();
 /// assert_eq!(err.valid_up_to(), 6);
 /// assert_eq!(err.error_len(), Some(1));
 ///
-/// // The fact that it&#39;s an invalid prefix does not change error_len even
+/// // The fact that it's an invalid prefix does not change error_len even
 /// // when it immediately precedes the end of the string.
-/// let s = b&quot;foobar\xFF&quot;;
+/// let s = b"foobar\xFF";
 /// let err = s.to_str().unwrap_err();
 /// assert_eq!(err.valid_up_to(), 6);
 /// assert_eq!(err.error_len(), Some(1));
@@ -1789,12 +1790,12 @@
     /// ```
     /// use bstr::ByteSlice;
     ///
-    /// let s = b&quot;foobar\xF1\x80\x80quux&quot;;
+    /// let s = b"foobar\xF1\x80\x80quux";
     /// let err = s.to_str().unwrap_err();
     ///
     /// // This is guaranteed to never panic.
     /// let string = s[..err.valid_up_to()].to_str().unwrap();
-    /// assert_eq!(string, &quot;foobar&quot;);
+    /// assert_eq!(string, "foobar");
     /// ```
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>valid_up_to(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
@@ -1816,22 +1817,22 @@
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
 </span><span class="kw">impl </span>error::Error <span class="kw">for </span>Utf8Error {
     <span class="kw">fn </span>description(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
-        <span class="string">&quot;invalid UTF-8&quot;
+        <span class="string">"invalid UTF-8"
     </span>}
 }
 
 <span class="kw">impl </span>fmt::Display <span class="kw">for </span>Utf8Error {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        <span class="macro">write!</span>(f, <span class="string">&quot;invalid UTF-8 found at byte offset {}&quot;</span>, <span class="self">self</span>.valid_up_to)
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
+        <span class="macro">write!</span>(f, <span class="string">"invalid UTF-8 found at byte offset {}"</span>, <span class="self">self</span>.valid_up_to)
     }
 }
 
 <span class="doccomment">/// Returns OK if and only if the given slice is completely valid UTF-8.
 ///
-/// If the slice isn&#39;t valid UTF-8, then an error is returned that explains
+/// If the slice isn't valid UTF-8, then an error is returned that explains
 /// the first location at which invalid UTF-8 was detected.
 </span><span class="kw">pub fn </span>validate(slice: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;(), Utf8Error&gt; {
     <span class="comment">// The fast path for validating UTF-8. It steps through a UTF-8 automaton
@@ -1889,7 +1890,7 @@
 
     <span class="comment">// Like top-level UTF-8 decoding, except it correctly reports a UTF-8 error
     // when an invalid sequence is found. This is split out from validate so
-    // that the fast path doesn&#39;t need to keep track of the position of the
+    // that the fast path doesn't need to keep track of the position of the
     // last valid UTF-8 byte. In particular, tracking this requires checking
     // for an ACCEPT state on each byte, which degrades throughput pretty
     // badly.
@@ -1916,7 +1917,7 @@
     <span class="comment">// Advance to the next state given the current state and current byte.
     </span><span class="kw">fn </span>step(state: usize, b: u8) -&gt; usize {
         <span class="kw">let </span>class = CLASSES[b <span class="kw">as </span>usize];
-        <span class="comment">// SAFETY: This is safe because &#39;class&#39; is always &lt;=11 and &#39;state&#39; is
+        <span class="comment">// SAFETY: This is safe because 'class' is always &lt;=11 and 'state' is
         // always &lt;=96. Therefore, the maximal index is 96+11 = 107, where
         // STATES_FORWARD.len() = 108 such that every index is guaranteed to be
         // valid by construction of the state machine and the byte equivalence
@@ -1948,12 +1949,12 @@
 /// use bstr::decode_utf8;
 ///
 /// // Decoding a valid codepoint.
-/// let (ch, size) = decode_utf8(b&quot;\xE2\x98\x83&quot;);
-/// assert_eq!(Some(&#39;☃&#39;), ch);
+/// let (ch, size) = decode_utf8(b"\xE2\x98\x83");
+/// assert_eq!(Some('☃'), ch);
 /// assert_eq!(3, size);
 ///
 /// // Decoding an incomplete codepoint.
-/// let (ch, size) = decode_utf8(b&quot;\xE2\x98&quot;);
+/// let (ch, size) = decode_utf8(b"\xE2\x98");
 /// assert_eq!(None, ch);
 /// assert_eq!(2, size);
 /// ```
@@ -1965,14 +1966,14 @@
 /// ```
 /// use bstr::{B, decode_utf8};
 ///
-/// let mut bytes = B(b&quot;\xE2\x98\x83\xFF\xF0\x9D\x9E\x83\xE2\x98\x61&quot;);
+/// let mut bytes = B(b"\xE2\x98\x83\xFF\xF0\x9D\x9E\x83\xE2\x98\x61");
 /// let mut chars = vec![];
 /// while !bytes.is_empty() {
 ///     let (ch, size) = decode_utf8(bytes);
 ///     bytes = &amp;bytes[size..];
-///     chars.push(ch.unwrap_or(&#39;\u{FFFD}&#39;));
+///     chars.push(ch.unwrap_or('\u{FFFD}'));
 /// }
-/// assert_eq!(vec![&#39;☃&#39;, &#39;\u{FFFD}&#39;, &#39;𝞃&#39;, &#39;\u{FFFD}&#39;, &#39;a&#39;], chars);
+/// assert_eq!(vec!['☃', '\u{FFFD}', '𝞃', '\u{FFFD}', 'a'], chars);
 /// ```
 </span><span class="attr">#[inline]
 </span><span class="kw">pub fn </span>decode&lt;B: AsRef&lt;[u8]&gt;&gt;(slice: B) -&gt; (<span class="prelude-ty">Option</span>&lt;char&gt;, usize) {
@@ -2022,13 +2023,13 @@
 /// use bstr::decode_utf8_lossy;
 ///
 /// // Decoding a valid codepoint.
-/// let (ch, size) = decode_utf8_lossy(b&quot;\xE2\x98\x83&quot;);
-/// assert_eq!(&#39;☃&#39;, ch);
+/// let (ch, size) = decode_utf8_lossy(b"\xE2\x98\x83");
+/// assert_eq!('☃', ch);
 /// assert_eq!(3, size);
 ///
 /// // Decoding an incomplete codepoint.
-/// let (ch, size) = decode_utf8_lossy(b&quot;\xE2\x98&quot;);
-/// assert_eq!(&#39;\u{FFFD}&#39;, ch);
+/// let (ch, size) = decode_utf8_lossy(b"\xE2\x98");
+/// assert_eq!('\u{FFFD}', ch);
 /// assert_eq!(2, size);
 /// ```
 ///
@@ -2039,20 +2040,20 @@
 /// ```ignore
 /// use bstr::{B, decode_utf8_lossy};
 ///
-/// let mut bytes = B(b&quot;\xE2\x98\x83\xFF\xF0\x9D\x9E\x83\xE2\x98\x61&quot;);
+/// let mut bytes = B(b"\xE2\x98\x83\xFF\xF0\x9D\x9E\x83\xE2\x98\x61");
 /// let mut chars = vec![];
 /// while !bytes.is_empty() {
 ///     let (ch, size) = decode_utf8_lossy(bytes);
 ///     bytes = &amp;bytes[size..];
 ///     chars.push(ch);
 /// }
-/// assert_eq!(vec![&#39;☃&#39;, &#39;\u{FFFD}&#39;, &#39;𝞃&#39;, &#39;\u{FFFD}&#39;, &#39;a&#39;], chars);
+/// assert_eq!(vec!['☃', '\u{FFFD}', '𝞃', '\u{FFFD}', 'a'], chars);
 /// ```
 </span><span class="attr">#[inline]
 </span><span class="kw">pub fn </span>decode_lossy&lt;B: AsRef&lt;[u8]&gt;&gt;(slice: B) -&gt; (char, usize) {
     <span class="kw">match </span>decode(slice) {
         (<span class="prelude-val">Some</span>(ch), size) =&gt; (ch, size),
-        (<span class="prelude-val">None</span>, size) =&gt; (<span class="string">&#39;\u{FFFD}&#39;</span>, size),
+        (<span class="prelude-val">None</span>, size) =&gt; (<span class="string">'\u{FFFD}'</span>, size),
     }
 }
 
@@ -2075,12 +2076,12 @@
 /// use bstr::decode_last_utf8;
 ///
 /// // Decoding a valid codepoint.
-/// let (ch, size) = decode_last_utf8(b&quot;\xE2\x98\x83&quot;);
-/// assert_eq!(Some(&#39;☃&#39;), ch);
+/// let (ch, size) = decode_last_utf8(b"\xE2\x98\x83");
+/// assert_eq!(Some('☃'), ch);
 /// assert_eq!(3, size);
 ///
 /// // Decoding an incomplete codepoint.
-/// let (ch, size) = decode_last_utf8(b&quot;\xE2\x98&quot;);
+/// let (ch, size) = decode_last_utf8(b"\xE2\x98");
 /// assert_eq!(None, ch);
 /// assert_eq!(2, size);
 /// ```
@@ -2092,14 +2093,14 @@
 /// ```
 /// use bstr::{B, decode_last_utf8};
 ///
-/// let mut bytes = B(b&quot;\xE2\x98\x83\xFF\xF0\x9D\x9E\x83\xE2\x98\x61&quot;);
+/// let mut bytes = B(b"\xE2\x98\x83\xFF\xF0\x9D\x9E\x83\xE2\x98\x61");
 /// let mut chars = vec![];
 /// while !bytes.is_empty() {
 ///     let (ch, size) = decode_last_utf8(bytes);
 ///     bytes = &amp;bytes[..bytes.len()-size];
-///     chars.push(ch.unwrap_or(&#39;\u{FFFD}&#39;));
+///     chars.push(ch.unwrap_or('\u{FFFD}'));
 /// }
-/// assert_eq!(vec![&#39;a&#39;, &#39;\u{FFFD}&#39;, &#39;𝞃&#39;, &#39;\u{FFFD}&#39;, &#39;☃&#39;], chars);
+/// assert_eq!(vec!['a', '\u{FFFD}', '𝞃', '\u{FFFD}', '☃'], chars);
 /// ```
 </span><span class="attr">#[inline]
 </span><span class="kw">pub fn </span>decode_last&lt;B: AsRef&lt;[u8]&gt;&gt;(slice: B) -&gt; (<span class="prelude-ty">Option</span>&lt;char&gt;, usize) {
@@ -2116,7 +2117,7 @@
         start -= <span class="number">1</span>;
     }
     <span class="kw">let </span>(ch, size) = decode(<span class="kw-2">&amp;</span>slice[start..]);
-    <span class="comment">// If we didn&#39;t consume all of the bytes, then that means there&#39;s at least
+    <span class="comment">// If we didn't consume all of the bytes, then that means there's at least
     // one stray byte that never occurs in a valid code unit prefix, so we can
     // advance by one byte.
     </span><span class="kw">if </span>start + size != slice.len() {
@@ -2146,13 +2147,13 @@
 /// use bstr::decode_last_utf8_lossy;
 ///
 /// // Decoding a valid codepoint.
-/// let (ch, size) = decode_last_utf8_lossy(b&quot;\xE2\x98\x83&quot;);
-/// assert_eq!(&#39;☃&#39;, ch);
+/// let (ch, size) = decode_last_utf8_lossy(b"\xE2\x98\x83");
+/// assert_eq!('☃', ch);
 /// assert_eq!(3, size);
 ///
 /// // Decoding an incomplete codepoint.
-/// let (ch, size) = decode_last_utf8_lossy(b&quot;\xE2\x98&quot;);
-/// assert_eq!(&#39;\u{FFFD}&#39;, ch);
+/// let (ch, size) = decode_last_utf8_lossy(b"\xE2\x98");
+/// assert_eq!('\u{FFFD}', ch);
 /// assert_eq!(2, size);
 /// ```
 ///
@@ -2163,20 +2164,20 @@
 /// ```ignore
 /// use bstr::decode_last_utf8_lossy;
 ///
-/// let mut bytes = B(b&quot;\xE2\x98\x83\xFF\xF0\x9D\x9E\x83\xE2\x98\x61&quot;);
+/// let mut bytes = B(b"\xE2\x98\x83\xFF\xF0\x9D\x9E\x83\xE2\x98\x61");
 /// let mut chars = vec![];
 /// while !bytes.is_empty() {
 ///     let (ch, size) = decode_last_utf8_lossy(bytes);
 ///     bytes = &amp;bytes[..bytes.len()-size];
 ///     chars.push(ch);
 /// }
-/// assert_eq!(vec![&#39;a&#39;, &#39;\u{FFFD}&#39;, &#39;𝞃&#39;, &#39;\u{FFFD}&#39;, &#39;☃&#39;], chars);
+/// assert_eq!(vec!['a', '\u{FFFD}', '𝞃', '\u{FFFD}', '☃'], chars);
 /// ```
 </span><span class="attr">#[inline]
 </span><span class="kw">pub fn </span>decode_last_lossy&lt;B: AsRef&lt;[u8]&gt;&gt;(slice: B) -&gt; (char, usize) {
     <span class="kw">match </span>decode_last(slice) {
         (<span class="prelude-val">Some</span>(ch), size) =&gt; (ch, size),
-        (<span class="prelude-val">None</span>, size) =&gt; (<span class="string">&#39;\u{FFFD}&#39;</span>, size),
+        (<span class="prelude-val">None</span>, size) =&gt; (<span class="string">'\u{FFFD}'</span>, size),
     }
 }
 
@@ -2219,7 +2220,7 @@
     </span>(b &amp; <span class="number">0b1100_0000</span>) != <span class="number">0b1000_0000
 </span>}
 
-<span class="attr">#[cfg(all(test, feature = <span class="string">&quot;std&quot;</span>))]
+<span class="attr">#[cfg(all(test, feature = <span class="string">"std"</span>))]
 </span><span class="kw">mod </span>tests {
     <span class="kw">use </span>std::char;
 
@@ -2253,106 +2254,106 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>validate_multiple_codepoints() {
-        <span class="macro">assert_eq!</span>(<span class="prelude-val">Ok</span>(()), utf8::validate(<span class="string">b&quot;abc&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="prelude-val">Ok</span>(()), utf8::validate(<span class="string">b&quot;a\xE2\x98\x83a&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="prelude-val">Ok</span>(()), utf8::validate(<span class="string">b&quot;a\xF0\x9D\x9C\xB7a&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="prelude-val">Ok</span>(()), utf8::validate(<span class="string">b&quot;\xE2\x98\x83\xF0\x9D\x9C\xB7&quot;</span>,));
+        <span class="macro">assert_eq!</span>(<span class="prelude-val">Ok</span>(()), utf8::validate(<span class="string">b"abc"</span>));
+        <span class="macro">assert_eq!</span>(<span class="prelude-val">Ok</span>(()), utf8::validate(<span class="string">b"a\xE2\x98\x83a"</span>));
+        <span class="macro">assert_eq!</span>(<span class="prelude-val">Ok</span>(()), utf8::validate(<span class="string">b"a\xF0\x9D\x9C\xB7a"</span>));
+        <span class="macro">assert_eq!</span>(<span class="prelude-val">Ok</span>(()), utf8::validate(<span class="string">b"\xE2\x98\x83\xF0\x9D\x9C\xB7"</span>,));
         <span class="macro">assert_eq!</span>(
             <span class="prelude-val">Ok</span>(()),
-            utf8::validate(<span class="string">b&quot;a\xE2\x98\x83a\xF0\x9D\x9C\xB7a&quot;</span>,)
+            utf8::validate(<span class="string">b"a\xE2\x98\x83a\xF0\x9D\x9C\xB7a"</span>,)
         );
         <span class="macro">assert_eq!</span>(
             <span class="prelude-val">Ok</span>(()),
-            utf8::validate(<span class="string">b&quot;\xEF\xBF\xBD\xE2\x98\x83\xEF\xBF\xBD&quot;</span>,)
+            utf8::validate(<span class="string">b"\xEF\xBF\xBD\xE2\x98\x83\xEF\xBF\xBD"</span>,)
         );
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>validate_errors() {
         <span class="comment">// single invalid byte
-        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">0</span>, <span class="number">1</span>)), utf8::validate(<span class="string">b&quot;\xFF&quot;</span>));
+        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">0</span>, <span class="number">1</span>)), utf8::validate(<span class="string">b"\xFF"</span>));
         <span class="comment">// single invalid byte after ASCII
-        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">1</span>, <span class="number">1</span>)), utf8::validate(<span class="string">b&quot;a\xFF&quot;</span>));
+        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">1</span>, <span class="number">1</span>)), utf8::validate(<span class="string">b"a\xFF"</span>));
         <span class="comment">// single invalid byte after 2 byte sequence
-        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">2</span>, <span class="number">1</span>)), utf8::validate(<span class="string">b&quot;\xCE\xB2\xFF&quot;</span>));
+        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">2</span>, <span class="number">1</span>)), utf8::validate(<span class="string">b"\xCE\xB2\xFF"</span>));
         <span class="comment">// single invalid byte after 3 byte sequence
-        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">3</span>, <span class="number">1</span>)), utf8::validate(<span class="string">b&quot;\xE2\x98\x83\xFF&quot;</span>));
+        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">3</span>, <span class="number">1</span>)), utf8::validate(<span class="string">b"\xE2\x98\x83\xFF"</span>));
         <span class="comment">// single invalid byte after 4 byte sequence
-        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">4</span>, <span class="number">1</span>)), utf8::validate(<span class="string">b&quot;\xF0\x9D\x9D\xB1\xFF&quot;</span>));
+        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">4</span>, <span class="number">1</span>)), utf8::validate(<span class="string">b"\xF0\x9D\x9D\xB1\xFF"</span>));
 
         <span class="comment">// An invalid 2-byte sequence with a valid 1-byte prefix.
-        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">0</span>, <span class="number">1</span>)), utf8::validate(<span class="string">b&quot;\xCE\xF0&quot;</span>));
+        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">0</span>, <span class="number">1</span>)), utf8::validate(<span class="string">b"\xCE\xF0"</span>));
         <span class="comment">// An invalid 3-byte sequence with a valid 2-byte prefix.
-        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">0</span>, <span class="number">2</span>)), utf8::validate(<span class="string">b&quot;\xE2\x98\xF0&quot;</span>));
+        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">0</span>, <span class="number">2</span>)), utf8::validate(<span class="string">b"\xE2\x98\xF0"</span>));
         <span class="comment">// An invalid 4-byte sequence with a valid 3-byte prefix.
-        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">0</span>, <span class="number">3</span>)), utf8::validate(<span class="string">b&quot;\xF0\x9D\x9D\xF0&quot;</span>));
+        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">0</span>, <span class="number">3</span>)), utf8::validate(<span class="string">b"\xF0\x9D\x9D\xF0"</span>));
 
         <span class="comment">// An overlong sequence. Should be \xE2\x82\xAC, but we encode the
         // same codepoint value in 4 bytes. This not only tests that we reject
         // overlong sequences, but that we get valid_up_to correct.
-        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">0</span>, <span class="number">1</span>)), utf8::validate(<span class="string">b&quot;\xF0\x82\x82\xAC&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">1</span>, <span class="number">1</span>)), utf8::validate(<span class="string">b&quot;a\xF0\x82\x82\xAC&quot;</span>));
+        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">0</span>, <span class="number">1</span>)), utf8::validate(<span class="string">b"\xF0\x82\x82\xAC"</span>));
+        <span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">1</span>, <span class="number">1</span>)), utf8::validate(<span class="string">b"a\xF0\x82\x82\xAC"</span>));
         <span class="macro">assert_eq!</span>(
             <span class="prelude-val">Err</span>(utf8e2(<span class="number">3</span>, <span class="number">1</span>)),
-            utf8::validate(<span class="string">b&quot;\xE2\x98\x83\xF0\x82\x82\xAC&quot;</span>,)
+            utf8::validate(<span class="string">b"\xE2\x98\x83\xF0\x82\x82\xAC"</span>,)
         );
 
         <span class="comment">// Check that encoding a surrogate codepoint using the UTF-8 scheme
         // fails validation.
-        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">0</span>, <span class="number">1</span>)), utf8::validate(<span class="string">b&quot;\xED\xA0\x80&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">1</span>, <span class="number">1</span>)), utf8::validate(<span class="string">b&quot;a\xED\xA0\x80&quot;</span>));
+        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">0</span>, <span class="number">1</span>)), utf8::validate(<span class="string">b"\xED\xA0\x80"</span>));
+        <span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">1</span>, <span class="number">1</span>)), utf8::validate(<span class="string">b"a\xED\xA0\x80"</span>));
         <span class="macro">assert_eq!</span>(
             <span class="prelude-val">Err</span>(utf8e2(<span class="number">3</span>, <span class="number">1</span>)),
-            utf8::validate(<span class="string">b&quot;\xE2\x98\x83\xED\xA0\x80&quot;</span>,)
+            utf8::validate(<span class="string">b"\xE2\x98\x83\xED\xA0\x80"</span>,)
         );
 
         <span class="comment">// Check that an incomplete 2-byte sequence fails.
-        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">0</span>, <span class="number">1</span>)), utf8::validate(<span class="string">b&quot;\xCEa&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">1</span>, <span class="number">1</span>)), utf8::validate(<span class="string">b&quot;a\xCEa&quot;</span>));
+        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">0</span>, <span class="number">1</span>)), utf8::validate(<span class="string">b"\xCEa"</span>));
+        <span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">1</span>, <span class="number">1</span>)), utf8::validate(<span class="string">b"a\xCEa"</span>));
         <span class="macro">assert_eq!</span>(
             <span class="prelude-val">Err</span>(utf8e2(<span class="number">3</span>, <span class="number">1</span>)),
-            utf8::validate(<span class="string">b&quot;\xE2\x98\x83\xCE\xE2\x98\x83&quot;</span>,)
+            utf8::validate(<span class="string">b"\xE2\x98\x83\xCE\xE2\x98\x83"</span>,)
         );
         <span class="comment">// Check that an incomplete 3-byte sequence fails.
-        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">0</span>, <span class="number">2</span>)), utf8::validate(<span class="string">b&quot;\xE2\x98a&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">1</span>, <span class="number">2</span>)), utf8::validate(<span class="string">b&quot;a\xE2\x98a&quot;</span>));
+        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">0</span>, <span class="number">2</span>)), utf8::validate(<span class="string">b"\xE2\x98a"</span>));
+        <span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">1</span>, <span class="number">2</span>)), utf8::validate(<span class="string">b"a\xE2\x98a"</span>));
         <span class="macro">assert_eq!</span>(
             <span class="prelude-val">Err</span>(utf8e2(<span class="number">3</span>, <span class="number">2</span>)),
-            utf8::validate(<span class="string">b&quot;\xE2\x98\x83\xE2\x98\xE2\x98\x83&quot;</span>,)
+            utf8::validate(<span class="string">b"\xE2\x98\x83\xE2\x98\xE2\x98\x83"</span>,)
         );
         <span class="comment">// Check that an incomplete 4-byte sequence fails.
-        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">0</span>, <span class="number">3</span>)), utf8::validate(<span class="string">b&quot;\xF0\x9D\x9Ca&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">1</span>, <span class="number">3</span>)), utf8::validate(<span class="string">b&quot;a\xF0\x9D\x9Ca&quot;</span>));
+        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">0</span>, <span class="number">3</span>)), utf8::validate(<span class="string">b"\xF0\x9D\x9Ca"</span>));
+        <span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e2(<span class="number">1</span>, <span class="number">3</span>)), utf8::validate(<span class="string">b"a\xF0\x9D\x9Ca"</span>));
         <span class="macro">assert_eq!</span>(
             <span class="prelude-val">Err</span>(utf8e2(<span class="number">4</span>, <span class="number">3</span>)),
-            utf8::validate(<span class="string">b&quot;\xF0\x9D\x9C\xB1\xF0\x9D\x9C\xE2\x98\x83&quot;</span>,)
+            utf8::validate(<span class="string">b"\xF0\x9D\x9C\xB1\xF0\x9D\x9C\xE2\x98\x83"</span>,)
         );
         <span class="macro">assert_eq!</span>(
             <span class="prelude-val">Err</span>(utf8e2(<span class="number">6</span>, <span class="number">3</span>)),
-            utf8::validate(<span class="string">b&quot;foobar\xF1\x80\x80quux&quot;</span>,)
+            utf8::validate(<span class="string">b"foobar\xF1\x80\x80quux"</span>,)
         );
 
         <span class="comment">// Check that an incomplete (EOF) 2-byte sequence fails.
-        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e(<span class="number">0</span>)), utf8::validate(<span class="string">b&quot;\xCE&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e(<span class="number">1</span>)), utf8::validate(<span class="string">b&quot;a\xCE&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e(<span class="number">3</span>)), utf8::validate(<span class="string">b&quot;\xE2\x98\x83\xCE&quot;</span>));
+        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e(<span class="number">0</span>)), utf8::validate(<span class="string">b"\xCE"</span>));
+        <span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e(<span class="number">1</span>)), utf8::validate(<span class="string">b"a\xCE"</span>));
+        <span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e(<span class="number">3</span>)), utf8::validate(<span class="string">b"\xE2\x98\x83\xCE"</span>));
         <span class="comment">// Check that an incomplete (EOF) 3-byte sequence fails.
-        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e(<span class="number">0</span>)), utf8::validate(<span class="string">b&quot;\xE2\x98&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e(<span class="number">1</span>)), utf8::validate(<span class="string">b&quot;a\xE2\x98&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e(<span class="number">3</span>)), utf8::validate(<span class="string">b&quot;\xE2\x98\x83\xE2\x98&quot;</span>));
+        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e(<span class="number">0</span>)), utf8::validate(<span class="string">b"\xE2\x98"</span>));
+        <span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e(<span class="number">1</span>)), utf8::validate(<span class="string">b"a\xE2\x98"</span>));
+        <span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e(<span class="number">3</span>)), utf8::validate(<span class="string">b"\xE2\x98\x83\xE2\x98"</span>));
         <span class="comment">// Check that an incomplete (EOF) 4-byte sequence fails.
-        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e(<span class="number">0</span>)), utf8::validate(<span class="string">b&quot;\xF0\x9D\x9C&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e(<span class="number">1</span>)), utf8::validate(<span class="string">b&quot;a\xF0\x9D\x9C&quot;</span>));
+        </span><span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e(<span class="number">0</span>)), utf8::validate(<span class="string">b"\xF0\x9D\x9C"</span>));
+        <span class="macro">assert_eq!</span>(<span class="prelude-val">Err</span>(utf8e(<span class="number">1</span>)), utf8::validate(<span class="string">b"a\xF0\x9D\x9C"</span>));
         <span class="macro">assert_eq!</span>(
             <span class="prelude-val">Err</span>(utf8e(<span class="number">4</span>)),
-            utf8::validate(<span class="string">b&quot;\xF0\x9D\x9C\xB1\xF0\x9D\x9C&quot;</span>,)
+            utf8::validate(<span class="string">b"\xF0\x9D\x9C\xB1\xF0\x9D\x9C"</span>,)
         );
 
         <span class="comment">// Test that we errors correct even after long valid sequences. This
-        // checks that our &quot;backup&quot; logic for detecting errors is correct.
+        // checks that our "backup" logic for detecting errors is correct.
         </span><span class="macro">assert_eq!</span>(
             <span class="prelude-val">Err</span>(utf8e2(<span class="number">8</span>, <span class="number">1</span>)),
-            utf8::validate(<span class="string">b&quot;\xe2\x98\x83\xce\xb2\xe3\x83\x84\xFF&quot;</span>,)
+            utf8::validate(<span class="string">b"\xe2\x98\x83\xce\xb2\xe3\x83\x84\xFF"</span>,)
         );
     }
 
@@ -2368,100 +2369,100 @@
             chars
         }
 
-        <span class="macro">assert_eq!</span>(<span class="macro">vec!</span>[<span class="string">&#39;☃&#39;</span>], d(<span class="string">&quot;☃&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="macro">vec!</span>[<span class="string">&#39;☃&#39;</span>, <span class="string">&#39;☃&#39;</span>], d(<span class="string">&quot;☃☃&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="macro">vec!</span>[<span class="string">&#39;α&#39;</span>, <span class="string">&#39;β&#39;</span>, <span class="string">&#39;γ&#39;</span>, <span class="string">&#39;δ&#39;</span>, <span class="string">&#39;ε&#39;</span>], d(<span class="string">&quot;αβγδε&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="macro">vec!</span>[<span class="string">&#39;☃&#39;</span>, <span class="string">&#39;⛄&#39;</span>, <span class="string">&#39;⛇&#39;</span>], d(<span class="string">&quot;☃⛄⛇&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="macro">vec!</span>[<span class="string">&#39;𝗮&#39;</span>, <span class="string">&#39;𝗯&#39;</span>, <span class="string">&#39;𝗰&#39;</span>, <span class="string">&#39;𝗱&#39;</span>, <span class="string">&#39;𝗲&#39;</span>], d(<span class="string">&quot;𝗮𝗯𝗰𝗱𝗲&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="macro">vec!</span>[<span class="string">'☃'</span>], d(<span class="string">"☃"</span>));
+        <span class="macro">assert_eq!</span>(<span class="macro">vec!</span>[<span class="string">'☃'</span>, <span class="string">'☃'</span>], d(<span class="string">"☃☃"</span>));
+        <span class="macro">assert_eq!</span>(<span class="macro">vec!</span>[<span class="string">'α'</span>, <span class="string">'β'</span>, <span class="string">'γ'</span>, <span class="string">'δ'</span>, <span class="string">'ε'</span>], d(<span class="string">"αβγδε"</span>));
+        <span class="macro">assert_eq!</span>(<span class="macro">vec!</span>[<span class="string">'☃'</span>, <span class="string">'⛄'</span>, <span class="string">'⛇'</span>], d(<span class="string">"☃⛄⛇"</span>));
+        <span class="macro">assert_eq!</span>(<span class="macro">vec!</span>[<span class="string">'𝗮'</span>, <span class="string">'𝗯'</span>, <span class="string">'𝗰'</span>, <span class="string">'𝗱'</span>, <span class="string">'𝗲'</span>], d(<span class="string">"𝗮𝗯𝗰𝗱𝗲"</span>));
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>decode_invalid() {
-        <span class="kw">let </span>(ch, size) = utf8::decode(<span class="string">b&quot;&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode(<span class="string">b""</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">0</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode(<span class="string">b&quot;\xFF&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode(<span class="string">b"\xFF"</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode(<span class="string">b&quot;\xCE\xF0&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode(<span class="string">b"\xCE\xF0"</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode(<span class="string">b&quot;\xE2\x98\xF0&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode(<span class="string">b"\xE2\x98\xF0"</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">2</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode(<span class="string">b&quot;\xF0\x9D\x9D&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode(<span class="string">b"\xF0\x9D\x9D"</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">3</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode(<span class="string">b&quot;\xF0\x9D\x9D\xF0&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode(<span class="string">b"\xF0\x9D\x9D\xF0"</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">3</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode(<span class="string">b&quot;\xF0\x82\x82\xAC&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode(<span class="string">b"\xF0\x82\x82\xAC"</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode(<span class="string">b&quot;\xED\xA0\x80&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode(<span class="string">b"\xED\xA0\x80"</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode(<span class="string">b&quot;\xCEa&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode(<span class="string">b"\xCEa"</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode(<span class="string">b&quot;\xE2\x98a&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode(<span class="string">b"\xE2\x98a"</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">2</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode(<span class="string">b&quot;\xF0\x9D\x9Ca&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode(<span class="string">b"\xF0\x9D\x9Ca"</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">3</span>, size);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>decode_lossy() {
-        <span class="kw">let </span>(ch, size) = utf8::decode_lossy(<span class="string">b&quot;&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_lossy(<span class="string">b""</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">0</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_lossy(<span class="string">b&quot;\xFF&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_lossy(<span class="string">b"\xFF"</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_lossy(<span class="string">b&quot;\xCE\xF0&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_lossy(<span class="string">b"\xCE\xF0"</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_lossy(<span class="string">b&quot;\xE2\x98\xF0&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_lossy(<span class="string">b"\xE2\x98\xF0"</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">2</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_lossy(<span class="string">b&quot;\xF0\x9D\x9D\xF0&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_lossy(<span class="string">b"\xF0\x9D\x9D\xF0"</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">3</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_lossy(<span class="string">b&quot;\xF0\x82\x82\xAC&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_lossy(<span class="string">b"\xF0\x82\x82\xAC"</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_lossy(<span class="string">b&quot;\xED\xA0\x80&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_lossy(<span class="string">b"\xED\xA0\x80"</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_lossy(<span class="string">b&quot;\xCEa&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_lossy(<span class="string">b"\xCEa"</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_lossy(<span class="string">b&quot;\xE2\x98a&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_lossy(<span class="string">b"\xE2\x98a"</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">2</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_lossy(<span class="string">b&quot;\xF0\x9D\x9Ca&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_lossy(<span class="string">b"\xF0\x9D\x9Ca"</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">3</span>, size);
     }
 
@@ -2477,136 +2478,136 @@
             chars
         }
 
-        <span class="macro">assert_eq!</span>(<span class="macro">vec!</span>[<span class="string">&#39;☃&#39;</span>], d(<span class="string">&quot;☃&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="macro">vec!</span>[<span class="string">&#39;☃&#39;</span>, <span class="string">&#39;☃&#39;</span>], d(<span class="string">&quot;☃☃&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="macro">vec!</span>[<span class="string">&#39;ε&#39;</span>, <span class="string">&#39;δ&#39;</span>, <span class="string">&#39;γ&#39;</span>, <span class="string">&#39;β&#39;</span>, <span class="string">&#39;α&#39;</span>], d(<span class="string">&quot;αβγδε&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="macro">vec!</span>[<span class="string">&#39;⛇&#39;</span>, <span class="string">&#39;⛄&#39;</span>, <span class="string">&#39;☃&#39;</span>], d(<span class="string">&quot;☃⛄⛇&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="macro">vec!</span>[<span class="string">&#39;𝗲&#39;</span>, <span class="string">&#39;𝗱&#39;</span>, <span class="string">&#39;𝗰&#39;</span>, <span class="string">&#39;𝗯&#39;</span>, <span class="string">&#39;𝗮&#39;</span>], d(<span class="string">&quot;𝗮𝗯𝗰𝗱𝗲&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="macro">vec!</span>[<span class="string">'☃'</span>], d(<span class="string">"☃"</span>));
+        <span class="macro">assert_eq!</span>(<span class="macro">vec!</span>[<span class="string">'☃'</span>, <span class="string">'☃'</span>], d(<span class="string">"☃☃"</span>));
+        <span class="macro">assert_eq!</span>(<span class="macro">vec!</span>[<span class="string">'ε'</span>, <span class="string">'δ'</span>, <span class="string">'γ'</span>, <span class="string">'β'</span>, <span class="string">'α'</span>], d(<span class="string">"αβγδε"</span>));
+        <span class="macro">assert_eq!</span>(<span class="macro">vec!</span>[<span class="string">'⛇'</span>, <span class="string">'⛄'</span>, <span class="string">'☃'</span>], d(<span class="string">"☃⛄⛇"</span>));
+        <span class="macro">assert_eq!</span>(<span class="macro">vec!</span>[<span class="string">'𝗲'</span>, <span class="string">'𝗱'</span>, <span class="string">'𝗰'</span>, <span class="string">'𝗯'</span>, <span class="string">'𝗮'</span>], d(<span class="string">"𝗮𝗯𝗰𝗱𝗲"</span>));
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>decode_last_invalid() {
-        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b&quot;&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b""</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">0</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b&quot;\xFF&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b"\xFF"</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b&quot;\xCE\xF0&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b"\xCE\xF0"</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b&quot;\xCE&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b"\xCE"</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b&quot;\xE2\x98\xF0&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b"\xE2\x98\xF0"</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b&quot;\xE2\x98&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b"\xE2\x98"</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">2</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b&quot;\xF0\x9D\x9D\xF0&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b"\xF0\x9D\x9D\xF0"</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b&quot;\xF0\x9D\x9D&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b"\xF0\x9D\x9D"</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">3</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b&quot;\xF0\x82\x82\xAC&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b"\xF0\x82\x82\xAC"</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b&quot;\xED\xA0\x80&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b"\xED\xA0\x80"</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b&quot;\xED\xA0&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b"\xED\xA0"</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b&quot;\xED&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b"\xED"</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b&quot;a\xCE&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b"a\xCE"</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b&quot;a\xE2\x98&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b"a\xE2\x98"</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">2</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b&quot;a\xF0\x9D\x9C&quot;</span>);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last(<span class="string">b"a\xF0\x9D\x9C"</span>);
         <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">3</span>, size);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>decode_last_lossy() {
-        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b&quot;&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b""</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">0</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b&quot;\xFF&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b"\xFF"</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b&quot;\xCE\xF0&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b"\xCE\xF0"</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b&quot;\xCE&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b"\xCE"</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b&quot;\xE2\x98\xF0&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b"\xE2\x98\xF0"</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b&quot;\xE2\x98&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b"\xE2\x98"</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">2</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b&quot;\xF0\x9D\x9D\xF0&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b"\xF0\x9D\x9D\xF0"</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b&quot;\xF0\x9D\x9D&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b"\xF0\x9D\x9D"</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">3</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b&quot;\xF0\x82\x82\xAC&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b"\xF0\x82\x82\xAC"</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b&quot;\xED\xA0\x80&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b"\xED\xA0\x80"</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b&quot;\xED\xA0&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b"\xED\xA0"</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b&quot;\xED&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b"\xED"</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b&quot;a\xCE&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b"a\xCE"</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b&quot;a\xE2\x98&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b"a\xE2\x98"</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">2</span>, size);
 
-        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b&quot;a\xF0\x9D\x9C&quot;</span>);
-        <span class="macro">assert_eq!</span>(<span class="string">&#39;\u{FFFD}&#39;</span>, ch);
+        <span class="kw">let </span>(ch, size) = utf8::decode_last_lossy(<span class="string">b"a\xF0\x9D\x9C"</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">'\u{FFFD}'</span>, ch);
         <span class="macro">assert_eq!</span>(<span class="number">3</span>, size);
     }
 
@@ -2616,14 +2617,14 @@
             <span class="kw">let </span>got: String = B(input).chars().collect();
             <span class="macro">assert_eq!</span>(
                 expected, got,
-                <span class="string">&quot;chars(ith: {:?}, given: {:?})&quot;</span>,
+                <span class="string">"chars(ith: {:?}, given: {:?})"</span>,
                 i, input,
             );
             <span class="kw">let </span>got: String =
                 B(input).char_indices().map(|(<span class="kw">_</span>, <span class="kw">_</span>, ch)| ch).collect();
             <span class="macro">assert_eq!</span>(
                 expected, got,
-                <span class="string">&quot;char_indices(ith: {:?}, given: {:?})&quot;</span>,
+                <span class="string">"char_indices(ith: {:?}, given: {:?})"</span>,
                 i, input,
             );
 
@@ -2632,14 +2633,14 @@
             <span class="kw">let </span>got: String = B(input).chars().rev().collect();
             <span class="macro">assert_eq!</span>(
                 expected, got,
-                <span class="string">&quot;chars.rev(ith: {:?}, given: {:?})&quot;</span>,
+                <span class="string">"chars.rev(ith: {:?}, given: {:?})"</span>,
                 i, input,
             );
             <span class="kw">let </span>got: String =
                 B(input).char_indices().rev().map(|(<span class="kw">_</span>, <span class="kw">_</span>, ch)| ch).collect();
             <span class="macro">assert_eq!</span>(
                 expected, got,
-                <span class="string">&quot;char_indices.rev(ith: {:?}, given: {:?})&quot;</span>,
+                <span class="string">"char_indices.rev(ith: {:?}, given: {:?})"</span>,
                 i, input,
             );
         }
@@ -2647,88 +2648,88 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>utf8_chunks() {
-        <span class="kw">let </span><span class="kw-2">mut </span>c = utf8::Utf8Chunks { bytes: <span class="string">b&quot;123\xC0&quot; </span>};
+        <span class="kw">let </span><span class="kw-2">mut </span>c = utf8::Utf8Chunks { bytes: <span class="string">b"123\xC0" </span>};
         <span class="macro">assert_eq!</span>(
             (c.next(), c.next()),
             (
                 <span class="prelude-val">Some</span>(utf8::Utf8Chunk {
-                    valid: <span class="string">&quot;123&quot;</span>,
-                    invalid: <span class="string">b&quot;\xC0&quot;</span>.as_bstr(),
+                    valid: <span class="string">"123"</span>,
+                    invalid: <span class="string">b"\xC0"</span>.as_bstr(),
                     incomplete: <span class="bool-val">false</span>,
                 }),
                 <span class="prelude-val">None</span>,
             )
         );
 
-        <span class="kw">let </span><span class="kw-2">mut </span>c = utf8::Utf8Chunks { bytes: <span class="string">b&quot;123\xFF\xFF&quot; </span>};
+        <span class="kw">let </span><span class="kw-2">mut </span>c = utf8::Utf8Chunks { bytes: <span class="string">b"123\xFF\xFF" </span>};
         <span class="macro">assert_eq!</span>(
             (c.next(), c.next(), c.next()),
             (
                 <span class="prelude-val">Some</span>(utf8::Utf8Chunk {
-                    valid: <span class="string">&quot;123&quot;</span>,
-                    invalid: <span class="string">b&quot;\xFF&quot;</span>.as_bstr(),
+                    valid: <span class="string">"123"</span>,
+                    invalid: <span class="string">b"\xFF"</span>.as_bstr(),
                     incomplete: <span class="bool-val">false</span>,
                 }),
                 <span class="prelude-val">Some</span>(utf8::Utf8Chunk {
-                    valid: <span class="string">&quot;&quot;</span>,
-                    invalid: <span class="string">b&quot;\xFF&quot;</span>.as_bstr(),
+                    valid: <span class="string">""</span>,
+                    invalid: <span class="string">b"\xFF"</span>.as_bstr(),
                     incomplete: <span class="bool-val">false</span>,
                 }),
                 <span class="prelude-val">None</span>,
             )
         );
 
-        <span class="kw">let </span><span class="kw-2">mut </span>c = utf8::Utf8Chunks { bytes: <span class="string">b&quot;123\xD0&quot; </span>};
+        <span class="kw">let </span><span class="kw-2">mut </span>c = utf8::Utf8Chunks { bytes: <span class="string">b"123\xD0" </span>};
         <span class="macro">assert_eq!</span>(
             (c.next(), c.next()),
             (
                 <span class="prelude-val">Some</span>(utf8::Utf8Chunk {
-                    valid: <span class="string">&quot;123&quot;</span>,
-                    invalid: <span class="string">b&quot;\xD0&quot;</span>.as_bstr(),
+                    valid: <span class="string">"123"</span>,
+                    invalid: <span class="string">b"\xD0"</span>.as_bstr(),
                     incomplete: <span class="bool-val">true</span>,
                 }),
                 <span class="prelude-val">None</span>,
             )
         );
 
-        <span class="kw">let </span><span class="kw-2">mut </span>c = utf8::Utf8Chunks { bytes: <span class="string">b&quot;123\xD0456&quot; </span>};
+        <span class="kw">let </span><span class="kw-2">mut </span>c = utf8::Utf8Chunks { bytes: <span class="string">b"123\xD0456" </span>};
         <span class="macro">assert_eq!</span>(
             (c.next(), c.next(), c.next()),
             (
                 <span class="prelude-val">Some</span>(utf8::Utf8Chunk {
-                    valid: <span class="string">&quot;123&quot;</span>,
-                    invalid: <span class="string">b&quot;\xD0&quot;</span>.as_bstr(),
+                    valid: <span class="string">"123"</span>,
+                    invalid: <span class="string">b"\xD0"</span>.as_bstr(),
                     incomplete: <span class="bool-val">false</span>,
                 }),
                 <span class="prelude-val">Some</span>(utf8::Utf8Chunk {
-                    valid: <span class="string">&quot;456&quot;</span>,
-                    invalid: <span class="string">b&quot;&quot;</span>.as_bstr(),
+                    valid: <span class="string">"456"</span>,
+                    invalid: <span class="string">b""</span>.as_bstr(),
                     incomplete: <span class="bool-val">false</span>,
                 }),
                 <span class="prelude-val">None</span>,
             )
         );
 
-        <span class="kw">let </span><span class="kw-2">mut </span>c = utf8::Utf8Chunks { bytes: <span class="string">b&quot;123\xE2\x98&quot; </span>};
+        <span class="kw">let </span><span class="kw-2">mut </span>c = utf8::Utf8Chunks { bytes: <span class="string">b"123\xE2\x98" </span>};
         <span class="macro">assert_eq!</span>(
             (c.next(), c.next()),
             (
                 <span class="prelude-val">Some</span>(utf8::Utf8Chunk {
-                    valid: <span class="string">&quot;123&quot;</span>,
-                    invalid: <span class="string">b&quot;\xE2\x98&quot;</span>.as_bstr(),
+                    valid: <span class="string">"123"</span>,
+                    invalid: <span class="string">b"\xE2\x98"</span>.as_bstr(),
                     incomplete: <span class="bool-val">true</span>,
                 }),
                 <span class="prelude-val">None</span>,
             )
         );
 
-        <span class="kw">let </span><span class="kw-2">mut </span>c = utf8::Utf8Chunks { bytes: <span class="string">b&quot;123\xF4\x8F\xBF&quot; </span>};
+        <span class="kw">let </span><span class="kw-2">mut </span>c = utf8::Utf8Chunks { bytes: <span class="string">b"123\xF4\x8F\xBF" </span>};
         <span class="macro">assert_eq!</span>(
             (c.next(), c.next()),
             (
                 <span class="prelude-val">Some</span>(utf8::Utf8Chunk {
-                    valid: <span class="string">&quot;123&quot;</span>,
-                    invalid: <span class="string">b&quot;\xF4\x8F\xBF&quot;</span>.as_bstr(),
+                    valid: <span class="string">"123"</span>,
+                    invalid: <span class="string">b"\xF4\x8F\xBF"</span>.as_bstr(),
                     incomplete: <span class="bool-val">true</span>,
                 }),
                 <span class="prelude-val">None</span>,

@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.36.0/src/task/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="tokio" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.36.0/src/task/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="tokio" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -378,8 +379,8 @@
 //! A _task_ is a light weight, non-blocking unit of execution. A task is similar
 //! to an OS thread, but rather than being managed by the OS scheduler, they are
 //! managed by the [Tokio runtime][rt]. Another name for this general pattern is
-//! [green threads]. If you are familiar with [`Go&#39;s goroutines`], [`Kotlin&#39;s
-//! coroutines`], or [`Erlang&#39;s processes`], you can think of Tokio&#39;s tasks as
+//! [green threads]. If you are familiar with [`Go's goroutines`], [`Kotlin's
+//! coroutines`], or [`Erlang's processes`], you can think of Tokio's tasks as
 //! something similar.
 //!
 //! Key points about tasks include:
@@ -396,7 +397,7 @@
 //!   _preempts_ it, temporarily pausing that thread and switching to another.
 //!   Tasks, on the other hand, implement _cooperative multitasking_. In
 //!   cooperative multitasking, a task is allowed to run until it _yields_,
-//!   indicating to the Tokio runtime&#39;s scheduler that it cannot currently
+//!   indicating to the Tokio runtime's scheduler that it cannot currently
 //!   continue executing. When a task yields, the Tokio runtime switches to
 //!   executing the next task.
 //!
@@ -411,9 +412,9 @@
 //!
 //! [rt]: crate::runtime
 //! [green threads]: https://en.wikipedia.org/wiki/Green_threads
-//! [Go&#39;s goroutines]: https://tour.golang.org/concurrency/1
-//! [Kotlin&#39;s coroutines]: https://kotlinlang.org/docs/reference/coroutines-overview.html
-//! [Erlang&#39;s processes]: http://erlang.org/doc/getting_started/conc_prog.html#processes
+//! [Go's goroutines]: https://tour.golang.org/concurrency/1
+//! [Kotlin's coroutines]: https://kotlinlang.org/docs/reference/coroutines-overview.html
+//! [Erlang's processes]: http://erlang.org/doc/getting_started/conc_prog.html#processes
 //!
 //! ## Working with Tasks
 //!
@@ -422,7 +423,7 @@
 //! ### Spawning
 //!
 //! Perhaps the most important function in this module is [`task::spawn`]. This
-//! function can be thought of as an async equivalent to the standard library&#39;s
+//! function can be thought of as an async equivalent to the standard library's
 //! [`thread::spawn`][`std::thread::spawn`]. It takes an `async` block or other
 //! [future], and creates a new task to run that work concurrently:
 //!
@@ -446,19 +447,19 @@
 //! # #[tokio::main] async fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
 //! let join = task::spawn(async {
 //!     // ...
-//!     &quot;hello world!&quot;
+//!     "hello world!"
 //! });
 //!
 //! // ...
 //!
 //! // Await the result of the spawned task.
 //! let result = join.await?;
-//! assert_eq!(result, &quot;hello world!&quot;);
+//! assert_eq!(result, "hello world!");
 //! # Ok(())
 //! # }
 //! ```
 //!
-//! Again, like `std::thread`&#39;s [`JoinHandle` type][thread_join], if the spawned
+//! Again, like `std::thread`'s [`JoinHandle` type][thread_join], if the spawned
 //! task panics, awaiting its `JoinHandle` will return a [`JoinError`]. For
 //! example:
 //!
@@ -467,7 +468,7 @@
 //!
 //! # #[tokio::main] async fn main() {
 //! let join = task::spawn(async {
-//!     panic!(&quot;something bad happened!&quot;)
+//!     panic!("something bad happened!")
 //! });
 //!
 //! // The returned result indicates that the task failed.
@@ -475,7 +476,7 @@
 //! # }
 //! ```
 //!
-//! `spawn`, `JoinHandle`, and `JoinError` are present when the &quot;rt&quot;
+//! `spawn`, `JoinHandle`, and `JoinError` are present when the "rt"
 //! feature flag is enabled.
 //!
 //! [`task::spawn`]: crate::task::spawn()
@@ -566,11 +567,11 @@
 //! # async fn docs() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt;{
 //! let join = task::spawn_blocking(|| {
 //!     // do some compute-heavy work or call synchronous code
-//!     &quot;blocking completed&quot;
+//!     "blocking completed"
 //! });
 //!
 //! let result = join.await?;
-//! assert_eq!(result, &quot;blocking completed&quot;);
+//! assert_eq!(result, "blocking completed");
 //! # Ok(())
 //! # }
 //! ```
@@ -593,19 +594,19 @@
 //! # async fn docs() {
 //! let result = task::block_in_place(|| {
 //!     // do some compute-heavy work or call synchronous code
-//!     &quot;blocking completed&quot;
+//!     "blocking completed"
 //! });
 //!
-//! assert_eq!(result, &quot;blocking completed&quot;);
+//! assert_eq!(result, "blocking completed");
 //! # }
 //! ```
 //!
 //! #### `yield_now`
 //!
 //! In addition, this module provides a [`task::yield_now`] async function
-//! that is analogous to the standard library&#39;s [`thread::yield_now`]. Calling
+//! that is analogous to the standard library's [`thread::yield_now`]. Calling
 //! and `await`ing this function will cause the current task to yield to the
-//! Tokio runtime&#39;s scheduler, allowing other tasks to be
+//! Tokio runtime's scheduler, allowing other tasks to be
 //! scheduled. Eventually, the yielding task will be polled again, allowing it
 //! to execute. For example:
 //!
@@ -616,12 +617,12 @@
 //! async {
 //!     task::spawn(async {
 //!         // ...
-//!         println!(&quot;spawned task done!&quot;)
+//!         println!("spawned task done!")
 //!     });
 //!
 //!     // Yield, allowing the newly-spawned task to execute first.
 //!     task::yield_now().await;
-//!     println!(&quot;main task done!&quot;);
+//!     println!("main task done!");
 //! }
 //! # .await;
 //! # }
@@ -656,7 +657,7 @@
 //!
 //! #### unconstrained
 //!
-//! If necessary, [`task::unconstrained`] lets you opt a future out of Tokio&#39;s cooperative
+//! If necessary, [`task::unconstrained`] lets you opt a future out of Tokio's cooperative
 //! scheduling. When a future is wrapped with `unconstrained`, it will never be forced to yield to
 //! Tokio. For example:
 //!

@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-3.4.0/src/enc/threading.rs`."><title>threading.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-3.4.0/src/enc/threading.rs`."><title>threading.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -498,7 +499,7 @@
 <span class="kw">use </span>core::marker::PhantomData;
 <span class="kw">use </span>core::mem;
 <span class="kw">use </span>core::any;
-<span class="attr">#[cfg(feature=<span class="string">&quot;std&quot;</span>)]
+<span class="attr">#[cfg(feature=<span class="string">"std"</span>)]
 </span><span class="kw">use </span>std;
 <span class="kw">use </span><span class="kw">super</span>::BrotliAlloc;
 <span class="kw">use </span><span class="kw">super</span>::encode::{
@@ -519,9 +520,9 @@
 <span class="kw">use </span><span class="kw">super</span>::backward_references::{BrotliEncoderParams, UnionHasher, CloneWithAlloc, AnyHasher};
 <span class="kw">pub type </span>PoisonedThreadError = ();
 
-<span class="attr">#[cfg(feature=<span class="string">&quot;std&quot;</span>)]
-</span><span class="kw">pub type </span>LowLevelThreadError = std::boxed::Box&lt;<span class="kw">dyn </span>any::Any + Send + <span class="lifetime">&#39;static</span>&gt;;
-<span class="attr">#[cfg(not(feature=<span class="string">&quot;std&quot;</span>))]
+<span class="attr">#[cfg(feature=<span class="string">"std"</span>)]
+</span><span class="kw">pub type </span>LowLevelThreadError = std::boxed::Box&lt;<span class="kw">dyn </span>any::Any + Send + <span class="lifetime">'static</span>&gt;;
+<span class="attr">#[cfg(not(feature=<span class="string">"std"</span>))]
 </span><span class="kw">pub type </span>LowLevelThreadError = ();
 
 
@@ -529,7 +530,7 @@
     <span class="kw">fn </span>new(data:LowLevelThreadError) -&gt; <span class="self">Self</span>;
 }
 
-<span class="kw">pub trait </span>Joinable&lt;T:Send+<span class="lifetime">&#39;static</span>, U:Send+<span class="lifetime">&#39;static</span>&gt;:Sized {
+<span class="kw">pub trait </span>Joinable&lt;T:Send+<span class="lifetime">'static</span>, U:Send+<span class="lifetime">'static</span>&gt;:Sized {
   <span class="kw">fn </span>join(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;T, U&gt;;
 }
 <span class="attr">#[derive(Debug)]
@@ -549,36 +550,36 @@
 }
 
 
-<span class="kw">pub struct </span>CompressedFileChunk&lt;Alloc:BrotliAlloc+Send+<span class="lifetime">&#39;static</span>&gt; <span class="kw">where </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory: Send {
+<span class="kw">pub struct </span>CompressedFileChunk&lt;Alloc:BrotliAlloc+Send+<span class="lifetime">'static</span>&gt; <span class="kw">where </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory: Send {
     data_backing:&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory,
     data_size: usize,
 }
-<span class="kw">pub struct </span>CompressionThreadResult&lt;Alloc:BrotliAlloc+Send+<span class="lifetime">&#39;static</span>&gt; <span class="kw">where </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory: Send {
+<span class="kw">pub struct </span>CompressionThreadResult&lt;Alloc:BrotliAlloc+Send+<span class="lifetime">'static</span>&gt; <span class="kw">where </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory: Send {
   compressed: <span class="prelude-ty">Result</span>&lt;CompressedFileChunk&lt;Alloc&gt;, BrotliEncoderThreadError&gt;,
   alloc: Alloc,
 }
-<span class="kw">pub enum </span>InternalSendAlloc&lt;ReturnVal:Send+<span class="lifetime">&#39;static</span>, ExtraInput:Send+<span class="lifetime">&#39;static</span>,Alloc:BrotliAlloc+Send+<span class="lifetime">&#39;static</span>, Join: Joinable&lt;ReturnVal, BrotliEncoderThreadError&gt;&gt;
+<span class="kw">pub enum </span>InternalSendAlloc&lt;ReturnVal:Send+<span class="lifetime">'static</span>, ExtraInput:Send+<span class="lifetime">'static</span>,Alloc:BrotliAlloc+Send+<span class="lifetime">'static</span>, Join: Joinable&lt;ReturnVal, BrotliEncoderThreadError&gt;&gt;
   <span class="kw">where </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory: Send {
   A(Alloc, ExtraInput),
   Join(Join),
   SpawningOrJoining(PhantomData&lt;ReturnVal&gt;),
 }
-<span class="kw">impl </span>&lt;ReturnVal:Send+<span class="lifetime">&#39;static</span>, ExtraInput:Send+<span class="lifetime">&#39;static</span>,Alloc:BrotliAlloc+Send+<span class="lifetime">&#39;static</span>, Join: Joinable&lt;ReturnVal, BrotliEncoderThreadError&gt;&gt; InternalSendAlloc&lt;ReturnVal, ExtraInput, Alloc, Join&gt;  <span class="kw">where </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory: Send {
+<span class="kw">impl </span>&lt;ReturnVal:Send+<span class="lifetime">'static</span>, ExtraInput:Send+<span class="lifetime">'static</span>,Alloc:BrotliAlloc+Send+<span class="lifetime">'static</span>, Join: Joinable&lt;ReturnVal, BrotliEncoderThreadError&gt;&gt; InternalSendAlloc&lt;ReturnVal, ExtraInput, Alloc, Join&gt;  <span class="kw">where </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory: Send {
   <span class="kw">fn </span>unwrap_input(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; (<span class="kw-2">&amp;mut </span>Alloc, <span class="kw-2">&amp;mut </span>ExtraInput) {
     <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
       InternalSendAlloc::A(<span class="kw-2">ref mut </span>alloc, <span class="kw-2">ref mut </span>extra) =&gt; (alloc, extra),
-      <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;Bad state for allocator&quot;</span>),
+      <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">"Bad state for allocator"</span>),
     }
   }
 }
 
-<span class="kw">pub struct </span>SendAlloc&lt;ReturnValue:Send+<span class="lifetime">&#39;static</span>,
-                     ExtraInput:Send+<span class="lifetime">&#39;static</span>,
-                     Alloc:BrotliAlloc +Send+<span class="lifetime">&#39;static</span>,
+<span class="kw">pub struct </span>SendAlloc&lt;ReturnValue:Send+<span class="lifetime">'static</span>,
+                     ExtraInput:Send+<span class="lifetime">'static</span>,
+                     Alloc:BrotliAlloc +Send+<span class="lifetime">'static</span>,
                      Join:Joinable&lt;ReturnValue, BrotliEncoderThreadError&gt;&gt;(<span class="kw">pub </span>InternalSendAlloc&lt;ReturnValue, ExtraInput, Alloc, Join&gt;)<span class="comment">//FIXME pub
   </span><span class="kw">where </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory: Send;
 
-<span class="kw">impl</span>&lt;ReturnValue:Send+<span class="lifetime">&#39;static</span>, ExtraInput:Send+<span class="lifetime">&#39;static</span>, Alloc:BrotliAlloc+Send+<span class="lifetime">&#39;static</span>,Join:Joinable&lt;ReturnValue, BrotliEncoderThreadError&gt;&gt; SendAlloc&lt;ReturnValue, ExtraInput, Alloc, Join&gt;
+<span class="kw">impl</span>&lt;ReturnValue:Send+<span class="lifetime">'static</span>, ExtraInput:Send+<span class="lifetime">'static</span>, Alloc:BrotliAlloc+Send+<span class="lifetime">'static</span>,Join:Joinable&lt;ReturnValue, BrotliEncoderThreadError&gt;&gt; SendAlloc&lt;ReturnValue, ExtraInput, Alloc, Join&gt;
   <span class="kw">where </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory: Send {
   <span class="kw">pub fn </span>new(alloc: Alloc, extra_input: ExtraInput) -&gt; <span class="self">Self </span>{
     SendAlloc::&lt;ReturnValue, ExtraInput, Alloc, Join&gt;(InternalSendAlloc::A(alloc, extra_input))
@@ -598,7 +599,7 @@
       InternalSendAlloc::A(<span class="kw-2">ref mut </span>alloc, <span class="kw-2">ref mut </span>extra_input) =&gt; {
         (alloc, extra_input)
       },
-      InternalSendAlloc::SpawningOrJoining(<span class="kw">_</span>) | InternalSendAlloc::Join(<span class="kw">_</span>) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Item permanently borrowed/leaked&quot;</span>),
+      InternalSendAlloc::SpawningOrJoining(<span class="kw">_</span>) | InternalSendAlloc::Join(<span class="kw">_</span>) =&gt; <span class="macro">panic!</span>(<span class="string">"Item permanently borrowed/leaked"</span>),
     }
   }
   <span class="kw">pub fn </span>unwrap(<span class="self">self</span>) -&gt; (Alloc, ExtraInput) {
@@ -606,7 +607,7 @@
       InternalSendAlloc::A(alloc, extra_input) =&gt; {
         (alloc, extra_input)
       },
-      InternalSendAlloc::SpawningOrJoining(<span class="kw">_</span>) | InternalSendAlloc::Join(<span class="kw">_</span>) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Item permanently borrowed/leaked&quot;</span>),
+      InternalSendAlloc::SpawningOrJoining(<span class="kw">_</span>) | InternalSendAlloc::Join(<span class="kw">_</span>) =&gt; <span class="macro">panic!</span>(<span class="string">"Item permanently borrowed/leaked"</span>),
     }
   }
   <span class="kw">pub fn </span>replace_with_default(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; (Alloc, ExtraInput) {
@@ -614,7 +615,7 @@
       InternalSendAlloc::A(alloc, extra_input) =&gt; {
         (alloc, extra_input)
       },
-      InternalSendAlloc::SpawningOrJoining(<span class="kw">_</span>) | InternalSendAlloc::Join(<span class="kw">_</span>) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Item permanently borrowed/leaked&quot;</span>),
+      InternalSendAlloc::SpawningOrJoining(<span class="kw">_</span>) | InternalSendAlloc::Join(<span class="kw">_</span>) =&gt; <span class="macro">panic!</span>(<span class="string">"Item permanently borrowed/leaked"</span>),
     }
   }
 }
@@ -640,27 +641,27 @@
     <span class="kw">if let </span>InternalOwned::Item(x) = <span class="self">self</span>.<span class="number">0 </span>{
       x
     } <span class="kw">else </span>{
-      <span class="macro">panic!</span>(<span class="string">&quot;Item permanently borrowed&quot;</span>)
+      <span class="macro">panic!</span>(<span class="string">"Item permanently borrowed"</span>)
     }
   }
   <span class="kw">pub fn </span>view(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>T {
     <span class="kw">if let </span>InternalOwned::Item(<span class="kw-2">ref </span>x) = <span class="self">self</span>.<span class="number">0 </span>{
       x
     } <span class="kw">else </span>{
-      <span class="macro">panic!</span>(<span class="string">&quot;Item permanently borrowed&quot;</span>)
+      <span class="macro">panic!</span>(<span class="string">"Item permanently borrowed"</span>)
     }
   }
 }
 
 
 
-<span class="kw">pub trait </span>OwnedRetriever&lt;U:Send+<span class="lifetime">&#39;static</span>&gt; {
+<span class="kw">pub trait </span>OwnedRetriever&lt;U:Send+<span class="lifetime">'static</span>&gt; {
   <span class="kw">fn </span>view&lt;T, F:FnOnce(<span class="kw-2">&amp;</span>U)-&gt; T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, f:F) -&gt; <span class="prelude-ty">Result</span>&lt;T, PoisonedThreadError&gt;;
   <span class="kw">fn </span>unwrap(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;U, PoisonedThreadError&gt;;
 }
 
-<span class="attr">#[cfg(feature=<span class="string">&quot;std&quot;</span>)]
-</span><span class="kw">impl</span>&lt;U:Send+<span class="lifetime">&#39;static</span>&gt; OwnedRetriever&lt;U&gt; <span class="kw">for </span>std::sync::Arc&lt;std::sync::RwLock&lt;U&gt;&gt; {
+<span class="attr">#[cfg(feature=<span class="string">"std"</span>)]
+</span><span class="kw">impl</span>&lt;U:Send+<span class="lifetime">'static</span>&gt; OwnedRetriever&lt;U&gt; <span class="kw">for </span>std::sync::Arc&lt;std::sync::RwLock&lt;U&gt;&gt; {
   <span class="kw">fn </span>view&lt;T, F:FnOnce(<span class="kw-2">&amp;</span>U)-&gt; T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, f:F) -&gt; <span class="prelude-ty">Result</span>&lt;T, PoisonedThreadError&gt; {
       <span class="kw">match </span><span class="self">self</span>.read() {
           <span class="prelude-val">Ok</span>(<span class="kw-2">ref </span>u) =&gt; <span class="prelude-val">Ok</span>(f(u)),
@@ -680,11 +681,11 @@
 
 
 
-<span class="kw">pub trait </span>BatchSpawnable&lt;ReturnValue:Send+<span class="lifetime">&#39;static</span>,
-                         ExtraInput:Send+<span class="lifetime">&#39;static</span>,
-                         Alloc:BrotliAlloc+Send+<span class="lifetime">&#39;static</span>,
-                         U:Send+<span class="lifetime">&#39;static</span>+Sync&gt;
-  <span class="kw">where </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory:Send+<span class="lifetime">&#39;static
+<span class="kw">pub trait </span>BatchSpawnable&lt;ReturnValue:Send+<span class="lifetime">'static</span>,
+                         ExtraInput:Send+<span class="lifetime">'static</span>,
+                         Alloc:BrotliAlloc+Send+<span class="lifetime">'static</span>,
+                         U:Send+<span class="lifetime">'static</span>+Sync&gt;
+  <span class="kw">where </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory:Send+<span class="lifetime">'static
 </span>{
   <span class="kw">type </span>JoinHandle: Joinable&lt;ReturnValue, BrotliEncoderThreadError&gt;;
   <span class="kw">type </span>FinalJoinHandle: OwnedRetriever&lt;U&gt;;
@@ -700,7 +701,7 @@
     <span class="kw-2">&amp;mut </span><span class="self">self</span>,
     input: <span class="kw-2">&amp;mut </span>Owned&lt;U&gt;,
   ) -&gt; <span class="self">Self</span>::FinalJoinHandle;
-  <span class="kw">fn </span>spawn&lt;F: Fn(ExtraInput, usize, usize, <span class="kw-2">&amp;</span>U, Alloc) -&gt; ReturnValue+Send+<span class="lifetime">&#39;static</span>+Copy&gt;(
+  <span class="kw">fn </span>spawn&lt;F: Fn(ExtraInput, usize, usize, <span class="kw-2">&amp;</span>U, Alloc) -&gt; ReturnValue+Send+<span class="lifetime">'static</span>+Copy&gt;(
     <span class="kw-2">&amp;mut </span><span class="self">self</span>,
     handle:<span class="kw-2">&amp;mut </span><span class="self">Self</span>::FinalJoinHandle,
     alloc:<span class="kw-2">&amp;mut </span>SendAlloc&lt;ReturnValue, ExtraInput, Alloc, <span class="self">Self</span>::JoinHandle&gt;,
@@ -710,11 +711,11 @@
   );
 }
 
-<span class="kw">pub trait </span>BatchSpawnableLite&lt;ReturnValue:Send+<span class="lifetime">&#39;static</span>,
-                             ExtraInput:Send+<span class="lifetime">&#39;static</span>,
-                         Alloc:BrotliAlloc+Send+<span class="lifetime">&#39;static</span>,
-                         U:Send+<span class="lifetime">&#39;static</span>+Sync&gt;
-  <span class="kw">where </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory:Send+<span class="lifetime">&#39;static
+<span class="kw">pub trait </span>BatchSpawnableLite&lt;ReturnValue:Send+<span class="lifetime">'static</span>,
+                             ExtraInput:Send+<span class="lifetime">'static</span>,
+                         Alloc:BrotliAlloc+Send+<span class="lifetime">'static</span>,
+                         U:Send+<span class="lifetime">'static</span>+Sync&gt;
+  <span class="kw">where </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory:Send+<span class="lifetime">'static
 </span>{
   <span class="kw">type </span>JoinHandle: Joinable&lt;ReturnValue, BrotliEncoderThreadError&gt;;
   <span class="kw">type </span>FinalJoinHandle: OwnedRetriever&lt;U&gt;;
@@ -732,10 +733,10 @@
   );
 }
 <span class="comment">/*
-impl&lt;ReturnValue:Send+&#39;static,
-     ExtraInput:Send+&#39;static,
-     Alloc:BrotliAlloc+Send+&#39;static,
-     U:Send+&#39;static+Sync&gt;
+impl&lt;ReturnValue:Send+'static,
+     ExtraInput:Send+'static,
+     Alloc:BrotliAlloc+Send+'static,
+     U:Send+'static+Sync&gt;
      BatchSpawnableLite&lt;T, Alloc, U&gt; for BatchSpawnable&lt;T, Alloc, U&gt; {
   type JoinHandle = &lt;Self as BatchSpawnable&lt;T, Alloc, U&gt;&gt;::JoinHandle;
   type FinalJoinHandle = &lt;Self as BatchSpawnable&lt;T, Alloc, U&gt;&gt;::FinalJoinHandle;
@@ -749,7 +750,7 @@ impl&lt;ReturnValue:Send+&#39;static,
   }
 }*/
 
-</span><span class="kw">pub fn </span>CompressMultiSlice&lt;Alloc:BrotliAlloc+Send+<span class="lifetime">&#39;static</span>,
+</span><span class="kw">pub fn </span>CompressMultiSlice&lt;Alloc:BrotliAlloc+Send+<span class="lifetime">'static</span>,
                           Spawner:BatchSpawnableLite&lt;CompressionThreadResult&lt;Alloc&gt;,
                                                      UnionHasher&lt;Alloc&gt;,
                                                      Alloc,
@@ -779,14 +780,14 @@ impl&lt;ReturnValue:Send+&#39;static,
     ((thread_index * file_size) / num_threads)..(((thread_index + <span class="number">1</span>) * file_size) / num_threads)
 }
 
-<span class="kw">fn </span>compress_part&lt;Alloc: BrotliAlloc+Send+<span class="lifetime">&#39;static</span>,
+<span class="kw">fn </span>compress_part&lt;Alloc: BrotliAlloc+Send+<span class="lifetime">'static</span>,
                  SliceW:SliceWrapper&lt;u8&gt;&gt;(
   hasher: UnionHasher&lt;Alloc&gt;,
   thread_index: usize,
   num_threads: usize,
   input_and_params:<span class="kw-2">&amp;</span>(SliceW, BrotliEncoderParams),
   <span class="kw-2">mut </span>alloc: Alloc,
-) -&gt; CompressionThreadResult&lt;Alloc&gt; <span class="kw">where </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory:Send+<span class="lifetime">&#39;static </span>{
+) -&gt; CompressionThreadResult&lt;Alloc&gt; <span class="kw">where </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory:Send+<span class="lifetime">'static </span>{
   <span class="kw">let </span><span class="kw-2">mut </span>range = get_range(thread_index, num_threads, input_and_params.<span class="number">0</span>.len());
   <span class="kw">let </span><span class="kw-2">mut </span>mem = &lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::alloc_cell(<span class="kw-2">&amp;mut </span>alloc,
                                                      BrotliEncoderMaxCompressedSize(range.end - range.start));
@@ -846,8 +847,8 @@ impl&lt;ReturnValue:Send+&#39;static,
     }
 }
 
-<span class="kw">pub fn </span>CompressMulti&lt;Alloc:BrotliAlloc+Send+<span class="lifetime">&#39;static</span>,
-                     SliceW: SliceWrapper&lt;u8&gt;+Send+<span class="lifetime">&#39;static</span>+Sync,
+<span class="kw">pub fn </span>CompressMulti&lt;Alloc:BrotliAlloc+Send+<span class="lifetime">'static</span>,
+                     SliceW: SliceWrapper&lt;u8&gt;+Send+<span class="lifetime">'static</span>+Sync,
                      Spawner:BatchSpawnableLite&lt;CompressionThreadResult&lt;Alloc&gt;,
                                                 UnionHasher&lt;Alloc&gt;,
                                                 Alloc,
@@ -864,7 +865,7 @@ impl&lt;ReturnValue:Send+&#39;static,
   <span class="comment">// start thread spawner
   </span><span class="kw">let </span><span class="kw-2">mut </span>spawner_and_input = thread_spawner.make_spawner(<span class="kw-2">&amp;mut </span>owned_input_pair);
   <span class="kw">if </span>num_threads &gt; <span class="number">1 </span>{
-    <span class="comment">// spawn first thread without &quot;custom dictionary&quot; while we compute the custom dictionary for other work items
+    <span class="comment">// spawn first thread without "custom dictionary" while we compute the custom dictionary for other work items
       </span>thread_spawner.spawn(<span class="kw-2">&amp;mut </span>spawner_and_input, <span class="kw-2">&amp;mut </span>alloc_per_thread[<span class="number">0</span>], <span class="number">0</span>, num_threads, compress_part);
     }
     <span class="comment">// populate all hashers at once, cloning them one by one
@@ -937,7 +938,7 @@ impl&lt;ReturnValue:Send+&#39;static,
         }
       } <span class="kw">else </span>{
         <span class="kw">match </span>mem::replace(<span class="kw-2">&amp;mut </span>thread.<span class="number">0</span>, InternalSendAlloc::SpawningOrJoining(PhantomData::default())) {
-          InternalSendAlloc::A(<span class="kw">_</span>, <span class="kw">_</span>) | InternalSendAlloc::SpawningOrJoining(<span class="kw">_</span>) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Thread not properly spawned&quot;</span>),
+          InternalSendAlloc::A(<span class="kw">_</span>, <span class="kw">_</span>) | InternalSendAlloc::SpawningOrJoining(<span class="kw">_</span>) =&gt; <span class="macro">panic!</span>(<span class="string">"Thread not properly spawned"</span>),
           InternalSendAlloc::Join(join) =&gt; <span class="kw">match </span>join.join() {
             <span class="prelude-val">Ok</span>(result) =&gt; result,
             <span class="prelude-val">Err</span>(err) =&gt; {

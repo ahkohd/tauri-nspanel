@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/kuchikiki-0.8.2/src/select.rs`."><title>select.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="kuchikiki" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/kuchikiki-0.8.2/src/select.rs`."><title>select.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="kuchikiki" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -452,7 +453,7 @@
 <span class="doccomment">/// The definition of whitespace per CSS Selectors Level 3 § 4.
 ///
 /// Copied from rust-selectors.
-</span><span class="kw">static </span>SELECTOR_WHITESPACE: <span class="kw-2">&amp;</span>[char] = <span class="kw-2">&amp;</span>[<span class="string">&#39; &#39;</span>, <span class="string">&#39;\t&#39;</span>, <span class="string">&#39;\n&#39;</span>, <span class="string">&#39;\r&#39;</span>, <span class="string">&#39;\x0C&#39;</span>];
+</span><span class="kw">static </span>SELECTOR_WHITESPACE: <span class="kw-2">&amp;</span>[char] = <span class="kw-2">&amp;</span>[<span class="string">' '</span>, <span class="string">'\t'</span>, <span class="string">'\n'</span>, <span class="string">'\r'</span>, <span class="string">'\x0C'</span>];
 
 <span class="attr">#[derive(Debug, Clone)]
 </span><span class="kw">pub struct </span>KuchikiSelectors;
@@ -476,35 +477,35 @@
 
 <span class="kw">struct </span>KuchikiParser;
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;i</span>&gt; Parser&lt;<span class="lifetime">&#39;i</span>&gt; <span class="kw">for </span>KuchikiParser {
+<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>&gt; Parser&lt;<span class="lifetime">'i</span>&gt; <span class="kw">for </span>KuchikiParser {
     <span class="kw">type </span>Impl = KuchikiSelectors;
-    <span class="kw">type </span>Error = SelectorParseErrorKind&lt;<span class="lifetime">&#39;i</span>&gt;;
+    <span class="kw">type </span>Error = SelectorParseErrorKind&lt;<span class="lifetime">'i</span>&gt;;
 
     <span class="kw">fn </span>parse_non_ts_pseudo_class(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         location: SourceLocation,
-        name: CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;PseudoClass, ParseError&lt;<span class="lifetime">&#39;i</span>, SelectorParseErrorKind&lt;<span class="lifetime">&#39;i</span>&gt;&gt;&gt; {
+        name: CowRcStr&lt;<span class="lifetime">'i</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;PseudoClass, ParseError&lt;<span class="lifetime">'i</span>, SelectorParseErrorKind&lt;<span class="lifetime">'i</span>&gt;&gt;&gt; {
         <span class="kw">use </span><span class="self">self</span>::PseudoClass::<span class="kw-2">*</span>;
-        <span class="kw">if </span>name.eq_ignore_ascii_case(<span class="string">&quot;any-link&quot;</span>) {
+        <span class="kw">if </span>name.eq_ignore_ascii_case(<span class="string">"any-link"</span>) {
             <span class="prelude-val">Ok</span>(AnyLink)
-        } <span class="kw">else if </span>name.eq_ignore_ascii_case(<span class="string">&quot;link&quot;</span>) {
+        } <span class="kw">else if </span>name.eq_ignore_ascii_case(<span class="string">"link"</span>) {
             <span class="prelude-val">Ok</span>(Link)
-        } <span class="kw">else if </span>name.eq_ignore_ascii_case(<span class="string">&quot;visited&quot;</span>) {
+        } <span class="kw">else if </span>name.eq_ignore_ascii_case(<span class="string">"visited"</span>) {
             <span class="prelude-val">Ok</span>(Visited)
-        } <span class="kw">else if </span>name.eq_ignore_ascii_case(<span class="string">&quot;active&quot;</span>) {
+        } <span class="kw">else if </span>name.eq_ignore_ascii_case(<span class="string">"active"</span>) {
             <span class="prelude-val">Ok</span>(Active)
-        } <span class="kw">else if </span>name.eq_ignore_ascii_case(<span class="string">&quot;focus&quot;</span>) {
+        } <span class="kw">else if </span>name.eq_ignore_ascii_case(<span class="string">"focus"</span>) {
             <span class="prelude-val">Ok</span>(Focus)
-        } <span class="kw">else if </span>name.eq_ignore_ascii_case(<span class="string">&quot;hover&quot;</span>) {
+        } <span class="kw">else if </span>name.eq_ignore_ascii_case(<span class="string">"hover"</span>) {
             <span class="prelude-val">Ok</span>(Hover)
-        } <span class="kw">else if </span>name.eq_ignore_ascii_case(<span class="string">&quot;enabled&quot;</span>) {
+        } <span class="kw">else if </span>name.eq_ignore_ascii_case(<span class="string">"enabled"</span>) {
             <span class="prelude-val">Ok</span>(Enabled)
-        } <span class="kw">else if </span>name.eq_ignore_ascii_case(<span class="string">&quot;disabled&quot;</span>) {
+        } <span class="kw">else if </span>name.eq_ignore_ascii_case(<span class="string">"disabled"</span>) {
             <span class="prelude-val">Ok</span>(Disabled)
-        } <span class="kw">else if </span>name.eq_ignore_ascii_case(<span class="string">&quot;checked&quot;</span>) {
+        } <span class="kw">else if </span>name.eq_ignore_ascii_case(<span class="string">"checked"</span>) {
             <span class="prelude-val">Ok</span>(Checked)
-        } <span class="kw">else if </span>name.eq_ignore_ascii_case(<span class="string">&quot;indeterminate&quot;</span>) {
+        } <span class="kw">else if </span>name.eq_ignore_ascii_case(<span class="string">"indeterminate"</span>) {
             <span class="prelude-val">Ok</span>(Indeterminate)
         } <span class="kw">else </span>{
             <span class="prelude-val">Err</span>(
@@ -555,16 +556,16 @@
         </span>W: fmt::Write,
     {
         dest.write_str(<span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
-            PseudoClass::AnyLink =&gt; <span class="string">&quot;:any-link&quot;</span>,
-            PseudoClass::Link =&gt; <span class="string">&quot;:link&quot;</span>,
-            PseudoClass::Visited =&gt; <span class="string">&quot;:visited&quot;</span>,
-            PseudoClass::Active =&gt; <span class="string">&quot;:active&quot;</span>,
-            PseudoClass::Focus =&gt; <span class="string">&quot;:focus&quot;</span>,
-            PseudoClass::Hover =&gt; <span class="string">&quot;:hover&quot;</span>,
-            PseudoClass::Enabled =&gt; <span class="string">&quot;:enabled&quot;</span>,
-            PseudoClass::Disabled =&gt; <span class="string">&quot;:disabled&quot;</span>,
-            PseudoClass::Checked =&gt; <span class="string">&quot;:checked&quot;</span>,
-            PseudoClass::Indeterminate =&gt; <span class="string">&quot;:indeterminate&quot;</span>,
+            PseudoClass::AnyLink =&gt; <span class="string">":any-link"</span>,
+            PseudoClass::Link =&gt; <span class="string">":link"</span>,
+            PseudoClass::Visited =&gt; <span class="string">":visited"</span>,
+            PseudoClass::Active =&gt; <span class="string">":active"</span>,
+            PseudoClass::Focus =&gt; <span class="string">":focus"</span>,
+            PseudoClass::Hover =&gt; <span class="string">":hover"</span>,
+            PseudoClass::Enabled =&gt; <span class="string">":enabled"</span>,
+            PseudoClass::Disabled =&gt; <span class="string">":disabled"</span>,
+            PseudoClass::Checked =&gt; <span class="string">":checked"</span>,
+            PseudoClass::Indeterminate =&gt; <span class="string">":indeterminate"</span>,
         })
     }
 }
@@ -680,20 +681,20 @@
         <span class="self">self</span>.name.ns == <span class="macro">ns!</span>(html)
             &amp;&amp; <span class="macro">matches!</span>(
                 <span class="self">self</span>.name.local,
-                <span class="macro">local_name!</span>(<span class="string">&quot;a&quot;</span>) | <span class="macro">local_name!</span>(<span class="string">&quot;area&quot;</span>) | <span class="macro">local_name!</span>(<span class="string">&quot;link&quot;</span>)
+                <span class="macro">local_name!</span>(<span class="string">"a"</span>) | <span class="macro">local_name!</span>(<span class="string">"area"</span>) | <span class="macro">local_name!</span>(<span class="string">"link"</span>)
             )
             &amp;&amp; <span class="self">self
                 </span>.attributes
                 .borrow()
                 .map
-                .contains_key(<span class="kw-2">&amp;</span>ExpandedName::new(<span class="macro">ns!</span>(), <span class="macro">local_name!</span>(<span class="string">&quot;href&quot;</span>)))
+                .contains_key(<span class="kw-2">&amp;</span>ExpandedName::new(<span class="macro">ns!</span>(), <span class="macro">local_name!</span>(<span class="string">"href"</span>)))
     }
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>has_id(<span class="kw-2">&amp;</span><span class="self">self</span>, id: <span class="kw-2">&amp;</span>LocalName, case_sensitivity: CaseSensitivity) -&gt; bool {
         <span class="self">self</span>.attributes
             .borrow()
-            .get(<span class="macro">local_name!</span>(<span class="string">&quot;id&quot;</span>))
+            .get(<span class="macro">local_name!</span>(<span class="string">"id"</span>))
             .map_or(<span class="bool-val">false</span>, |id_attr| {
                 case_sensitivity.eq(id.as_bytes(), id_attr.as_bytes())
             })
@@ -703,7 +704,7 @@
     </span><span class="kw">fn </span>has_class(<span class="kw-2">&amp;</span><span class="self">self</span>, name: <span class="kw-2">&amp;</span>LocalName, case_sensitivity: CaseSensitivity) -&gt; bool {
         <span class="kw">let </span>name = name.as_bytes();
         !name.is_empty()
-            &amp;&amp; <span class="kw">if let </span><span class="prelude-val">Some</span>(class_attr) = <span class="self">self</span>.attributes.borrow().get(<span class="macro">local_name!</span>(<span class="string">&quot;class&quot;</span>)) {
+            &amp;&amp; <span class="kw">if let </span><span class="prelude-val">Some</span>(class_attr) = <span class="self">self</span>.attributes.borrow().get(<span class="macro">local_name!</span>(<span class="string">"class"</span>)) {
                 class_attr
                     .split(SELECTOR_WHITESPACE)
                     .any(|class| case_sensitivity.eq(class.as_bytes(), name))
@@ -758,9 +759,9 @@
                 <span class="self">self</span>.name.ns == <span class="macro">ns!</span>(html)
                     &amp;&amp; <span class="macro">matches!</span>(
                         <span class="self">self</span>.name.local,
-                        <span class="macro">local_name!</span>(<span class="string">&quot;a&quot;</span>) | <span class="macro">local_name!</span>(<span class="string">&quot;area&quot;</span>) | <span class="macro">local_name!</span>(<span class="string">&quot;link&quot;</span>)
+                        <span class="macro">local_name!</span>(<span class="string">"a"</span>) | <span class="macro">local_name!</span>(<span class="string">"area"</span>) | <span class="macro">local_name!</span>(<span class="string">"link"</span>)
                     )
-                    &amp;&amp; <span class="self">self</span>.attributes.borrow().contains(<span class="macro">local_name!</span>(<span class="string">&quot;href&quot;</span>))
+                    &amp;&amp; <span class="self">self</span>.attributes.borrow().contains(<span class="macro">local_name!</span>(<span class="string">"href"</span>))
             }
         }
     }
@@ -849,10 +850,10 @@
         <span class="kw">let </span><span class="kw-2">mut </span>iter = <span class="self">self</span>.<span class="number">0</span>.iter();
         <span class="kw">let </span>first = iter
             .next()
-            .expect(<span class="string">&quot;Empty Selectors, should contain at least one selector&quot;</span>);
+            .expect(<span class="string">"Empty Selectors, should contain at least one selector"</span>);
         first.<span class="number">0</span>.to_css(f)<span class="question-mark">?</span>;
         <span class="kw">for </span>selector <span class="kw">in </span>iter {
-            f.write_str(<span class="string">&quot;, &quot;</span>)<span class="question-mark">?</span>;
+            f.write_str(<span class="string">", "</span>)<span class="question-mark">?</span>;
             selector.<span class="number">0</span>.to_css(f)<span class="question-mark">?</span>;
         }
         <span class="prelude-val">Ok</span>(())

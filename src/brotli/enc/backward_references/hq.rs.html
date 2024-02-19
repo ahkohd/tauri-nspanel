@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-3.4.0/src/enc/backward_references/hq.rs`."><title>hq.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-3.4.0/src/enc/backward_references/hq.rs`."><title>hq.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2329,7 +2330,7 @@ pub static kHashMul64Long: u64 = 0x1fe35a7bu32 as (u64) &lt;&lt; 32i32 | 0xd3579
     <span class="kw">let </span>i_end = core::cmp::min(position, i_start.wrapping_add(num_bytes));
     <span class="kw">for </span>i <span class="kw">in </span>i_start..i_end {
       <span class="comment">/* Maximum distance is window size - 16, see section 9.1. of the spec.
-         Furthermore, we have to make sure that we don&#39;t look further back
+         Furthermore, we have to make sure that we don't look further back
          from the start of the next block than the window size, otherwise we
          could access already overwritten areas of the ring-buffer. */
       </span><span class="kw">let </span>max_backward =
@@ -2375,13 +2376,13 @@ pub static kHashMul64Long: u64 = 0x1fe35a7bu32 as (u64) &lt;&lt; 32i32 | 0xd3579
         stop = <span class="number">0usize</span>;
     }
     i = cur_ix.wrapping_sub(<span class="number">1usize</span>);
-    <span class="lifetime">&#39;break14</span>: <span class="kw">while </span>i &gt; stop &amp;&amp; (best_len &lt;= <span class="number">2usize</span>) {
-        <span class="lifetime">&#39;continue15</span>: <span class="kw">loop </span>{
+    <span class="lifetime">'break14</span>: <span class="kw">while </span>i &gt; stop &amp;&amp; (best_len &lt;= <span class="number">2usize</span>) {
+        <span class="lifetime">'continue15</span>: <span class="kw">loop </span>{
             {
                 <span class="kw">let </span><span class="kw-2">mut </span>prev_ix : usize = i;
                 <span class="kw">let </span>backward : usize = cur_ix.wrapping_sub(prev_ix);
                 <span class="kw">if </span>backward &gt; max_backward {
-                    <span class="kw">break </span><span class="lifetime">&#39;break14</span>;
+                    <span class="kw">break </span><span class="lifetime">'break14</span>;
                 }
                 prev_ix = prev_ix &amp; ring_buffer_mask;
                 <span class="kw">if </span>data[(cur_ix_masked <span class="kw">as </span>(usize)) ]<span class="kw">as </span>(i32) != data[(
@@ -2395,7 +2396,7 @@ pub static kHashMul64Long: u64 = 0x1fe35a7bu32 as (u64) &lt;&lt; 32i32 | 0xd3579
                                                                                                              <span class="number">1usize
                                                                                                          </span>) <span class="kw">as </span>(usize)
                                                                                                      ) ]<span class="kw">as </span>(i32) {
-                    <span class="kw">break </span><span class="lifetime">&#39;continue15</span>;
+                    <span class="kw">break </span><span class="lifetime">'continue15</span>;
                 }
                 {
                     <span class="kw">let </span>len
@@ -2854,7 +2855,7 @@ pub static kHashMul64Long: u64 = 0x1fe35a7bu32 as (u64) &lt;&lt; 32i32 | 0xd3579
     <span class="kw">while </span>k &lt; max_iters &amp;&amp; (k &lt; StartPosQueueSize(
                                     queue 
                                 )) {
-        <span class="lifetime">&#39;continue28</span>: <span class="kw">loop </span>{
+        <span class="lifetime">'continue28</span>: <span class="kw">loop </span>{
             {
                 <span class="kw">let </span>posdata
                     = StartPosQueueAt(queue ,k);
@@ -2872,8 +2873,8 @@ pub static kHashMul64Long: u64 = 0x1fe35a7bu32 as (u64) &lt;&lt; 32i32 | 0xd3579
                                                     );
                 <span class="kw">let </span><span class="kw-2">mut </span>best_len : usize = min_len.wrapping_sub(<span class="number">1usize</span>);
                 <span class="kw">let </span><span class="kw-2">mut </span>j : usize = <span class="number">0usize</span>;
-                <span class="lifetime">&#39;break29</span>: <span class="kw">while </span>j &lt; <span class="number">16usize </span>&amp;&amp; (best_len &lt; max_len) {
-                    <span class="lifetime">&#39;continue30</span>: <span class="kw">loop </span>{
+                <span class="lifetime">'break29</span>: <span class="kw">while </span>j &lt; <span class="number">16usize </span>&amp;&amp; (best_len &lt; max_len) {
+                    <span class="lifetime">'continue30</span>: <span class="kw">loop </span>{
                         {
                             <span class="kw">let </span>idx
                                 : usize
@@ -2893,14 +2894,14 @@ pub static kHashMul64Long: u64 = 0x1fe35a7bu32 as (u64) &lt;&lt; 32i32 | 0xd3579
                                        cur_ix_masked.wrapping_add(best_len) <span class="kw">as </span>(usize)
                                    )];
                             <span class="kw">if </span>cur_ix_masked.wrapping_add(best_len) &gt; ringbuffer_mask {
-                                <span class="kw">break </span><span class="lifetime">&#39;break29</span>;
+                                <span class="kw">break </span><span class="lifetime">'break29</span>;
                             }
                             <span class="kw">if </span>backward &gt; max_distance.wrapping_add(gap) {
-                                <span class="kw">break </span><span class="lifetime">&#39;continue30</span>;
+                                <span class="kw">break </span><span class="lifetime">'continue30</span>;
                             }
                             <span class="kw">if </span>backward &lt;= max_distance {
                                 <span class="kw">if </span>prev_ix &gt;= cur_ix {
-                                    <span class="kw">break </span><span class="lifetime">&#39;continue30</span>;
+                                    <span class="kw">break </span><span class="lifetime">'continue30</span>;
                                 }
                                 prev_ix = prev_ix &amp; ringbuffer_mask;
                                 <span class="kw">if </span>prev_ix.wrapping_add(
@@ -2910,7 +2911,7 @@ pub static kHashMul64Long: u64 = 0x1fe35a7bu32 as (u64) &lt;&lt; 32i32 | 0xd3579
                                                                                             best_len
                                                                                         ) <span class="kw">as </span>(usize)
                                                                                     ) ]<span class="kw">as </span>(i32) {
-                                    <span class="kw">break </span><span class="lifetime">&#39;continue30</span>;
+                                    <span class="kw">break </span><span class="lifetime">'continue30</span>;
                                 }
                                 len = FindMatchLengthWithLimit(
                                           <span class="kw-2">&amp;</span>ringbuffer[(prev_ix <span class="kw">as </span>(usize))..],
@@ -2920,7 +2921,7 @@ pub static kHashMul64Long: u64 = 0x1fe35a7bu32 as (u64) &lt;&lt; 32i32 | 0xd3579
                                           max_len
                                       );
                             } <span class="kw">else </span>{
-                                <span class="kw">break </span><span class="lifetime">&#39;continue30</span>;
+                                <span class="kw">break </span><span class="lifetime">'continue30</span>;
                             }
                             {
                                 <span class="kw">let </span>dist_cost
@@ -2976,7 +2977,7 @@ pub static kHashMul64Long: u64 = 0x1fe35a7bu32 as (u64) &lt;&lt; 32i32 | 0xd3579
                     j = j.wrapping_add(<span class="number">1 </span><span class="kw">as </span>(usize));
                 }
                 <span class="kw">if </span>k &gt;= <span class="number">2usize </span>{
-                    <span class="kw">break </span><span class="lifetime">&#39;continue28</span>;
+                    <span class="kw">break </span><span class="lifetime">'continue28</span>;
                 }
                 {
                     <span class="kw">let </span><span class="kw-2">mut </span>len : usize = min_len;
@@ -3391,11 +3392,11 @@ pub static kHashMul64Long: u64 = 0x1fe35a7bu32 as (u64) &lt;&lt; 32i32 | 0xd3579
                           ) <span class="kw">as </span>(floatX) + <span class="number">2i32 </span><span class="kw">as </span>(floatX);
     i = <span class="number">0usize</span>;
     <span class="kw">while </span>i &lt; histogram_size {
-        <span class="lifetime">&#39;continue56</span>: <span class="kw">loop </span>{
+        <span class="lifetime">'continue56</span>: <span class="kw">loop </span>{
             {
                 <span class="kw">if </span>histogram[(i <span class="kw">as </span>(usize)) ]== <span class="number">0u32 </span>{
                     cost[(i <span class="kw">as </span>(usize)) ]= missing_symbol_cost;
-                    <span class="kw">break </span><span class="lifetime">&#39;continue56</span>;
+                    <span class="kw">break </span><span class="lifetime">'continue56</span>;
                 }
                 cost[(i <span class="kw">as </span>(usize)) ]= log2sum - FastLog2(
                                                            u64::from(histogram[(

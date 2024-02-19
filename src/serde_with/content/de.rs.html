@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_with-3.6.0/src/content/de.rs`."><title>de.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="serde_with" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_with-3.6.1/src/content/de.rs`."><title>de.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="serde_with" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1903,7 +1904,7 @@
 //! Since the type is private we copy the type here.
 //! `serde` is licensed as MIT+Apache2, the same as this crate.
 //!
-//! This version carries improvements compared to `serde`&#39;s version.
+//! This version carries improvements compared to `serde`'s version.
 //! The types support 128-bit integers, which is supported for all targets in Rust 1.40+.
 //! A value for `is_human_readable` is passed through all types, to preserve the information.
 //!
@@ -1920,7 +1921,7 @@
 ///
 /// Not public API. Use serde-value instead.
 </span><span class="attr">#[derive(Debug, Clone)]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">enum </span>Content&lt;<span class="lifetime">&#39;de</span>&gt; {
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">enum </span>Content&lt;<span class="lifetime">'de</span>&gt; {
     Bool(bool),
 
     U8(u8),
@@ -1940,34 +1941,34 @@
 
     Char(char),
     String(String),
-    Str(<span class="kw-2">&amp;</span><span class="lifetime">&#39;de </span>str),
+    Str(<span class="kw-2">&amp;</span><span class="lifetime">'de </span>str),
     ByteBuf(Vec&lt;u8&gt;),
-    Bytes(<span class="kw-2">&amp;</span><span class="lifetime">&#39;de </span>[u8]),
+    Bytes(<span class="kw-2">&amp;</span><span class="lifetime">'de </span>[u8]),
 
     <span class="prelude-val">None</span>,
-    <span class="prelude-val">Some</span>(Box&lt;Content&lt;<span class="lifetime">&#39;de</span>&gt;&gt;),
+    <span class="prelude-val">Some</span>(Box&lt;Content&lt;<span class="lifetime">'de</span>&gt;&gt;),
 
     Unit,
-    Newtype(Box&lt;Content&lt;<span class="lifetime">&#39;de</span>&gt;&gt;),
-    Seq(Vec&lt;Content&lt;<span class="lifetime">&#39;de</span>&gt;&gt;),
-    Map(Vec&lt;(Content&lt;<span class="lifetime">&#39;de</span>&gt;, Content&lt;<span class="lifetime">&#39;de</span>&gt;)&gt;),
+    Newtype(Box&lt;Content&lt;<span class="lifetime">'de</span>&gt;&gt;),
+    Seq(Vec&lt;Content&lt;<span class="lifetime">'de</span>&gt;&gt;),
+    Map(Vec&lt;(Content&lt;<span class="lifetime">'de</span>&gt;, Content&lt;<span class="lifetime">'de</span>&gt;)&gt;),
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>&gt; Content&lt;<span class="lifetime">&#39;de</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>&gt; Content&lt;<span class="lifetime">'de</span>&gt; {
     <span class="attr">#[cold]
-    </span><span class="kw">fn </span>unexpected(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Unexpected&lt;<span class="lifetime">&#39;_</span>&gt; {
+    </span><span class="kw">fn </span>unexpected(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Unexpected&lt;<span class="lifetime">'_</span>&gt; {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
             Content::Bool(b) =&gt; Unexpected::Bool(b),
             Content::U8(n) =&gt; Unexpected::Unsigned(n <span class="kw">as </span>u64),
             Content::U16(n) =&gt; Unexpected::Unsigned(n <span class="kw">as </span>u64),
             Content::U32(n) =&gt; Unexpected::Unsigned(n <span class="kw">as </span>u64),
             Content::U64(n) =&gt; Unexpected::Unsigned(n),
-            Content::U128(<span class="kw">_</span>) =&gt; Unexpected::Other(<span class="string">&quot;u128&quot;</span>),
+            Content::U128(<span class="kw">_</span>) =&gt; Unexpected::Other(<span class="string">"u128"</span>),
             Content::I8(n) =&gt; Unexpected::Signed(n <span class="kw">as </span>i64),
             Content::I16(n) =&gt; Unexpected::Signed(n <span class="kw">as </span>i64),
             Content::I32(n) =&gt; Unexpected::Signed(n <span class="kw">as </span>i64),
             Content::I64(n) =&gt; Unexpected::Signed(n),
-            Content::I128(<span class="kw">_</span>) =&gt; Unexpected::Other(<span class="string">&quot;i128&quot;</span>),
+            Content::I128(<span class="kw">_</span>) =&gt; Unexpected::Other(<span class="string">"i128"</span>),
             Content::F32(f) =&gt; Unexpected::Float(f <span class="kw">as </span>f64),
             Content::F64(f) =&gt; Unexpected::Float(f),
             Content::Char(c) =&gt; Unexpected::Char(c),
@@ -1984,10 +1985,10 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>&gt; Deserialize&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>Content&lt;<span class="lifetime">&#39;de</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>&gt; Deserialize&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>Content&lt;<span class="lifetime">'de</span>&gt; {
     <span class="kw">fn </span>deserialize&lt;D&gt;(deserializer: D) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, D::Error&gt;
     <span class="kw">where
-        </span>D: Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>D: Deserializer&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="comment">// Untagged and internally tagged enums are only supported in
         // self-describing formats.
@@ -1996,15 +1997,15 @@
     }
 }
 
-<span class="kw">struct </span>ContentVisitor&lt;<span class="lifetime">&#39;de</span>&gt; {
-    value: PhantomData&lt;Content&lt;<span class="lifetime">&#39;de</span>&gt;&gt;,
+<span class="kw">struct </span>ContentVisitor&lt;<span class="lifetime">'de</span>&gt; {
+    value: PhantomData&lt;Content&lt;<span class="lifetime">'de</span>&gt;&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>&gt; Visitor&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>ContentVisitor&lt;<span class="lifetime">&#39;de</span>&gt; {
-    <span class="kw">type </span>Value = Content&lt;<span class="lifetime">&#39;de</span>&gt;;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>&gt; Visitor&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>ContentVisitor&lt;<span class="lifetime">'de</span>&gt; {
+    <span class="kw">type </span>Value = Content&lt;<span class="lifetime">'de</span>&gt;;
 
-    <span class="kw">fn </span>expecting(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        fmt.write_str(<span class="string">&quot;any value&quot;</span>)
+    <span class="kw">fn </span>expecting(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
+        fmt.write_str(<span class="string">"any value"</span>)
     }
 
     <span class="kw">fn </span>visit_bool&lt;F&gt;(<span class="self">self</span>, value: bool) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, F&gt;
@@ -2112,7 +2113,7 @@
         <span class="prelude-val">Ok</span>(Content::String(value.into()))
     }
 
-    <span class="kw">fn </span>visit_borrowed_str&lt;F&gt;(<span class="self">self</span>, value: <span class="kw-2">&amp;</span><span class="lifetime">&#39;de </span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, F&gt;
+    <span class="kw">fn </span>visit_borrowed_str&lt;F&gt;(<span class="self">self</span>, value: <span class="kw-2">&amp;</span><span class="lifetime">'de </span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, F&gt;
     <span class="kw">where
         </span>F: DeError,
     {
@@ -2133,7 +2134,7 @@
         <span class="prelude-val">Ok</span>(Content::ByteBuf(value.into()))
     }
 
-    <span class="kw">fn </span>visit_borrowed_bytes&lt;F&gt;(<span class="self">self</span>, value: <span class="kw-2">&amp;</span><span class="lifetime">&#39;de </span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, F&gt;
+    <span class="kw">fn </span>visit_borrowed_bytes&lt;F&gt;(<span class="self">self</span>, value: <span class="kw-2">&amp;</span><span class="lifetime">'de </span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, F&gt;
     <span class="kw">where
         </span>F: DeError,
     {
@@ -2163,23 +2164,23 @@
 
     <span class="kw">fn </span>visit_some&lt;D&gt;(<span class="self">self</span>, deserializer: D) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, D::Error&gt;
     <span class="kw">where
-        </span>D: Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>D: Deserializer&lt;<span class="lifetime">'de</span>&gt;,
     {
         Deserialize::deserialize(deserializer).map(|v| Content::Some(Box::new(v)))
     }
 
     <span class="kw">fn </span>visit_newtype_struct&lt;D&gt;(<span class="self">self</span>, deserializer: D) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, D::Error&gt;
     <span class="kw">where
-        </span>D: Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>D: Deserializer&lt;<span class="lifetime">'de</span>&gt;,
     {
         Deserialize::deserialize(deserializer).map(|v| Content::Newtype(Box::new(v)))
     }
 
     <span class="kw">fn </span>visit_seq&lt;V&gt;(<span class="self">self</span>, <span class="kw-2">mut </span>visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, V::Error&gt;
     <span class="kw">where
-        </span>V: SeqAccess&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: SeqAccess&lt;<span class="lifetime">'de</span>&gt;,
     {
-        <span class="kw">let </span><span class="kw-2">mut </span>vec = Vec::with_capacity(size_hint_cautious::&lt;Content&lt;<span class="lifetime">&#39;_</span>&gt;&gt;(visitor.size_hint()));
+        <span class="kw">let </span><span class="kw-2">mut </span>vec = Vec::with_capacity(size_hint_cautious::&lt;Content&lt;<span class="lifetime">'_</span>&gt;&gt;(visitor.size_hint()));
         <span class="kw">while let </span><span class="prelude-val">Some</span>(e) = visitor.next_element()<span class="question-mark">? </span>{
             vec.push(e);
         }
@@ -2188,9 +2189,9 @@
 
     <span class="kw">fn </span>visit_map&lt;V&gt;(<span class="self">self</span>, <span class="kw-2">mut </span>visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, V::Error&gt;
     <span class="kw">where
-        </span>V: MapAccess&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: MapAccess&lt;<span class="lifetime">'de</span>&gt;,
     {
-        <span class="kw">let </span><span class="kw-2">mut </span>vec = Vec::with_capacity(size_hint_cautious::&lt;(Content&lt;<span class="lifetime">&#39;_</span>&gt;, Content&lt;<span class="lifetime">&#39;_</span>&gt;)&gt;(
+        <span class="kw">let </span><span class="kw-2">mut </span>vec = Vec::with_capacity(size_hint_cautious::&lt;(Content&lt;<span class="lifetime">'_</span>&gt;, Content&lt;<span class="lifetime">'_</span>&gt;)&gt;(
             visitor.size_hint(),
         ));
         <span class="kw">while let </span><span class="prelude-val">Some</span>(kv) = visitor.next_entry()<span class="question-mark">? </span>{
@@ -2201,21 +2202,21 @@
 
     <span class="kw">fn </span>visit_enum&lt;V&gt;(<span class="self">self</span>, _visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, V::Error&gt;
     <span class="kw">where
-        </span>V: EnumAccess&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: EnumAccess&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="prelude-val">Err</span>(DeError::custom(
-            <span class="string">&quot;untagged and internally tagged enums do not support enum input&quot;</span>,
+            <span class="string">"untagged and internally tagged enums do not support enum input"</span>,
         ))
     }
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>ContentDeserializer&lt;<span class="lifetime">&#39;de</span>, E&gt; {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>ContentDeserializer&lt;<span class="lifetime">'de</span>, E&gt; {
     is_human_readable: bool,
-    content: Content&lt;<span class="lifetime">&#39;de</span>&gt;,
+    content: Content&lt;<span class="lifetime">'de</span>&gt;,
     err: PhantomData&lt;E&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, E&gt; ContentDeserializer&lt;<span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, E&gt; ContentDeserializer&lt;<span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
@@ -2226,7 +2227,7 @@
 
     <span class="kw">fn </span>deserialize_integer&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, E&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.content {
             Content::U8(v) =&gt; visitor.visit_u8(v),
@@ -2245,7 +2246,7 @@
 
     <span class="kw">fn </span>deserialize_float&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, E&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.content {
             Content::F32(v) =&gt; visitor.visit_f32(v),
@@ -2265,13 +2266,13 @@
     }
 }
 
-<span class="kw">fn </span>visit_content_seq&lt;<span class="lifetime">&#39;de</span>, V, E&gt;(
-    content: Vec&lt;Content&lt;<span class="lifetime">&#39;de</span>&gt;&gt;,
+<span class="kw">fn </span>visit_content_seq&lt;<span class="lifetime">'de</span>, V, E&gt;(
+    content: Vec&lt;Content&lt;<span class="lifetime">'de</span>&gt;&gt;,
     visitor: V,
     is_human_readable: bool,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, E&gt;
 <span class="kw">where
-    </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+    </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     E: DeError,
 {
     <span class="kw">let </span>seq = content
@@ -2283,13 +2284,13 @@
     <span class="prelude-val">Ok</span>(value)
 }
 
-<span class="kw">fn </span>visit_content_map&lt;<span class="lifetime">&#39;de</span>, V, E&gt;(
-    content: Vec&lt;(Content&lt;<span class="lifetime">&#39;de</span>&gt;, Content&lt;<span class="lifetime">&#39;de</span>&gt;)&gt;,
+<span class="kw">fn </span>visit_content_map&lt;<span class="lifetime">'de</span>, V, E&gt;(
+    content: Vec&lt;(Content&lt;<span class="lifetime">'de</span>&gt;, Content&lt;<span class="lifetime">'de</span>&gt;)&gt;,
     visitor: V,
     is_human_readable: bool,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, E&gt;
 <span class="kw">where
-    </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+    </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     E: DeError,
 {
     <span class="kw">let </span>map = content.into_iter().map(|(k, v)| {
@@ -2306,7 +2307,7 @@
 
 <span class="doccomment">/// Used when deserializing an internally tagged enum because the content
 /// will be used exactly once.
-</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, E&gt; Deserializer&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>ContentDeserializer&lt;<span class="lifetime">&#39;de</span>, E&gt;
+</span><span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, E&gt; Deserializer&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>ContentDeserializer&lt;<span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
@@ -2319,7 +2320,7 @@
 
     <span class="kw">fn </span>deserialize_any&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.content {
             Content::Bool(v) =&gt; visitor.visit_bool(v),
@@ -2355,7 +2356,7 @@
 
     <span class="kw">fn </span>deserialize_bool&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.content {
             Content::Bool(v) =&gt; visitor.visit_bool(v),
@@ -2365,91 +2366,91 @@
 
     <span class="kw">fn </span>deserialize_i8&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_integer(visitor)
     }
 
     <span class="kw">fn </span>deserialize_i16&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_integer(visitor)
     }
 
     <span class="kw">fn </span>deserialize_i32&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_integer(visitor)
     }
 
     <span class="kw">fn </span>deserialize_i64&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_integer(visitor)
     }
 
     <span class="kw">fn </span>deserialize_i128&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_integer(visitor)
     }
 
     <span class="kw">fn </span>deserialize_u8&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_integer(visitor)
     }
 
     <span class="kw">fn </span>deserialize_u16&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_integer(visitor)
     }
 
     <span class="kw">fn </span>deserialize_u32&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_integer(visitor)
     }
 
     <span class="kw">fn </span>deserialize_u64&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_integer(visitor)
     }
 
     <span class="kw">fn </span>deserialize_u128&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_integer(visitor)
     }
 
     <span class="kw">fn </span>deserialize_f32&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_float(visitor)
     }
 
     <span class="kw">fn </span>deserialize_f64&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_float(visitor)
     }
 
     <span class="kw">fn </span>deserialize_char&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.content {
             Content::Char(v) =&gt; visitor.visit_char(v),
@@ -2461,14 +2462,14 @@
 
     <span class="kw">fn </span>deserialize_str&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_string(visitor)
     }
 
     <span class="kw">fn </span>deserialize_string&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.content {
             Content::String(v) =&gt; visitor.visit_string(v),
@@ -2481,14 +2482,14 @@
 
     <span class="kw">fn </span>deserialize_bytes&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_byte_buf(visitor)
     }
 
     <span class="kw">fn </span>deserialize_byte_buf&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.content {
             Content::String(v) =&gt; visitor.visit_string(v),
@@ -2502,7 +2503,7 @@
 
     <span class="kw">fn </span>deserialize_option&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.content {
             Content::None =&gt; visitor.visit_none(),
@@ -2516,7 +2517,7 @@
 
     <span class="kw">fn </span>deserialize_unit&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.content {
             Content::Unit =&gt; visitor.visit_unit(),
@@ -2524,12 +2525,12 @@
             <span class="comment">// Allow deserializing newtype variant containing unit.
             //
             //     #[derive(Deserialize)]
-            //     #[serde(tag = &quot;result&quot;)]
+            //     #[serde(tag = "result")]
             //     enum Response&lt;T&gt; {
             //         Success(T),
             //     }
             //
-            // We want {&quot;result&quot;:&quot;Success&quot;} to deserialize into Response&lt;()&gt;.
+            // We want {"result":"Success"} to deserialize into Response&lt;()&gt;.
             </span>Content::Map(<span class="kw-2">ref </span>v) <span class="kw">if </span>v.is_empty() =&gt; visitor.visit_unit(),
             <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(<span class="self">self</span>.invalid_type(<span class="kw-2">&amp;</span>visitor)),
         }
@@ -2537,11 +2538,11 @@
 
     <span class="kw">fn </span>deserialize_unit_struct&lt;V&gt;(
         <span class="self">self</span>,
-        _name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        _name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         visitor: V,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.content {
             <span class="comment">// As a special case, allow deserializing untagged newtype
@@ -2551,12 +2552,12 @@
             //     struct Info;
             //
             //     #[derive(Deserialize)]
-            //     #[serde(tag = &quot;topic&quot;)]
+            //     #[serde(tag = "topic")]
             //     enum Message {
             //         Info(Info),
             //     }
             //
-            // We want {&quot;topic&quot;:&quot;Info&quot;} to deserialize even though
+            // We want {"topic":"Info"} to deserialize even though
             // ordinarily unit structs do not deserialize from empty map/seq.
             </span>Content::Map(<span class="kw-2">ref </span>v) <span class="kw">if </span>v.is_empty() =&gt; visitor.visit_unit(),
             Content::Seq(<span class="kw-2">ref </span>v) <span class="kw">if </span>v.is_empty() =&gt; visitor.visit_unit(),
@@ -2566,7 +2567,7 @@
 
     <span class="kw">fn </span>deserialize_newtype_struct&lt;V&gt;(<span class="self">self</span>, _name: <span class="kw-2">&amp;</span>str, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.content {
             Content::Newtype(v) =&gt; {
@@ -2578,7 +2579,7 @@
 
     <span class="kw">fn </span>deserialize_seq&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.content {
             Content::Seq(v) =&gt; visit_content_seq(v, visitor, <span class="self">self</span>.is_human_readable),
@@ -2588,26 +2589,26 @@
 
     <span class="kw">fn </span>deserialize_tuple&lt;V&gt;(<span class="self">self</span>, _len: usize, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_seq(visitor)
     }
 
     <span class="kw">fn </span>deserialize_tuple_struct&lt;V&gt;(
         <span class="self">self</span>,
-        _name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        _name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         _len: usize,
         visitor: V,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_seq(visitor)
     }
 
     <span class="kw">fn </span>deserialize_map&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.content {
             Content::Map(v) =&gt; visit_content_map(v, visitor, <span class="self">self</span>.is_human_readable),
@@ -2617,12 +2618,12 @@
 
     <span class="kw">fn </span>deserialize_struct&lt;V&gt;(
         <span class="self">self</span>,
-        _name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
-        _fields: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str],
+        _name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
+        _fields: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>[<span class="kw-2">&amp;</span><span class="lifetime">'static </span>str],
         visitor: V,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.content {
             Content::Seq(v) =&gt; visit_content_seq(v, visitor, <span class="self">self</span>.is_human_readable),
@@ -2634,11 +2635,11 @@
     <span class="kw">fn </span>deserialize_enum&lt;V&gt;(
         <span class="self">self</span>,
         _name: <span class="kw-2">&amp;</span>str,
-        _variants: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str],
+        _variants: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>[<span class="kw-2">&amp;</span><span class="lifetime">'static </span>str],
         visitor: V,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">let </span>(variant, value) = <span class="kw">match </span><span class="self">self</span>.content {
             Content::Map(value) =&gt; {
@@ -2648,7 +2649,7 @@
                     <span class="prelude-val">None </span>=&gt; {
                         <span class="kw">return </span><span class="prelude-val">Err</span>(DeError::invalid_value(
                             Unexpected::Map,
-                            <span class="kw-2">&amp;</span><span class="string">&quot;map with a single key&quot;</span>,
+                            <span class="kw-2">&amp;</span><span class="string">"map with a single key"</span>,
                         ));
                     }
                 };
@@ -2656,14 +2657,14 @@
                 </span><span class="kw">if </span>iter.next().is_some() {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(DeError::invalid_value(
                         Unexpected::Map,
-                        <span class="kw-2">&amp;</span><span class="string">&quot;map with a single key&quot;</span>,
+                        <span class="kw-2">&amp;</span><span class="string">"map with a single key"</span>,
                     ));
                 }
                 (variant, <span class="prelude-val">Some</span>(value))
             }
             s @ Content::String(<span class="kw">_</span>) | s @ Content::Str(<span class="kw">_</span>) =&gt; (s, <span class="prelude-val">None</span>),
             other =&gt; {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(DeError::invalid_type(other.unexpected(), <span class="kw-2">&amp;</span><span class="string">&quot;string or map&quot;</span>));
+                <span class="kw">return </span><span class="prelude-val">Err</span>(DeError::invalid_type(other.unexpected(), <span class="kw-2">&amp;</span><span class="string">"string or map"</span>));
             }
         };
 
@@ -2676,7 +2677,7 @@
 
     <span class="kw">fn </span>deserialize_identifier&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.content {
             Content::String(v) =&gt; visitor.visit_string(v),
@@ -2691,16 +2692,16 @@
 
     <span class="kw">fn </span>deserialize_ignored_any&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         drop(<span class="self">self</span>);
         visitor.visit_unit()
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, E&gt; ContentDeserializer&lt;<span class="lifetime">&#39;de</span>, E&gt; {
-    <span class="doccomment">/// private API, don&#39;t use
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(content: Content&lt;<span class="lifetime">&#39;de</span>&gt;, is_human_readable: bool) -&gt; <span class="self">Self </span>{
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, E&gt; ContentDeserializer&lt;<span class="lifetime">'de</span>, E&gt; {
+    <span class="doccomment">/// private API, don't use
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(content: Content&lt;<span class="lifetime">'de</span>&gt;, is_human_readable: bool) -&gt; <span class="self">Self </span>{
         ContentDeserializer {
             is_human_readable,
             content,
@@ -2709,25 +2710,25 @@
     }
 }
 
-<span class="kw">struct </span>EnumDeserializer&lt;<span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">struct </span>EnumDeserializer&lt;<span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
     is_human_readable: bool,
-    variant: Content&lt;<span class="lifetime">&#39;de</span>&gt;,
-    value: <span class="prelude-ty">Option</span>&lt;Content&lt;<span class="lifetime">&#39;de</span>&gt;&gt;,
+    variant: Content&lt;<span class="lifetime">'de</span>&gt;,
+    value: <span class="prelude-ty">Option</span>&lt;Content&lt;<span class="lifetime">'de</span>&gt;&gt;,
     err: PhantomData&lt;E&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, E&gt; EnumDeserializer&lt;<span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, E&gt; EnumDeserializer&lt;<span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
     <span class="kw">pub fn </span>new(
-        variant: Content&lt;<span class="lifetime">&#39;de</span>&gt;,
-        value: <span class="prelude-ty">Option</span>&lt;Content&lt;<span class="lifetime">&#39;de</span>&gt;&gt;,
+        variant: Content&lt;<span class="lifetime">'de</span>&gt;,
+        value: <span class="prelude-ty">Option</span>&lt;Content&lt;<span class="lifetime">'de</span>&gt;&gt;,
         is_human_readable: bool,
-    ) -&gt; EnumDeserializer&lt;<span class="lifetime">&#39;de</span>, E&gt; {
+    ) -&gt; EnumDeserializer&lt;<span class="lifetime">'de</span>, E&gt; {
         EnumDeserializer {
             is_human_readable,
             variant,
@@ -2737,16 +2738,16 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, E&gt; EnumAccess&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>EnumDeserializer&lt;<span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, E&gt; EnumAccess&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>EnumDeserializer&lt;<span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
     <span class="kw">type </span>Error = E;
-    <span class="kw">type </span>Variant = VariantDeserializer&lt;<span class="lifetime">&#39;de</span>, <span class="self">Self</span>::Error&gt;;
+    <span class="kw">type </span>Variant = VariantDeserializer&lt;<span class="lifetime">'de</span>, <span class="self">Self</span>::Error&gt;;
 
     <span class="kw">fn </span>variant_seed&lt;V&gt;(<span class="self">self</span>, seed: V) -&gt; <span class="prelude-ty">Result</span>&lt;(V::Value, <span class="self">Self</span>::Variant), E&gt;
     <span class="kw">where
-        </span>V: DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: DeserializeSeed&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">let </span>visitor = VariantDeserializer {
             is_human_readable: <span class="self">self</span>.is_human_readable,
@@ -2761,16 +2762,16 @@
     }
 }
 
-<span class="kw">pub struct </span>VariantDeserializer&lt;<span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">pub struct </span>VariantDeserializer&lt;<span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
     is_human_readable: bool,
-    value: <span class="prelude-ty">Option</span>&lt;Content&lt;<span class="lifetime">&#39;de</span>&gt;&gt;,
+    value: <span class="prelude-ty">Option</span>&lt;Content&lt;<span class="lifetime">'de</span>&gt;&gt;,
     err: PhantomData&lt;E&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, E&gt; VariantAccess&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>VariantDeserializer&lt;<span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, E&gt; VariantAccess&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>VariantDeserializer&lt;<span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
@@ -2787,7 +2788,7 @@
 
     <span class="kw">fn </span>newtype_variant_seed&lt;T&gt;(<span class="self">self</span>, seed: T) -&gt; <span class="prelude-ty">Result</span>&lt;T::Value, E&gt;
     <span class="kw">where
-        </span>T: DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>T: DeserializeSeed&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.value {
             <span class="prelude-val">Some</span>(value) =&gt; {
@@ -2795,35 +2796,35 @@
             }
             <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(DeError::invalid_type(
                 Unexpected::UnitVariant,
-                <span class="kw-2">&amp;</span><span class="string">&quot;newtype variant&quot;</span>,
+                <span class="kw-2">&amp;</span><span class="string">"newtype variant"</span>,
             )),
         }
     }
 
     <span class="kw">fn </span>tuple_variant&lt;V&gt;(<span class="self">self</span>, _len: usize, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.value {
             <span class="prelude-val">Some</span>(Content::Seq(v)) =&gt; Deserializer::deserialize_any(
                 SeqDeserializer::new(v, <span class="self">self</span>.is_human_readable),
                 visitor,
             ),
-            <span class="prelude-val">Some</span>(other) =&gt; <span class="prelude-val">Err</span>(DeError::invalid_type(other.unexpected(), <span class="kw-2">&amp;</span><span class="string">&quot;tuple variant&quot;</span>)),
+            <span class="prelude-val">Some</span>(other) =&gt; <span class="prelude-val">Err</span>(DeError::invalid_type(other.unexpected(), <span class="kw-2">&amp;</span><span class="string">"tuple variant"</span>)),
             <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(DeError::invalid_type(
                 Unexpected::UnitVariant,
-                <span class="kw-2">&amp;</span><span class="string">&quot;tuple variant&quot;</span>,
+                <span class="kw-2">&amp;</span><span class="string">"tuple variant"</span>,
             )),
         }
     }
 
     <span class="kw">fn </span>struct_variant&lt;V&gt;(
         <span class="self">self</span>,
-        _fields: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str],
+        _fields: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>[<span class="kw-2">&amp;</span><span class="lifetime">'static </span>str],
         visitor: V,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.value {
             <span class="prelude-val">Some</span>(Content::Map(v)) =&gt; Deserializer::deserialize_any(
@@ -2834,29 +2835,29 @@
                 SeqDeserializer::new(v, <span class="self">self</span>.is_human_readable),
                 visitor,
             ),
-            <span class="prelude-val">Some</span>(other) =&gt; <span class="prelude-val">Err</span>(DeError::invalid_type(other.unexpected(), <span class="kw-2">&amp;</span><span class="string">&quot;struct variant&quot;</span>)),
+            <span class="prelude-val">Some</span>(other) =&gt; <span class="prelude-val">Err</span>(DeError::invalid_type(other.unexpected(), <span class="kw-2">&amp;</span><span class="string">"struct variant"</span>)),
             <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(DeError::invalid_type(
                 Unexpected::UnitVariant,
-                <span class="kw-2">&amp;</span><span class="string">&quot;struct variant&quot;</span>,
+                <span class="kw-2">&amp;</span><span class="string">"struct variant"</span>,
             )),
         }
     }
 }
 
-<span class="kw">struct </span>SeqDeserializer&lt;<span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">struct </span>SeqDeserializer&lt;<span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
     is_human_readable: bool,
-    iter: &lt;Vec&lt;Content&lt;<span class="lifetime">&#39;de</span>&gt;&gt; <span class="kw">as </span>IntoIterator&gt;::IntoIter,
+    iter: &lt;Vec&lt;Content&lt;<span class="lifetime">'de</span>&gt;&gt; <span class="kw">as </span>IntoIterator&gt;::IntoIter,
     err: PhantomData&lt;E&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, E&gt; SeqDeserializer&lt;<span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, E&gt; SeqDeserializer&lt;<span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
-    <span class="kw">fn </span>new(vec: Vec&lt;Content&lt;<span class="lifetime">&#39;de</span>&gt;&gt;, is_human_readable: bool) -&gt; <span class="self">Self </span>{
+    <span class="kw">fn </span>new(vec: Vec&lt;Content&lt;<span class="lifetime">'de</span>&gt;&gt;, is_human_readable: bool) -&gt; <span class="self">Self </span>{
         SeqDeserializer {
             is_human_readable,
             iter: vec.into_iter(),
@@ -2865,7 +2866,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, E&gt; Deserializer&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>SeqDeserializer&lt;<span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, E&gt; Deserializer&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>SeqDeserializer&lt;<span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
@@ -2879,7 +2880,7 @@
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>deserialize_any&lt;V&gt;(<span class="kw-2">mut </span><span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">let </span>len = <span class="self">self</span>.iter.len();
         <span class="kw">if </span>len == <span class="number">0 </span>{
@@ -2890,7 +2891,7 @@
             <span class="kw">if </span>remaining == <span class="number">0 </span>{
                 <span class="prelude-val">Ok</span>(ret)
             } <span class="kw">else </span>{
-                <span class="prelude-val">Err</span>(DeError::invalid_length(len, <span class="kw-2">&amp;</span><span class="string">&quot;fewer elements in array&quot;</span>))
+                <span class="prelude-val">Err</span>(DeError::invalid_length(len, <span class="kw-2">&amp;</span><span class="string">"fewer elements in array"</span>))
             }
         }
     }
@@ -2902,7 +2903,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, E&gt; SeqAccess&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>SeqDeserializer&lt;<span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, E&gt; SeqAccess&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>SeqDeserializer&lt;<span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
@@ -2910,7 +2911,7 @@
 
     <span class="kw">fn </span>next_element_seed&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, seed: T) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;T::Value&gt;, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>T: DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>T: DeserializeSeed&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.iter.next() {
             <span class="prelude-val">Some</span>(value) =&gt; seed
@@ -2925,21 +2926,21 @@
     }
 }
 
-<span class="kw">struct </span>MapDeserializer&lt;<span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">struct </span>MapDeserializer&lt;<span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
     is_human_readable: bool,
-    iter: &lt;Vec&lt;(Content&lt;<span class="lifetime">&#39;de</span>&gt;, Content&lt;<span class="lifetime">&#39;de</span>&gt;)&gt; <span class="kw">as </span>IntoIterator&gt;::IntoIter,
-    value: <span class="prelude-ty">Option</span>&lt;Content&lt;<span class="lifetime">&#39;de</span>&gt;&gt;,
+    iter: &lt;Vec&lt;(Content&lt;<span class="lifetime">'de</span>&gt;, Content&lt;<span class="lifetime">'de</span>&gt;)&gt; <span class="kw">as </span>IntoIterator&gt;::IntoIter,
+    value: <span class="prelude-ty">Option</span>&lt;Content&lt;<span class="lifetime">'de</span>&gt;&gt;,
     err: PhantomData&lt;E&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, E&gt; MapDeserializer&lt;<span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, E&gt; MapDeserializer&lt;<span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
-    <span class="kw">fn </span>new(map: Vec&lt;(Content&lt;<span class="lifetime">&#39;de</span>&gt;, Content&lt;<span class="lifetime">&#39;de</span>&gt;)&gt;, is_human_readable: bool) -&gt; <span class="self">Self </span>{
+    <span class="kw">fn </span>new(map: Vec&lt;(Content&lt;<span class="lifetime">'de</span>&gt;, Content&lt;<span class="lifetime">'de</span>&gt;)&gt;, is_human_readable: bool) -&gt; <span class="self">Self </span>{
         MapDeserializer {
             is_human_readable,
             iter: map.into_iter(),
@@ -2949,7 +2950,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, E&gt; MapAccess&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>MapDeserializer&lt;<span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, E&gt; MapAccess&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>MapDeserializer&lt;<span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
@@ -2957,7 +2958,7 @@
 
     <span class="kw">fn </span>next_key_seed&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, seed: T) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;T::Value&gt;, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>T: DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>T: DeserializeSeed&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.iter.next() {
             <span class="prelude-val">Some</span>((key, value)) =&gt; {
@@ -2971,13 +2972,13 @@
 
     <span class="kw">fn </span>next_value_seed&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, seed: T) -&gt; <span class="prelude-ty">Result</span>&lt;T::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>T: DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>T: DeserializeSeed&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.value.take() {
             <span class="prelude-val">Some</span>(value) =&gt; {
                 seed.deserialize(ContentDeserializer::new(value, <span class="self">self</span>.is_human_readable))
             }
-            <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(DeError::custom(<span class="string">&quot;value is missing&quot;</span>)),
+            <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(DeError::custom(<span class="string">"value is missing"</span>)),
         }
     }
 
@@ -2986,7 +2987,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, E&gt; Deserializer&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>MapDeserializer&lt;<span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, E&gt; Deserializer&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>MapDeserializer&lt;<span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
@@ -3000,7 +3001,7 @@
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>deserialize_any&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         visitor.visit_map(<span class="self">self</span>)
     }
@@ -3013,13 +3014,13 @@
 }
 
 <span class="doccomment">/// Not public API.
-</span><span class="kw">pub struct </span>ContentRefDeserializer&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>, E&gt; {
+</span><span class="kw">pub struct </span>ContentRefDeserializer&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>, E&gt; {
     is_human_readable: bool,
-    content: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Content&lt;<span class="lifetime">&#39;de</span>&gt;,
+    content: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Content&lt;<span class="lifetime">'de</span>&gt;,
     err: PhantomData&lt;E&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>, E&gt; ContentRefDeserializer&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>, E&gt; ContentRefDeserializer&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
@@ -3030,7 +3031,7 @@
 
     <span class="kw">fn </span>deserialize_integer&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, E&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.content {
             Content::U8(v) =&gt; visitor.visit_u8(v),
@@ -3049,7 +3050,7 @@
 
     <span class="kw">fn </span>deserialize_float&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, E&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.content {
             Content::F32(v) =&gt; visitor.visit_f32(v),
@@ -3069,13 +3070,13 @@
     }
 }
 
-<span class="kw">fn </span>visit_content_seq_ref&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>, V, E&gt;(
-    content: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[Content&lt;<span class="lifetime">&#39;de</span>&gt;],
+<span class="kw">fn </span>visit_content_seq_ref&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>, V, E&gt;(
+    content: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[Content&lt;<span class="lifetime">'de</span>&gt;],
     visitor: V,
     is_human_readable: bool,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, E&gt;
 <span class="kw">where
-    </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+    </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     E: DeError,
 {
     <span class="kw">let </span>seq = content
@@ -3087,13 +3088,13 @@
     <span class="prelude-val">Ok</span>(value)
 }
 
-<span class="kw">fn </span>visit_content_map_ref&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>, V, E&gt;(
-    content: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[(Content&lt;<span class="lifetime">&#39;de</span>&gt;, Content&lt;<span class="lifetime">&#39;de</span>&gt;)],
+<span class="kw">fn </span>visit_content_map_ref&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>, V, E&gt;(
+    content: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[(Content&lt;<span class="lifetime">'de</span>&gt;, Content&lt;<span class="lifetime">'de</span>&gt;)],
     visitor: V,
     is_human_readable: bool,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, E&gt;
 <span class="kw">where
-    </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+    </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     E: DeError,
 {
     <span class="kw">let </span>map = content.iter().map(|(k, v)| {
@@ -3110,7 +3111,7 @@
 
 <span class="doccomment">/// Used when deserializing an untagged enum because the content may need
 /// to be used more than once.
-</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, <span class="lifetime">&#39;a</span>, E&gt; Deserializer&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>ContentRefDeserializer&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>, E&gt;
+</span><span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, <span class="lifetime">'a</span>, E&gt; Deserializer&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>ContentRefDeserializer&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
@@ -3123,7 +3124,7 @@
 
     <span class="kw">fn </span>deserialize_any&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, E&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.content {
             Content::Bool(v) =&gt; visitor.visit_bool(v),
@@ -3159,7 +3160,7 @@
 
     <span class="kw">fn </span>deserialize_bool&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.content {
             Content::Bool(v) =&gt; visitor.visit_bool(v),
@@ -3169,91 +3170,91 @@
 
     <span class="kw">fn </span>deserialize_i8&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_integer(visitor)
     }
 
     <span class="kw">fn </span>deserialize_i16&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_integer(visitor)
     }
 
     <span class="kw">fn </span>deserialize_i32&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_integer(visitor)
     }
 
     <span class="kw">fn </span>deserialize_i64&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_integer(visitor)
     }
 
     <span class="kw">fn </span>deserialize_i128&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_integer(visitor)
     }
 
     <span class="kw">fn </span>deserialize_u8&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_integer(visitor)
     }
 
     <span class="kw">fn </span>deserialize_u16&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_integer(visitor)
     }
 
     <span class="kw">fn </span>deserialize_u32&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_integer(visitor)
     }
 
     <span class="kw">fn </span>deserialize_u64&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_integer(visitor)
     }
 
     <span class="kw">fn </span>deserialize_u128&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_integer(visitor)
     }
 
     <span class="kw">fn </span>deserialize_f32&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_float(visitor)
     }
 
     <span class="kw">fn </span>deserialize_f64&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_float(visitor)
     }
 
     <span class="kw">fn </span>deserialize_char&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.content {
             Content::Char(v) =&gt; visitor.visit_char(v),
@@ -3265,7 +3266,7 @@
 
     <span class="kw">fn </span>deserialize_str&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.content {
             Content::String(<span class="kw-2">ref </span>v) =&gt; visitor.visit_str(v),
@@ -3278,14 +3279,14 @@
 
     <span class="kw">fn </span>deserialize_string&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_str(visitor)
     }
 
     <span class="kw">fn </span>deserialize_bytes&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.content {
             Content::String(<span class="kw-2">ref </span>v) =&gt; visitor.visit_str(v),
@@ -3299,14 +3300,14 @@
 
     <span class="kw">fn </span>deserialize_byte_buf&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_bytes(visitor)
     }
 
     <span class="kw">fn </span>deserialize_option&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, E&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.content {
             Content::None =&gt; visitor.visit_none(),
@@ -3320,7 +3321,7 @@
 
     <span class="kw">fn </span>deserialize_unit&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.content {
             Content::Unit =&gt; visitor.visit_unit(),
@@ -3330,18 +3331,18 @@
 
     <span class="kw">fn </span>deserialize_unit_struct&lt;V&gt;(
         <span class="self">self</span>,
-        _name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        _name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         visitor: V,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_unit(visitor)
     }
 
     <span class="kw">fn </span>deserialize_newtype_struct&lt;V&gt;(<span class="self">self</span>, _name: <span class="kw-2">&amp;</span>str, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, E&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.content {
             Content::Newtype(<span class="kw-2">ref </span>v) =&gt; {
@@ -3353,7 +3354,7 @@
 
     <span class="kw">fn </span>deserialize_seq&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.content {
             Content::Seq(<span class="kw-2">ref </span>v) =&gt; visit_content_seq_ref(v, visitor, <span class="self">self</span>.is_human_readable),
@@ -3363,26 +3364,26 @@
 
     <span class="kw">fn </span>deserialize_tuple&lt;V&gt;(<span class="self">self</span>, _len: usize, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_seq(visitor)
     }
 
     <span class="kw">fn </span>deserialize_tuple_struct&lt;V&gt;(
         <span class="self">self</span>,
-        _name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        _name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         _len: usize,
         visitor: V,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_seq(visitor)
     }
 
     <span class="kw">fn </span>deserialize_map&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.content {
             Content::Map(<span class="kw-2">ref </span>v) =&gt; visit_content_map_ref(v, visitor, <span class="self">self</span>.is_human_readable),
@@ -3392,12 +3393,12 @@
 
     <span class="kw">fn </span>deserialize_struct&lt;V&gt;(
         <span class="self">self</span>,
-        _name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
-        _fields: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str],
+        _name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
+        _fields: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>[<span class="kw-2">&amp;</span><span class="lifetime">'static </span>str],
         visitor: V,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.content {
             Content::Seq(<span class="kw-2">ref </span>v) =&gt; visit_content_seq_ref(v, visitor, <span class="self">self</span>.is_human_readable),
@@ -3409,11 +3410,11 @@
     <span class="kw">fn </span>deserialize_enum&lt;V&gt;(
         <span class="self">self</span>,
         _name: <span class="kw-2">&amp;</span>str,
-        _variants: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str],
+        _variants: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>[<span class="kw-2">&amp;</span><span class="lifetime">'static </span>str],
         visitor: V,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">let </span>(variant, value) = <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.content {
             Content::Map(<span class="kw-2">ref </span>value) =&gt; {
@@ -3423,7 +3424,7 @@
                     <span class="prelude-val">None </span>=&gt; {
                         <span class="kw">return </span><span class="prelude-val">Err</span>(DeError::invalid_value(
                             Unexpected::Map,
-                            <span class="kw-2">&amp;</span><span class="string">&quot;map with a single key&quot;</span>,
+                            <span class="kw-2">&amp;</span><span class="string">"map with a single key"</span>,
                         ));
                     }
                 };
@@ -3431,14 +3432,14 @@
                 </span><span class="kw">if </span>iter.next().is_some() {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(DeError::invalid_value(
                         Unexpected::Map,
-                        <span class="kw-2">&amp;</span><span class="string">&quot;map with a single key&quot;</span>,
+                        <span class="kw-2">&amp;</span><span class="string">"map with a single key"</span>,
                     ));
                 }
                 (variant, <span class="prelude-val">Some</span>(value))
             }
             <span class="kw-2">ref </span>s @ Content::String(<span class="kw">_</span>) | <span class="kw-2">ref </span>s @ Content::Str(<span class="kw">_</span>) =&gt; (s, <span class="prelude-val">None</span>),
             <span class="kw-2">ref </span>other =&gt; {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(DeError::invalid_type(other.unexpected(), <span class="kw-2">&amp;</span><span class="string">&quot;string or map&quot;</span>));
+                <span class="kw">return </span><span class="prelude-val">Err</span>(DeError::invalid_type(other.unexpected(), <span class="kw-2">&amp;</span><span class="string">"string or map"</span>));
             }
         };
 
@@ -3452,7 +3453,7 @@
 
     <span class="kw">fn </span>deserialize_identifier&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.content {
             Content::String(<span class="kw-2">ref </span>v) =&gt; visitor.visit_str(v),
@@ -3467,15 +3468,15 @@
 
     <span class="kw">fn </span>deserialize_ignored_any&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         visitor.visit_unit()
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>, E&gt; ContentRefDeserializer&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>, E&gt; {
-    <span class="doccomment">/// private API, don&#39;t use
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(content: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Content&lt;<span class="lifetime">&#39;de</span>&gt;, is_human_readable: bool) -&gt; <span class="self">Self </span>{
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>, E&gt; ContentRefDeserializer&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>, E&gt; {
+    <span class="doccomment">/// private API, don't use
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(content: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Content&lt;<span class="lifetime">'de</span>&gt;, is_human_readable: bool) -&gt; <span class="self">Self </span>{
         ContentRefDeserializer {
             is_human_readable,
             content,
@@ -3484,26 +3485,26 @@
     }
 }
 
-<span class="kw">struct </span>EnumRefDeserializer&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">struct </span>EnumRefDeserializer&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
     is_human_readable: bool,
-    variant: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Content&lt;<span class="lifetime">&#39;de</span>&gt;,
-    value: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Content&lt;<span class="lifetime">&#39;de</span>&gt;&gt;,
+    variant: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Content&lt;<span class="lifetime">'de</span>&gt;,
+    value: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>Content&lt;<span class="lifetime">'de</span>&gt;&gt;,
     err: PhantomData&lt;E&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, <span class="lifetime">&#39;a</span>, E&gt; EnumAccess&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>EnumRefDeserializer&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, <span class="lifetime">'a</span>, E&gt; EnumAccess&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>EnumRefDeserializer&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
     <span class="kw">type </span>Error = E;
-    <span class="kw">type </span>Variant = VariantRefDeserializer&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>, <span class="self">Self</span>::Error&gt;;
+    <span class="kw">type </span>Variant = VariantRefDeserializer&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>, <span class="self">Self</span>::Error&gt;;
 
     <span class="kw">fn </span>variant_seed&lt;V&gt;(<span class="self">self</span>, seed: V) -&gt; <span class="prelude-ty">Result</span>&lt;(V::Value, <span class="self">Self</span>::Variant), <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: DeserializeSeed&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">let </span>visitor = VariantRefDeserializer {
             is_human_readable: <span class="self">self</span>.is_human_readable,
@@ -3518,16 +3519,16 @@
     }
 }
 
-<span class="kw">struct </span>VariantRefDeserializer&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">struct </span>VariantRefDeserializer&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
     is_human_readable: bool,
-    value: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Content&lt;<span class="lifetime">&#39;de</span>&gt;&gt;,
+    value: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>Content&lt;<span class="lifetime">'de</span>&gt;&gt;,
     err: PhantomData&lt;E&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, <span class="lifetime">&#39;a</span>, E&gt; VariantAccess&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>VariantRefDeserializer&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, <span class="lifetime">'a</span>, E&gt; VariantAccess&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>VariantRefDeserializer&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
@@ -3544,7 +3545,7 @@
 
     <span class="kw">fn </span>newtype_variant_seed&lt;T&gt;(<span class="self">self</span>, seed: T) -&gt; <span class="prelude-ty">Result</span>&lt;T::Value, E&gt;
     <span class="kw">where
-        </span>T: DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>T: DeserializeSeed&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.value {
             <span class="prelude-val">Some</span>(value) =&gt; {
@@ -3552,35 +3553,35 @@
             }
             <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(DeError::invalid_type(
                 Unexpected::UnitVariant,
-                <span class="kw-2">&amp;</span><span class="string">&quot;newtype variant&quot;</span>,
+                <span class="kw-2">&amp;</span><span class="string">"newtype variant"</span>,
             )),
         }
     }
 
     <span class="kw">fn </span>tuple_variant&lt;V&gt;(<span class="self">self</span>, _len: usize, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.value {
             <span class="prelude-val">Some</span>(Content::Seq(v)) =&gt; Deserializer::deserialize_any(
                 SeqRefDeserializer::new(v, <span class="self">self</span>.is_human_readable),
                 visitor,
             ),
-            <span class="prelude-val">Some</span>(other) =&gt; <span class="prelude-val">Err</span>(DeError::invalid_type(other.unexpected(), <span class="kw-2">&amp;</span><span class="string">&quot;tuple variant&quot;</span>)),
+            <span class="prelude-val">Some</span>(other) =&gt; <span class="prelude-val">Err</span>(DeError::invalid_type(other.unexpected(), <span class="kw-2">&amp;</span><span class="string">"tuple variant"</span>)),
             <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(DeError::invalid_type(
                 Unexpected::UnitVariant,
-                <span class="kw-2">&amp;</span><span class="string">&quot;tuple variant&quot;</span>,
+                <span class="kw-2">&amp;</span><span class="string">"tuple variant"</span>,
             )),
         }
     }
 
     <span class="kw">fn </span>struct_variant&lt;V&gt;(
         <span class="self">self</span>,
-        _fields: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str],
+        _fields: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>[<span class="kw-2">&amp;</span><span class="lifetime">'static </span>str],
         visitor: V,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.value {
             <span class="prelude-val">Some</span>(Content::Map(v)) =&gt; Deserializer::deserialize_any(
@@ -3591,29 +3592,29 @@
                 SeqRefDeserializer::new(v, <span class="self">self</span>.is_human_readable),
                 visitor,
             ),
-            <span class="prelude-val">Some</span>(other) =&gt; <span class="prelude-val">Err</span>(DeError::invalid_type(other.unexpected(), <span class="kw-2">&amp;</span><span class="string">&quot;struct variant&quot;</span>)),
+            <span class="prelude-val">Some</span>(other) =&gt; <span class="prelude-val">Err</span>(DeError::invalid_type(other.unexpected(), <span class="kw-2">&amp;</span><span class="string">"struct variant"</span>)),
             <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(DeError::invalid_type(
                 Unexpected::UnitVariant,
-                <span class="kw-2">&amp;</span><span class="string">&quot;struct variant&quot;</span>,
+                <span class="kw-2">&amp;</span><span class="string">"struct variant"</span>,
             )),
         }
     }
 }
 
-<span class="kw">struct </span>SeqRefDeserializer&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">struct </span>SeqRefDeserializer&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
     is_human_readable: bool,
-    iter: &lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[Content&lt;<span class="lifetime">&#39;de</span>&gt;] <span class="kw">as </span>IntoIterator&gt;::IntoIter,
+    iter: &lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>[Content&lt;<span class="lifetime">'de</span>&gt;] <span class="kw">as </span>IntoIterator&gt;::IntoIter,
     err: PhantomData&lt;E&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>, E&gt; SeqRefDeserializer&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>, E&gt; SeqRefDeserializer&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
-    <span class="kw">fn </span>new(slice: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[Content&lt;<span class="lifetime">&#39;de</span>&gt;], is_human_readable: bool) -&gt; <span class="self">Self </span>{
+    <span class="kw">fn </span>new(slice: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[Content&lt;<span class="lifetime">'de</span>&gt;], is_human_readable: bool) -&gt; <span class="self">Self </span>{
         SeqRefDeserializer {
             is_human_readable,
             iter: slice.iter(),
@@ -3622,7 +3623,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, <span class="lifetime">&#39;a</span>, E&gt; Deserializer&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>SeqRefDeserializer&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, <span class="lifetime">'a</span>, E&gt; Deserializer&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>SeqRefDeserializer&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
@@ -3636,7 +3637,7 @@
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>deserialize_any&lt;V&gt;(<span class="kw-2">mut </span><span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">let </span>len = <span class="self">self</span>.iter.len();
         <span class="kw">if </span>len == <span class="number">0 </span>{
@@ -3647,7 +3648,7 @@
             <span class="kw">if </span>remaining == <span class="number">0 </span>{
                 <span class="prelude-val">Ok</span>(ret)
             } <span class="kw">else </span>{
-                <span class="prelude-val">Err</span>(DeError::invalid_length(len, <span class="kw-2">&amp;</span><span class="string">&quot;fewer elements in array&quot;</span>))
+                <span class="prelude-val">Err</span>(DeError::invalid_length(len, <span class="kw-2">&amp;</span><span class="string">"fewer elements in array"</span>))
             }
         }
     }
@@ -3659,7 +3660,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, <span class="lifetime">&#39;a</span>, E&gt; SeqAccess&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>SeqRefDeserializer&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, <span class="lifetime">'a</span>, E&gt; SeqAccess&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>SeqRefDeserializer&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
@@ -3667,7 +3668,7 @@
 
     <span class="kw">fn </span>next_element_seed&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, seed: T) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;T::Value&gt;, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>T: DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>T: DeserializeSeed&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.iter.next() {
             <span class="prelude-val">Some</span>(value) =&gt; seed
@@ -3682,21 +3683,21 @@
     }
 }
 
-<span class="kw">struct </span>MapRefDeserializer&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">struct </span>MapRefDeserializer&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
     is_human_readable: bool,
-    iter: &lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[(Content&lt;<span class="lifetime">&#39;de</span>&gt;, Content&lt;<span class="lifetime">&#39;de</span>&gt;)] <span class="kw">as </span>IntoIterator&gt;::IntoIter,
-    value: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Content&lt;<span class="lifetime">&#39;de</span>&gt;&gt;,
+    iter: &lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>[(Content&lt;<span class="lifetime">'de</span>&gt;, Content&lt;<span class="lifetime">'de</span>&gt;)] <span class="kw">as </span>IntoIterator&gt;::IntoIter,
+    value: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>Content&lt;<span class="lifetime">'de</span>&gt;&gt;,
     err: PhantomData&lt;E&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>, E&gt; MapRefDeserializer&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>, E&gt; MapRefDeserializer&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
-    <span class="kw">fn </span>new(map: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[(Content&lt;<span class="lifetime">&#39;de</span>&gt;, Content&lt;<span class="lifetime">&#39;de</span>&gt;)], is_human_readable: bool) -&gt; <span class="self">Self </span>{
+    <span class="kw">fn </span>new(map: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[(Content&lt;<span class="lifetime">'de</span>&gt;, Content&lt;<span class="lifetime">'de</span>&gt;)], is_human_readable: bool) -&gt; <span class="self">Self </span>{
         MapRefDeserializer {
             is_human_readable,
             iter: map.iter(),
@@ -3706,7 +3707,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, <span class="lifetime">&#39;a</span>, E&gt; MapAccess&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>MapRefDeserializer&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, <span class="lifetime">'a</span>, E&gt; MapAccess&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>MapRefDeserializer&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
@@ -3714,7 +3715,7 @@
 
     <span class="kw">fn </span>next_key_seed&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, seed: T) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;T::Value&gt;, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>T: DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>T: DeserializeSeed&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.iter.next() {
             <span class="prelude-val">Some</span>((key, value)) =&gt; {
@@ -3728,13 +3729,13 @@
 
     <span class="kw">fn </span>next_value_seed&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, seed: T) -&gt; <span class="prelude-ty">Result</span>&lt;T::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>T: DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>T: DeserializeSeed&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.value.take() {
             <span class="prelude-val">Some</span>(value) =&gt; {
                 seed.deserialize(ContentRefDeserializer::new(value, <span class="self">self</span>.is_human_readable))
             }
-            <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(DeError::custom(<span class="string">&quot;value is missing&quot;</span>)),
+            <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(DeError::custom(<span class="string">"value is missing"</span>)),
         }
     }
 
@@ -3743,7 +3744,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, <span class="lifetime">&#39;a</span>, E&gt; Deserializer&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>MapRefDeserializer&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, <span class="lifetime">'a</span>, E&gt; Deserializer&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>MapRefDeserializer&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
@@ -3757,7 +3758,7 @@
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>deserialize_any&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         visitor.visit_map(<span class="self">self</span>)
     }
@@ -3769,7 +3770,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, E&gt; IntoDeserializer&lt;<span class="lifetime">&#39;de</span>, E&gt; <span class="kw">for </span>ContentDeserializer&lt;<span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, E&gt; IntoDeserializer&lt;<span class="lifetime">'de</span>, E&gt; <span class="kw">for </span>ContentDeserializer&lt;<span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {
@@ -3780,7 +3781,7 @@
     </span>}
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, <span class="lifetime">&#39;a</span>, E&gt; IntoDeserializer&lt;<span class="lifetime">&#39;de</span>, E&gt; <span class="kw">for </span>ContentRefDeserializer&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;de</span>, E&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, <span class="lifetime">'a</span>, E&gt; IntoDeserializer&lt;<span class="lifetime">'de</span>, E&gt; <span class="kw">for </span>ContentRefDeserializer&lt;<span class="lifetime">'a</span>, <span class="lifetime">'de</span>, E&gt;
 <span class="kw">where
     </span>E: DeError,
 {

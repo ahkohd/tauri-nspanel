@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tar-0.4.40/src/builder.rs`."><title>builder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tar" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tar-0.4.40/src/builder.rs`."><title>builder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tar" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -725,7 +726,7 @@
     <span class="doccomment">/// Unwrap this archive, returning the underlying object.
     ///
     /// This function will finish writing the archive if the `finish` function
-    /// hasn&#39;t yet been called, returning any I/O error which happens during
+    /// hasn't yet been called, returning any I/O error which happens during
     /// that operation.
     </span><span class="kw">pub fn </span>into_inner(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; io::Result&lt;W&gt; {
         <span class="kw">if </span>!<span class="self">self</span>.finished {
@@ -738,7 +739,7 @@
     ///
     /// This function will append the header specified, followed by contents of
     /// the stream specified by `data`. To produce a valid archive the `size`
-    /// field of `header` must be the same as the length of the stream that&#39;s
+    /// field of `header` must be the same as the length of the stream that's
     /// being written. Additionally the checksum for the header should have been
     /// set via the `set_cksum` method.
     ///
@@ -760,7 +761,7 @@
     /// use tar::{Builder, Header};
     ///
     /// let mut header = Header::new_gnu();
-    /// header.set_path(&quot;foo&quot;).unwrap();
+    /// header.set_path("foo").unwrap();
     /// header.set_size(4);
     /// header.set_cksum();
     ///
@@ -784,7 +785,7 @@
     ///
     /// Then it will append the header, followed by contents of the stream
     /// specified by `data`. To produce a valid archive the `size` field of
-    /// `header` must be the same as the length of the stream that&#39;s being
+    /// `header` must be the same as the length of the stream that's being
     /// written.
     ///
     /// Note that this will not attempt to seek the archive to a valid position,
@@ -811,7 +812,7 @@
     /// let mut data: &amp;[u8] = &amp;[1, 2, 3, 4];
     ///
     /// let mut ar = Builder::new(Vec::new());
-    /// ar.append_data(&amp;mut header, &quot;really/long/path/to/foo&quot;, data).unwrap();
+    /// ar.append_data(&amp;mut header, "really/long/path/to/foo", data).unwrap();
     /// let data = ar.into_inner().unwrap();
     /// ```
     </span><span class="kw">pub fn </span>append_data&lt;P: AsRef&lt;Path&gt;, R: Read&gt;(
@@ -851,10 +852,10 @@
     ///
     /// let mut ar = Builder::new(Vec::new());
     /// let mut header = Header::new_gnu();
-    /// header.set_username(&quot;foo&quot;);
+    /// header.set_username("foo");
     /// header.set_entry_type(EntryType::Symlink);
     /// header.set_size(0);
-    /// ar.append_link(&amp;mut header, &quot;really/long/path/to/foo&quot;, &quot;other/really/long/target&quot;).unwrap();
+    /// ar.append_link(&amp;mut header, "really/long/path/to/foo", "other/really/long/target").unwrap();
     /// let data = ar.into_inner().unwrap();
     /// ```
     </span><span class="kw">pub fn </span>append_link&lt;P: AsRef&lt;Path&gt;, T: AsRef&lt;Path&gt;&gt;(
@@ -895,7 +896,7 @@
     ///
     /// let mut ar = Builder::new(Vec::new());
     ///
-    /// ar.append_path(&quot;foo/bar.txt&quot;).unwrap();
+    /// ar.append_path("foo/bar.txt").unwrap();
     /// ```
     </span><span class="kw">pub fn </span>append_path&lt;P: AsRef&lt;Path&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, path: P) -&gt; io::Result&lt;()&gt; {
         <span class="kw">let </span>mode = <span class="self">self</span>.mode.clone();
@@ -927,9 +928,9 @@
     ///
     /// let mut ar = Builder::new(Vec::new());
     ///
-    /// // Insert the local file &quot;foo/bar.txt&quot; in the archive but with the name
-    /// // &quot;bar/foo.txt&quot;.
-    /// ar.append_path_with_name(&quot;foo/bar.txt&quot;, &quot;bar/foo.txt&quot;).unwrap();
+    /// // Insert the local file "foo/bar.txt" in the archive but with the name
+    /// // "bar/foo.txt".
+    /// ar.append_path_with_name("foo/bar.txt", "bar/foo.txt").unwrap();
     /// ```
     </span><span class="kw">pub fn </span>append_path_with_name&lt;P: AsRef&lt;Path&gt;, N: AsRef&lt;Path&gt;&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
@@ -970,8 +971,8 @@
     ///
     /// // Open the file at one location, but insert it into the archive with a
     /// // different name.
-    /// let mut f = File::open(&quot;foo/bar/baz.txt&quot;).unwrap();
-    /// ar.append_file(&quot;bar/baz.txt&quot;, &amp;mut f).unwrap();
+    /// let mut f = File::open("foo/bar/baz.txt").unwrap();
+    /// ar.append_file("bar/baz.txt", &amp;mut f).unwrap();
     /// ```
     </span><span class="kw">pub fn </span>append_file&lt;P: AsRef&lt;Path&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, path: P, file: <span class="kw-2">&amp;mut </span>fs::File) -&gt; io::Result&lt;()&gt; {
         <span class="kw">let </span>mode = <span class="self">self</span>.mode.clone();
@@ -1004,7 +1005,7 @@
     ///
     /// // Use the directory at one location, but insert it into the archive
     /// // with a different name.
-    /// ar.append_dir(&quot;bardir&quot;, &quot;.&quot;).unwrap();
+    /// ar.append_dir("bardir", ".").unwrap();
     /// ```
     </span><span class="kw">pub fn </span>append_dir&lt;P, Q&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, path: P, src_path: Q) -&gt; io::Result&lt;()&gt;
     <span class="kw">where
@@ -1035,7 +1036,7 @@
     ///
     /// // Use the directory at one location, but insert it into the archive
     /// // with a different name.
-    /// ar.append_dir_all(&quot;bardir&quot;, &quot;.&quot;).unwrap();
+    /// ar.append_dir_all("bardir", ".").unwrap();
     /// ```
     </span><span class="kw">pub fn </span>append_dir_all&lt;P, Q&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, path: P, src_path: Q) -&gt; io::Result&lt;()&gt;
     <span class="kw">where
@@ -1094,14 +1095,14 @@
         fs::metadata(path).map_err(|err| {
             io::Error::new(
                 err.kind(),
-                <span class="macro">format!</span>(<span class="string">&quot;{} when getting metadata for {}&quot;</span>, err, path.display()),
+                <span class="macro">format!</span>(<span class="string">"{} when getting metadata for {}"</span>, err, path.display()),
             )
         })<span class="question-mark">?
     </span>} <span class="kw">else </span>{
         fs::symlink_metadata(path).map_err(|err| {
             io::Error::new(
                 err.kind(),
-                <span class="macro">format!</span>(<span class="string">&quot;{} when getting metadata for {}&quot;</span>, err, path.display()),
+                <span class="macro">format!</span>(<span class="string">"{} when getting metadata for {}"</span>, err, path.display()),
             )
         })<span class="question-mark">?
     </span>};
@@ -1127,7 +1128,7 @@
         }
         <span class="attr">#[cfg(not(unix))]
         </span>{
-            <span class="prelude-val">Err</span>(other(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{} has unknown file type&quot;</span>, path.display())))
+            <span class="prelude-val">Err</span>(other(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{} has unknown file type"</span>, path.display())))
         }
     }
 }
@@ -1144,9 +1145,9 @@
     <span class="kw">let </span>file_type = stat.file_type();
     <span class="kw">let </span>entry_type;
     <span class="kw">if </span>file_type.is_socket() {
-        <span class="comment">// sockets can&#39;t be archived
+        <span class="comment">// sockets can't be archived
         </span><span class="kw">return </span><span class="prelude-val">Err</span>(other(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
-            <span class="string">&quot;{}: socket can not be archived&quot;</span>,
+            <span class="string">"{}: socket can not be archived"</span>,
             path.display()
         )));
     } <span class="kw">else if </span>file_type.is_fifo() {
@@ -1156,7 +1157,7 @@
     } <span class="kw">else if </span>file_type.is_block_device() {
         entry_type = EntryType::Block;
     } <span class="kw">else </span>{
-        <span class="kw">return </span><span class="prelude-val">Err</span>(other(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{} has unknown file type&quot;</span>, path.display())));
+        <span class="kw">return </span><span class="prelude-val">Err</span>(other(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{} has unknown file type"</span>, path.display())));
     }
 
     <span class="kw">let </span><span class="kw-2">mut </span>header = Header::new_gnu();
@@ -1198,7 +1199,7 @@
 
 <span class="kw">fn </span>prepare_header(size: u64, entry_type: u8) -&gt; Header {
     <span class="kw">let </span><span class="kw-2">mut </span>header = Header::new_gnu();
-    <span class="kw">let </span>name = <span class="string">b&quot;././@LongLink&quot;</span>;
+    <span class="kw">let </span>name = <span class="string">b"././@LongLink"</span>;
     header.as_gnu_mut().unwrap().name[..name.len()].clone_from_slice(<span class="kw-2">&amp;</span>name[..]);
     header.set_mode(<span class="number">0o644</span>);
     header.set_uid(<span class="number">0</span>);
@@ -1213,27 +1214,27 @@
 
 <span class="kw">fn </span>prepare_header_path(dst: <span class="kw-2">&amp;mut </span><span class="kw">dyn </span>Write, header: <span class="kw-2">&amp;mut </span>Header, path: <span class="kw-2">&amp;</span>Path) -&gt; io::Result&lt;()&gt; {
     <span class="comment">// Try to encode the path directly in the header, but if it ends up not
-    // working (probably because it&#39;s too long) then try to use the GNU-specific
-    // long name extension by emitting an entry which indicates that it&#39;s the
+    // working (probably because it's too long) then try to use the GNU-specific
+    // long name extension by emitting an entry which indicates that it's the
     // filename.
     </span><span class="kw">if let </span><span class="prelude-val">Err</span>(e) = header.set_path(path) {
         <span class="kw">let </span>data = path2bytes(<span class="kw-2">&amp;</span>path)<span class="question-mark">?</span>;
         <span class="kw">let </span>max = header.as_old().name.len();
-        <span class="comment">// Since `e` isn&#39;t specific enough to let us know the path is indeed too
+        <span class="comment">// Since `e` isn't specific enough to let us know the path is indeed too
         // long, verify it first before using the extension.
         </span><span class="kw">if </span>data.len() &lt; max {
             <span class="kw">return </span><span class="prelude-val">Err</span>(e);
         }
-        <span class="kw">let </span>header2 = prepare_header(data.len() <span class="kw">as </span>u64, <span class="string">b&#39;L&#39;</span>);
+        <span class="kw">let </span>header2 = prepare_header(data.len() <span class="kw">as </span>u64, <span class="string">b'L'</span>);
         <span class="comment">// null-terminated string
         </span><span class="kw">let </span><span class="kw-2">mut </span>data2 = data.chain(io::repeat(<span class="number">0</span>).take(<span class="number">1</span>));
         append(dst, <span class="kw-2">&amp;</span>header2, <span class="kw-2">&amp;mut </span>data2)<span class="question-mark">?</span>;
 
-        <span class="comment">// Truncate the path to store in the header we&#39;re about to emit to
-        // ensure we&#39;ve got something at least mentioned. Note that we use
+        <span class="comment">// Truncate the path to store in the header we're about to emit to
+        // ensure we've got something at least mentioned. Note that we use
         // `str`-encoding to be compatible with Windows, but in general the
-        // entry in the header itself shouldn&#39;t matter too much since extraction
-        // doesn&#39;t look at it.
+        // entry in the header itself shouldn't matter too much since extraction
+        // doesn't look at it.
         </span><span class="kw">let </span>truncated = <span class="kw">match </span>str::from_utf8(<span class="kw-2">&amp;</span>data[..max]) {
             <span class="prelude-val">Ok</span>(s) =&gt; s,
             <span class="prelude-val">Err</span>(e) =&gt; str::from_utf8(<span class="kw-2">&amp;</span>data[..e.valid_up_to()]).unwrap(),
@@ -1254,7 +1255,7 @@
         <span class="kw">if </span>data.len() &lt; header.as_old().linkname.len() {
             <span class="kw">return </span><span class="prelude-val">Err</span>(e);
         }
-        <span class="kw">let </span>header2 = prepare_header(data.len() <span class="kw">as </span>u64, <span class="string">b&#39;K&#39;</span>);
+        <span class="kw">let </span>header2 = prepare_header(data.len() <span class="kw">as </span>u64, <span class="string">b'K'</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>data2 = data.chain(io::repeat(<span class="number">0</span>).take(<span class="number">1</span>));
         append(dst, <span class="kw-2">&amp;</span>header2, <span class="kw-2">&amp;mut </span>data2)<span class="question-mark">?</span>;
     }
@@ -1297,7 +1298,7 @@
                 <span class="kw">let </span>file_type = entry.file_type()<span class="question-mark">?</span>;
                 stack.push((entry.path(), file_type.is_dir(), file_type.is_symlink()));
             }
-            <span class="kw">if </span>dest != Path::new(<span class="string">&quot;&quot;</span>) {
+            <span class="kw">if </span>dest != Path::new(<span class="string">""</span>) {
                 append_dir(dst, <span class="kw-2">&amp;</span>dest, <span class="kw-2">&amp;</span>src, mode)<span class="question-mark">?</span>;
             }
         } <span class="kw">else if </span>!follow &amp;&amp; is_symlink {

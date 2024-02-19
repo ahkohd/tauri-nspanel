@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cssparser-0.27.2/src/parser.rs`."><title>parser.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="cssparser" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cssparser-0.27.2/src/parser.rs`."><title>parser.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="cssparser" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1115,14 +1116,14 @@
 
 <span class="doccomment">/// Details about a `BasicParseError`
 </span><span class="attr">#[derive(Clone, Debug, PartialEq)]
-</span><span class="kw">pub enum </span>BasicParseErrorKind&lt;<span class="lifetime">&#39;i</span>&gt; {
+</span><span class="kw">pub enum </span>BasicParseErrorKind&lt;<span class="lifetime">'i</span>&gt; {
     <span class="doccomment">/// An unexpected token was encountered.
-    </span>UnexpectedToken(Token&lt;<span class="lifetime">&#39;i</span>&gt;),
+    </span>UnexpectedToken(Token&lt;<span class="lifetime">'i</span>&gt;),
     <span class="doccomment">/// The end of the input was encountered unexpectedly.
     </span>EndOfInput,
     <span class="doccomment">/// An `@` rule was encountered that was invalid.
-    </span>AtRuleInvalid(CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;),
-    <span class="doccomment">/// The body of an &#39;@&#39; rule was invalid.
+    </span>AtRuleInvalid(CowRcStr&lt;<span class="lifetime">'i</span>&gt;),
+    <span class="doccomment">/// The body of an '@' rule was invalid.
     </span>AtRuleBodyInvalid,
     <span class="doccomment">/// A qualified rule was encountered that was invalid.
     </span>QualifiedRuleInvalid,
@@ -1130,16 +1131,16 @@
 
 <span class="doccomment">/// The funamental parsing errors that can be triggered by built-in parsing routines.
 </span><span class="attr">#[derive(Clone, Debug, PartialEq)]
-</span><span class="kw">pub struct </span>BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt; {
+</span><span class="kw">pub struct </span>BasicParseError&lt;<span class="lifetime">'i</span>&gt; {
     <span class="doccomment">/// Details of this error
-    </span><span class="kw">pub </span>kind: BasicParseErrorKind&lt;<span class="lifetime">&#39;i</span>&gt;,
+    </span><span class="kw">pub </span>kind: BasicParseErrorKind&lt;<span class="lifetime">'i</span>&gt;,
     <span class="doccomment">/// Location where this error occurred
     </span><span class="kw">pub </span>location: SourceLocation,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;i</span>, T&gt; From&lt;BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; <span class="kw">for </span>ParseError&lt;<span class="lifetime">&#39;i</span>, T&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>, T&gt; From&lt;BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; <span class="kw">for </span>ParseError&lt;<span class="lifetime">'i</span>, T&gt; {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>from(this: BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;) -&gt; ParseError&lt;<span class="lifetime">&#39;i</span>, T&gt; {
+    </span><span class="kw">fn </span>from(this: BasicParseError&lt;<span class="lifetime">'i</span>&gt;) -&gt; ParseError&lt;<span class="lifetime">'i</span>, T&gt; {
         ParseError {
             kind: ParseErrorKind::Basic(this.kind),
             location: this.location,
@@ -1150,7 +1151,7 @@
 <span class="kw">impl </span>SourceLocation {
     <span class="doccomment">/// Create a new BasicParseError at this location for an unexpected token
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>new_basic_unexpected_token_error&lt;<span class="lifetime">&#39;i</span>&gt;(<span class="self">self</span>, token: Token&lt;<span class="lifetime">&#39;i</span>&gt;) -&gt; BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt; {
+    </span><span class="kw">pub fn </span>new_basic_unexpected_token_error&lt;<span class="lifetime">'i</span>&gt;(<span class="self">self</span>, token: Token&lt;<span class="lifetime">'i</span>&gt;) -&gt; BasicParseError&lt;<span class="lifetime">'i</span>&gt; {
         BasicParseError {
             kind: BasicParseErrorKind::UnexpectedToken(token),
             location: <span class="self">self</span>,
@@ -1159,7 +1160,7 @@
 
     <span class="doccomment">/// Create a new ParseError at this location for an unexpected token
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>new_unexpected_token_error&lt;<span class="lifetime">&#39;i</span>, E&gt;(<span class="self">self</span>, token: Token&lt;<span class="lifetime">&#39;i</span>&gt;) -&gt; ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt; {
+    </span><span class="kw">pub fn </span>new_unexpected_token_error&lt;<span class="lifetime">'i</span>, E&gt;(<span class="self">self</span>, token: Token&lt;<span class="lifetime">'i</span>&gt;) -&gt; ParseError&lt;<span class="lifetime">'i</span>, E&gt; {
         ParseError {
             kind: ParseErrorKind::Basic(BasicParseErrorKind::UnexpectedToken(token)),
             location: <span class="self">self</span>,
@@ -1168,7 +1169,7 @@
 
     <span class="doccomment">/// Create a new custom ParseError at this location
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>new_custom_error&lt;<span class="lifetime">&#39;i</span>, E1: Into&lt;E2&gt;, E2&gt;(<span class="self">self</span>, error: E1) -&gt; ParseError&lt;<span class="lifetime">&#39;i</span>, E2&gt; {
+    </span><span class="kw">pub fn </span>new_custom_error&lt;<span class="lifetime">'i</span>, E1: Into&lt;E2&gt;, E2&gt;(<span class="self">self</span>, error: E1) -&gt; ParseError&lt;<span class="lifetime">'i</span>, E2&gt; {
         ParseError {
             kind: ParseErrorKind::Custom(error.into()),
             location: <span class="self">self</span>,
@@ -1178,16 +1179,16 @@
 
 <span class="doccomment">/// Details of a `ParseError`
 </span><span class="attr">#[derive(Clone, Debug, PartialEq)]
-</span><span class="kw">pub enum </span>ParseErrorKind&lt;<span class="lifetime">&#39;i</span>, T: <span class="lifetime">&#39;i</span>&gt; {
+</span><span class="kw">pub enum </span>ParseErrorKind&lt;<span class="lifetime">'i</span>, T: <span class="lifetime">'i</span>&gt; {
     <span class="doccomment">/// A fundamental parse error from a built-in parsing routine.
-    </span>Basic(BasicParseErrorKind&lt;<span class="lifetime">&#39;i</span>&gt;),
+    </span>Basic(BasicParseErrorKind&lt;<span class="lifetime">'i</span>&gt;),
     <span class="doccomment">/// A parse error reported by downstream consumer code.
     </span>Custom(T),
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;i</span>, T&gt; ParseErrorKind&lt;<span class="lifetime">&#39;i</span>, T&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>, T&gt; ParseErrorKind&lt;<span class="lifetime">'i</span>, T&gt; {
     <span class="doccomment">/// Like `std::convert::Into::into`
-    </span><span class="kw">pub fn </span>into&lt;U&gt;(<span class="self">self</span>) -&gt; ParseErrorKind&lt;<span class="lifetime">&#39;i</span>, U&gt;
+    </span><span class="kw">pub fn </span>into&lt;U&gt;(<span class="self">self</span>) -&gt; ParseErrorKind&lt;<span class="lifetime">'i</span>, U&gt;
     <span class="kw">where
         </span>T: Into&lt;U&gt;,
     {
@@ -1200,27 +1201,27 @@
 
 <span class="doccomment">/// Extensible parse errors that can be encountered by client parsing implementations.
 </span><span class="attr">#[derive(Clone, Debug, PartialEq)]
-</span><span class="kw">pub struct </span>ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt; {
+</span><span class="kw">pub struct </span>ParseError&lt;<span class="lifetime">'i</span>, E&gt; {
     <span class="doccomment">/// Details of this error
-    </span><span class="kw">pub </span>kind: ParseErrorKind&lt;<span class="lifetime">&#39;i</span>, E&gt;,
+    </span><span class="kw">pub </span>kind: ParseErrorKind&lt;<span class="lifetime">'i</span>, E&gt;,
     <span class="doccomment">/// Location where this error occurred
     </span><span class="kw">pub </span>location: SourceLocation,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;i</span>, T&gt; ParseError&lt;<span class="lifetime">&#39;i</span>, T&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>, T&gt; ParseError&lt;<span class="lifetime">'i</span>, T&gt; {
     <span class="doccomment">/// Extract the fundamental parse error from an extensible error.
-    </span><span class="kw">pub fn </span>basic(<span class="self">self</span>) -&gt; BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt; {
+    </span><span class="kw">pub fn </span>basic(<span class="self">self</span>) -&gt; BasicParseError&lt;<span class="lifetime">'i</span>&gt; {
         <span class="kw">match </span><span class="self">self</span>.kind {
             ParseErrorKind::Basic(kind) =&gt; BasicParseError {
                 kind: kind,
                 location: <span class="self">self</span>.location,
             },
-            ParseErrorKind::Custom(<span class="kw">_</span>) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Not a basic parse error&quot;</span>),
+            ParseErrorKind::Custom(<span class="kw">_</span>) =&gt; <span class="macro">panic!</span>(<span class="string">"Not a basic parse error"</span>),
         }
     }
 
     <span class="doccomment">/// Like `std::convert::Into::into`
-    </span><span class="kw">pub fn </span>into&lt;U&gt;(<span class="self">self</span>) -&gt; ParseError&lt;<span class="lifetime">&#39;i</span>, U&gt;
+    </span><span class="kw">pub fn </span>into&lt;U&gt;(<span class="self">self</span>) -&gt; ParseError&lt;<span class="lifetime">'i</span>, U&gt;
     <span class="kw">where
         </span>T: Into&lt;U&gt;,
     {
@@ -1232,20 +1233,20 @@
 }
 
 <span class="doccomment">/// The owned input for a parser.
-</span><span class="kw">pub struct </span>ParserInput&lt;<span class="lifetime">&#39;i</span>&gt; {
-    tokenizer: Tokenizer&lt;<span class="lifetime">&#39;i</span>&gt;,
-    cached_token: <span class="prelude-ty">Option</span>&lt;CachedToken&lt;<span class="lifetime">&#39;i</span>&gt;&gt;,
+</span><span class="kw">pub struct </span>ParserInput&lt;<span class="lifetime">'i</span>&gt; {
+    tokenizer: Tokenizer&lt;<span class="lifetime">'i</span>&gt;,
+    cached_token: <span class="prelude-ty">Option</span>&lt;CachedToken&lt;<span class="lifetime">'i</span>&gt;&gt;,
 }
 
-<span class="kw">struct </span>CachedToken&lt;<span class="lifetime">&#39;i</span>&gt; {
-    token: Token&lt;<span class="lifetime">&#39;i</span>&gt;,
+<span class="kw">struct </span>CachedToken&lt;<span class="lifetime">'i</span>&gt; {
+    token: Token&lt;<span class="lifetime">'i</span>&gt;,
     start_position: SourcePosition,
     end_state: ParserState,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;i</span>&gt; ParserInput&lt;<span class="lifetime">&#39;i</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>&gt; ParserInput&lt;<span class="lifetime">'i</span>&gt; {
     <span class="doccomment">/// Create a new input for a parser.
-    </span><span class="kw">pub fn </span>new(input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;i </span>str) -&gt; ParserInput&lt;<span class="lifetime">&#39;i</span>&gt; {
+    </span><span class="kw">pub fn </span>new(input: <span class="kw-2">&amp;</span><span class="lifetime">'i </span>str) -&gt; ParserInput&lt;<span class="lifetime">'i</span>&gt; {
         ParserInput {
             tokenizer: Tokenizer::new(input),
             cached_token: <span class="prelude-val">None</span>,
@@ -1254,7 +1255,7 @@
 
     <span class="doccomment">/// Create a new input for a parser.  Line numbers in locations
     /// are offset by the given value.
-    </span><span class="kw">pub fn </span>new_with_line_number_offset(input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;i </span>str, first_line_number: u32) -&gt; ParserInput&lt;<span class="lifetime">&#39;i</span>&gt; {
+    </span><span class="kw">pub fn </span>new_with_line_number_offset(input: <span class="kw-2">&amp;</span><span class="lifetime">'i </span>str, first_line_number: u32) -&gt; ParserInput&lt;<span class="lifetime">'i</span>&gt; {
         ParserInput {
             tokenizer: Tokenizer::with_first_line_number(input, first_line_number),
             cached_token: <span class="prelude-val">None</span>,
@@ -1262,7 +1263,7 @@
     }
 
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>cached_token_ref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Token&lt;<span class="lifetime">&#39;i</span>&gt; {
+    </span><span class="kw">fn </span>cached_token_ref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Token&lt;<span class="lifetime">'i</span>&gt; {
         <span class="kw-2">&amp;</span><span class="self">self</span>.cached_token.as_ref().unwrap().token
     }
 }
@@ -1270,8 +1271,8 @@
 <span class="doccomment">/// A CSS parser that borrows its `&amp;str` input,
 /// yields `Token`s,
 /// and keeps track of nested blocks and functions.
-</span><span class="kw">pub struct </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt; {
-    input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;t </span><span class="kw-2">mut </span>ParserInput&lt;<span class="lifetime">&#39;i</span>&gt;,
+</span><span class="kw">pub struct </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt; {
+    input: <span class="kw-2">&amp;</span><span class="lifetime">'t </span><span class="kw-2">mut </span>ParserInput&lt;<span class="lifetime">'i</span>&gt;,
     <span class="doccomment">/// If `Some(_)`, .parse_nested_block() can be called.
     </span>at_start_of: <span class="prelude-ty">Option</span>&lt;BlockType&gt;,
     <span class="doccomment">/// For parsers from `parse_until` or `parse_nested_block`
@@ -1363,13 +1364,13 @@
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>from_byte(byte: <span class="prelude-ty">Option</span>&lt;u8&gt;) -&gt; Delimiters {
         <span class="kw">match </span>byte {
-            <span class="prelude-val">Some</span>(<span class="string">b&#39;;&#39;</span>) =&gt; Delimiter::Semicolon,
-            <span class="prelude-val">Some</span>(<span class="string">b&#39;!&#39;</span>) =&gt; Delimiter::Bang,
-            <span class="prelude-val">Some</span>(<span class="string">b&#39;,&#39;</span>) =&gt; Delimiter::Comma,
-            <span class="prelude-val">Some</span>(<span class="string">b&#39;{&#39;</span>) =&gt; Delimiter::CurlyBracketBlock,
-            <span class="prelude-val">Some</span>(<span class="string">b&#39;}&#39;</span>) =&gt; ClosingDelimiter::CloseCurlyBracket,
-            <span class="prelude-val">Some</span>(<span class="string">b&#39;]&#39;</span>) =&gt; ClosingDelimiter::CloseSquareBracket,
-            <span class="prelude-val">Some</span>(<span class="string">b&#39;)&#39;</span>) =&gt; ClosingDelimiter::CloseParenthesis,
+            <span class="prelude-val">Some</span>(<span class="string">b';'</span>) =&gt; Delimiter::Semicolon,
+            <span class="prelude-val">Some</span>(<span class="string">b'!'</span>) =&gt; Delimiter::Bang,
+            <span class="prelude-val">Some</span>(<span class="string">b','</span>) =&gt; Delimiter::Comma,
+            <span class="prelude-val">Some</span>(<span class="string">b'{'</span>) =&gt; Delimiter::CurlyBracketBlock,
+            <span class="prelude-val">Some</span>(<span class="string">b'}'</span>) =&gt; ClosingDelimiter::CloseCurlyBracket,
+            <span class="prelude-val">Some</span>(<span class="string">b']'</span>) =&gt; ClosingDelimiter::CloseSquareBracket,
+            <span class="prelude-val">Some</span>(<span class="string">b')'</span>) =&gt; ClosingDelimiter::CloseParenthesis,
             <span class="kw">_ </span>=&gt; Delimiter::None,
         }
     }
@@ -1390,10 +1391,10 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;i</span>: <span class="lifetime">&#39;t</span>, <span class="lifetime">&#39;t</span>&gt; Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>: <span class="lifetime">'t</span>, <span class="lifetime">'t</span>&gt; Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt; {
     <span class="doccomment">/// Create a new parser
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>new(input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;t </span><span class="kw-2">mut </span>ParserInput&lt;<span class="lifetime">&#39;i</span>&gt;) -&gt; Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt; {
+    </span><span class="kw">pub fn </span>new(input: <span class="kw-2">&amp;</span><span class="lifetime">'t </span><span class="kw-2">mut </span>ParserInput&lt;<span class="lifetime">'i</span>&gt;) -&gt; Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt; {
         Parser {
             input: input,
             at_start_of: <span class="prelude-val">None</span>,
@@ -1402,7 +1403,7 @@
     }
 
     <span class="doccomment">/// Return the current line that is being parsed.
-    </span><span class="kw">pub fn </span>current_line(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;i </span>str {
+    </span><span class="kw">pub fn </span>current_line(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'i </span>str {
         <span class="self">self</span>.input.tokenizer.current_source_line()
     }
 
@@ -1419,14 +1420,14 @@
     ///
     /// This ignores whitespace and comments.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>expect_exhausted(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>expect_exhausted(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="kw">let </span>start = <span class="self">self</span>.state();
         <span class="kw">let </span>result = <span class="kw">match </span><span class="self">self</span>.next() {
             <span class="prelude-val">Err</span>(BasicParseError {
                 kind: BasicParseErrorKind::EndOfInput,
                 ..
             }) =&gt; <span class="prelude-val">Ok</span>(()),
-            <span class="prelude-val">Err</span>(e) =&gt; <span class="macro">unreachable!</span>(<span class="string">&quot;Unexpected error encountered: {:?}&quot;</span>, e),
+            <span class="prelude-val">Err</span>(e) =&gt; <span class="macro">unreachable!</span>(<span class="string">"Unexpected error encountered: {:?}"</span>, e),
             <span class="prelude-val">Ok</span>(t) =&gt; <span class="prelude-val">Err</span>(start
                 .source_location()
                 .new_basic_unexpected_token_error(t.clone())),
@@ -1469,7 +1470,7 @@
 
     <span class="doccomment">/// Create a new BasicParseError at the current location
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>new_basic_error(<span class="kw-2">&amp;</span><span class="self">self</span>, kind: BasicParseErrorKind&lt;<span class="lifetime">&#39;i</span>&gt;) -&gt; BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt; {
+    </span><span class="kw">pub fn </span>new_basic_error(<span class="kw-2">&amp;</span><span class="self">self</span>, kind: BasicParseErrorKind&lt;<span class="lifetime">'i</span>&gt;) -&gt; BasicParseError&lt;<span class="lifetime">'i</span>&gt; {
         BasicParseError {
             kind: kind,
             location: <span class="self">self</span>.current_source_location(),
@@ -1478,7 +1479,7 @@
 
     <span class="doccomment">/// Create a new basic ParseError at the current location
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>new_error&lt;E&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, kind: BasicParseErrorKind&lt;<span class="lifetime">&#39;i</span>&gt;) -&gt; ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt; {
+    </span><span class="kw">pub fn </span>new_error&lt;E&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, kind: BasicParseErrorKind&lt;<span class="lifetime">'i</span>&gt;) -&gt; ParseError&lt;<span class="lifetime">'i</span>, E&gt; {
         ParseError {
             kind: ParseErrorKind::Basic(kind),
             location: <span class="self">self</span>.current_source_location(),
@@ -1487,25 +1488,25 @@
 
     <span class="doccomment">/// Create a new custom BasicParseError at the current location
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>new_custom_error&lt;E1: Into&lt;E2&gt;, E2&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, error: E1) -&gt; ParseError&lt;<span class="lifetime">&#39;i</span>, E2&gt; {
+    </span><span class="kw">pub fn </span>new_custom_error&lt;E1: Into&lt;E2&gt;, E2&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, error: E1) -&gt; ParseError&lt;<span class="lifetime">'i</span>, E2&gt; {
         <span class="self">self</span>.current_source_location().new_custom_error(error)
     }
 
     <span class="doccomment">/// Create a new unexpected token BasicParseError at the current location
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>new_basic_unexpected_token_error(<span class="kw-2">&amp;</span><span class="self">self</span>, token: Token&lt;<span class="lifetime">&#39;i</span>&gt;) -&gt; BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt; {
+    </span><span class="kw">pub fn </span>new_basic_unexpected_token_error(<span class="kw-2">&amp;</span><span class="self">self</span>, token: Token&lt;<span class="lifetime">'i</span>&gt;) -&gt; BasicParseError&lt;<span class="lifetime">'i</span>&gt; {
         <span class="self">self</span>.new_basic_error(BasicParseErrorKind::UnexpectedToken(token))
     }
 
     <span class="doccomment">/// Create a new unexpected token ParseError at the current location
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>new_unexpected_token_error&lt;E&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, token: Token&lt;<span class="lifetime">&#39;i</span>&gt;) -&gt; ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt; {
+    </span><span class="kw">pub fn </span>new_unexpected_token_error&lt;E&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, token: Token&lt;<span class="lifetime">'i</span>&gt;) -&gt; ParseError&lt;<span class="lifetime">'i</span>, E&gt; {
         <span class="self">self</span>.new_error(BasicParseErrorKind::UnexpectedToken(token))
     }
 
     <span class="doccomment">/// Create a new unexpected token or EOF ParseError at the current location
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>new_error_for_next_token&lt;E&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt; {
+    </span><span class="kw">pub fn </span>new_error_for_next_token&lt;E&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; ParseError&lt;<span class="lifetime">'i</span>, E&gt; {
         <span class="kw">let </span>token = <span class="kw">match </span><span class="self">self</span>.next() {
             <span class="prelude-val">Ok</span>(token) =&gt; token.clone(),
             <span class="prelude-val">Err</span>(e) =&gt; <span class="kw">return </span>e.into(),
@@ -1581,7 +1582,7 @@
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>r#try&lt;F, T, E&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, thing: F) -&gt; <span class="prelude-ty">Result</span>&lt;T, E&gt;
     <span class="kw">where
-        </span>F: FnOnce(<span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;T, E&gt;,
+        </span>F: FnOnce(<span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;T, E&gt;,
     {
         <span class="self">self</span>.try_parse(thing)
     }
@@ -1593,7 +1594,7 @@
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>try_parse&lt;F, T, E&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, thing: F) -&gt; <span class="prelude-ty">Result</span>&lt;T, E&gt;
     <span class="kw">where
-        </span>F: FnOnce(<span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;T, E&gt;,
+        </span>F: FnOnce(<span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;T, E&gt;,
     {
         <span class="kw">let </span>start = <span class="self">self</span>.state();
         <span class="kw">let </span>result = thing(<span class="self">self</span>);
@@ -1605,13 +1606,13 @@
 
     <span class="doccomment">/// Return a slice of the CSS input
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>slice(<span class="kw-2">&amp;</span><span class="self">self</span>, range: Range&lt;SourcePosition&gt;) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;i </span>str {
+    </span><span class="kw">pub fn </span>slice(<span class="kw-2">&amp;</span><span class="self">self</span>, range: Range&lt;SourcePosition&gt;) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'i </span>str {
         <span class="self">self</span>.input.tokenizer.slice(range)
     }
 
     <span class="doccomment">/// Return a slice of the CSS input, from the given position to the current one.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>slice_from(<span class="kw-2">&amp;</span><span class="self">self</span>, start_position: SourcePosition) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;i </span>str {
+    </span><span class="kw">pub fn </span>slice_from(<span class="kw-2">&amp;</span><span class="self">self</span>, start_position: SourcePosition) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'i </span>str {
         <span class="self">self</span>.input.tokenizer.slice_from(start_position)
     }
 
@@ -1626,13 +1627,13 @@
     /// See the `Parser::parse_nested_block` method to parse the content of functions or blocks.
     ///
     /// This only returns a closing token when it is unmatched (and therefore an error).
-    </span><span class="kw">pub fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>Token&lt;<span class="lifetime">&#39;i</span>&gt;, BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>Token&lt;<span class="lifetime">'i</span>&gt;, BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="self">self</span>.skip_whitespace();
         <span class="self">self</span>.next_including_whitespace_and_comments()
     }
 
     <span class="doccomment">/// Same as `Parser::next`, but does not skip whitespace tokens.
-    </span><span class="kw">pub fn </span>next_including_whitespace(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>Token&lt;<span class="lifetime">&#39;i</span>&gt;, BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>next_including_whitespace(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>Token&lt;<span class="lifetime">'i</span>&gt;, BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="kw">loop </span>{
             <span class="kw">match </span><span class="self">self</span>.next_including_whitespace_and_comments() {
                 <span class="prelude-val">Err</span>(e) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(e),
@@ -1651,7 +1652,7 @@
     /// comments should always be ignored between tokens.
     </span><span class="kw">pub fn </span>next_including_whitespace_and_comments(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>Token&lt;<span class="lifetime">&#39;i</span>&gt;, BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>Token&lt;<span class="lifetime">'i</span>&gt;, BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(block_type) = <span class="self">self</span>.at_start_of.take() {
             consume_until_end_of_block(block_type, <span class="kw-2">&amp;mut </span><span class="self">self</span>.input.tokenizer);
         }
@@ -1702,9 +1703,9 @@
     ///
     /// This can help tell e.g. `color: green;` from `color: green 4px;`
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>parse_entirely&lt;F, T, E&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, parse: F) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt;&gt;
+    </span><span class="kw">pub fn </span>parse_entirely&lt;F, T, E&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, parse: F) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">'i</span>, E&gt;&gt;
     <span class="kw">where
-        </span>F: FnOnce(<span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt;&gt;,
+        </span>F: FnOnce(<span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">'i</span>, E&gt;&gt;,
     {
         <span class="kw">let </span>result = parse(<span class="self">self</span>)<span class="question-mark">?</span>;
         <span class="self">self</span>.expect_exhausted()<span class="question-mark">?</span>;
@@ -1713,7 +1714,7 @@
 
     <span class="doccomment">/// Parse a list of comma-separated values, all with the same syntax.
     ///
-    /// The given closure is called repeatedly with a &quot;delimited&quot; parser
+    /// The given closure is called repeatedly with a "delimited" parser
     /// (see the `Parser::parse_until_before` method)
     /// so that it can over consume the input past a comma at this block/function nesting level.
     ///
@@ -1725,12 +1726,12 @@
     </span><span class="kw">pub fn </span>parse_comma_separated&lt;F, T, E&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         <span class="kw-2">mut </span>parse_one: F,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;T&gt;, ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt;&gt;
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;T&gt;, ParseError&lt;<span class="lifetime">'i</span>, E&gt;&gt;
     <span class="kw">where
-        </span>F: <span class="kw">for</span>&lt;<span class="lifetime">&#39;tt</span>&gt; FnMut(<span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;tt</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt;&gt;,
+        </span>F: <span class="kw">for</span>&lt;<span class="lifetime">'tt</span>&gt; FnMut(<span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'tt</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">'i</span>, E&gt;&gt;,
     {
         <span class="comment">// Vec grows from 0 to 4 by default on first push().  So allocate with
-        // capacity 1, so in the somewhat common case of only one item we don&#39;t
+        // capacity 1, so in the somewhat common case of only one item we don't
         // way overallocate.  Note that we always push at least one item if
         // parsing succeeds.
         </span><span class="kw">let </span><span class="kw-2">mut </span>values = Vec::with_capacity(<span class="number">1</span>);
@@ -1752,14 +1753,14 @@
     /// is not a on that marks the start of a block or function:
     /// a `Function`, `ParenthesisBlock`, `CurlyBracketBlock`, or `SquareBracketBlock`.
     ///
-    /// The given closure is called with a &quot;delimited&quot; parser
+    /// The given closure is called with a "delimited" parser
     /// that stops at the end of the block or function (at the matching closing token).
     ///
     /// The result is overridden to `Err(())` if the closure leaves some input before that point.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>parse_nested_block&lt;F, T, E&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, parse: F) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt;&gt;
+    </span><span class="kw">pub fn </span>parse_nested_block&lt;F, T, E&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, parse: F) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">'i</span>, E&gt;&gt;
     <span class="kw">where
-        </span>F: <span class="kw">for</span>&lt;<span class="lifetime">&#39;tt</span>&gt; FnOnce(<span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;tt</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt;&gt;,
+        </span>F: <span class="kw">for</span>&lt;<span class="lifetime">'tt</span>&gt; FnOnce(<span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'tt</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">'i</span>, E&gt;&gt;,
     {
         parse_nested_block(<span class="self">self</span>, parse)
     }
@@ -1767,7 +1768,7 @@
     <span class="doccomment">/// Limit parsing to until a given delimiter or the end of the input. (E.g.
     /// a semicolon for a property value.)
     ///
-    /// The given closure is called with a &quot;delimited&quot; parser
+    /// The given closure is called with a "delimited" parser
     /// that stops before the first character at this block/function nesting level
     /// that matches the given set of delimiters, or at the end of the input.
     ///
@@ -1777,9 +1778,9 @@
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         delimiters: Delimiters,
         parse: F,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt;&gt;
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">'i</span>, E&gt;&gt;
     <span class="kw">where
-        </span>F: <span class="kw">for</span>&lt;<span class="lifetime">&#39;tt</span>&gt; FnOnce(<span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;tt</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt;&gt;,
+        </span>F: <span class="kw">for</span>&lt;<span class="lifetime">'tt</span>&gt; FnOnce(<span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'tt</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">'i</span>, E&gt;&gt;,
     {
         parse_until_before(<span class="self">self</span>, delimiters, parse)
     }
@@ -1794,16 +1795,16 @@
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         delimiters: Delimiters,
         parse: F,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt;&gt;
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">'i</span>, E&gt;&gt;
     <span class="kw">where
-        </span>F: <span class="kw">for</span>&lt;<span class="lifetime">&#39;tt</span>&gt; FnOnce(<span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;tt</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt;&gt;,
+        </span>F: <span class="kw">for</span>&lt;<span class="lifetime">'tt</span>&gt; FnOnce(<span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'tt</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">'i</span>, E&gt;&gt;,
     {
         parse_until_after(<span class="self">self</span>, delimiters, parse)
     }
 
     <span class="doccomment">/// Parse a &lt;whitespace-token&gt; and return its value.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>expect_whitespace(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;i </span>str, BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>expect_whitespace(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'i </span>str, BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="kw">let </span>start_location = <span class="self">self</span>.current_source_location();
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.next_including_whitespace()<span class="question-mark">? </span>{
             Token::WhiteSpace(value) =&gt; <span class="prelude-val">Ok</span>(value),
@@ -1813,7 +1814,7 @@
 
     <span class="doccomment">/// Parse a &lt;ident-token&gt; and return the unescaped value.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>expect_ident(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;, BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>expect_ident(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>CowRcStr&lt;<span class="lifetime">'i</span>&gt;, BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="macro">expect! </span>{<span class="self">self</span>,
             Token::Ident(<span class="kw-2">ref </span>value) =&gt; <span class="prelude-val">Ok</span>(value),
         }
@@ -1821,7 +1822,7 @@
 
     <span class="doccomment">/// expect_ident, but clone the CowRcStr
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>expect_ident_cloned(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;, BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>expect_ident_cloned(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;CowRcStr&lt;<span class="lifetime">'i</span>&gt;, BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="self">self</span>.expect_ident().map(|s| s.clone())
     }
 
@@ -1830,7 +1831,7 @@
     </span><span class="kw">pub fn </span>expect_ident_matching(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         expected_value: <span class="kw-2">&amp;</span>str,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="macro">expect! </span>{<span class="self">self</span>,
             Token::Ident(<span class="kw-2">ref </span>value) <span class="kw">if </span>value.eq_ignore_ascii_case(expected_value) =&gt; <span class="prelude-val">Ok</span>(()),
         }
@@ -1838,7 +1839,7 @@
 
     <span class="doccomment">/// Parse a &lt;string-token&gt; and return the unescaped value.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>expect_string(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;, BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>expect_string(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>CowRcStr&lt;<span class="lifetime">'i</span>&gt;, BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="macro">expect! </span>{<span class="self">self</span>,
             Token::QuotedString(<span class="kw-2">ref </span>value) =&gt; <span class="prelude-val">Ok</span>(value),
         }
@@ -1846,13 +1847,13 @@
 
     <span class="doccomment">/// expect_string, but clone the CowRcStr
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>expect_string_cloned(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;, BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>expect_string_cloned(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;CowRcStr&lt;<span class="lifetime">'i</span>&gt;, BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="self">self</span>.expect_string().map(|s| s.clone())
     }
 
     <span class="doccomment">/// Parse either a &lt;ident-token&gt; or a &lt;string-token&gt;, and return the unescaped value.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>expect_ident_or_string(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;, BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>expect_ident_or_string(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>CowRcStr&lt;<span class="lifetime">'i</span>&gt;, BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="macro">expect! </span>{<span class="self">self</span>,
             Token::Ident(<span class="kw-2">ref </span>value) =&gt; <span class="prelude-val">Ok</span>(value),
             Token::QuotedString(<span class="kw-2">ref </span>value) =&gt; <span class="prelude-val">Ok</span>(value),
@@ -1861,10 +1862,10 @@
 
     <span class="doccomment">/// Parse a &lt;url-token&gt; and return the unescaped value.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>expect_url(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;, BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>expect_url(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;CowRcStr&lt;<span class="lifetime">'i</span>&gt;, BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="macro">expect! </span>{<span class="self">self</span>,
             Token::UnquotedUrl(<span class="kw-2">ref </span>value) =&gt; <span class="prelude-val">Ok</span>(value.clone()),
-            Token::Function(<span class="kw-2">ref </span>name) <span class="kw">if </span>name.eq_ignore_ascii_case(<span class="string">&quot;url&quot;</span>) =&gt; {
+            Token::Function(<span class="kw-2">ref </span>name) <span class="kw">if </span>name.eq_ignore_ascii_case(<span class="string">"url"</span>) =&gt; {
                 <span class="self">self</span>.parse_nested_block(|input| {
                     input.expect_string().map_err(Into::into).map(|s| s.clone())
                 })
@@ -1875,11 +1876,11 @@
 
     <span class="doccomment">/// Parse either a &lt;url-token&gt; or a &lt;string-token&gt;, and return the unescaped value.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>expect_url_or_string(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;, BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>expect_url_or_string(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;CowRcStr&lt;<span class="lifetime">'i</span>&gt;, BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="macro">expect! </span>{<span class="self">self</span>,
             Token::UnquotedUrl(<span class="kw-2">ref </span>value) =&gt; <span class="prelude-val">Ok</span>(value.clone()),
             Token::QuotedString(<span class="kw-2">ref </span>value) =&gt; <span class="prelude-val">Ok</span>(value.clone()),
-            Token::Function(<span class="kw-2">ref </span>name) <span class="kw">if </span>name.eq_ignore_ascii_case(<span class="string">&quot;url&quot;</span>) =&gt; {
+            Token::Function(<span class="kw-2">ref </span>name) <span class="kw">if </span>name.eq_ignore_ascii_case(<span class="string">"url"</span>) =&gt; {
                 <span class="self">self</span>.parse_nested_block(|input| {
                     input.expect_string().map_err(Into::into).map(|s| s.clone())
                 })
@@ -1890,7 +1891,7 @@
 
     <span class="doccomment">/// Parse a &lt;number-token&gt; and return the integer value.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>expect_number(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;f32, BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>expect_number(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;f32, BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="macro">expect! </span>{<span class="self">self</span>,
             Token::Number { value, .. } =&gt; <span class="prelude-val">Ok</span>(value),
         }
@@ -1898,7 +1899,7 @@
 
     <span class="doccomment">/// Parse a &lt;number-token&gt; that does not have a fractional part, and return the integer value.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>expect_integer(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;i32, BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>expect_integer(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;i32, BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="macro">expect! </span>{<span class="self">self</span>,
             Token::Number { int_value: <span class="prelude-val">Some</span>(int_value), .. } =&gt; <span class="prelude-val">Ok</span>(int_value),
         }
@@ -1907,7 +1908,7 @@
     <span class="doccomment">/// Parse a &lt;percentage-token&gt; and return the value.
     /// `0%` and `100%` map to `0.0` and `1.0` (not `100.0`), respectively.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>expect_percentage(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;f32, BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>expect_percentage(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;f32, BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="macro">expect! </span>{<span class="self">self</span>,
             Token::Percentage { unit_value, .. } =&gt; <span class="prelude-val">Ok</span>(unit_value),
         }
@@ -1915,7 +1916,7 @@
 
     <span class="doccomment">/// Parse a `:` &lt;colon-token&gt;.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>expect_colon(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>expect_colon(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="macro">expect! </span>{<span class="self">self</span>,
             Token::Colon =&gt; <span class="prelude-val">Ok</span>(()),
         }
@@ -1923,7 +1924,7 @@
 
     <span class="doccomment">/// Parse a `;` &lt;semicolon-token&gt;.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>expect_semicolon(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>expect_semicolon(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="macro">expect! </span>{<span class="self">self</span>,
             Token::Semicolon =&gt; <span class="prelude-val">Ok</span>(()),
         }
@@ -1931,7 +1932,7 @@
 
     <span class="doccomment">/// Parse a `,` &lt;comma-token&gt;.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>expect_comma(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>expect_comma(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="macro">expect! </span>{<span class="self">self</span>,
             Token::Comma =&gt; <span class="prelude-val">Ok</span>(()),
         }
@@ -1939,7 +1940,7 @@
 
     <span class="doccomment">/// Parse a &lt;delim-token&gt; with the given value.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>expect_delim(<span class="kw-2">&amp;mut </span><span class="self">self</span>, expected_value: char) -&gt; <span class="prelude-ty">Result</span>&lt;(), BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>expect_delim(<span class="kw-2">&amp;mut </span><span class="self">self</span>, expected_value: char) -&gt; <span class="prelude-ty">Result</span>&lt;(), BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="macro">expect! </span>{<span class="self">self</span>,
             Token::Delim(value) <span class="kw">if </span>value == expected_value =&gt; <span class="prelude-val">Ok</span>(()),
         }
@@ -1949,7 +1950,7 @@
     ///
     /// If the result is `Ok`, you can then call the `Parser::parse_nested_block` method.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>expect_curly_bracket_block(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>expect_curly_bracket_block(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="macro">expect! </span>{<span class="self">self</span>,
             Token::CurlyBracketBlock =&gt; <span class="prelude-val">Ok</span>(()),
         }
@@ -1959,7 +1960,7 @@
     ///
     /// If the result is `Ok`, you can then call the `Parser::parse_nested_block` method.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>expect_square_bracket_block(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>expect_square_bracket_block(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="macro">expect! </span>{<span class="self">self</span>,
             Token::SquareBracketBlock =&gt; <span class="prelude-val">Ok</span>(()),
         }
@@ -1969,7 +1970,7 @@
     ///
     /// If the result is `Ok`, you can then call the `Parser::parse_nested_block` method.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>expect_parenthesis_block(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>expect_parenthesis_block(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="macro">expect! </span>{<span class="self">self</span>,
             Token::ParenthesisBlock =&gt; <span class="prelude-val">Ok</span>(()),
         }
@@ -1979,7 +1980,7 @@
     ///
     /// If the result is `Ok`, you can then call the `Parser::parse_nested_block` method.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>expect_function(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;, BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>expect_function(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>CowRcStr&lt;<span class="lifetime">'i</span>&gt;, BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="macro">expect! </span>{<span class="self">self</span>,
             Token::Function(<span class="kw-2">ref </span>name) =&gt; <span class="prelude-val">Ok</span>(name),
         }
@@ -1992,7 +1993,7 @@
     </span><span class="kw">pub fn </span>expect_function_matching(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         expected_name: <span class="kw-2">&amp;</span>str,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="macro">expect! </span>{<span class="self">self</span>,
             Token::Function(<span class="kw-2">ref </span>name) <span class="kw">if </span>name.eq_ignore_ascii_case(expected_name) =&gt; <span class="prelude-val">Ok</span>(()),
         }
@@ -2002,7 +2003,7 @@
     ///
     /// See `Token::is_parse_error`. This also checks nested blocks and functions recursively.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>expect_no_error_token(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>expect_no_error_token(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="kw">loop </span>{
             <span class="kw">match </span><span class="self">self</span>.next_including_whitespace_and_comments() {
                 <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span>Token::Function(<span class="kw">_</span>))
@@ -2027,13 +2028,13 @@
     }
 }
 
-<span class="kw">pub fn </span>parse_until_before&lt;<span class="lifetime">&#39;i</span>: <span class="lifetime">&#39;t</span>, <span class="lifetime">&#39;t</span>, F, T, E&gt;(
-    parser: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
+<span class="kw">pub fn </span>parse_until_before&lt;<span class="lifetime">'i</span>: <span class="lifetime">'t</span>, <span class="lifetime">'t</span>, F, T, E&gt;(
+    parser: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
     delimiters: Delimiters,
     parse: F,
-) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt;&gt;
+) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">'i</span>, E&gt;&gt;
 <span class="kw">where
-    </span>F: <span class="kw">for</span>&lt;<span class="lifetime">&#39;tt</span>&gt; FnOnce(<span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;tt</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt;&gt;,
+    </span>F: <span class="kw">for</span>&lt;<span class="lifetime">'tt</span>&gt; FnOnce(<span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'tt</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">'i</span>, E&gt;&gt;,
 {
     <span class="kw">let </span>delimiters = parser.stop_before | delimiters;
     <span class="kw">let </span>result;
@@ -2065,13 +2066,13 @@
     result
 }
 
-<span class="kw">pub fn </span>parse_until_after&lt;<span class="lifetime">&#39;i</span>: <span class="lifetime">&#39;t</span>, <span class="lifetime">&#39;t</span>, F, T, E&gt;(
-    parser: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
+<span class="kw">pub fn </span>parse_until_after&lt;<span class="lifetime">'i</span>: <span class="lifetime">'t</span>, <span class="lifetime">'t</span>, F, T, E&gt;(
+    parser: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
     delimiters: Delimiters,
     parse: F,
-) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt;&gt;
+) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">'i</span>, E&gt;&gt;
 <span class="kw">where
-    </span>F: <span class="kw">for</span>&lt;<span class="lifetime">&#39;tt</span>&gt; FnOnce(<span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;tt</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt;&gt;,
+    </span>F: <span class="kw">for</span>&lt;<span class="lifetime">'tt</span>&gt; FnOnce(<span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'tt</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">'i</span>, E&gt;&gt;,
 {
     <span class="kw">let </span>result = parser.parse_until_before(delimiters, parse);
     <span class="kw">let </span>next_byte = parser.input.tokenizer.next_byte();
@@ -2083,26 +2084,26 @@
         <span class="macro">debug_assert!</span>(delimiters.contains(Delimiters::from_byte(next_byte)));
         <span class="comment">// We know this byte is ASCII.
         </span>parser.input.tokenizer.advance(<span class="number">1</span>);
-        <span class="kw">if </span>next_byte == <span class="prelude-val">Some</span>(<span class="string">b&#39;{&#39;</span>) {
+        <span class="kw">if </span>next_byte == <span class="prelude-val">Some</span>(<span class="string">b'{'</span>) {
             consume_until_end_of_block(BlockType::CurlyBracket, <span class="kw-2">&amp;mut </span>parser.input.tokenizer);
         }
     }
     result
 }
 
-<span class="kw">pub fn </span>parse_nested_block&lt;<span class="lifetime">&#39;i</span>: <span class="lifetime">&#39;t</span>, <span class="lifetime">&#39;t</span>, F, T, E&gt;(
-    parser: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
+<span class="kw">pub fn </span>parse_nested_block&lt;<span class="lifetime">'i</span>: <span class="lifetime">'t</span>, <span class="lifetime">'t</span>, F, T, E&gt;(
+    parser: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
     parse: F,
-) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt;&gt;
+) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">'i</span>, E&gt;&gt;
 <span class="kw">where
-    </span>F: <span class="kw">for</span>&lt;<span class="lifetime">&#39;tt</span>&gt; FnOnce(<span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;tt</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt;&gt;,
+    </span>F: <span class="kw">for</span>&lt;<span class="lifetime">'tt</span>&gt; FnOnce(<span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'tt</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;T, ParseError&lt;<span class="lifetime">'i</span>, E&gt;&gt;,
 {
     <span class="kw">let </span>block_type = parser.at_start_of.take().expect(
-        <span class="string">&quot;\
+        <span class="string">"\
          A nested parser can only be created when a Function, \
          ParenthesisBlock, SquareBracketBlock, or CurlyBracketBlock \
          token was just consumed.\
-         &quot;</span>,
+         "</span>,
     );
     <span class="kw">let </span>closing_delimiter = <span class="kw">match </span>block_type {
         BlockType::CurlyBracket =&gt; ClosingDelimiter::CloseCurlyBracket,

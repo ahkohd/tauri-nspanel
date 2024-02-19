@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.22/src/walk.rs`."><title>walk.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="ignore" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.22/src/walk.rs`."><title>walk.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="ignore" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2373,7 +2374,7 @@
 
     <span class="doccomment">/// Return the file type for the file that this entry points to.
     ///
-    /// This entry doesn&#39;t have a file type if it corresponds to stdin.
+    /// This entry doesn't have a file type if it corresponds to stdin.
     </span><span class="kw">pub fn </span>file_type(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;FileType&gt; {
         <span class="self">self</span>.dent.file_type()
     }
@@ -2393,7 +2394,7 @@
 
     <span class="doccomment">/// Returns the underlying inode number if one exists.
     ///
-    /// If this entry doesn&#39;t have an inode number, then `None` is returned.
+    /// If this entry doesn't have an inode number, then `None` is returned.
     </span><span class="attr">#[cfg(unix)]
     </span><span class="kw">pub fn </span>ino(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;u64&gt; {
         <span class="self">self</span>.dent.ino()
@@ -2447,7 +2448,7 @@
     <span class="kw">fn </span>path(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Path {
         <span class="kw">use </span><span class="self">self</span>::DirEntryInner::<span class="kw-2">*</span>;
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
-            Stdin =&gt; Path::new(<span class="string">&quot;&lt;stdin&gt;&quot;</span>),
+            Stdin =&gt; Path::new(<span class="string">"&lt;stdin&gt;"</span>),
             Walkdir(<span class="kw-2">ref </span>x) =&gt; x.path(),
             Raw(<span class="kw-2">ref </span>x) =&gt; x.path(),
         }
@@ -2456,7 +2457,7 @@
     <span class="kw">fn </span>into_path(<span class="self">self</span>) -&gt; PathBuf {
         <span class="kw">use </span><span class="self">self</span>::DirEntryInner::<span class="kw-2">*</span>;
         <span class="kw">match </span><span class="self">self </span>{
-            Stdin =&gt; PathBuf::from(<span class="string">&quot;&lt;stdin&gt;&quot;</span>),
+            Stdin =&gt; PathBuf::from(<span class="string">"&lt;stdin&gt;"</span>),
             Walkdir(x) =&gt; x.into_path(),
             Raw(x) =&gt; x.into_path(),
         }
@@ -2484,9 +2485,9 @@
             Stdin =&gt; {
                 <span class="kw">let </span>err = Error::Io(io::Error::new(
                     io::ErrorKind::Other,
-                    <span class="string">&quot;&lt;stdin&gt; has no metadata&quot;</span>,
+                    <span class="string">"&lt;stdin&gt; has no metadata"</span>,
                 ));
-                <span class="prelude-val">Err</span>(err.with_path(<span class="string">&quot;&lt;stdin&gt;&quot;</span>))
+                <span class="prelude-val">Err</span>(err.with_path(<span class="string">"&lt;stdin&gt;"</span>))
             }
             Walkdir(<span class="kw-2">ref </span>x) =&gt; x.metadata().map_err(|err| {
                 Error::Io(io::Error::from(err)).with_path(x.path())
@@ -2507,7 +2508,7 @@
     <span class="kw">fn </span>file_name(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>OsStr {
         <span class="kw">use </span><span class="self">self</span>::DirEntryInner::<span class="kw-2">*</span>;
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
-            Stdin =&gt; OsStr::new(<span class="string">&quot;&lt;stdin&gt;&quot;</span>),
+            Stdin =&gt; OsStr::new(<span class="string">"&lt;stdin&gt;"</span>),
             Walkdir(<span class="kw-2">ref </span>x) =&gt; x.file_name(),
             Raw(<span class="kw-2">ref </span>x) =&gt; x.file_name(),
         }
@@ -2543,7 +2544,7 @@
 /// build `DirEntry`s from whole cloth in the parallel iterator.
 </span><span class="attr">#[derive(Clone)]
 </span><span class="kw">struct </span>DirEntryRaw {
-    <span class="doccomment">/// The path as reported by the `fs::ReadDir` iterator (even if it&#39;s a
+    <span class="doccomment">/// The path as reported by the `fs::ReadDir` iterator (even if it's a
     /// symbolic link).
     </span>path: PathBuf,
     <span class="doccomment">/// The file type. Necessary for recursive iteration, so store it.
@@ -2563,14 +2564,14 @@
 }
 
 <span class="kw">impl </span>std::fmt::Debug <span class="kw">for </span>DirEntryRaw {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; std::fmt::Result {
-        <span class="comment">// Leaving out FileType because it doesn&#39;t have a debug impl
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; std::fmt::Result {
+        <span class="comment">// Leaving out FileType because it doesn't have a debug impl
         // in Rust 1.9. We could add it if we really wanted to by manually
         // querying each possibly file type. Meh. ---AG
-        </span>f.debug_struct(<span class="string">&quot;DirEntryRaw&quot;</span>)
-            .field(<span class="string">&quot;path&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.path)
-            .field(<span class="string">&quot;follow_link&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.follow_link)
-            .field(<span class="string">&quot;depth&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.depth)
+        </span>f.debug_struct(<span class="string">"DirEntryRaw"</span>)
+            .field(<span class="string">"path"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.path)
+            .field(<span class="string">"follow_link"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.follow_link)
+            .field(<span class="string">"depth"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.depth)
             .finish()
     }
 }
@@ -2686,7 +2687,7 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;DirEntryRaw, Error&gt; {
         <span class="prelude-val">Err</span>(Error::Io(io::Error::new(
             io::ErrorKind::Other,
-            <span class="string">&quot;unsupported platform&quot;</span>,
+            <span class="string">"unsupported platform"</span>,
         )))
     }
 
@@ -2736,7 +2737,7 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;DirEntryRaw, Error&gt; {
         <span class="prelude-val">Err</span>(Error::Io(io::Error::new(
             io::ErrorKind::Other,
-            <span class="string">&quot;unsupported platform&quot;</span>,
+            <span class="string">"unsupported platform"</span>,
         )))
     }
 }
@@ -2783,7 +2784,7 @@
 /// the path. As above, if it yields an ignore match, then all matching is
 /// stopped and the path is skipped. If it yields a whitelist match, then
 /// matching continues.
-/// * Fifth, if the path hasn&#39;t been whitelisted and it is hidden, then the
+/// * Fifth, if the path hasn't been whitelisted and it is hidden, then the
 /// path is skipped.
 /// * Sixth, unless the path is a directory, the size of the file is compared
 /// against the max filesize limit. If it exceeds the limit, it is skipped.
@@ -2805,23 +2806,23 @@
 
 <span class="attr">#[derive(Clone)]
 </span><span class="kw">enum </span>Sorter {
-    ByName(Arc&lt;<span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>OsStr, <span class="kw-2">&amp;</span>OsStr) -&gt; Ordering + Send + Sync + <span class="lifetime">&#39;static</span>&gt;),
-    ByPath(Arc&lt;<span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>Path, <span class="kw-2">&amp;</span>Path) -&gt; Ordering + Send + Sync + <span class="lifetime">&#39;static</span>&gt;),
+    ByName(Arc&lt;<span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>OsStr, <span class="kw-2">&amp;</span>OsStr) -&gt; Ordering + Send + Sync + <span class="lifetime">'static</span>&gt;),
+    ByPath(Arc&lt;<span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>Path, <span class="kw-2">&amp;</span>Path) -&gt; Ordering + Send + Sync + <span class="lifetime">'static</span>&gt;),
 }
 
 <span class="attr">#[derive(Clone)]
-</span><span class="kw">struct </span>Filter(Arc&lt;<span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>DirEntry) -&gt; bool + Send + Sync + <span class="lifetime">&#39;static</span>&gt;);
+</span><span class="kw">struct </span>Filter(Arc&lt;<span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>DirEntry) -&gt; bool + Send + Sync + <span class="lifetime">'static</span>&gt;);
 
 <span class="kw">impl </span>std::fmt::Debug <span class="kw">for </span>WalkBuilder {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; std::fmt::Result {
-        f.debug_struct(<span class="string">&quot;WalkBuilder&quot;</span>)
-            .field(<span class="string">&quot;paths&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.paths)
-            .field(<span class="string">&quot;ig_builder&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.ig_builder)
-            .field(<span class="string">&quot;max_depth&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.max_depth)
-            .field(<span class="string">&quot;max_filesize&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.max_filesize)
-            .field(<span class="string">&quot;follow_links&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.follow_links)
-            .field(<span class="string">&quot;threads&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.threads)
-            .field(<span class="string">&quot;skip&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.skip)
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; std::fmt::Result {
+        f.debug_struct(<span class="string">"WalkBuilder"</span>)
+            .field(<span class="string">"paths"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.paths)
+            .field(<span class="string">"ig_builder"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.ig_builder)
+            .field(<span class="string">"max_depth"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.max_depth)
+            .field(<span class="string">"max_filesize"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.max_filesize)
+            .field(<span class="string">"follow_links"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.follow_links)
+            .field(<span class="string">"threads"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.threads)
+            .field(<span class="string">"skip"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.skip)
             .finish()
     }
 }
@@ -2857,7 +2858,7 @@
             </span>.paths
             .iter()
             .map(<span class="kw">move </span>|p| {
-                <span class="kw">if </span>p == Path::new(<span class="string">&quot;-&quot;</span>) {
+                <span class="kw">if </span>p == Path::new(<span class="string">"-"</span>) {
                     (p.to_path_buf(), <span class="prelude-val">None</span>)
                 } <span class="kw">else </span>{
                     <span class="kw">let </span><span class="kw-2">mut </span>wd = WalkDir::new(p);
@@ -2899,9 +2900,9 @@
 
     <span class="doccomment">/// Build a new `WalkParallel` iterator.
     ///
-    /// Note that this *doesn&#39;t* return something that implements `Iterator`.
+    /// Note that this *doesn't* return something that implements `Iterator`.
     /// Instead, the returned value must be run with a closure. e.g.,
-    /// `builder.build_parallel().run(|| |path| println!(&quot;{:?}&quot;, path))`.
+    /// `builder.build_parallel().run(|| |path| println!("{:?}", path))`.
     </span><span class="kw">pub fn </span>build_parallel(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; WalkParallel {
         WalkParallel {
             paths: <span class="self">self</span>.paths.clone().into_iter(),
@@ -2966,7 +2967,7 @@
     /// example, if an ignore file contains an invalid glob, all other globs
     /// are still applied.
     </span><span class="kw">pub fn </span>add_ignore&lt;P: AsRef&lt;Path&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, path: P) -&gt; <span class="prelude-ty">Option</span>&lt;Error&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>builder = GitignoreBuilder::new(<span class="string">&quot;&quot;</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>builder = GitignoreBuilder::new(<span class="string">""</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>errs = PartialErrorBuilder::default();
         errs.maybe_push(builder.add(path));
         <span class="kw">match </span>builder.build() {
@@ -3068,9 +3069,9 @@
     </span>}
 
     <span class="doccomment">/// Enables reading a global gitignore file, whose path is specified in
-    /// git&#39;s `core.excludesFile` config option.
+    /// git's `core.excludesFile` config option.
     ///
-    /// Git&#39;s config file location is `$HOME/.gitconfig`. If `$HOME/.gitconfig`
+    /// Git's config file location is `$HOME/.gitconfig`. If `$HOME/.gitconfig`
     /// does not exist or does not specify `core.excludesFile`, then
     /// `$XDG_CONFIG_HOME/git/ignore` is read. If `$XDG_CONFIG_HOME` is not
     /// set or is empty, then `$HOME/.config/git/ignore` is used instead.
@@ -3137,7 +3138,7 @@
     /// Note that this is not used in the parallel iterator.
     </span><span class="kw">pub fn </span>sort_by_file_path&lt;F&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cmp: F) -&gt; <span class="kw-2">&amp;mut </span>WalkBuilder
     <span class="kw">where
-        </span>F: Fn(<span class="kw-2">&amp;</span>Path, <span class="kw-2">&amp;</span>Path) -&gt; Ordering + Send + Sync + <span class="lifetime">&#39;static</span>,
+        </span>F: Fn(<span class="kw-2">&amp;</span>Path, <span class="kw-2">&amp;</span>Path) -&gt; Ordering + Send + Sync + <span class="lifetime">'static</span>,
     {
         <span class="self">self</span>.sorter = <span class="prelude-val">Some</span>(Sorter::ByPath(Arc::new(cmp)));
         <span class="self">self
@@ -3156,7 +3157,7 @@
     /// Note that this is not used in the parallel iterator.
     </span><span class="kw">pub fn </span>sort_by_file_name&lt;F&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cmp: F) -&gt; <span class="kw-2">&amp;mut </span>WalkBuilder
     <span class="kw">where
-        </span>F: Fn(<span class="kw-2">&amp;</span>OsStr, <span class="kw-2">&amp;</span>OsStr) -&gt; Ordering + Send + Sync + <span class="lifetime">&#39;static</span>,
+        </span>F: Fn(<span class="kw-2">&amp;</span>OsStr, <span class="kw-2">&amp;</span>OsStr) -&gt; Ordering + Send + Sync + <span class="lifetime">'static</span>,
     {
         <span class="self">self</span>.sorter = <span class="prelude-val">Some</span>(Sorter::ByName(Arc::new(cmp)));
         <span class="self">self
@@ -3206,7 +3207,7 @@
     /// predicate will still be yielded.
     </span><span class="kw">pub fn </span>filter_entry&lt;P&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, filter: P) -&gt; <span class="kw-2">&amp;mut </span>WalkBuilder
     <span class="kw">where
-        </span>P: Fn(<span class="kw-2">&amp;</span>DirEntry) -&gt; bool + Send + Sync + <span class="lifetime">&#39;static</span>,
+        </span>P: Fn(<span class="kw-2">&amp;</span>DirEntry) -&gt; bool + Send + Sync + <span class="lifetime">'static</span>,
     {
         <span class="self">self</span>.filter = <span class="prelude-val">Some</span>(Filter(Arc::new(filter)));
         <span class="self">self
@@ -3322,8 +3323,8 @@
                     <span class="kw">if </span>should_skip {
                         <span class="self">self</span>.it.as_mut().unwrap().it.skip_current_dir();
                         <span class="comment">// Still need to push this on the stack because
-                        // we&#39;ll get a WalkEvent::Exit event for this dir.
-                        // We don&#39;t care if it errors though.
+                        // we'll get a WalkEvent::Exit event for this dir.
+                        // We don't care if it errors though.
                         </span><span class="kw">let </span>(igtmp, <span class="kw">_</span>) = <span class="self">self</span>.ig.add_child(ent.path());
                         <span class="self">self</span>.ig = igtmp;
                         <span class="kw">continue</span>;
@@ -3353,7 +3354,7 @@
 
 <span class="doccomment">/// WalkEventIter transforms a WalkDir iterator into an iterator that more
 /// accurately describes the directory tree. Namely, it emits events that are
-/// one of three types: directory, file or &quot;exit.&quot; An &quot;exit&quot; event means that
+/// one of three types: directory, file or "exit." An "exit" event means that
 /// the entire contents of a directory have been enumerated.
 </span><span class="kw">struct </span>WalkEventIter {
     depth: usize,
@@ -3413,7 +3414,7 @@
 </span><span class="kw">pub enum </span>WalkState {
     <span class="doccomment">/// Continue walking as normal.
     </span>Continue,
-    <span class="doccomment">/// If the directory entry given is a directory, don&#39;t descend into it.
+    <span class="doccomment">/// If the directory entry given is a directory, don't descend into it.
     /// In all other cases, this has no effect.
     </span>Skip,
     <span class="doccomment">/// Quit the entire iterator as soon as possible.
@@ -3438,15 +3439,15 @@
 /// The builder will be called for each thread started by `WalkParallel`. The
 /// visitor returned from each builder is then called for every directory
 /// entry.
-</span><span class="kw">pub trait </span>ParallelVisitorBuilder&lt;<span class="lifetime">&#39;s</span>&gt; {
+</span><span class="kw">pub trait </span>ParallelVisitorBuilder&lt;<span class="lifetime">'s</span>&gt; {
     <span class="doccomment">/// Create per-thread `ParallelVisitor`s for `WalkParallel`.
-    </span><span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Box&lt;<span class="kw">dyn </span>ParallelVisitor + <span class="lifetime">&#39;s</span>&gt;;
+    </span><span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Box&lt;<span class="kw">dyn </span>ParallelVisitor + <span class="lifetime">'s</span>&gt;;
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;s</span>, P: ParallelVisitorBuilder&lt;<span class="lifetime">&#39;s</span>&gt;&gt; ParallelVisitorBuilder&lt;<span class="lifetime">&#39;s</span>&gt;
-    <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>P
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'s</span>, P: ParallelVisitorBuilder&lt;<span class="lifetime">'s</span>&gt;&gt; ParallelVisitorBuilder&lt;<span class="lifetime">'s</span>&gt;
+    <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>P
 {
-    <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Box&lt;<span class="kw">dyn </span>ParallelVisitor + <span class="lifetime">&#39;s</span>&gt; {
+    <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Box&lt;<span class="kw">dyn </span>ParallelVisitor + <span class="lifetime">'s</span>&gt; {
         (<span class="kw-2">**</span><span class="self">self</span>).build()
     }
 }
@@ -3466,23 +3467,23 @@
     builder: F,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;s</span>, F: FnMut() -&gt; FnVisitor&lt;<span class="lifetime">&#39;s</span>&gt;&gt; ParallelVisitorBuilder&lt;<span class="lifetime">&#39;s</span>&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'s</span>, F: FnMut() -&gt; FnVisitor&lt;<span class="lifetime">'s</span>&gt;&gt; ParallelVisitorBuilder&lt;<span class="lifetime">'s</span>&gt;
     <span class="kw">for </span>FnBuilder&lt;F&gt;
 {
-    <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Box&lt;<span class="kw">dyn </span>ParallelVisitor + <span class="lifetime">&#39;s</span>&gt; {
+    <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Box&lt;<span class="kw">dyn </span>ParallelVisitor + <span class="lifetime">'s</span>&gt; {
         <span class="kw">let </span>visitor = (<span class="self">self</span>.builder)();
         Box::new(FnVisitorImp { visitor })
     }
 }
 
-<span class="kw">type </span>FnVisitor&lt;<span class="lifetime">&#39;s</span>&gt; =
-    Box&lt;<span class="kw">dyn </span>FnMut(<span class="prelude-ty">Result</span>&lt;DirEntry, Error&gt;) -&gt; WalkState + Send + <span class="lifetime">&#39;s</span>&gt;;
+<span class="kw">type </span>FnVisitor&lt;<span class="lifetime">'s</span>&gt; =
+    Box&lt;<span class="kw">dyn </span>FnMut(<span class="prelude-ty">Result</span>&lt;DirEntry, Error&gt;) -&gt; WalkState + Send + <span class="lifetime">'s</span>&gt;;
 
-<span class="kw">struct </span>FnVisitorImp&lt;<span class="lifetime">&#39;s</span>&gt; {
-    visitor: FnVisitor&lt;<span class="lifetime">&#39;s</span>&gt;,
+<span class="kw">struct </span>FnVisitorImp&lt;<span class="lifetime">'s</span>&gt; {
+    visitor: FnVisitor&lt;<span class="lifetime">'s</span>&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;s</span>&gt; ParallelVisitor <span class="kw">for </span>FnVisitorImp&lt;<span class="lifetime">&#39;s</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'s</span>&gt; ParallelVisitor <span class="kw">for </span>FnVisitorImp&lt;<span class="lifetime">'s</span>&gt; {
     <span class="kw">fn </span>visit(<span class="kw-2">&amp;mut </span><span class="self">self</span>, entry: <span class="prelude-ty">Result</span>&lt;DirEntry, Error&gt;) -&gt; WalkState {
         (<span class="self">self</span>.visitor)(entry)
     }
@@ -3512,9 +3513,9 @@
     <span class="doccomment">/// Execute the parallel recursive directory iterator. `mkf` is called
     /// for each thread used for iteration. The function produced by `mkf`
     /// is then in turn called for each visited file path.
-    </span><span class="kw">pub fn </span>run&lt;<span class="lifetime">&#39;s</span>, F&gt;(<span class="self">self</span>, mkf: F)
+    </span><span class="kw">pub fn </span>run&lt;<span class="lifetime">'s</span>, F&gt;(<span class="self">self</span>, mkf: F)
     <span class="kw">where
-        </span>F: FnMut() -&gt; FnVisitor&lt;<span class="lifetime">&#39;s</span>&gt;,
+        </span>F: FnMut() -&gt; FnVisitor&lt;<span class="lifetime">'s</span>&gt;,
     {
         <span class="self">self</span>.visit(<span class="kw-2">&amp;mut </span>FnBuilder { builder: mkf })
     }
@@ -3536,7 +3537,7 @@
     /// visitor runs on only one thread, this build-up can be done without
     /// synchronization. Then, once traversal is complete, all of the results
     /// can be merged together into a single data structure.
-    </span><span class="kw">pub fn </span>visit(<span class="kw-2">mut </span><span class="self">self</span>, builder: <span class="kw-2">&amp;mut </span><span class="kw">dyn </span>ParallelVisitorBuilder&lt;<span class="lifetime">&#39;_</span>&gt;) {
+    </span><span class="kw">pub fn </span>visit(<span class="kw-2">mut </span><span class="self">self</span>, builder: <span class="kw-2">&amp;mut </span><span class="kw">dyn </span>ParallelVisitorBuilder&lt;<span class="lifetime">'_</span>&gt;) {
         <span class="kw">let </span>threads = <span class="self">self</span>.threads();
         <span class="kw">let </span><span class="kw-2">mut </span>stack = <span class="macro">vec!</span>[];
         {
@@ -3547,7 +3548,7 @@
             // that we only send directories. For files, we send to them the
             // callback directly.
             </span><span class="kw">for </span>path <span class="kw">in </span>paths {
-                <span class="kw">let </span>(dent, root_device) = <span class="kw">if </span>path == Path::new(<span class="string">&quot;-&quot;</span>) {
+                <span class="kw">let </span>(dent, root_device) = <span class="kw">if </span>path == Path::new(<span class="string">"-"</span>) {
                     (DirEntry::new_stdin(), <span class="prelude-val">None</span>)
                 } <span class="kw">else </span>{
                     <span class="kw">let </span>root_device = <span class="kw">if </span>!<span class="self">self</span>.same_file_system {
@@ -3582,7 +3583,7 @@
                     root_device,
                 }));
             }
-            <span class="comment">// ... but there&#39;s no need to start workers if we don&#39;t need them.
+            <span class="comment">// ... but there's no need to start workers if we don't need them.
             </span><span class="kw">if </span>stack.is_empty() {
                 <span class="kw">return</span>;
             }
@@ -3639,7 +3640,7 @@
 </span><span class="kw">struct </span>Work {
     <span class="doccomment">/// The directory entry.
     </span>dent: DirEntry,
-    <span class="doccomment">/// Any ignore matchers that have been built for this directory&#39;s parents.
+    <span class="doccomment">/// Any ignore matchers that have been built for this directory's parents.
     </span>ignore: Ignore,
     <span class="doccomment">/// The root device number. When present, only files with the same device
     /// number should be considered.
@@ -3678,7 +3679,7 @@
     /// If there was a problem with reading the directory contents, then
     /// an error is returned. If there was a problem reading the ignore
     /// rules for this directory, then the error is attached to this
-    /// work item&#39;s directory entry.
+    /// work item's directory entry.
     </span><span class="kw">fn </span>read_dir(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;fs::ReadDir, Error&gt; {
         <span class="kw">let </span>readdir = <span class="kw">match </span>fs::read_dir(<span class="self">self</span>.dent.path()) {
             <span class="prelude-val">Ok</span>(readdir) =&gt; readdir,
@@ -3699,7 +3700,7 @@
 <span class="doccomment">/// A work-stealing stack.
 </span><span class="attr">#[derive(Debug)]
 </span><span class="kw">struct </span>Stack {
-    <span class="doccomment">/// This thread&#39;s index.
+    <span class="doccomment">/// This thread's index.
     </span>index: usize,
     <span class="doccomment">/// The thread-local stack.
     </span>deque: Deque&lt;Message&gt;,
@@ -3752,7 +3753,7 @@
         <span class="comment">// For fairness, try to steal from index + 1, index + 2, ... len - 1,
         // then wrap around to 0, 1, ... index - 1.
         </span><span class="kw">let </span>(left, right) = <span class="self">self</span>.stealers.split_at(<span class="self">self</span>.index);
-        <span class="comment">// Don&#39;t steal from ourselves
+        <span class="comment">// Don't steal from ourselves
         </span><span class="kw">let </span>right = <span class="kw-2">&amp;</span>right[<span class="number">1</span>..];
 
         right
@@ -3764,12 +3765,12 @@
 }
 
 <span class="doccomment">/// A worker is responsible for descending into directories, updating the
-/// ignore matchers, producing new work and invoking the caller&#39;s callback.
+/// ignore matchers, producing new work and invoking the caller's callback.
 ///
 /// Note that a worker is *both* a producer and a consumer.
-</span><span class="kw">struct </span>Worker&lt;<span class="lifetime">&#39;s</span>&gt; {
-    <span class="doccomment">/// The caller&#39;s callback.
-    </span>visitor: Box&lt;<span class="kw">dyn </span>ParallelVisitor + <span class="lifetime">&#39;s</span>&gt;,
+</span><span class="kw">struct </span>Worker&lt;<span class="lifetime">'s</span>&gt; {
+    <span class="doccomment">/// The caller's callback.
+    </span>visitor: Box&lt;<span class="kw">dyn </span>ParallelVisitor + <span class="lifetime">'s</span>&gt;,
     <span class="doccomment">/// A work-stealing stack of work to do.
     ///
     /// We use a stack instead of a channel because a stack lets us visit
@@ -3778,8 +3779,8 @@
     /// matchers in memory lower.
     </span>stack: Stack,
     <span class="doccomment">/// Whether all workers should terminate at the next opportunity. Note
-    /// that we need this because we don&#39;t want other `Work` to be done after
-    /// we quit. We wouldn&#39;t need this if have a priority channel.
+    /// that we need this because we don't want other `Work` to be done after
+    /// we quit. We wouldn't need this if have a priority channel.
     </span>quit_now: Arc&lt;AtomicBool&gt;,
     <span class="doccomment">/// The number of currently active workers.
     </span>active_workers: Arc&lt;AtomicUsize&gt;,
@@ -3792,7 +3793,7 @@
     <span class="doccomment">/// Whether to follow symbolic links or not. When this is enabled, loop
     /// detection is performed.
     </span>follow_links: bool,
-    <span class="doccomment">/// A file handle to skip, currently is either `None` or stdout, if it&#39;s
+    <span class="doccomment">/// A file handle to skip, currently is either `None` or stdout, if it's
     /// a file and it has been requested to skip files identical to stdout.
     </span>skip: <span class="prelude-ty">Option</span>&lt;Arc&lt;Handle&gt;&gt;,
     <span class="doccomment">/// A predicate applied to dir entries. If true, the entry and all
@@ -3800,10 +3801,10 @@
     </span>filter: <span class="prelude-ty">Option</span>&lt;Filter&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;s</span>&gt; Worker&lt;<span class="lifetime">&#39;s</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'s</span>&gt; Worker&lt;<span class="lifetime">'s</span>&gt; {
     <span class="doccomment">/// Runs this worker until there is no more work left to do.
     ///
-    /// The worker will call the caller&#39;s callback for all entries that aren&#39;t
+    /// The worker will call the caller's callback for all entries that aren't
     /// skipped by the ignore matcher.
     </span><span class="kw">fn </span>run(<span class="kw-2">mut </span><span class="self">self</span>) {
         <span class="kw">while let </span><span class="prelude-val">Some</span>(work) = <span class="self">self</span>.get_work() {
@@ -3815,7 +3816,7 @@
 
     <span class="kw">fn </span>run_one(<span class="kw-2">&amp;mut </span><span class="self">self</span>, <span class="kw-2">mut </span>work: Work) -&gt; WalkState {
         <span class="comment">// If the work is not a directory, then we can just execute the
-        // caller&#39;s callback immediately and move on.
+        // caller's callback immediately and move on.
         </span><span class="kw">if </span>work.is_symlink() || !work.is_dir() {
             <span class="kw">return </span><span class="self">self</span>.visitor.visit(<span class="prelude-val">Ok</span>(work.dent));
         }
@@ -3890,7 +3891,7 @@
     /// of the callback happens in `run_one`.)
     ///
     /// If an error occurs while reading the entry, then it is sent to the
-    /// caller&#39;s callback.
+    /// caller's callback.
     ///
     /// `ig` is the `Ignore` matcher for the parent directory. `depth` should
     /// be the depth of this entry. `result` should be the item yielded by
@@ -3932,7 +3933,7 @@
             }
         }
         <span class="comment">// N.B. See analogous call in the single-threaded implementation about
-        // why it&#39;s important for this to come before the checks below.
+        // why it's important for this to come before the checks below.
         </span><span class="kw">if </span>should_skip_entry(ig, <span class="kw-2">&amp;</span>dent) {
             <span class="kw">return </span>WalkState::Continue;
         }
@@ -3996,7 +3997,7 @@
                         // is currently within the critical section between the
                         // acquire in deactivate_worker() and the release in
                         // activate_worker() below.  For this to happen, every
-                        // worker&#39;s local deque must be simultaneously empty,
+                        // worker's local deque must be simultaneously empty,
                         // meaning there is no more work left at all.
                         </span><span class="self">self</span>.send_quit();
                         <span class="kw">return </span><span class="prelude-val">None</span>;
@@ -4008,7 +4009,7 @@
                             value = <span class="prelude-val">Some</span>(v);
                             <span class="kw">break</span>;
                         }
-                        <span class="comment">// Our stack isn&#39;t blocking. Instead of burning the
+                        <span class="comment">// Our stack isn't blocking. Instead of burning the
                         // CPU waiting, we let the thread sleep for a bit. In
                         // general, this tends to only occur once the search is
                         // approaching termination.
@@ -4093,7 +4094,7 @@
 
     <span class="kw">if let </span><span class="prelude-val">Some</span>(fs) = filesize {
         <span class="kw">if </span>fs &gt; max_filesize {
-            <span class="macro">log::debug!</span>(<span class="string">&quot;ignoring {}: {} bytes&quot;</span>, path.display(), fs);
+            <span class="macro">log::debug!</span>(<span class="string">"ignoring {}: {} bytes"</span>, path.display(), fs);
             <span class="bool-val">true
         </span>} <span class="kw">else </span>{
             <span class="bool-val">false
@@ -4106,10 +4107,10 @@
 <span class="kw">fn </span>should_skip_entry(ig: <span class="kw-2">&amp;</span>Ignore, dent: <span class="kw-2">&amp;</span>DirEntry) -&gt; bool {
     <span class="kw">let </span>m = ig.matched_dir_entry(dent);
     <span class="kw">if </span>m.is_ignore() {
-        <span class="macro">log::debug!</span>(<span class="string">&quot;ignoring {}: {:?}&quot;</span>, dent.path().display(), m);
+        <span class="macro">log::debug!</span>(<span class="string">"ignoring {}: {:?}"</span>, dent.path().display(), m);
         <span class="bool-val">true
     </span>} <span class="kw">else if </span>m.is_whitelist() {
-        <span class="macro">log::debug!</span>(<span class="string">&quot;whitelisting {}: {:?}&quot;</span>, dent.path().display(), m);
+        <span class="macro">log::debug!</span>(<span class="string">"whitelisting {}: {:?}"</span>, dent.path().display(), m);
         <span class="bool-val">false
     </span>} <span class="kw">else </span>{
         <span class="bool-val">false
@@ -4152,7 +4153,7 @@
         <span class="bool-val">false
     </span>}
 
-    <span class="comment">// If we know for sure that these two things aren&#39;t equal, then avoid
+    <span class="comment">// If we know for sure that these two things aren't equal, then avoid
     // the costly extra stat call to determine equality.
     </span><span class="kw">if </span>dent.is_stdin() || never_equal(dent, handle) {
         <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="bool-val">false</span>);
@@ -4164,11 +4165,11 @@
 
 <span class="doccomment">/// Returns true if the given walkdir entry corresponds to a directory.
 ///
-/// This is normally just `dent.file_type().is_dir()`, but when we aren&#39;t
+/// This is normally just `dent.file_type().is_dir()`, but when we aren't
 /// following symlinks, the root directory entry may be a symlink to a
 /// directory that we *do* follow---by virtue of it being specified by the user
 /// explicitly. In that case, we need to follow the symlink and query whether
-/// it&#39;s a directory or not. But we only do this for root entries to avoid an
+/// it's a directory or not. But we only do this for root entries to avoid an
 /// additional stat check in most cases.
 </span><span class="kw">fn </span>walkdir_is_dir(dent: <span class="kw-2">&amp;</span>walkdir::DirEntry) -&gt; bool {
     <span class="kw">if </span>dent.file_type().is_dir() {
@@ -4207,7 +4208,7 @@
 </span><span class="kw">fn </span>device_num&lt;P: AsRef&lt;Path&gt;&gt;(<span class="kw">_</span>: P) -&gt; io::Result&lt;u64&gt; {
     <span class="prelude-val">Err</span>(io::Error::new(
         io::ErrorKind::Other,
-        <span class="string">&quot;walkdir: same_file_system option not supported on this platform&quot;</span>,
+        <span class="string">"walkdir: same_file_system option not supported on this platform"</span>,
     ))
 }
 
@@ -4244,7 +4245,7 @@
 
     <span class="kw">fn </span>normal_path(unix: <span class="kw-2">&amp;</span>str) -&gt; String {
         <span class="kw">if </span><span class="macro">cfg!</span>(windows) {
-            unix.replace(<span class="string">&quot;\\&quot;</span>, <span class="string">&quot;/&quot;</span>)
+            unix.replace(<span class="string">"\\"</span>, <span class="string">"/"</span>)
         } <span class="kw">else </span>{
             unix.to_string()
         }
@@ -4311,52 +4312,52 @@
 
     <span class="kw">fn </span>assert_paths(prefix: <span class="kw-2">&amp;</span>Path, builder: <span class="kw-2">&amp;</span>WalkBuilder, expected: <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>str]) {
         <span class="kw">let </span>got = walk_collect(prefix, builder);
-        <span class="macro">assert_eq!</span>(got, mkpaths(expected), <span class="string">&quot;single threaded&quot;</span>);
+        <span class="macro">assert_eq!</span>(got, mkpaths(expected), <span class="string">"single threaded"</span>);
         <span class="kw">let </span>got = walk_collect_parallel(prefix, builder);
-        <span class="macro">assert_eq!</span>(got, mkpaths(expected), <span class="string">&quot;parallel&quot;</span>);
+        <span class="macro">assert_eq!</span>(got, mkpaths(expected), <span class="string">"parallel"</span>);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>no_ignores() {
         <span class="kw">let </span>td = tmpdir();
-        mkdirp(td.path().join(<span class="string">&quot;a/b/c&quot;</span>));
-        mkdirp(td.path().join(<span class="string">&quot;x/y&quot;</span>));
-        wfile(td.path().join(<span class="string">&quot;a/b/foo&quot;</span>), <span class="string">&quot;&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;x/y/foo&quot;</span>), <span class="string">&quot;&quot;</span>);
+        mkdirp(td.path().join(<span class="string">"a/b/c"</span>));
+        mkdirp(td.path().join(<span class="string">"x/y"</span>));
+        wfile(td.path().join(<span class="string">"a/b/foo"</span>), <span class="string">""</span>);
+        wfile(td.path().join(<span class="string">"x/y/foo"</span>), <span class="string">""</span>);
 
         assert_paths(
             td.path(),
             <span class="kw-2">&amp;</span>WalkBuilder::new(td.path()),
-            <span class="kw-2">&amp;</span>[<span class="string">&quot;x&quot;</span>, <span class="string">&quot;x/y&quot;</span>, <span class="string">&quot;x/y/foo&quot;</span>, <span class="string">&quot;a&quot;</span>, <span class="string">&quot;a/b&quot;</span>, <span class="string">&quot;a/b/foo&quot;</span>, <span class="string">&quot;a/b/c&quot;</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">"x"</span>, <span class="string">"x/y"</span>, <span class="string">"x/y/foo"</span>, <span class="string">"a"</span>, <span class="string">"a/b"</span>, <span class="string">"a/b/foo"</span>, <span class="string">"a/b/c"</span>],
         );
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>custom_ignore() {
         <span class="kw">let </span>td = tmpdir();
-        <span class="kw">let </span>custom_ignore = <span class="string">&quot;.customignore&quot;</span>;
-        mkdirp(td.path().join(<span class="string">&quot;a&quot;</span>));
-        wfile(td.path().join(custom_ignore), <span class="string">&quot;foo&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;foo&quot;</span>), <span class="string">&quot;&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;a/foo&quot;</span>), <span class="string">&quot;&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;bar&quot;</span>), <span class="string">&quot;&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;a/bar&quot;</span>), <span class="string">&quot;&quot;</span>);
+        <span class="kw">let </span>custom_ignore = <span class="string">".customignore"</span>;
+        mkdirp(td.path().join(<span class="string">"a"</span>));
+        wfile(td.path().join(custom_ignore), <span class="string">"foo"</span>);
+        wfile(td.path().join(<span class="string">"foo"</span>), <span class="string">""</span>);
+        wfile(td.path().join(<span class="string">"a/foo"</span>), <span class="string">""</span>);
+        wfile(td.path().join(<span class="string">"bar"</span>), <span class="string">""</span>);
+        wfile(td.path().join(<span class="string">"a/bar"</span>), <span class="string">""</span>);
 
         <span class="kw">let </span><span class="kw-2">mut </span>builder = WalkBuilder::new(td.path());
         builder.add_custom_ignore_filename(<span class="kw-2">&amp;</span>custom_ignore);
-        assert_paths(td.path(), <span class="kw-2">&amp;</span>builder, <span class="kw-2">&amp;</span>[<span class="string">&quot;bar&quot;</span>, <span class="string">&quot;a&quot;</span>, <span class="string">&quot;a/bar&quot;</span>]);
+        assert_paths(td.path(), <span class="kw-2">&amp;</span>builder, <span class="kw-2">&amp;</span>[<span class="string">"bar"</span>, <span class="string">"a"</span>, <span class="string">"a/bar"</span>]);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>custom_ignore_exclusive_use() {
         <span class="kw">let </span>td = tmpdir();
-        <span class="kw">let </span>custom_ignore = <span class="string">&quot;.customignore&quot;</span>;
-        mkdirp(td.path().join(<span class="string">&quot;a&quot;</span>));
-        wfile(td.path().join(custom_ignore), <span class="string">&quot;foo&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;foo&quot;</span>), <span class="string">&quot;&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;a/foo&quot;</span>), <span class="string">&quot;&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;bar&quot;</span>), <span class="string">&quot;&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;a/bar&quot;</span>), <span class="string">&quot;&quot;</span>);
+        <span class="kw">let </span>custom_ignore = <span class="string">".customignore"</span>;
+        mkdirp(td.path().join(<span class="string">"a"</span>));
+        wfile(td.path().join(custom_ignore), <span class="string">"foo"</span>);
+        wfile(td.path().join(<span class="string">"foo"</span>), <span class="string">""</span>);
+        wfile(td.path().join(<span class="string">"a/foo"</span>), <span class="string">""</span>);
+        wfile(td.path().join(<span class="string">"bar"</span>), <span class="string">""</span>);
+        wfile(td.path().join(<span class="string">"a/bar"</span>), <span class="string">""</span>);
 
         <span class="kw">let </span><span class="kw-2">mut </span>builder = WalkBuilder::new(td.path());
         builder.ignore(<span class="bool-val">false</span>);
@@ -4364,53 +4365,53 @@
         builder.git_global(<span class="bool-val">false</span>);
         builder.git_exclude(<span class="bool-val">false</span>);
         builder.add_custom_ignore_filename(<span class="kw-2">&amp;</span>custom_ignore);
-        assert_paths(td.path(), <span class="kw-2">&amp;</span>builder, <span class="kw-2">&amp;</span>[<span class="string">&quot;bar&quot;</span>, <span class="string">&quot;a&quot;</span>, <span class="string">&quot;a/bar&quot;</span>]);
+        assert_paths(td.path(), <span class="kw-2">&amp;</span>builder, <span class="kw-2">&amp;</span>[<span class="string">"bar"</span>, <span class="string">"a"</span>, <span class="string">"a/bar"</span>]);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>gitignore() {
         <span class="kw">let </span>td = tmpdir();
-        mkdirp(td.path().join(<span class="string">&quot;.git&quot;</span>));
-        mkdirp(td.path().join(<span class="string">&quot;a&quot;</span>));
-        wfile(td.path().join(<span class="string">&quot;.gitignore&quot;</span>), <span class="string">&quot;foo&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;foo&quot;</span>), <span class="string">&quot;&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;a/foo&quot;</span>), <span class="string">&quot;&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;bar&quot;</span>), <span class="string">&quot;&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;a/bar&quot;</span>), <span class="string">&quot;&quot;</span>);
+        mkdirp(td.path().join(<span class="string">".git"</span>));
+        mkdirp(td.path().join(<span class="string">"a"</span>));
+        wfile(td.path().join(<span class="string">".gitignore"</span>), <span class="string">"foo"</span>);
+        wfile(td.path().join(<span class="string">"foo"</span>), <span class="string">""</span>);
+        wfile(td.path().join(<span class="string">"a/foo"</span>), <span class="string">""</span>);
+        wfile(td.path().join(<span class="string">"bar"</span>), <span class="string">""</span>);
+        wfile(td.path().join(<span class="string">"a/bar"</span>), <span class="string">""</span>);
 
         assert_paths(
             td.path(),
             <span class="kw-2">&amp;</span>WalkBuilder::new(td.path()),
-            <span class="kw-2">&amp;</span>[<span class="string">&quot;bar&quot;</span>, <span class="string">&quot;a&quot;</span>, <span class="string">&quot;a/bar&quot;</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">"bar"</span>, <span class="string">"a"</span>, <span class="string">"a/bar"</span>],
         );
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>explicit_ignore() {
         <span class="kw">let </span>td = tmpdir();
-        <span class="kw">let </span>igpath = td.path().join(<span class="string">&quot;.not-an-ignore&quot;</span>);
-        mkdirp(td.path().join(<span class="string">&quot;a&quot;</span>));
-        wfile(<span class="kw-2">&amp;</span>igpath, <span class="string">&quot;foo&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;foo&quot;</span>), <span class="string">&quot;&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;a/foo&quot;</span>), <span class="string">&quot;&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;bar&quot;</span>), <span class="string">&quot;&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;a/bar&quot;</span>), <span class="string">&quot;&quot;</span>);
+        <span class="kw">let </span>igpath = td.path().join(<span class="string">".not-an-ignore"</span>);
+        mkdirp(td.path().join(<span class="string">"a"</span>));
+        wfile(<span class="kw-2">&amp;</span>igpath, <span class="string">"foo"</span>);
+        wfile(td.path().join(<span class="string">"foo"</span>), <span class="string">""</span>);
+        wfile(td.path().join(<span class="string">"a/foo"</span>), <span class="string">""</span>);
+        wfile(td.path().join(<span class="string">"bar"</span>), <span class="string">""</span>);
+        wfile(td.path().join(<span class="string">"a/bar"</span>), <span class="string">""</span>);
 
         <span class="kw">let </span><span class="kw-2">mut </span>builder = WalkBuilder::new(td.path());
         <span class="macro">assert!</span>(builder.add_ignore(<span class="kw-2">&amp;</span>igpath).is_none());
-        assert_paths(td.path(), <span class="kw-2">&amp;</span>builder, <span class="kw-2">&amp;</span>[<span class="string">&quot;bar&quot;</span>, <span class="string">&quot;a&quot;</span>, <span class="string">&quot;a/bar&quot;</span>]);
+        assert_paths(td.path(), <span class="kw-2">&amp;</span>builder, <span class="kw-2">&amp;</span>[<span class="string">"bar"</span>, <span class="string">"a"</span>, <span class="string">"a/bar"</span>]);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>explicit_ignore_exclusive_use() {
         <span class="kw">let </span>td = tmpdir();
-        <span class="kw">let </span>igpath = td.path().join(<span class="string">&quot;.not-an-ignore&quot;</span>);
-        mkdirp(td.path().join(<span class="string">&quot;a&quot;</span>));
-        wfile(<span class="kw-2">&amp;</span>igpath, <span class="string">&quot;foo&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;foo&quot;</span>), <span class="string">&quot;&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;a/foo&quot;</span>), <span class="string">&quot;&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;bar&quot;</span>), <span class="string">&quot;&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;a/bar&quot;</span>), <span class="string">&quot;&quot;</span>);
+        <span class="kw">let </span>igpath = td.path().join(<span class="string">".not-an-ignore"</span>);
+        mkdirp(td.path().join(<span class="string">"a"</span>));
+        wfile(<span class="kw-2">&amp;</span>igpath, <span class="string">"foo"</span>);
+        wfile(td.path().join(<span class="string">"foo"</span>), <span class="string">""</span>);
+        wfile(td.path().join(<span class="string">"a/foo"</span>), <span class="string">""</span>);
+        wfile(td.path().join(<span class="string">"bar"</span>), <span class="string">""</span>);
+        wfile(td.path().join(<span class="string">"a/bar"</span>), <span class="string">""</span>);
 
         <span class="kw">let </span><span class="kw-2">mut </span>builder = WalkBuilder::new(td.path());
         builder.standard_filters(<span class="bool-val">false</span>);
@@ -4418,78 +4419,78 @@
         assert_paths(
             td.path(),
             <span class="kw-2">&amp;</span>builder,
-            <span class="kw-2">&amp;</span>[<span class="string">&quot;.not-an-ignore&quot;</span>, <span class="string">&quot;bar&quot;</span>, <span class="string">&quot;a&quot;</span>, <span class="string">&quot;a/bar&quot;</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">".not-an-ignore"</span>, <span class="string">"bar"</span>, <span class="string">"a"</span>, <span class="string">"a/bar"</span>],
         );
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>gitignore_parent() {
         <span class="kw">let </span>td = tmpdir();
-        mkdirp(td.path().join(<span class="string">&quot;.git&quot;</span>));
-        mkdirp(td.path().join(<span class="string">&quot;a&quot;</span>));
-        wfile(td.path().join(<span class="string">&quot;.gitignore&quot;</span>), <span class="string">&quot;foo&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;a/foo&quot;</span>), <span class="string">&quot;&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;a/bar&quot;</span>), <span class="string">&quot;&quot;</span>);
+        mkdirp(td.path().join(<span class="string">".git"</span>));
+        mkdirp(td.path().join(<span class="string">"a"</span>));
+        wfile(td.path().join(<span class="string">".gitignore"</span>), <span class="string">"foo"</span>);
+        wfile(td.path().join(<span class="string">"a/foo"</span>), <span class="string">""</span>);
+        wfile(td.path().join(<span class="string">"a/bar"</span>), <span class="string">""</span>);
 
-        <span class="kw">let </span>root = td.path().join(<span class="string">&quot;a&quot;</span>);
-        assert_paths(<span class="kw-2">&amp;</span>root, <span class="kw-2">&amp;</span>WalkBuilder::new(<span class="kw-2">&amp;</span>root), <span class="kw-2">&amp;</span>[<span class="string">&quot;bar&quot;</span>]);
+        <span class="kw">let </span>root = td.path().join(<span class="string">"a"</span>);
+        assert_paths(<span class="kw-2">&amp;</span>root, <span class="kw-2">&amp;</span>WalkBuilder::new(<span class="kw-2">&amp;</span>root), <span class="kw-2">&amp;</span>[<span class="string">"bar"</span>]);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>max_depth() {
         <span class="kw">let </span>td = tmpdir();
-        mkdirp(td.path().join(<span class="string">&quot;a/b/c&quot;</span>));
-        wfile(td.path().join(<span class="string">&quot;foo&quot;</span>), <span class="string">&quot;&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;a/foo&quot;</span>), <span class="string">&quot;&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;a/b/foo&quot;</span>), <span class="string">&quot;&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;a/b/c/foo&quot;</span>), <span class="string">&quot;&quot;</span>);
+        mkdirp(td.path().join(<span class="string">"a/b/c"</span>));
+        wfile(td.path().join(<span class="string">"foo"</span>), <span class="string">""</span>);
+        wfile(td.path().join(<span class="string">"a/foo"</span>), <span class="string">""</span>);
+        wfile(td.path().join(<span class="string">"a/b/foo"</span>), <span class="string">""</span>);
+        wfile(td.path().join(<span class="string">"a/b/c/foo"</span>), <span class="string">""</span>);
 
         <span class="kw">let </span><span class="kw-2">mut </span>builder = WalkBuilder::new(td.path());
         assert_paths(
             td.path(),
             <span class="kw-2">&amp;</span>builder,
-            <span class="kw-2">&amp;</span>[<span class="string">&quot;a&quot;</span>, <span class="string">&quot;a/b&quot;</span>, <span class="string">&quot;a/b/c&quot;</span>, <span class="string">&quot;foo&quot;</span>, <span class="string">&quot;a/foo&quot;</span>, <span class="string">&quot;a/b/foo&quot;</span>, <span class="string">&quot;a/b/c/foo&quot;</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">"a"</span>, <span class="string">"a/b"</span>, <span class="string">"a/b/c"</span>, <span class="string">"foo"</span>, <span class="string">"a/foo"</span>, <span class="string">"a/b/foo"</span>, <span class="string">"a/b/c/foo"</span>],
         );
         assert_paths(td.path(), builder.max_depth(<span class="prelude-val">Some</span>(<span class="number">0</span>)), <span class="kw-2">&amp;</span>[]);
-        assert_paths(td.path(), builder.max_depth(<span class="prelude-val">Some</span>(<span class="number">1</span>)), <span class="kw-2">&amp;</span>[<span class="string">&quot;a&quot;</span>, <span class="string">&quot;foo&quot;</span>]);
+        assert_paths(td.path(), builder.max_depth(<span class="prelude-val">Some</span>(<span class="number">1</span>)), <span class="kw-2">&amp;</span>[<span class="string">"a"</span>, <span class="string">"foo"</span>]);
         assert_paths(
             td.path(),
             builder.max_depth(<span class="prelude-val">Some</span>(<span class="number">2</span>)),
-            <span class="kw-2">&amp;</span>[<span class="string">&quot;a&quot;</span>, <span class="string">&quot;a/b&quot;</span>, <span class="string">&quot;foo&quot;</span>, <span class="string">&quot;a/foo&quot;</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">"a"</span>, <span class="string">"a/b"</span>, <span class="string">"foo"</span>, <span class="string">"a/foo"</span>],
         );
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>max_filesize() {
         <span class="kw">let </span>td = tmpdir();
-        mkdirp(td.path().join(<span class="string">&quot;a/b&quot;</span>));
-        wfile_size(td.path().join(<span class="string">&quot;foo&quot;</span>), <span class="number">0</span>);
-        wfile_size(td.path().join(<span class="string">&quot;bar&quot;</span>), <span class="number">400</span>);
-        wfile_size(td.path().join(<span class="string">&quot;baz&quot;</span>), <span class="number">600</span>);
-        wfile_size(td.path().join(<span class="string">&quot;a/foo&quot;</span>), <span class="number">600</span>);
-        wfile_size(td.path().join(<span class="string">&quot;a/bar&quot;</span>), <span class="number">500</span>);
-        wfile_size(td.path().join(<span class="string">&quot;a/baz&quot;</span>), <span class="number">200</span>);
+        mkdirp(td.path().join(<span class="string">"a/b"</span>));
+        wfile_size(td.path().join(<span class="string">"foo"</span>), <span class="number">0</span>);
+        wfile_size(td.path().join(<span class="string">"bar"</span>), <span class="number">400</span>);
+        wfile_size(td.path().join(<span class="string">"baz"</span>), <span class="number">600</span>);
+        wfile_size(td.path().join(<span class="string">"a/foo"</span>), <span class="number">600</span>);
+        wfile_size(td.path().join(<span class="string">"a/bar"</span>), <span class="number">500</span>);
+        wfile_size(td.path().join(<span class="string">"a/baz"</span>), <span class="number">200</span>);
 
         <span class="kw">let </span><span class="kw-2">mut </span>builder = WalkBuilder::new(td.path());
         assert_paths(
             td.path(),
             <span class="kw-2">&amp;</span>builder,
-            <span class="kw-2">&amp;</span>[<span class="string">&quot;a&quot;</span>, <span class="string">&quot;a/b&quot;</span>, <span class="string">&quot;foo&quot;</span>, <span class="string">&quot;bar&quot;</span>, <span class="string">&quot;baz&quot;</span>, <span class="string">&quot;a/foo&quot;</span>, <span class="string">&quot;a/bar&quot;</span>, <span class="string">&quot;a/baz&quot;</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">"a"</span>, <span class="string">"a/b"</span>, <span class="string">"foo"</span>, <span class="string">"bar"</span>, <span class="string">"baz"</span>, <span class="string">"a/foo"</span>, <span class="string">"a/bar"</span>, <span class="string">"a/baz"</span>],
         );
         assert_paths(
             td.path(),
             builder.max_filesize(<span class="prelude-val">Some</span>(<span class="number">0</span>)),
-            <span class="kw-2">&amp;</span>[<span class="string">&quot;a&quot;</span>, <span class="string">&quot;a/b&quot;</span>, <span class="string">&quot;foo&quot;</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">"a"</span>, <span class="string">"a/b"</span>, <span class="string">"foo"</span>],
         );
         assert_paths(
             td.path(),
             builder.max_filesize(<span class="prelude-val">Some</span>(<span class="number">500</span>)),
-            <span class="kw-2">&amp;</span>[<span class="string">&quot;a&quot;</span>, <span class="string">&quot;a/b&quot;</span>, <span class="string">&quot;foo&quot;</span>, <span class="string">&quot;bar&quot;</span>, <span class="string">&quot;a/bar&quot;</span>, <span class="string">&quot;a/baz&quot;</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">"a"</span>, <span class="string">"a/b"</span>, <span class="string">"foo"</span>, <span class="string">"bar"</span>, <span class="string">"a/bar"</span>, <span class="string">"a/baz"</span>],
         );
         assert_paths(
             td.path(),
             builder.max_filesize(<span class="prelude-val">Some</span>(<span class="number">50000</span>)),
-            <span class="kw-2">&amp;</span>[<span class="string">&quot;a&quot;</span>, <span class="string">&quot;a/b&quot;</span>, <span class="string">&quot;foo&quot;</span>, <span class="string">&quot;bar&quot;</span>, <span class="string">&quot;baz&quot;</span>, <span class="string">&quot;a/foo&quot;</span>, <span class="string">&quot;a/bar&quot;</span>, <span class="string">&quot;a/baz&quot;</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">"a"</span>, <span class="string">"a/b"</span>, <span class="string">"foo"</span>, <span class="string">"bar"</span>, <span class="string">"baz"</span>, <span class="string">"a/foo"</span>, <span class="string">"a/bar"</span>, <span class="string">"a/baz"</span>],
         );
     }
 
@@ -4497,16 +4498,16 @@
     </span><span class="attr">#[test]
     </span><span class="kw">fn </span>symlinks() {
         <span class="kw">let </span>td = tmpdir();
-        mkdirp(td.path().join(<span class="string">&quot;a/b&quot;</span>));
-        symlink(td.path().join(<span class="string">&quot;a/b&quot;</span>), td.path().join(<span class="string">&quot;z&quot;</span>));
-        wfile(td.path().join(<span class="string">&quot;a/b/foo&quot;</span>), <span class="string">&quot;&quot;</span>);
+        mkdirp(td.path().join(<span class="string">"a/b"</span>));
+        symlink(td.path().join(<span class="string">"a/b"</span>), td.path().join(<span class="string">"z"</span>));
+        wfile(td.path().join(<span class="string">"a/b/foo"</span>), <span class="string">""</span>);
 
         <span class="kw">let </span><span class="kw-2">mut </span>builder = WalkBuilder::new(td.path());
-        assert_paths(td.path(), <span class="kw-2">&amp;</span>builder, <span class="kw-2">&amp;</span>[<span class="string">&quot;a&quot;</span>, <span class="string">&quot;a/b&quot;</span>, <span class="string">&quot;a/b/foo&quot;</span>, <span class="string">&quot;z&quot;</span>]);
+        assert_paths(td.path(), <span class="kw-2">&amp;</span>builder, <span class="kw-2">&amp;</span>[<span class="string">"a"</span>, <span class="string">"a/b"</span>, <span class="string">"a/b/foo"</span>, <span class="string">"z"</span>]);
         assert_paths(
             td.path(),
             <span class="kw-2">&amp;</span>builder.follow_links(<span class="bool-val">true</span>),
-            <span class="kw-2">&amp;</span>[<span class="string">&quot;a&quot;</span>, <span class="string">&quot;a/b&quot;</span>, <span class="string">&quot;a/b/foo&quot;</span>, <span class="string">&quot;z&quot;</span>, <span class="string">&quot;z/foo&quot;</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">"a"</span>, <span class="string">"a/b"</span>, <span class="string">"a/b/foo"</span>, <span class="string">"z"</span>, <span class="string">"z/foo"</span>],
         );
     }
 
@@ -4514,9 +4515,9 @@
     </span><span class="attr">#[test]
     </span><span class="kw">fn </span>first_path_not_symlink() {
         <span class="kw">let </span>td = tmpdir();
-        mkdirp(td.path().join(<span class="string">&quot;foo&quot;</span>));
+        mkdirp(td.path().join(<span class="string">"foo"</span>));
 
-        <span class="kw">let </span>dents = WalkBuilder::new(td.path().join(<span class="string">&quot;foo&quot;</span>))
+        <span class="kw">let </span>dents = WalkBuilder::new(td.path().join(<span class="string">"foo"</span>))
             .build()
             .into_iter()
             .collect::&lt;<span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;&gt;()
@@ -4525,7 +4526,7 @@
         <span class="macro">assert!</span>(!dents[<span class="number">0</span>].path_is_symlink());
 
         <span class="kw">let </span>dents = walk_collect_entries_parallel(<span class="kw-2">&amp;</span>WalkBuilder::new(
-            td.path().join(<span class="string">&quot;foo&quot;</span>),
+            td.path().join(<span class="string">"foo"</span>),
         ));
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, dents.len());
         <span class="macro">assert!</span>(!dents[<span class="number">0</span>].path_is_symlink());
@@ -4535,86 +4536,86 @@
     </span><span class="attr">#[test]
     </span><span class="kw">fn </span>symlink_loop() {
         <span class="kw">let </span>td = tmpdir();
-        mkdirp(td.path().join(<span class="string">&quot;a/b&quot;</span>));
-        symlink(td.path().join(<span class="string">&quot;a&quot;</span>), td.path().join(<span class="string">&quot;a/b/c&quot;</span>));
+        mkdirp(td.path().join(<span class="string">"a/b"</span>));
+        symlink(td.path().join(<span class="string">"a"</span>), td.path().join(<span class="string">"a/b/c"</span>));
 
         <span class="kw">let </span><span class="kw-2">mut </span>builder = WalkBuilder::new(td.path());
-        assert_paths(td.path(), <span class="kw-2">&amp;</span>builder, <span class="kw-2">&amp;</span>[<span class="string">&quot;a&quot;</span>, <span class="string">&quot;a/b&quot;</span>, <span class="string">&quot;a/b/c&quot;</span>]);
-        assert_paths(td.path(), <span class="kw-2">&amp;</span>builder.follow_links(<span class="bool-val">true</span>), <span class="kw-2">&amp;</span>[<span class="string">&quot;a&quot;</span>, <span class="string">&quot;a/b&quot;</span>]);
+        assert_paths(td.path(), <span class="kw-2">&amp;</span>builder, <span class="kw-2">&amp;</span>[<span class="string">"a"</span>, <span class="string">"a/b"</span>, <span class="string">"a/b/c"</span>]);
+        assert_paths(td.path(), <span class="kw-2">&amp;</span>builder.follow_links(<span class="bool-val">true</span>), <span class="kw-2">&amp;</span>[<span class="string">"a"</span>, <span class="string">"a/b"</span>]);
     }
 
-    <span class="comment">// It&#39;s a little tricky to test the &#39;same_file_system&#39; option since
+    <span class="comment">// It's a little tricky to test the 'same_file_system' option since
     // we need an environment with more than one file system. We adopt a
     // heuristic where /sys is typically a distinct volume on Linux and roll
     // with that.
     </span><span class="attr">#[test]
-    #[cfg(target_os = <span class="string">&quot;linux&quot;</span>)]
+    #[cfg(target_os = <span class="string">"linux"</span>)]
     </span><span class="kw">fn </span>same_file_system() {
         <span class="kw">use </span><span class="kw">super</span>::device_num;
 
-        <span class="comment">// If for some reason /sys doesn&#39;t exist or isn&#39;t a directory, just
+        <span class="comment">// If for some reason /sys doesn't exist or isn't a directory, just
         // skip this test.
-        </span><span class="kw">if </span>!Path::new(<span class="string">&quot;/sys&quot;</span>).is_dir() {
+        </span><span class="kw">if </span>!Path::new(<span class="string">"/sys"</span>).is_dir() {
             <span class="kw">return</span>;
         }
 
-        <span class="comment">// If our test directory actually isn&#39;t a different volume from /sys,
-        // then this test is meaningless and we shouldn&#39;t run it.
+        <span class="comment">// If our test directory actually isn't a different volume from /sys,
+        // then this test is meaningless and we shouldn't run it.
         </span><span class="kw">let </span>td = tmpdir();
-        <span class="kw">if </span>device_num(td.path()).unwrap() == device_num(<span class="string">&quot;/sys&quot;</span>).unwrap() {
+        <span class="kw">if </span>device_num(td.path()).unwrap() == device_num(<span class="string">"/sys"</span>).unwrap() {
             <span class="kw">return</span>;
         }
 
-        mkdirp(td.path().join(<span class="string">&quot;same_file&quot;</span>));
-        symlink(<span class="string">&quot;/sys&quot;</span>, td.path().join(<span class="string">&quot;same_file&quot;</span>).join(<span class="string">&quot;alink&quot;</span>));
+        mkdirp(td.path().join(<span class="string">"same_file"</span>));
+        symlink(<span class="string">"/sys"</span>, td.path().join(<span class="string">"same_file"</span>).join(<span class="string">"alink"</span>));
 
         <span class="comment">// Create a symlink to sys and enable following symlinks. If the
-        // same_file_system option doesn&#39;t work, then this probably will hit a
+        // same_file_system option doesn't work, then this probably will hit a
         // permission error. Otherwise, it should just skip over the symlink
         // completely.
         </span><span class="kw">let </span><span class="kw-2">mut </span>builder = WalkBuilder::new(td.path());
         builder.follow_links(<span class="bool-val">true</span>).same_file_system(<span class="bool-val">true</span>);
-        assert_paths(td.path(), <span class="kw-2">&amp;</span>builder, <span class="kw-2">&amp;</span>[<span class="string">&quot;same_file&quot;</span>, <span class="string">&quot;same_file/alink&quot;</span>]);
+        assert_paths(td.path(), <span class="kw-2">&amp;</span>builder, <span class="kw-2">&amp;</span>[<span class="string">"same_file"</span>, <span class="string">"same_file/alink"</span>]);
     }
 
-    <span class="attr">#[cfg(target_os = <span class="string">&quot;linux&quot;</span>)]
+    <span class="attr">#[cfg(target_os = <span class="string">"linux"</span>)]
     #[test]
     </span><span class="kw">fn </span>no_read_permissions() {
-        <span class="kw">let </span>dir_path = Path::new(<span class="string">&quot;/root&quot;</span>);
+        <span class="kw">let </span>dir_path = Path::new(<span class="string">"/root"</span>);
 
-        <span class="comment">// There&#39;s no /etc/sudoers.d, skip the test.
+        <span class="comment">// There's no /etc/sudoers.d, skip the test.
         </span><span class="kw">if </span>!dir_path.is_dir() {
             <span class="kw">return</span>;
         }
-        <span class="comment">// We&#39;re the root, so the test won&#39;t check what we want it to.
+        <span class="comment">// We're the root, so the test won't check what we want it to.
         </span><span class="kw">if </span>fs::read_dir(<span class="kw-2">&amp;</span>dir_path).is_ok() {
             <span class="kw">return</span>;
         }
 
-        <span class="comment">// Check that we can&#39;t descend but get an entry for the parent dir.
+        <span class="comment">// Check that we can't descend but get an entry for the parent dir.
         </span><span class="kw">let </span>builder = WalkBuilder::new(<span class="kw-2">&amp;</span>dir_path);
-        assert_paths(dir_path.parent().unwrap(), <span class="kw-2">&amp;</span>builder, <span class="kw-2">&amp;</span>[<span class="string">&quot;root&quot;</span>]);
+        assert_paths(dir_path.parent().unwrap(), <span class="kw-2">&amp;</span>builder, <span class="kw-2">&amp;</span>[<span class="string">"root"</span>]);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>filter() {
         <span class="kw">let </span>td = tmpdir();
-        mkdirp(td.path().join(<span class="string">&quot;a/b/c&quot;</span>));
-        mkdirp(td.path().join(<span class="string">&quot;x/y&quot;</span>));
-        wfile(td.path().join(<span class="string">&quot;a/b/foo&quot;</span>), <span class="string">&quot;&quot;</span>);
-        wfile(td.path().join(<span class="string">&quot;x/y/foo&quot;</span>), <span class="string">&quot;&quot;</span>);
+        mkdirp(td.path().join(<span class="string">"a/b/c"</span>));
+        mkdirp(td.path().join(<span class="string">"x/y"</span>));
+        wfile(td.path().join(<span class="string">"a/b/foo"</span>), <span class="string">""</span>);
+        wfile(td.path().join(<span class="string">"x/y/foo"</span>), <span class="string">""</span>);
 
         assert_paths(
             td.path(),
             <span class="kw-2">&amp;</span>WalkBuilder::new(td.path()),
-            <span class="kw-2">&amp;</span>[<span class="string">&quot;x&quot;</span>, <span class="string">&quot;x/y&quot;</span>, <span class="string">&quot;x/y/foo&quot;</span>, <span class="string">&quot;a&quot;</span>, <span class="string">&quot;a/b&quot;</span>, <span class="string">&quot;a/b/foo&quot;</span>, <span class="string">&quot;a/b/c&quot;</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">"x"</span>, <span class="string">"x/y"</span>, <span class="string">"x/y/foo"</span>, <span class="string">"a"</span>, <span class="string">"a/b"</span>, <span class="string">"a/b/foo"</span>, <span class="string">"a/b/c"</span>],
         );
 
         assert_paths(
             td.path(),
             <span class="kw-2">&amp;</span>WalkBuilder::new(td.path())
-                .filter_entry(|entry| entry.file_name() != OsStr::new(<span class="string">&quot;a&quot;</span>)),
-            <span class="kw-2">&amp;</span>[<span class="string">&quot;x&quot;</span>, <span class="string">&quot;x/y&quot;</span>, <span class="string">&quot;x/y/foo&quot;</span>],
+                .filter_entry(|entry| entry.file_name() != OsStr::new(<span class="string">"a"</span>)),
+            <span class="kw-2">&amp;</span>[<span class="string">"x"</span>, <span class="string">"x/y"</span>, <span class="string">"x/y/foo"</span>],
         );
     }
 }

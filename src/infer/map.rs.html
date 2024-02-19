@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/infer-0.13.0/src/map.rs`."><title>map.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="infer" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/infer-0.13.0/src/map.rs`."><title>map.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="infer" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -628,559 +629,559 @@
     <span class="comment">// Application
     </span>(
         MatcherType::App,
-        <span class="string">&quot;application/wasm&quot;</span>,
-        <span class="string">&quot;wasm&quot;</span>,
+        <span class="string">"application/wasm"</span>,
+        <span class="string">"wasm"</span>,
         matchers::app::is_wasm
     ),
     (
         MatcherType::App,
-        <span class="string">&quot;application/x-executable&quot;</span>,
-        <span class="string">&quot;elf&quot;</span>,
+        <span class="string">"application/x-executable"</span>,
+        <span class="string">"elf"</span>,
         matchers::app::is_elf
     ),
     (
         MatcherType::App,
-        <span class="string">&quot;application/vnd.microsoft.portable-executable&quot;</span>,
-        <span class="string">&quot;exe&quot;</span>,
+        <span class="string">"application/vnd.microsoft.portable-executable"</span>,
+        <span class="string">"exe"</span>,
         matchers::app::is_exe
     ),
     (
         MatcherType::App,
-        <span class="string">&quot;application/vnd.microsoft.portable-executable&quot;</span>,
-        <span class="string">&quot;dll&quot;</span>,
+        <span class="string">"application/vnd.microsoft.portable-executable"</span>,
+        <span class="string">"dll"</span>,
         matchers::app::is_dll
     ),
     (
         MatcherType::App,
-        <span class="string">&quot;application/java&quot;</span>,
-        <span class="string">&quot;class&quot;</span>,
+        <span class="string">"application/java"</span>,
+        <span class="string">"class"</span>,
         matchers::app::is_java
     ),
     (
         MatcherType::App,
-        <span class="string">&quot;application/x-llvm&quot;</span>,
-        <span class="string">&quot;bc&quot;</span>,
+        <span class="string">"application/x-llvm"</span>,
+        <span class="string">"bc"</span>,
         matchers::app::is_llvm
     ),
     (
         MatcherType::App,
-        <span class="string">&quot;application/x-mach-binary&quot;</span>,
-        <span class="string">&quot;mach&quot;</span>,
+        <span class="string">"application/x-mach-binary"</span>,
+        <span class="string">"mach"</span>,
         matchers::app::is_mach
     ),
     (
         MatcherType::App,
-        <span class="string">&quot;application/vnd.android.dex&quot;</span>,
-        <span class="string">&quot;dex&quot;</span>,
+        <span class="string">"application/vnd.android.dex"</span>,
+        <span class="string">"dex"</span>,
         matchers::app::is_dex
     ),
     (
         MatcherType::App,
-        <span class="string">&quot;application/vnd.android.dey&quot;</span>,
-        <span class="string">&quot;dey&quot;</span>,
+        <span class="string">"application/vnd.android.dey"</span>,
+        <span class="string">"dey"</span>,
         matchers::app::is_dey
     ),
     (
         MatcherType::App,
-        <span class="string">&quot;application/x-x509-ca-cert&quot;</span>,
-        <span class="string">&quot;der&quot;</span>,
+        <span class="string">"application/x-x509-ca-cert"</span>,
+        <span class="string">"der"</span>,
         matchers::app::is_der
     ),
     (
         MatcherType::App,
-        <span class="string">&quot;application/x-executable&quot;</span>,
-        <span class="string">&quot;obj&quot;</span>,
+        <span class="string">"application/x-executable"</span>,
+        <span class="string">"obj"</span>,
         matchers::app::is_coff
     ),
     (
         MatcherType::App,
-        <span class="string">&quot;application/x-x509-ca-cert&quot;</span>,
-        <span class="string">&quot;pem&quot;</span>,
+        <span class="string">"application/x-x509-ca-cert"</span>,
+        <span class="string">"pem"</span>,
         matchers::app::is_pem
     ),
     <span class="comment">// Book
     </span>(
         MatcherType::Book,
-        <span class="string">&quot;application/epub+zip&quot;</span>,
-        <span class="string">&quot;epub&quot;</span>,
+        <span class="string">"application/epub+zip"</span>,
+        <span class="string">"epub"</span>,
         matchers::book::is_epub
     ),
     (
         MatcherType::Book,
-        <span class="string">&quot;application/x-mobipocket-ebook&quot;</span>,
-        <span class="string">&quot;mobi&quot;</span>,
+        <span class="string">"application/x-mobipocket-ebook"</span>,
+        <span class="string">"mobi"</span>,
         matchers::book::is_mobi
     ),
     <span class="comment">// Image
     </span>(
         MatcherType::Image,
-        <span class="string">&quot;image/jpeg&quot;</span>,
-        <span class="string">&quot;jpg&quot;</span>,
+        <span class="string">"image/jpeg"</span>,
+        <span class="string">"jpg"</span>,
         matchers::image::is_jpeg
     ),
     (
         MatcherType::Image,
-        <span class="string">&quot;image/jp2&quot;</span>,
-        <span class="string">&quot;jp2&quot;</span>,
+        <span class="string">"image/jp2"</span>,
+        <span class="string">"jp2"</span>,
         matchers::image::is_jpeg2000
     ),
     (
         MatcherType::Image,
-        <span class="string">&quot;image/png&quot;</span>,
-        <span class="string">&quot;png&quot;</span>,
+        <span class="string">"image/png"</span>,
+        <span class="string">"png"</span>,
         matchers::image::is_png
     ),
     (
         MatcherType::Image,
-        <span class="string">&quot;image/gif&quot;</span>,
-        <span class="string">&quot;gif&quot;</span>,
+        <span class="string">"image/gif"</span>,
+        <span class="string">"gif"</span>,
         matchers::image::is_gif
     ),
     (
         MatcherType::Image,
-        <span class="string">&quot;image/webp&quot;</span>,
-        <span class="string">&quot;webp&quot;</span>,
+        <span class="string">"image/webp"</span>,
+        <span class="string">"webp"</span>,
         matchers::image::is_webp
     ),
     (
         MatcherType::Image,
-        <span class="string">&quot;image/x-canon-cr2&quot;</span>,
-        <span class="string">&quot;cr2&quot;</span>,
+        <span class="string">"image/x-canon-cr2"</span>,
+        <span class="string">"cr2"</span>,
         matchers::image::is_cr2
     ),
     (
         MatcherType::Image,
-        <span class="string">&quot;image/tiff&quot;</span>,
-        <span class="string">&quot;tif&quot;</span>,
+        <span class="string">"image/tiff"</span>,
+        <span class="string">"tif"</span>,
         matchers::image::is_tiff
     ),
     (
         MatcherType::Image,
-        <span class="string">&quot;image/bmp&quot;</span>,
-        <span class="string">&quot;bmp&quot;</span>,
+        <span class="string">"image/bmp"</span>,
+        <span class="string">"bmp"</span>,
         matchers::image::is_bmp
     ),
     (
         MatcherType::Image,
-        <span class="string">&quot;image/vnd.ms-photo&quot;</span>,
-        <span class="string">&quot;jxr&quot;</span>,
+        <span class="string">"image/vnd.ms-photo"</span>,
+        <span class="string">"jxr"</span>,
         matchers::image::is_jxr
     ),
     (
         MatcherType::Image,
-        <span class="string">&quot;image/vnd.adobe.photoshop&quot;</span>,
-        <span class="string">&quot;psd&quot;</span>,
+        <span class="string">"image/vnd.adobe.photoshop"</span>,
+        <span class="string">"psd"</span>,
         matchers::image::is_psd
     ),
     (
         MatcherType::Image,
-        <span class="string">&quot;image/vnd.microsoft.icon&quot;</span>,
-        <span class="string">&quot;ico&quot;</span>,
+        <span class="string">"image/vnd.microsoft.icon"</span>,
+        <span class="string">"ico"</span>,
         matchers::image::is_ico
     ),
     (
         MatcherType::Image,
-        <span class="string">&quot;image/heif&quot;</span>,
-        <span class="string">&quot;heif&quot;</span>,
+        <span class="string">"image/heif"</span>,
+        <span class="string">"heif"</span>,
         matchers::image::is_heif
     ),
     (
         MatcherType::Image,
-        <span class="string">&quot;image/avif&quot;</span>,
-        <span class="string">&quot;avif&quot;</span>,
+        <span class="string">"image/avif"</span>,
+        <span class="string">"avif"</span>,
         matchers::image::is_avif
     ),
     (
         MatcherType::Image,
-        <span class="string">&quot;image/jxl&quot;</span>,
-        <span class="string">&quot;jxl&quot;</span>,
+        <span class="string">"image/jxl"</span>,
+        <span class="string">"jxl"</span>,
         matchers::image::is_jxl
     ),
     (
         MatcherType::Image,
-        <span class="string">&quot;image/openraster&quot;</span>,
-        <span class="string">&quot;ora&quot;</span>,
+        <span class="string">"image/openraster"</span>,
+        <span class="string">"ora"</span>,
         matchers::image::is_ora
     ),
     <span class="comment">// Video
     </span>(
         MatcherType::Video,
-        <span class="string">&quot;video/mp4&quot;</span>,
-        <span class="string">&quot;mp4&quot;</span>,
+        <span class="string">"video/mp4"</span>,
+        <span class="string">"mp4"</span>,
         matchers::video::is_mp4
     ),
     (
         MatcherType::Video,
-        <span class="string">&quot;video/x-m4v&quot;</span>,
-        <span class="string">&quot;m4v&quot;</span>,
+        <span class="string">"video/x-m4v"</span>,
+        <span class="string">"m4v"</span>,
         matchers::video::is_m4v
     ),
     (
         MatcherType::Video,
-        <span class="string">&quot;video/x-matroska&quot;</span>,
-        <span class="string">&quot;mkv&quot;</span>,
+        <span class="string">"video/x-matroska"</span>,
+        <span class="string">"mkv"</span>,
         matchers::video::is_mkv
     ),
     (
         MatcherType::Video,
-        <span class="string">&quot;video/webm&quot;</span>,
-        <span class="string">&quot;webm&quot;</span>,
+        <span class="string">"video/webm"</span>,
+        <span class="string">"webm"</span>,
         matchers::video::is_webm
     ),
     (
         MatcherType::Video,
-        <span class="string">&quot;video/quicktime&quot;</span>,
-        <span class="string">&quot;mov&quot;</span>,
+        <span class="string">"video/quicktime"</span>,
+        <span class="string">"mov"</span>,
         matchers::video::is_mov
     ),
     (
         MatcherType::Video,
-        <span class="string">&quot;video/x-msvideo&quot;</span>,
-        <span class="string">&quot;avi&quot;</span>,
+        <span class="string">"video/x-msvideo"</span>,
+        <span class="string">"avi"</span>,
         matchers::video::is_avi
     ),
     (
         MatcherType::Video,
-        <span class="string">&quot;video/x-ms-wmv&quot;</span>,
-        <span class="string">&quot;wmv&quot;</span>,
+        <span class="string">"video/x-ms-wmv"</span>,
+        <span class="string">"wmv"</span>,
         matchers::video::is_wmv
     ),
     (
         MatcherType::Video,
-        <span class="string">&quot;video/mpeg&quot;</span>,
-        <span class="string">&quot;mpg&quot;</span>,
+        <span class="string">"video/mpeg"</span>,
+        <span class="string">"mpg"</span>,
         matchers::video::is_mpeg
     ),
     (
         MatcherType::Video,
-        <span class="string">&quot;video/x-flv&quot;</span>,
-        <span class="string">&quot;flv&quot;</span>,
+        <span class="string">"video/x-flv"</span>,
+        <span class="string">"flv"</span>,
         matchers::video::is_flv
     ),
     <span class="comment">// Audio
     </span>(
         MatcherType::Audio,
-        <span class="string">&quot;audio/midi&quot;</span>,
-        <span class="string">&quot;midi&quot;</span>,
+        <span class="string">"audio/midi"</span>,
+        <span class="string">"midi"</span>,
         matchers::audio::is_midi
     ),
     (
         MatcherType::Audio,
-        <span class="string">&quot;audio/mpeg&quot;</span>,
-        <span class="string">&quot;mp3&quot;</span>,
+        <span class="string">"audio/mpeg"</span>,
+        <span class="string">"mp3"</span>,
         matchers::audio::is_mp3
     ),
     (
         MatcherType::Audio,
-        <span class="string">&quot;audio/m4a&quot;</span>,
-        <span class="string">&quot;m4a&quot;</span>,
+        <span class="string">"audio/m4a"</span>,
+        <span class="string">"m4a"</span>,
         matchers::audio::is_m4a
     ),
     <span class="comment">// has to come before ogg
     </span>(
         MatcherType::Audio,
-        <span class="string">&quot;audio/opus&quot;</span>,
-        <span class="string">&quot;opus&quot;</span>,
+        <span class="string">"audio/opus"</span>,
+        <span class="string">"opus"</span>,
         matchers::audio::is_ogg_opus
     ),
     (
         MatcherType::Audio,
-        <span class="string">&quot;audio/ogg&quot;</span>,
-        <span class="string">&quot;ogg&quot;</span>,
+        <span class="string">"audio/ogg"</span>,
+        <span class="string">"ogg"</span>,
         matchers::audio::is_ogg
     ),
     (
         MatcherType::Audio,
-        <span class="string">&quot;audio/x-flac&quot;</span>,
-        <span class="string">&quot;flac&quot;</span>,
+        <span class="string">"audio/x-flac"</span>,
+        <span class="string">"flac"</span>,
         matchers::audio::is_flac
     ),
     (
         MatcherType::Audio,
-        <span class="string">&quot;audio/x-wav&quot;</span>,
-        <span class="string">&quot;wav&quot;</span>,
+        <span class="string">"audio/x-wav"</span>,
+        <span class="string">"wav"</span>,
         matchers::audio::is_wav
     ),
     (
         MatcherType::Audio,
-        <span class="string">&quot;audio/amr&quot;</span>,
-        <span class="string">&quot;amr&quot;</span>,
+        <span class="string">"audio/amr"</span>,
+        <span class="string">"amr"</span>,
         matchers::audio::is_amr
     ),
     (
         MatcherType::Audio,
-        <span class="string">&quot;audio/aac&quot;</span>,
-        <span class="string">&quot;aac&quot;</span>,
+        <span class="string">"audio/aac"</span>,
+        <span class="string">"aac"</span>,
         matchers::audio::is_aac
     ),
     (
         MatcherType::Audio,
-        <span class="string">&quot;audio/x-aiff&quot;</span>,
-        <span class="string">&quot;aiff&quot;</span>,
+        <span class="string">"audio/x-aiff"</span>,
+        <span class="string">"aiff"</span>,
         matchers::audio::is_aiff
     ),
     (
         MatcherType::Audio,
-        <span class="string">&quot;audio/x-dsf&quot;</span>,
-        <span class="string">&quot;dsf&quot;</span>,
+        <span class="string">"audio/x-dsf"</span>,
+        <span class="string">"dsf"</span>,
         matchers::audio::is_dsf
     ),
     (
         MatcherType::Audio,
-        <span class="string">&quot;audio/x-ape&quot;</span>,
-        <span class="string">&quot;ape&quot;</span>,
+        <span class="string">"audio/x-ape"</span>,
+        <span class="string">"ape"</span>,
         matchers::audio::is_ape
     ),
     <span class="comment">// Font
     </span>(
         MatcherType::Font,
-        <span class="string">&quot;application/font-woff&quot;</span>,
-        <span class="string">&quot;woff&quot;</span>,
+        <span class="string">"application/font-woff"</span>,
+        <span class="string">"woff"</span>,
         matchers::font::is_woff
     ),
     (
         MatcherType::Font,
-        <span class="string">&quot;application/font-woff&quot;</span>,
-        <span class="string">&quot;woff2&quot;</span>,
+        <span class="string">"application/font-woff"</span>,
+        <span class="string">"woff2"</span>,
         matchers::font::is_woff2
     ),
     (
         MatcherType::Font,
-        <span class="string">&quot;application/font-sfnt&quot;</span>,
-        <span class="string">&quot;ttf&quot;</span>,
+        <span class="string">"application/font-sfnt"</span>,
+        <span class="string">"ttf"</span>,
         matchers::font::is_ttf
     ),
     (
         MatcherType::Font,
-        <span class="string">&quot;application/font-sfnt&quot;</span>,
-        <span class="string">&quot;otf&quot;</span>,
+        <span class="string">"application/font-sfnt"</span>,
+        <span class="string">"otf"</span>,
         matchers::font::is_otf
     ),
     <span class="comment">// Document
     </span>(
         MatcherType::Doc,
-        <span class="string">&quot;application/msword&quot;</span>,
-        <span class="string">&quot;doc&quot;</span>,
+        <span class="string">"application/msword"</span>,
+        <span class="string">"doc"</span>,
         matchers::doc::is_doc
     ),
     (
         MatcherType::Doc,
-        <span class="string">&quot;application/vnd.openxmlformats-officedocument.wordprocessingml.document&quot;</span>,
-        <span class="string">&quot;docx&quot;</span>,
+        <span class="string">"application/vnd.openxmlformats-officedocument.wordprocessingml.document"</span>,
+        <span class="string">"docx"</span>,
         matchers::doc::is_docx
     ),
     (
         MatcherType::Doc,
-        <span class="string">&quot;application/vnd.ms-excel&quot;</span>,
-        <span class="string">&quot;xls&quot;</span>,
+        <span class="string">"application/vnd.ms-excel"</span>,
+        <span class="string">"xls"</span>,
         matchers::doc::is_xls
     ),
     (
         MatcherType::Doc,
-        <span class="string">&quot;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet&quot;</span>,
-        <span class="string">&quot;xlsx&quot;</span>,
+        <span class="string">"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"</span>,
+        <span class="string">"xlsx"</span>,
         matchers::doc::is_xlsx
     ),
     (
         MatcherType::Doc,
-        <span class="string">&quot;application/vnd.ms-powerpoint&quot;</span>,
-        <span class="string">&quot;ppt&quot;</span>,
+        <span class="string">"application/vnd.ms-powerpoint"</span>,
+        <span class="string">"ppt"</span>,
         matchers::doc::is_ppt
     ),
     (
         MatcherType::Doc,
-        <span class="string">&quot;application/vnd.openxmlformats-officedocument.presentationml.presentation&quot;</span>,
-        <span class="string">&quot;pptx&quot;</span>,
+        <span class="string">"application/vnd.openxmlformats-officedocument.presentationml.presentation"</span>,
+        <span class="string">"pptx"</span>,
         matchers::doc::is_pptx
     ),
     <span class="comment">// OpenDocument
     </span>(
         MatcherType::Doc,
-        <span class="string">&quot;application/vnd.oasis.opendocument.text&quot;</span>,
-        <span class="string">&quot;odt&quot;</span>,
+        <span class="string">"application/vnd.oasis.opendocument.text"</span>,
+        <span class="string">"odt"</span>,
         matchers::odf::is_odt
     ),
     (
         MatcherType::Doc,
-        <span class="string">&quot;application/vnd.oasis.opendocument.spreadsheet&quot;</span>,
-        <span class="string">&quot;ods&quot;</span>,
+        <span class="string">"application/vnd.oasis.opendocument.spreadsheet"</span>,
+        <span class="string">"ods"</span>,
         matchers::odf::is_ods
     ),
     (
         MatcherType::Doc,
-        <span class="string">&quot;application/vnd.oasis.opendocument.presentation&quot;</span>,
-        <span class="string">&quot;odp&quot;</span>,
+        <span class="string">"application/vnd.oasis.opendocument.presentation"</span>,
+        <span class="string">"odp"</span>,
         matchers::odf::is_odp
     ),
     <span class="comment">// Archive
     </span>(
         MatcherType::Archive,
-        <span class="string">&quot;application/epub+zip&quot;</span>,
-        <span class="string">&quot;epub&quot;</span>,
+        <span class="string">"application/epub+zip"</span>,
+        <span class="string">"epub"</span>,
         matchers::archive::is_epub
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/zip&quot;</span>,
-        <span class="string">&quot;zip&quot;</span>,
+        <span class="string">"application/zip"</span>,
+        <span class="string">"zip"</span>,
         matchers::archive::is_zip
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/x-tar&quot;</span>,
-        <span class="string">&quot;tar&quot;</span>,
+        <span class="string">"application/x-tar"</span>,
+        <span class="string">"tar"</span>,
         matchers::archive::is_tar
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/vnd.rar&quot;</span>,
-        <span class="string">&quot;rar&quot;</span>,
+        <span class="string">"application/vnd.rar"</span>,
+        <span class="string">"rar"</span>,
         matchers::archive::is_rar
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/gzip&quot;</span>,
-        <span class="string">&quot;gz&quot;</span>,
+        <span class="string">"application/gzip"</span>,
+        <span class="string">"gz"</span>,
         matchers::archive::is_gz
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/x-bzip2&quot;</span>,
-        <span class="string">&quot;bz2&quot;</span>,
+        <span class="string">"application/x-bzip2"</span>,
+        <span class="string">"bz2"</span>,
         matchers::archive::is_bz2
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/x-7z-compressed&quot;</span>,
-        <span class="string">&quot;7z&quot;</span>,
+        <span class="string">"application/x-7z-compressed"</span>,
+        <span class="string">"7z"</span>,
         matchers::archive::is_7z
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/x-xz&quot;</span>,
-        <span class="string">&quot;xz&quot;</span>,
+        <span class="string">"application/x-xz"</span>,
+        <span class="string">"xz"</span>,
         matchers::archive::is_xz
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/pdf&quot;</span>,
-        <span class="string">&quot;pdf&quot;</span>,
+        <span class="string">"application/pdf"</span>,
+        <span class="string">"pdf"</span>,
         matchers::archive::is_pdf
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/x-shockwave-flash&quot;</span>,
-        <span class="string">&quot;swf&quot;</span>,
+        <span class="string">"application/x-shockwave-flash"</span>,
+        <span class="string">"swf"</span>,
         matchers::archive::is_swf
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/rtf&quot;</span>,
-        <span class="string">&quot;rtf&quot;</span>,
+        <span class="string">"application/rtf"</span>,
+        <span class="string">"rtf"</span>,
         matchers::archive::is_rtf
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/octet-stream&quot;</span>,
-        <span class="string">&quot;eot&quot;</span>,
+        <span class="string">"application/octet-stream"</span>,
+        <span class="string">"eot"</span>,
         matchers::archive::is_eot
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/postscript&quot;</span>,
-        <span class="string">&quot;ps&quot;</span>,
+        <span class="string">"application/postscript"</span>,
+        <span class="string">"ps"</span>,
         matchers::archive::is_ps
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/vnd.sqlite3&quot;</span>,
-        <span class="string">&quot;sqlite&quot;</span>,
+        <span class="string">"application/vnd.sqlite3"</span>,
+        <span class="string">"sqlite"</span>,
         matchers::archive::is_sqlite
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/x-nintendo-nes-rom&quot;</span>,
-        <span class="string">&quot;nes&quot;</span>,
+        <span class="string">"application/x-nintendo-nes-rom"</span>,
+        <span class="string">"nes"</span>,
         matchers::archive::is_nes
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/x-google-chrome-extension&quot;</span>,
-        <span class="string">&quot;crx&quot;</span>,
+        <span class="string">"application/x-google-chrome-extension"</span>,
+        <span class="string">"crx"</span>,
         matchers::archive::is_crx
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/vnd.ms-cab-compressed&quot;</span>,
-        <span class="string">&quot;cab&quot;</span>,
+        <span class="string">"application/vnd.ms-cab-compressed"</span>,
+        <span class="string">"cab"</span>,
         matchers::archive::is_cab
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/vnd.debian.binary-package&quot;</span>,
-        <span class="string">&quot;deb&quot;</span>,
+        <span class="string">"application/vnd.debian.binary-package"</span>,
+        <span class="string">"deb"</span>,
         matchers::archive::is_deb
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/x-unix-archive&quot;</span>,
-        <span class="string">&quot;ar&quot;</span>,
+        <span class="string">"application/x-unix-archive"</span>,
+        <span class="string">"ar"</span>,
         matchers::archive::is_ar
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/x-compress&quot;</span>,
-        <span class="string">&quot;Z&quot;</span>,
+        <span class="string">"application/x-compress"</span>,
+        <span class="string">"Z"</span>,
         matchers::archive::is_z
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/x-lzip&quot;</span>,
-        <span class="string">&quot;lz&quot;</span>,
+        <span class="string">"application/x-lzip"</span>,
+        <span class="string">"lz"</span>,
         matchers::archive::is_lz
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/x-rpm&quot;</span>,
-        <span class="string">&quot;rpm&quot;</span>,
+        <span class="string">"application/x-rpm"</span>,
+        <span class="string">"rpm"</span>,
         matchers::archive::is_rpm
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/dicom&quot;</span>,
-        <span class="string">&quot;dcm&quot;</span>,
+        <span class="string">"application/dicom"</span>,
+        <span class="string">"dcm"</span>,
         matchers::archive::is_dcm
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/zstd&quot;</span>,
-        <span class="string">&quot;zst&quot;</span>,
+        <span class="string">"application/zstd"</span>,
+        <span class="string">"zst"</span>,
         matchers::archive::is_zst
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/x-ole-storage&quot;</span>,
-        <span class="string">&quot;msi&quot;</span>,
+        <span class="string">"application/x-ole-storage"</span>,
+        <span class="string">"msi"</span>,
         matchers::archive::is_msi
     ),
     (
         MatcherType::Archive,
-        <span class="string">&quot;application/x-cpio&quot;</span>,
-        <span class="string">&quot;cpio&quot;</span>,
+        <span class="string">"application/x-cpio"</span>,
+        <span class="string">"cpio"</span>,
         matchers::archive::is_cpio
     ),
     <span class="comment">// Text
     </span>(
         MatcherType::Text,
-        <span class="string">&quot;text/html&quot;</span>,
-        <span class="string">&quot;html&quot;</span>,
+        <span class="string">"text/html"</span>,
+        <span class="string">"html"</span>,
         matchers::text::is_html
     ),
-    (MatcherType::Text, <span class="string">&quot;text/xml&quot;</span>, <span class="string">&quot;xml&quot;</span>, matchers::text::is_xml),
+    (MatcherType::Text, <span class="string">"text/xml"</span>, <span class="string">"xml"</span>, matchers::text::is_xml),
     (
         MatcherType::Text,
-        <span class="string">&quot;text/x-shellscript&quot;</span>,
-        <span class="string">&quot;sh&quot;</span>,
+        <span class="string">"text/x-shellscript"</span>,
+        <span class="string">"sh"</span>,
         matchers::text::is_shellscript
     )
 );

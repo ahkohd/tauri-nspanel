@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-utils-1.5.2/src/config/parse.rs`."><title>parse.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="tauri_utils" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-utils-1.5.2/src/config/parse.rs`."><title>parse.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="tauri_utils" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -399,7 +400,7 @@
 <span class="kw">use </span>thiserror::Error;
 
 <span class="doccomment">/// All extensions that are possibly supported, but perhaps not enabled.
-</span><span class="kw">pub const </span>EXTENSIONS_SUPPORTED: <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>str] = <span class="kw-2">&amp;</span>[<span class="string">&quot;json&quot;</span>, <span class="string">&quot;json5&quot;</span>, <span class="string">&quot;toml&quot;</span>];
+</span><span class="kw">pub const </span>EXTENSIONS_SUPPORTED: <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>str] = <span class="kw-2">&amp;</span>[<span class="string">"json"</span>, <span class="string">"json5"</span>, <span class="string">"toml"</span>];
 
 <span class="doccomment">/// All configuration formats that are possibly supported, but perhaps not enabled.
 </span><span class="kw">pub const </span>SUPPORTED_FORMATS: <span class="kw-2">&amp;</span>[ConfigFormat] =
@@ -408,9 +409,9 @@
 <span class="doccomment">/// All configuration formats that are currently enabled.
 </span><span class="kw">pub const </span>ENABLED_FORMATS: <span class="kw-2">&amp;</span>[ConfigFormat] = <span class="kw-2">&amp;</span>[
   ConfigFormat::Json,
-  <span class="attr">#[cfg(feature = <span class="string">&quot;config-json5&quot;</span>)]
+  <span class="attr">#[cfg(feature = <span class="string">"config-json5"</span>)]
   </span>ConfigFormat::Json5,
-  <span class="attr">#[cfg(feature = <span class="string">&quot;config-toml&quot;</span>)]
+  <span class="attr">#[cfg(feature = <span class="string">"config-toml"</span>)]
   </span>ConfigFormat::Toml,
 ];
 
@@ -427,41 +428,41 @@
 
 <span class="kw">impl </span>ConfigFormat {
   <span class="doccomment">/// Maps the config format to its file name.
-  </span><span class="kw">pub fn </span>into_file_name(<span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
+  </span><span class="kw">pub fn </span>into_file_name(<span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str {
     <span class="kw">match </span><span class="self">self </span>{
-      <span class="self">Self</span>::Json =&gt; <span class="string">&quot;tauri.conf.json&quot;</span>,
-      <span class="self">Self</span>::Json5 =&gt; <span class="string">&quot;tauri.conf.json5&quot;</span>,
-      <span class="self">Self</span>::Toml =&gt; <span class="string">&quot;Tauri.toml&quot;</span>,
+      <span class="self">Self</span>::Json =&gt; <span class="string">"tauri.conf.json"</span>,
+      <span class="self">Self</span>::Json5 =&gt; <span class="string">"tauri.conf.json5"</span>,
+      <span class="self">Self</span>::Toml =&gt; <span class="string">"Tauri.toml"</span>,
     }
   }
 
-  <span class="kw">fn </span>into_platform_file_name(<span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
+  <span class="kw">fn </span>into_platform_file_name(<span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str {
     <span class="kw">match </span><span class="self">self </span>{
       <span class="self">Self</span>::Json =&gt; {
-        <span class="kw">if </span><span class="macro">cfg!</span>(target_os = <span class="string">&quot;macos&quot;</span>) {
-          <span class="string">&quot;tauri.macos.conf.json&quot;
+        <span class="kw">if </span><span class="macro">cfg!</span>(target_os = <span class="string">"macos"</span>) {
+          <span class="string">"tauri.macos.conf.json"
         </span>} <span class="kw">else if </span><span class="macro">cfg!</span>(windows) {
-          <span class="string">&quot;tauri.windows.conf.json&quot;
+          <span class="string">"tauri.windows.conf.json"
         </span>} <span class="kw">else </span>{
-          <span class="string">&quot;tauri.linux.conf.json&quot;
+          <span class="string">"tauri.linux.conf.json"
         </span>}
       }
       <span class="self">Self</span>::Json5 =&gt; {
-        <span class="kw">if </span><span class="macro">cfg!</span>(target_os = <span class="string">&quot;macos&quot;</span>) {
-          <span class="string">&quot;tauri.macos.conf.json5&quot;
+        <span class="kw">if </span><span class="macro">cfg!</span>(target_os = <span class="string">"macos"</span>) {
+          <span class="string">"tauri.macos.conf.json5"
         </span>} <span class="kw">else if </span><span class="macro">cfg!</span>(windows) {
-          <span class="string">&quot;tauri.windows.conf.json5&quot;
+          <span class="string">"tauri.windows.conf.json5"
         </span>} <span class="kw">else </span>{
-          <span class="string">&quot;tauri.linux.conf.json5&quot;
+          <span class="string">"tauri.linux.conf.json5"
         </span>}
       }
       <span class="self">Self</span>::Toml =&gt; {
-        <span class="kw">if </span><span class="macro">cfg!</span>(target_os = <span class="string">&quot;macos&quot;</span>) {
-          <span class="string">&quot;Tauri.macos.toml&quot;
+        <span class="kw">if </span><span class="macro">cfg!</span>(target_os = <span class="string">"macos"</span>) {
+          <span class="string">"Tauri.macos.toml"
         </span>} <span class="kw">else if </span><span class="macro">cfg!</span>(windows) {
-          <span class="string">&quot;Tauri.windows.toml&quot;
+          <span class="string">"Tauri.windows.toml"
         </span>} <span class="kw">else </span>{
-          <span class="string">&quot;Tauri.linux.toml&quot;
+          <span class="string">"Tauri.linux.toml"
         </span>}
       }
     }
@@ -473,7 +474,7 @@
 #[non_exhaustive]
 </span><span class="kw">pub enum </span>ConfigError {
   <span class="doccomment">/// Failed to parse from JSON.
-  </span><span class="attr">#[error(<span class="string">&quot;unable to parse JSON Tauri config file at {path} because {error}&quot;</span>)]
+  </span><span class="attr">#[error(<span class="string">"unable to parse JSON Tauri config file at {path} because {error}"</span>)]
   </span>FormatJson {
     <span class="doccomment">/// The path that failed to parse into JSON.
     </span>path: PathBuf,
@@ -483,8 +484,8 @@
   },
 
   <span class="doccomment">/// Failed to parse from JSON5.
-  </span><span class="attr">#[cfg(feature = <span class="string">&quot;config-json5&quot;</span>)]
-  #[error(<span class="string">&quot;unable to parse JSON5 Tauri config file at {path} because {error}&quot;</span>)]
+  </span><span class="attr">#[cfg(feature = <span class="string">"config-json5"</span>)]
+  #[error(<span class="string">"unable to parse JSON5 Tauri config file at {path} because {error}"</span>)]
   </span>FormatJson5 {
     <span class="doccomment">/// The path that failed to parse into JSON5.
     </span>path: PathBuf,
@@ -494,8 +495,8 @@
   },
 
   <span class="doccomment">/// Failed to parse from TOML.
-  </span><span class="attr">#[cfg(feature = <span class="string">&quot;config-toml&quot;</span>)]
-  #[error(<span class="string">&quot;unable to parse toml Tauri config file at {path} because {error}&quot;</span>)]
+  </span><span class="attr">#[cfg(feature = <span class="string">"config-toml"</span>)]
+  #[error(<span class="string">"unable to parse toml Tauri config file at {path} because {error}"</span>)]
   </span>FormatToml {
     <span class="doccomment">/// The path that failed to parse into TOML.
     </span>path: PathBuf,
@@ -505,11 +506,11 @@
   },
 
   <span class="doccomment">/// Unknown config file name encountered.
-  </span><span class="attr">#[error(<span class="string">&quot;unsupported format encountered {0}&quot;</span>)]
+  </span><span class="attr">#[error(<span class="string">"unsupported format encountered {0}"</span>)]
   </span>UnsupportedFormat(String),
 
   <span class="doccomment">/// Known file extension encountered, but corresponding parser is not enabled (cargo features).
-  </span><span class="attr">#[error(<span class="string">&quot;supported (but disabled) format encountered {extension} - try enabling `{feature}` &quot;</span>)]
+  </span><span class="attr">#[error(<span class="string">"supported (but disabled) format encountered {extension} - try enabling `{feature}` "</span>)]
   </span>DisabledFormat {
     <span class="doccomment">/// The extension encountered.
     </span>extension: String,
@@ -519,7 +520,7 @@
   },
 
   <span class="doccomment">/// A generic IO error with context of what caused it.
-  </span><span class="attr">#[error(<span class="string">&quot;unable to read Tauri config file at {path} because {error}&quot;</span>)]
+  </span><span class="attr">#[error(<span class="string">"unable to read Tauri config file at {path} because {error}"</span>)]
   </span>Io {
     <span class="doccomment">/// The path the IO error occurred on.
     </span>path: PathBuf,
@@ -567,7 +568,7 @@
 ///
 /// [JSON Merge Patch (RFC 7396)]: https://datatracker.ietf.org/doc/html/rfc7396.
 </span><span class="kw">pub fn </span>read_from(root_dir: PathBuf) -&gt; <span class="prelude-ty">Result</span>&lt;Value, ConfigError&gt; {
-  <span class="kw">let </span><span class="kw-2">mut </span>config: Value = parse_value(root_dir.join(<span class="string">&quot;tauri.conf.json&quot;</span>))<span class="question-mark">?</span>.<span class="number">0</span>;
+  <span class="kw">let </span><span class="kw-2">mut </span>config: Value = parse_value(root_dir.join(<span class="string">"tauri.conf.json"</span>))<span class="question-mark">?</span>.<span class="number">0</span>;
   <span class="kw">if let </span><span class="prelude-val">Some</span>((platform_config, <span class="kw">_</span>)) = read_platform(root_dir)<span class="question-mark">? </span>{
     merge(<span class="kw-2">&amp;mut </span>config, <span class="kw-2">&amp;</span>platform_config);
   }
@@ -589,7 +590,7 @@
 
 <span class="doccomment">/// Check if a supported config file exists at path.
 ///
-/// The passed path is expected to be the path to the &quot;default&quot; configuration format, in this case
+/// The passed path is expected to be the path to the "default" configuration format, in this case
 /// JSON with `.json`.
 </span><span class="kw">pub fn </span>does_supported_file_name_exist(path: <span class="kw">impl </span>Into&lt;PathBuf&gt;) -&gt; bool {
   <span class="kw">let </span>path = path.into();
@@ -667,40 +668,40 @@
     // if the json5 is not valid the serde_json error for regular json will be returned.
     // this could be a bit confusing, so we may want to encourage users using json5 to use the
     // .json5 extension instead of .json
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;config-json5&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"config-json5"</span>)]
     </span><span class="kw">let </span>json = {
       <span class="kw">match </span>do_parse_json5(<span class="kw-2">&amp;</span>raw, <span class="kw-2">&amp;</span>path) {
         json5 @ <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; json5,
 
-        <span class="comment">// assume any errors from json5 in a .json file is because it&#39;s not json5
+        <span class="comment">// assume any errors from json5 in a .json file is because it's not json5
         </span><span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; json,
       }
     };
 
     json.map(|j| (j, path))
   } <span class="kw">else if </span>json5.exists() {
-    <span class="attr">#[cfg(feature = <span class="string">&quot;config-json5&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"config-json5"</span>)]
     </span>{
       <span class="kw">let </span>raw = read_to_string(<span class="kw-2">&amp;</span>json5)<span class="question-mark">?</span>;
       do_parse_json5(<span class="kw-2">&amp;</span>raw, <span class="kw-2">&amp;</span>path).map(|config| (config, json5))
     }
 
-    <span class="attr">#[cfg(not(feature = <span class="string">&quot;config-json5&quot;</span>))]
+    <span class="attr">#[cfg(not(feature = <span class="string">"config-json5"</span>))]
     </span><span class="prelude-val">Err</span>(ConfigError::DisabledFormat {
-      extension: <span class="string">&quot;.json5&quot;</span>.into(),
-      feature: <span class="string">&quot;config-json5&quot;</span>.into(),
+      extension: <span class="string">".json5"</span>.into(),
+      feature: <span class="string">"config-json5"</span>.into(),
     })
   } <span class="kw">else if </span>toml.exists() {
-    <span class="attr">#[cfg(feature = <span class="string">&quot;config-toml&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"config-toml"</span>)]
     </span>{
       <span class="kw">let </span>raw = read_to_string(<span class="kw-2">&amp;</span>toml)<span class="question-mark">?</span>;
       do_parse_toml(<span class="kw-2">&amp;</span>raw, <span class="kw-2">&amp;</span>path).map(|config| (config, toml))
     }
 
-    <span class="attr">#[cfg(not(feature = <span class="string">&quot;config-toml&quot;</span>))]
+    <span class="attr">#[cfg(not(feature = <span class="string">"config-toml"</span>))]
     </span><span class="prelude-val">Err</span>(ConfigError::DisabledFormat {
-      extension: <span class="string">&quot;.toml&quot;</span>.into(),
-      feature: <span class="string">&quot;config-toml&quot;</span>.into(),
+      extension: <span class="string">".toml"</span>.into(),
+      feature: <span class="string">"config-toml"</span>.into(),
     })
   } <span class="kw">else if </span>!EXTENSIONS_SUPPORTED.contains(<span class="kw-2">&amp;</span>path_ext.as_ref()) {
     <span class="prelude-val">Err</span>(ConfigError::UnsupportedFormat(path_ext.to_string()))
@@ -712,14 +713,14 @@
   }
 }
 
-<span class="doccomment">/// &quot;Low-level&quot; helper to parse JSON into a [`Config`].
+<span class="doccomment">/// "Low-level" helper to parse JSON into a [`Config`].
 ///
 /// `raw` should be the contents of the file that is represented by `path`.
 </span><span class="kw">pub fn </span>parse_json(raw: <span class="kw-2">&amp;</span>str, path: <span class="kw-2">&amp;</span>Path) -&gt; <span class="prelude-ty">Result</span>&lt;Config, ConfigError&gt; {
   do_parse_json(raw, path)
 }
 
-<span class="doccomment">/// &quot;Low-level&quot; helper to parse JSON into a JSON [`Value`].
+<span class="doccomment">/// "Low-level" helper to parse JSON into a JSON [`Value`].
 ///
 /// `raw` should be the contents of the file that is represented by `path`.
 </span><span class="kw">pub fn </span>parse_json_value(raw: <span class="kw-2">&amp;</span>str, path: <span class="kw-2">&amp;</span>Path) -&gt; <span class="prelude-ty">Result</span>&lt;Value, ConfigError&gt; {
@@ -733,25 +734,25 @@
   })
 }
 
-<span class="doccomment">/// &quot;Low-level&quot; helper to parse JSON5 into a [`Config`].
+<span class="doccomment">/// "Low-level" helper to parse JSON5 into a [`Config`].
 ///
 /// `raw` should be the contents of the file that is represented by `path`. This function requires
 /// the `config-json5` feature to be enabled.
-</span><span class="attr">#[cfg(feature = <span class="string">&quot;config-json5&quot;</span>)]
+</span><span class="attr">#[cfg(feature = <span class="string">"config-json5"</span>)]
 </span><span class="kw">pub fn </span>parse_json5(raw: <span class="kw-2">&amp;</span>str, path: <span class="kw-2">&amp;</span>Path) -&gt; <span class="prelude-ty">Result</span>&lt;Config, ConfigError&gt; {
   do_parse_json5(raw, path)
 }
 
-<span class="doccomment">/// &quot;Low-level&quot; helper to parse JSON5 into a JSON [`Value`].
+<span class="doccomment">/// "Low-level" helper to parse JSON5 into a JSON [`Value`].
 ///
 /// `raw` should be the contents of the file that is represented by `path`. This function requires
 /// the `config-json5` feature to be enabled.
-</span><span class="attr">#[cfg(feature = <span class="string">&quot;config-json5&quot;</span>)]
+</span><span class="attr">#[cfg(feature = <span class="string">"config-json5"</span>)]
 </span><span class="kw">pub fn </span>parse_json5_value(raw: <span class="kw-2">&amp;</span>str, path: <span class="kw-2">&amp;</span>Path) -&gt; <span class="prelude-ty">Result</span>&lt;Value, ConfigError&gt; {
   do_parse_json5(raw, path)
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;config-json5&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"config-json5"</span>)]
 </span><span class="kw">fn </span>do_parse_json5&lt;D: DeserializeOwned&gt;(raw: <span class="kw-2">&amp;</span>str, path: <span class="kw-2">&amp;</span>Path) -&gt; <span class="prelude-ty">Result</span>&lt;D, ConfigError&gt; {
   ::json5::from_str(raw).map_err(|error| ConfigError::FormatJson5 {
     path: path.into(),
@@ -759,7 +760,7 @@
   })
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;config-toml&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"config-toml"</span>)]
 </span><span class="kw">fn </span>do_parse_toml&lt;D: DeserializeOwned&gt;(raw: <span class="kw-2">&amp;</span>str, path: <span class="kw-2">&amp;</span>Path) -&gt; <span class="prelude-ty">Result</span>&lt;D, ConfigError&gt; {
   ::toml::from_str(raw).map_err(|error| ConfigError::FormatToml {
     path: path.into(),

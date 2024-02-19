@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/objc-0.2.7/src/runtime.rs`."><title>runtime.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="objc" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/objc-0.2.7/src/runtime.rs`."><title>runtime.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="objc" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -632,7 +633,7 @@
 <a href="#632" id="632">632</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! A Rust interface for the functionality of the Objective-C runtime.
 //!
-//! For more information on foreign functions, see Apple&#39;s documentation:
+//! For more information on foreign functions, see Apple's documentation:
 //! &lt;https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ObjCRuntimeRef/index.html&gt;
 
 </span><span class="kw">use </span>std::ffi::{CStr, CString};
@@ -648,20 +649,20 @@
 <span class="doccomment">/// The Objective-C `BOOL` type.
 ///
 /// To convert an Objective-C `BOOL` into a Rust `bool`, compare it with `NO`.
-</span><span class="attr">#[cfg(not(target_arch = <span class="string">&quot;aarch64&quot;</span>))]
+</span><span class="attr">#[cfg(not(target_arch = <span class="string">"aarch64"</span>))]
 </span><span class="kw">pub type </span>BOOL = ::std::os::raw::c_schar;
-<span class="doccomment">/// The equivalent of true for Objective-C&#39;s `BOOL` type.
-</span><span class="attr">#[cfg(not(target_arch = <span class="string">&quot;aarch64&quot;</span>))]
+<span class="doccomment">/// The equivalent of true for Objective-C's `BOOL` type.
+</span><span class="attr">#[cfg(not(target_arch = <span class="string">"aarch64"</span>))]
 </span><span class="kw">pub const </span>YES: BOOL = <span class="number">1</span>;
-<span class="doccomment">/// The equivalent of false for Objective-C&#39;s `BOOL` type.
-</span><span class="attr">#[cfg(not(target_arch = <span class="string">&quot;aarch64&quot;</span>))]
+<span class="doccomment">/// The equivalent of false for Objective-C's `BOOL` type.
+</span><span class="attr">#[cfg(not(target_arch = <span class="string">"aarch64"</span>))]
 </span><span class="kw">pub const </span>NO: BOOL = <span class="number">0</span>;
 
-<span class="attr">#[cfg(target_arch = <span class="string">&quot;aarch64&quot;</span>)]
+<span class="attr">#[cfg(target_arch = <span class="string">"aarch64"</span>)]
 </span><span class="kw">pub type </span>BOOL = bool;
-<span class="attr">#[cfg(target_arch = <span class="string">&quot;aarch64&quot;</span>)]
+<span class="attr">#[cfg(target_arch = <span class="string">"aarch64"</span>)]
 </span><span class="kw">pub const </span>YES: BOOL = <span class="bool-val">true</span>;
-<span class="attr">#[cfg(target_arch = <span class="string">&quot;aarch64&quot;</span>)]
+<span class="attr">#[cfg(target_arch = <span class="string">"aarch64"</span>)]
 </span><span class="kw">pub const </span>NO: BOOL = <span class="bool-val">false</span>;
 
 <span class="doccomment">/// A type that represents a method selector.
@@ -707,7 +708,7 @@
 <span class="doccomment">/// A pointer to the start of a method implementation.
 </span><span class="kw">pub type </span>Imp = <span class="kw">unsafe extern fn</span>();
 
-<span class="attr">#[link(name = <span class="string">&quot;objc&quot;</span>, kind = <span class="string">&quot;dylib&quot;</span>)]
+<span class="attr">#[link(name = <span class="string">"objc"</span>, kind = <span class="string">"dylib"</span>)]
 </span><span class="kw">extern </span>{
     <span class="kw">pub fn </span>sel_registerName(name: <span class="kw-2">*const </span>c_char) -&gt; Sel;
     <span class="kw">pub fn </span>sel_getName(sel: Sel) -&gt; <span class="kw-2">*const </span>c_char;
@@ -829,7 +830,7 @@
 
 <span class="kw">impl </span>fmt::Debug <span class="kw">for </span>Sel {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
-        <span class="macro">write!</span>(f, <span class="string">&quot;{}&quot;</span>, <span class="self">self</span>.name())
+        <span class="macro">write!</span>(f, <span class="string">"{}"</span>, <span class="self">self</span>.name())
     }
 }
 
@@ -868,7 +869,7 @@
         }
     }
 
-    <span class="doccomment">/// Returns the `Encoding` of self&#39;s return type.
+    <span class="doccomment">/// Returns the `Encoding` of self's return type.
     </span><span class="kw">pub fn </span>return_type(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Encoding {
         <span class="kw">unsafe </span>{
             <span class="kw">let </span>encoding = method_copyReturnType(<span class="self">self</span>);
@@ -907,7 +908,7 @@
 <span class="kw">impl </span>Class {
     <span class="doccomment">/// Returns the class definition of a specified class, or `None` if the
     /// class is not registered with the Objective-C runtime.
-    </span><span class="kw">pub fn </span>get(name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>Class&gt; {
+    </span><span class="kw">pub fn </span>get(name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span>Class&gt; {
         <span class="kw">let </span>name = CString::new(name).unwrap();
         <span class="kw">unsafe </span>{
             <span class="kw">let </span>cls = objc_getClass(name.as_ptr());
@@ -916,7 +917,7 @@
     }
 
     <span class="doccomment">/// Obtains the list of registered class definitions.
-    </span><span class="kw">pub fn </span>classes() -&gt; MallocBuffer&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>Class&gt; {
+    </span><span class="kw">pub fn </span>classes() -&gt; MallocBuffer&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span>Class&gt; {
         <span class="kw">unsafe </span>{
             <span class="kw">let </span><span class="kw-2">mut </span>count: c_uint = <span class="number">0</span>;
             <span class="kw">let </span>classes = objc_copyClassList(<span class="kw-2">&amp;mut </span>count);
@@ -1028,14 +1029,14 @@
 
 <span class="kw">impl </span>fmt::Debug <span class="kw">for </span>Class {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
-        <span class="macro">write!</span>(f, <span class="string">&quot;{}&quot;</span>, <span class="self">self</span>.name())
+        <span class="macro">write!</span>(f, <span class="string">"{}"</span>, <span class="self">self</span>.name())
     }
 }
 
 <span class="kw">impl </span>Protocol {
     <span class="doccomment">/// Returns the protocol definition of a specified protocol, or `None` if the
     /// protocol is not registered with the Objective-C runtime.
-    </span><span class="kw">pub fn </span>get(name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>Protocol&gt; {
+    </span><span class="kw">pub fn </span>get(name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span>Protocol&gt; {
         <span class="kw">let </span>name = CString::new(name).unwrap();
         <span class="kw">unsafe </span>{
             <span class="kw">let </span>proto = objc_getProtocol(name.as_ptr());
@@ -1044,7 +1045,7 @@
     }
 
     <span class="doccomment">/// Obtains the list of registered protocol definitions.
-    </span><span class="kw">pub fn </span>protocols() -&gt; MallocBuffer&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>Protocol&gt; {
+    </span><span class="kw">pub fn </span>protocols() -&gt; MallocBuffer&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span>Protocol&gt; {
         <span class="kw">unsafe </span>{
             <span class="kw">let </span><span class="kw-2">mut </span>count: c_uint = <span class="number">0</span>;
             <span class="kw">let </span>protocols = objc_copyProtocolList(<span class="kw-2">&amp;mut </span>count);
@@ -1085,7 +1086,7 @@
 
 <span class="kw">impl </span>fmt::Debug <span class="kw">for </span>Protocol {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
-        <span class="macro">write!</span>(f, <span class="string">&quot;{}&quot;</span>, <span class="self">self</span>.name())
+        <span class="macro">write!</span>(f, <span class="string">"{}"</span>, <span class="self">self</span>.name())
     }
 }
 
@@ -1109,7 +1110,7 @@
                     <span class="macro">assert!</span>(ivar.type_encoding() == T::encode());
                     ivar.offset()
                 }
-                <span class="prelude-val">None </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;Ivar {} not found on class {:?}&quot;</span>, name, cls),
+                <span class="prelude-val">None </span>=&gt; <span class="macro">panic!</span>(<span class="string">"Ivar {} not found on class {:?}"</span>, name, cls),
             }
         };
         <span class="kw">let </span>ptr = {
@@ -1132,7 +1133,7 @@
                     <span class="macro">assert!</span>(ivar.type_encoding() == T::encode());
                     ivar.offset()
                 }
-                <span class="prelude-val">None </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;Ivar {} not found on class {:?}&quot;</span>, name, cls),
+                <span class="prelude-val">None </span>=&gt; <span class="macro">panic!</span>(<span class="string">"Ivar {} not found on class {:?}"</span>, name, cls),
             }
         };
         <span class="kw">let </span>ptr = {
@@ -1154,7 +1155,7 @@
 
 <span class="kw">impl </span>fmt::Debug <span class="kw">for </span>Object {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
-        <span class="macro">write!</span>(f, <span class="string">&quot;&lt;{:?}: {:p}&gt;&quot;</span>, <span class="self">self</span>.class(), <span class="self">self</span>)
+        <span class="macro">write!</span>(f, <span class="string">"&lt;{:?}: {:p}&gt;"</span>, <span class="self">self</span>.class(), <span class="self">self</span>)
     }
 }
 
@@ -1167,8 +1168,8 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_ivar() {
         <span class="kw">let </span>cls = test_utils::custom_class();
-        <span class="kw">let </span>ivar = cls.instance_variable(<span class="string">&quot;_foo&quot;</span>).unwrap();
-        <span class="macro">assert!</span>(ivar.name() == <span class="string">&quot;_foo&quot;</span>);
+        <span class="kw">let </span>ivar = cls.instance_variable(<span class="string">"_foo"</span>).unwrap();
+        <span class="macro">assert!</span>(ivar.name() == <span class="string">"_foo"</span>);
         <span class="macro">assert!</span>(ivar.type_encoding() == &lt;u32&gt;::encode());
         <span class="macro">assert!</span>(ivar.offset() &gt; <span class="number">0</span>);
 
@@ -1179,9 +1180,9 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_method() {
         <span class="kw">let </span>cls = test_utils::custom_class();
-        <span class="kw">let </span>sel = Sel::register(<span class="string">&quot;foo&quot;</span>);
+        <span class="kw">let </span>sel = Sel::register(<span class="string">"foo"</span>);
         <span class="kw">let </span>method = cls.instance_method(sel).unwrap();
-        <span class="macro">assert!</span>(method.name().name() == <span class="string">&quot;foo&quot;</span>);
+        <span class="macro">assert!</span>(method.name().name() == <span class="string">"foo"</span>);
         <span class="macro">assert!</span>(method.arguments_count() == <span class="number">2</span>);
         <span class="macro">assert!</span>(method.return_type() == &lt;u32&gt;::encode());
         <span class="macro">assert!</span>(method.argument_type(<span class="number">1</span>).unwrap() == Sel::encode());
@@ -1193,7 +1194,7 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_class() {
         <span class="kw">let </span>cls = test_utils::custom_class();
-        <span class="macro">assert!</span>(cls.name() == <span class="string">&quot;CustomObject&quot;</span>);
+        <span class="macro">assert!</span>(cls.name() == <span class="string">"CustomObject"</span>);
         <span class="macro">assert!</span>(cls.instance_size() &gt; <span class="number">0</span>);
         <span class="macro">assert!</span>(cls.superclass().is_none());
 
@@ -1217,7 +1218,7 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_protocol() {
         <span class="kw">let </span>proto = test_utils::custom_protocol();
-        <span class="macro">assert!</span>(proto.name() == <span class="string">&quot;CustomProtocol&quot;</span>);
+        <span class="macro">assert!</span>(proto.name() == <span class="string">"CustomProtocol"</span>);
         <span class="kw">let </span>class = test_utils::custom_class();
         <span class="macro">assert!</span>(class.conforms_to(proto));
         <span class="kw">let </span>class_protocols = class.adopted_protocols();
@@ -1256,8 +1257,8 @@
         <span class="kw">let </span><span class="kw-2">mut </span>obj = test_utils::custom_object();
         <span class="macro">assert!</span>(obj.class() == test_utils::custom_class());
         <span class="kw">let </span>result: u32 = <span class="kw">unsafe </span>{
-            obj.set_ivar(<span class="string">&quot;_foo&quot;</span>, <span class="number">4u32</span>);
-            <span class="kw-2">*</span>obj.get_ivar(<span class="string">&quot;_foo&quot;</span>)
+            obj.set_ivar(<span class="string">"_foo"</span>, <span class="number">4u32</span>);
+            <span class="kw-2">*</span>obj.get_ivar(<span class="string">"_foo"</span>)
         };
         <span class="macro">assert!</span>(result == <span class="number">4</span>);
     }

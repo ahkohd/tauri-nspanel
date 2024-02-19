@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/plist-1.6.0/src/stream/xml_reader.rs`."><title>xml_reader.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="plist" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/plist-1.6.0/src/stream/xml_reader.rs`."><title>xml_reader.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="plist" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -359,7 +360,7 @@
         kind.with_position(<span class="self">self</span>.xml_reader_pos())
     }
 
-    <span class="kw">fn </span>read_xml_event&lt;<span class="lifetime">&#39;buf</span>&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span><span class="lifetime">&#39;buf </span><span class="kw-2">mut </span>Vec&lt;u8&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;XmlEvent&lt;<span class="lifetime">&#39;buf</span>&gt;, Error&gt; {
+    <span class="kw">fn </span>read_xml_event&lt;<span class="lifetime">'buf</span>&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span><span class="lifetime">'buf </span><span class="kw-2">mut </span>Vec&lt;u8&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;XmlEvent&lt;<span class="lifetime">'buf</span>&gt;, Error&gt; {
         <span class="kw">let </span>event = <span class="self">self</span>.<span class="number">0</span>.read_event_into(buffer);
         <span class="kw">let </span>pos = <span class="self">self</span>.xml_reader_pos();
         event.map_err(|err| ErrorKind::from(err).with_position(pos))
@@ -376,7 +377,7 @@
                         .map_err(|<span class="kw">_</span>| <span class="self">self</span>.with_pos(ErrorKind::InvalidUtf8String));
                 }
                 XmlEvent::End(<span class="kw">_</span>) =&gt; {
-                    <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="string">&quot;&quot;</span>.to_owned());
+                    <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="string">""</span>.to_owned());
                 }
                 XmlEvent::Eof =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="self">self</span>.with_pos(ErrorKind::UnclosedXmlElement)),
                 XmlEvent::Start(<span class="kw">_</span>) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="self">self</span>.with_pos(ErrorKind::UnexpectedXmlOpeningTag)),
@@ -397,13 +398,13 @@
             <span class="kw">match </span><span class="self">self</span>.read_xml_event(buffer)<span class="question-mark">? </span>{
                 XmlEvent::Start(name) =&gt; {
                     <span class="kw">match </span>name.local_name().as_ref() {
-                        <span class="string">b&quot;plist&quot; </span>=&gt; {}
-                        <span class="string">b&quot;array&quot; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::StartArray(<span class="prelude-val">None</span>))),
-                        <span class="string">b&quot;dict&quot; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::StartDictionary(<span class="prelude-val">None</span>))),
-                        <span class="string">b&quot;key&quot; </span>=&gt; {
+                        <span class="string">b"plist" </span>=&gt; {}
+                        <span class="string">b"array" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::StartArray(<span class="prelude-val">None</span>))),
+                        <span class="string">b"dict" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::StartDictionary(<span class="prelude-val">None</span>))),
+                        <span class="string">b"key" </span>=&gt; {
                             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::String(<span class="self">self</span>.read_content(buffer)<span class="question-mark">?</span>.into())))
                         }
-                        <span class="string">b&quot;data&quot; </span>=&gt; {
+                        <span class="string">b"data" </span>=&gt; {
                             <span class="kw">let </span><span class="kw-2">mut </span>encoded = <span class="self">self</span>.read_content(buffer)<span class="question-mark">?</span>;
                             <span class="comment">// Strip whitespace and line endings from input string
                             </span>encoded.retain(|c| !c.is_ascii_whitespace());
@@ -412,13 +413,13 @@
                                 .map_err(|<span class="kw">_</span>| <span class="self">self</span>.with_pos(ErrorKind::InvalidDataString))<span class="question-mark">?</span>;
                             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::Data(data.into())));
                         }
-                        <span class="string">b&quot;date&quot; </span>=&gt; {
+                        <span class="string">b"date" </span>=&gt; {
                             <span class="kw">let </span>s = <span class="self">self</span>.read_content(buffer)<span class="question-mark">?</span>;
                             <span class="kw">let </span>date = Date::from_xml_format(<span class="kw-2">&amp;</span>s)
                                 .map_err(|<span class="kw">_</span>| <span class="self">self</span>.with_pos(ErrorKind::InvalidDateString))<span class="question-mark">?</span>;
                             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::Date(date)));
                         }
-                        <span class="string">b&quot;integer&quot; </span>=&gt; {
+                        <span class="string">b"integer" </span>=&gt; {
                             <span class="kw">let </span>s = <span class="self">self</span>.read_content(buffer)<span class="question-mark">?</span>;
                             <span class="kw">match </span>Integer::from_str(<span class="kw-2">&amp;</span>s) {
                                 <span class="prelude-val">Ok</span>(i) =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::Integer(i))),
@@ -427,23 +428,23 @@
                                 }
                             }
                         }
-                        <span class="string">b&quot;real&quot; </span>=&gt; {
+                        <span class="string">b"real" </span>=&gt; {
                             <span class="kw">let </span>s = <span class="self">self</span>.read_content(buffer)<span class="question-mark">?</span>;
                             <span class="kw">match </span>s.parse() {
                                 <span class="prelude-val">Ok</span>(f) =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::Real(f))),
                                 <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="self">self</span>.with_pos(ErrorKind::InvalidRealString)),
                             }
                         }
-                        <span class="string">b&quot;string&quot; </span>=&gt; {
+                        <span class="string">b"string" </span>=&gt; {
                             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::String(<span class="self">self</span>.read_content(buffer)<span class="question-mark">?</span>.into())))
                         }
-                        <span class="string">b&quot;true&quot; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::Boolean(<span class="bool-val">true</span>))),
-                        <span class="string">b&quot;false&quot; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::Boolean(<span class="bool-val">false</span>))),
+                        <span class="string">b"true" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::Boolean(<span class="bool-val">true</span>))),
+                        <span class="string">b"false" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::Boolean(<span class="bool-val">false</span>))),
                         <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="self">self</span>.with_pos(ErrorKind::UnknownXmlElement)),
                     }
                 }
                 XmlEvent::End(name) =&gt; <span class="kw">match </span>name.local_name().as_ref() {
-                    <span class="string">b&quot;array&quot; </span>| <span class="string">b&quot;dict&quot; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::EndCollection)),
+                    <span class="string">b"array" </span>| <span class="string">b"dict" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::EndCollection)),
                     <span class="kw">_ </span>=&gt; (),
                 },
                 XmlEvent::Eof =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
@@ -480,38 +481,38 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>streaming_parser() {
-        <span class="kw">let </span>reader = File::open(<span class="string">&quot;./tests/data/xml.plist&quot;</span>).unwrap();
+        <span class="kw">let </span>reader = File::open(<span class="string">"./tests/data/xml.plist"</span>).unwrap();
         <span class="kw">let </span>streaming_parser = XmlReader::new(reader);
         <span class="kw">let </span>events: Vec&lt;Event&gt; = streaming_parser.map(|e| e.unwrap()).collect();
 
         <span class="kw">let </span>comparison = <span class="kw-2">&amp;</span>[
             StartDictionary(<span class="prelude-val">None</span>),
-            String(<span class="string">&quot;Author&quot;</span>.into()),
-            String(<span class="string">&quot;William Shakespeare&quot;</span>.into()),
-            String(<span class="string">&quot;Lines&quot;</span>.into()),
+            String(<span class="string">"Author"</span>.into()),
+            String(<span class="string">"William Shakespeare"</span>.into()),
+            String(<span class="string">"Lines"</span>.into()),
             StartArray(<span class="prelude-val">None</span>),
-            String(<span class="string">&quot;It is a tale told by an idiot,     &quot;</span>.into()),
-            String(<span class="string">&quot;Full of sound and fury, signifying nothing.&quot;</span>.into()),
+            String(<span class="string">"It is a tale told by an idiot,     "</span>.into()),
+            String(<span class="string">"Full of sound and fury, signifying nothing."</span>.into()),
             EndCollection,
-            String(<span class="string">&quot;Death&quot;</span>.into()),
+            String(<span class="string">"Death"</span>.into()),
             Integer(<span class="number">1564</span>.into()),
-            String(<span class="string">&quot;Height&quot;</span>.into()),
+            String(<span class="string">"Height"</span>.into()),
             Real(<span class="number">1.60</span>),
-            String(<span class="string">&quot;Data&quot;</span>.into()),
+            String(<span class="string">"Data"</span>.into()),
             Data(<span class="macro">vec!</span>[<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">190</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">3</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">30</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>].into()),
-            String(<span class="string">&quot;Birthdate&quot;</span>.into()),
-            Date(<span class="kw">super</span>::Date::from_xml_format(<span class="string">&quot;1981-05-16T11:32:06Z&quot;</span>).unwrap()),
-            String(<span class="string">&quot;Blank&quot;</span>.into()),
-            String(<span class="string">&quot;&quot;</span>.into()),
-            String(<span class="string">&quot;BiggestNumber&quot;</span>.into()),
+            String(<span class="string">"Birthdate"</span>.into()),
+            Date(<span class="kw">super</span>::Date::from_xml_format(<span class="string">"1981-05-16T11:32:06Z"</span>).unwrap()),
+            String(<span class="string">"Blank"</span>.into()),
+            String(<span class="string">""</span>.into()),
+            String(<span class="string">"BiggestNumber"</span>.into()),
             Integer(<span class="number">18446744073709551615u64</span>.into()),
-            String(<span class="string">&quot;SmallestNumber&quot;</span>.into()),
+            String(<span class="string">"SmallestNumber"</span>.into()),
             Integer((-<span class="number">9223372036854775808i64</span>).into()),
-            String(<span class="string">&quot;HexademicalNumber&quot;</span>.into()),
+            String(<span class="string">"HexademicalNumber"</span>.into()),
             Integer(<span class="number">0xdead_beef_u64</span>.into()),
-            String(<span class="string">&quot;IsTrue&quot;</span>.into()),
+            String(<span class="string">"IsTrue"</span>.into()),
             Boolean(<span class="bool-val">true</span>),
-            String(<span class="string">&quot;IsNotFalse&quot;</span>.into()),
+            String(<span class="string">"IsNotFalse"</span>.into()),
             Boolean(<span class="bool-val">false</span>),
             EndCollection,
         ];
@@ -521,7 +522,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>bad_data() {
-        <span class="kw">let </span>reader = File::open(<span class="string">&quot;./tests/data/xml_error.plist&quot;</span>).unwrap();
+        <span class="kw">let </span>reader = File::open(<span class="string">"./tests/data/xml_error.plist"</span>).unwrap();
         <span class="kw">let </span>streaming_parser = XmlReader::new(reader);
         <span class="kw">let </span>events: Vec&lt;<span class="kw">_</span>&gt; = streaming_parser.collect();
 

@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/parser.rs`."><title>parser.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="uuid" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="icon" href="https://www.rust-lang.org/favicon.ico"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../uuid/index.html"><img src="https://www.rust-lang.org/logos/rust-logo-128x128-blk-v2.png" alt="uuid"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/parser.rs`."><title>parser.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="uuid" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="icon" href="https://www.rust-lang.org/favicon.ico"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><a class="sub-logo-container" href="../../uuid/index.html"><img src="https://www.rust-lang.org/logos/rust-logo-128x128-blk-v2.png" alt="uuid"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -556,10 +557,10 @@
     }
 }
 
-<span class="kw">impl </span>TryFrom&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;_ </span>str&gt; <span class="kw">for </span>Uuid {
+<span class="kw">impl </span>TryFrom&lt;<span class="kw-2">&amp;</span><span class="lifetime">'_ </span>str&gt; <span class="kw">for </span>Uuid {
     <span class="kw">type </span>Error = Error;
 
-    <span class="kw">fn </span>try_from(uuid_str: <span class="kw-2">&amp;</span><span class="lifetime">&#39;_ </span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Error&gt; {
+    <span class="kw">fn </span>try_from(uuid_str: <span class="kw-2">&amp;</span><span class="lifetime">'_ </span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Error&gt; {
         Uuid::parse_str(uuid_str)
     }
 }
@@ -581,7 +582,7 @@
     /// ```
     /// # use uuid::{Uuid, Version, Variant};
     /// # fn main() -&gt; Result&lt;(), uuid::Error&gt; {
-    /// let uuid = Uuid::parse_str(&quot;550e8400-e29b-41d4-a716-446655440000&quot;)?;
+    /// let uuid = Uuid::parse_str("550e8400-e29b-41d4-a716-446655440000")?;
     ///
     /// assert_eq!(Some(Version::Random), uuid.get_version());
     /// assert_eq!(Variant::RFC4122, uuid.get_variant());
@@ -601,7 +602,7 @@
     ///
     /// This function is similar to [`parse_str`], in fact `parse_str` shares
     /// the same underlying parser. The difference is that if `try_parse`
-    /// fails, it won&#39;t generate very useful error messages. The `parse_str`
+    /// fails, it won't generate very useful error messages. The `parse_str`
     /// function will eventually be deprecated in favor or `try_parse`.
     ///
     /// To parse a UUID from a byte stream instead of a UTF8 string, see
@@ -614,7 +615,7 @@
     /// ```
     /// # use uuid::{Uuid, Version, Variant};
     /// # fn main() -&gt; Result&lt;(), uuid::Error&gt; {
-    /// let uuid = Uuid::try_parse(&quot;550e8400-e29b-41d4-a716-446655440000&quot;)?;
+    /// let uuid = Uuid::try_parse("550e8400-e29b-41d4-a716-446655440000")?;
     ///
     /// assert_eq!(Some(Version::Random), uuid.get_version());
     /// assert_eq!(Variant::RFC4122, uuid.get_variant());
@@ -642,7 +643,7 @@
     /// ```
     /// # use uuid::{Uuid, Version, Variant};
     /// # fn main() -&gt; Result&lt;(), uuid::Error&gt; {
-    /// let uuid = Uuid::try_parse_ascii(b&quot;550e8400-e29b-41d4-a716-446655440000&quot;)?;
+    /// let uuid = Uuid::try_parse_ascii(b"550e8400-e29b-41d4-a716-446655440000")?;
     ///
     /// assert_eq!(Some(Version::Random), uuid.get_version());
     /// assert_eq!(Variant::RFC4122, uuid.get_variant());
@@ -654,7 +655,7 @@
     </span><span class="kw">pub const fn </span>try_parse_ascii(input: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;Uuid, Error&gt; {
         <span class="kw">match </span>try_parse(input) {
             <span class="prelude-val">Ok</span>(bytes) =&gt; <span class="prelude-val">Ok</span>(Uuid::from_bytes(bytes)),
-            <span class="comment">// If parsing fails then we don&#39;t know exactly what went wrong
+            <span class="comment">// If parsing fails then we don't know exactly what went wrong
             // In this case, we just return a generic error
             </span><span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(Error(ErrorKind::Other)),
         }
@@ -670,8 +671,8 @@
         // - `urn:uuid:UUID` for URNs
         // - `UUID` for a regular hyphenated UUID
         </span>(<span class="number">36</span>, s)
-        | (<span class="number">38</span>, [<span class="string">b&#39;{&#39;</span>, s @ .., <span class="string">b&#39;}&#39;</span>])
-        | (<span class="number">45</span>, [<span class="string">b&#39;u&#39;</span>, <span class="string">b&#39;r&#39;</span>, <span class="string">b&#39;n&#39;</span>, <span class="string">b&#39;:&#39;</span>, <span class="string">b&#39;u&#39;</span>, <span class="string">b&#39;u&#39;</span>, <span class="string">b&#39;i&#39;</span>, <span class="string">b&#39;d&#39;</span>, <span class="string">b&#39;:&#39;</span>, s @ ..]) =&gt; {
+        | (<span class="number">38</span>, [<span class="string">b'{'</span>, s @ .., <span class="string">b'}'</span>])
+        | (<span class="number">45</span>, [<span class="string">b'u'</span>, <span class="string">b'r'</span>, <span class="string">b'n'</span>, <span class="string">b':'</span>, <span class="string">b'u'</span>, <span class="string">b'u'</span>, <span class="string">b'i'</span>, <span class="string">b'd'</span>, <span class="string">b':'</span>, s @ ..]) =&gt; {
             parse_hyphenated(s)
         }
         <span class="comment">// Any other shaped input is immediately invalid
@@ -725,8 +726,8 @@
     }
 
     <span class="comment">// We look at two hex-encoded values (4 chars) at a time because
-    // that&#39;s the size of the smallest group in a hyphenated UUID.
-    // The indexes we&#39;re interested in are:
+    // that's the size of the smallest group in a hyphenated UUID.
+    // The indexes we're interested in are:
     //
     // uuid     : 936da01f-9abd-4d9d-80c7-02af85c822a8
     //            |   |   ||   ||   ||   ||   |   |
@@ -735,7 +736,7 @@
 
     // First, ensure the hyphens appear in the right places
     </span><span class="kw">match </span>[s[<span class="number">8</span>], s[<span class="number">13</span>], s[<span class="number">18</span>], s[<span class="number">23</span>]] {
-        [<span class="string">b&#39;-&#39;</span>, <span class="string">b&#39;-&#39;</span>, <span class="string">b&#39;-&#39;</span>, <span class="string">b&#39;-&#39;</span>] =&gt; {}
+        [<span class="string">b'-'</span>, <span class="string">b'-'</span>, <span class="string">b'-'</span>, <span class="string">b'-'</span>] =&gt; {}
         <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(()),
     }
 
@@ -747,7 +748,7 @@
         <span class="kw">let </span>i = positions[j];
 
         <span class="comment">// The decoding here is the same as the simple case
-        // We&#39;re just dealing with two values instead of one
+        // We're just dealing with two values instead of one
         </span><span class="kw">let </span>h1 = HEX_TABLE[s[i <span class="kw">as </span>usize] <span class="kw">as </span>usize];
         <span class="kw">let </span>h2 = HEX_TABLE[s[(i + <span class="number">1</span>) <span class="kw">as </span>usize] <span class="kw">as </span>usize];
         <span class="kw">let </span>h3 = HEX_TABLE[s[(i + <span class="number">2</span>) <span class="kw">as </span>usize] <span class="kw">as </span>usize];
@@ -771,9 +772,9 @@
 
     <span class="kw">loop </span>{
         buf[i <span class="kw">as </span>usize] = <span class="kw">match </span>i {
-            <span class="string">b&#39;0&#39;</span>..=<span class="string">b&#39;9&#39; </span>=&gt; i - <span class="string">b&#39;0&#39;</span>,
-            <span class="string">b&#39;a&#39;</span>..=<span class="string">b&#39;f&#39; </span>=&gt; i - <span class="string">b&#39;a&#39; </span>+ <span class="number">10</span>,
-            <span class="string">b&#39;A&#39;</span>..=<span class="string">b&#39;F&#39; </span>=&gt; i - <span class="string">b&#39;A&#39; </span>+ <span class="number">10</span>,
+            <span class="string">b'0'</span>..=<span class="string">b'9' </span>=&gt; i - <span class="string">b'0'</span>,
+            <span class="string">b'a'</span>..=<span class="string">b'f' </span>=&gt; i - <span class="string">b'a' </span>+ <span class="number">10</span>,
+            <span class="string">b'A'</span>..=<span class="string">b'F' </span>=&gt; i - <span class="string">b'A' </span>+ <span class="number">10</span>,
             <span class="kw">_ </span>=&gt; <span class="number">0xff</span>,
         };
 
@@ -807,31 +808,31 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_parse_uuid_v4_valid() {
-        <span class="kw">let </span>from_hyphenated = Uuid::parse_str(<span class="string">&quot;67e55044-10b1-426f-9247-bb680e5fe0c8&quot;</span>).unwrap();
-        <span class="kw">let </span>from_simple = Uuid::parse_str(<span class="string">&quot;67e5504410b1426f9247bb680e5fe0c8&quot;</span>).unwrap();
-        <span class="kw">let </span>from_urn = Uuid::parse_str(<span class="string">&quot;urn:uuid:67e55044-10b1-426f-9247-bb680e5fe0c8&quot;</span>).unwrap();
-        <span class="kw">let </span>from_guid = Uuid::parse_str(<span class="string">&quot;{67e55044-10b1-426f-9247-bb680e5fe0c8}&quot;</span>).unwrap();
+        <span class="kw">let </span>from_hyphenated = Uuid::parse_str(<span class="string">"67e55044-10b1-426f-9247-bb680e5fe0c8"</span>).unwrap();
+        <span class="kw">let </span>from_simple = Uuid::parse_str(<span class="string">"67e5504410b1426f9247bb680e5fe0c8"</span>).unwrap();
+        <span class="kw">let </span>from_urn = Uuid::parse_str(<span class="string">"urn:uuid:67e55044-10b1-426f-9247-bb680e5fe0c8"</span>).unwrap();
+        <span class="kw">let </span>from_guid = Uuid::parse_str(<span class="string">"{67e55044-10b1-426f-9247-bb680e5fe0c8}"</span>).unwrap();
 
         <span class="macro">assert_eq!</span>(from_hyphenated, from_simple);
         <span class="macro">assert_eq!</span>(from_hyphenated, from_urn);
         <span class="macro">assert_eq!</span>(from_hyphenated, from_guid);
 
-        <span class="macro">assert!</span>(Uuid::parse_str(<span class="string">&quot;00000000000000000000000000000000&quot;</span>).is_ok());
-        <span class="macro">assert!</span>(Uuid::parse_str(<span class="string">&quot;67e55044-10b1-426f-9247-bb680e5fe0c8&quot;</span>).is_ok());
-        <span class="macro">assert!</span>(Uuid::parse_str(<span class="string">&quot;F9168C5E-CEB2-4faa-B6BF-329BF39FA1E4&quot;</span>).is_ok());
-        <span class="macro">assert!</span>(Uuid::parse_str(<span class="string">&quot;67e5504410b1426f9247bb680e5fe0c8&quot;</span>).is_ok());
-        <span class="macro">assert!</span>(Uuid::parse_str(<span class="string">&quot;01020304-1112-2122-3132-414243444546&quot;</span>).is_ok());
-        <span class="macro">assert!</span>(Uuid::parse_str(<span class="string">&quot;urn:uuid:67e55044-10b1-426f-9247-bb680e5fe0c8&quot;</span>).is_ok());
-        <span class="macro">assert!</span>(Uuid::parse_str(<span class="string">&quot;{6d93bade-bd9f-4e13-8914-9474e1e3567b}&quot;</span>).is_ok());
+        <span class="macro">assert!</span>(Uuid::parse_str(<span class="string">"00000000000000000000000000000000"</span>).is_ok());
+        <span class="macro">assert!</span>(Uuid::parse_str(<span class="string">"67e55044-10b1-426f-9247-bb680e5fe0c8"</span>).is_ok());
+        <span class="macro">assert!</span>(Uuid::parse_str(<span class="string">"F9168C5E-CEB2-4faa-B6BF-329BF39FA1E4"</span>).is_ok());
+        <span class="macro">assert!</span>(Uuid::parse_str(<span class="string">"67e5504410b1426f9247bb680e5fe0c8"</span>).is_ok());
+        <span class="macro">assert!</span>(Uuid::parse_str(<span class="string">"01020304-1112-2122-3132-414243444546"</span>).is_ok());
+        <span class="macro">assert!</span>(Uuid::parse_str(<span class="string">"urn:uuid:67e55044-10b1-426f-9247-bb680e5fe0c8"</span>).is_ok());
+        <span class="macro">assert!</span>(Uuid::parse_str(<span class="string">"{6d93bade-bd9f-4e13-8914-9474e1e3567b}"</span>).is_ok());
 
         <span class="comment">// Nil
         </span><span class="kw">let </span>nil = Uuid::nil();
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;00000000000000000000000000000000&quot;</span>).unwrap(),
+            Uuid::parse_str(<span class="string">"00000000000000000000000000000000"</span>).unwrap(),
             nil
         );
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;00000000-0000-0000-0000-000000000000&quot;</span>).unwrap(),
+            Uuid::parse_str(<span class="string">"00000000-0000-0000-0000-000000000000"</span>).unwrap(),
             nil
         );
     }
@@ -840,20 +841,20 @@
     </span><span class="kw">fn </span>test_parse_uuid_v4_invalid() {
         <span class="comment">// Invalid
         </span><span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;&quot;</span>),
+            Uuid::parse_str(<span class="string">""</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::SimpleLength { len: <span class="number">0 </span>}))
         );
 
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;!&quot;</span>),
+            Uuid::parse_str(<span class="string">"!"</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::Char {
-                character: <span class="string">&#39;!&#39;</span>,
+                character: <span class="string">'!'</span>,
                 index: <span class="number">1</span>,
             }))
         );
 
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;F9168C5E-CEB2-4faa-B6BF-329BF39FA1E45&quot;</span>),
+            Uuid::parse_str(<span class="string">"F9168C5E-CEB2-4faa-B6BF-329BF39FA1E45"</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::GroupLength {
                 group: <span class="number">4</span>,
                 len: <span class="number">13</span>,
@@ -862,7 +863,7 @@
         );
 
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;F9168C5E-CEB2-4faa-BBF-329BF39FA1E4&quot;</span>),
+            Uuid::parse_str(<span class="string">"F9168C5E-CEB2-4faa-BBF-329BF39FA1E4"</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::GroupLength {
                 group: <span class="number">3</span>,
                 len: <span class="number">3</span>,
@@ -871,56 +872,56 @@
         );
 
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;F9168C5E-CEB2-4faa-BGBF-329BF39FA1E4&quot;</span>),
+            Uuid::parse_str(<span class="string">"F9168C5E-CEB2-4faa-BGBF-329BF39FA1E4"</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::Char {
-                character: <span class="string">&#39;G&#39;</span>,
+                character: <span class="string">'G'</span>,
                 index: <span class="number">21</span>,
             }))
         );
 
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;F9168C5E-CEB2F4faaFB6BFF329BF39FA1E4&quot;</span>),
+            Uuid::parse_str(<span class="string">"F9168C5E-CEB2F4faaFB6BFF329BF39FA1E4"</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::GroupCount { count: <span class="number">2 </span>}))
         );
 
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;F9168C5E-CEB2-4faaFB6BFF329BF39FA1E4&quot;</span>),
+            Uuid::parse_str(<span class="string">"F9168C5E-CEB2-4faaFB6BFF329BF39FA1E4"</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::GroupCount { count: <span class="number">3 </span>}))
         );
 
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;F9168C5E-CEB2-4faa-B6BFF329BF39FA1E4&quot;</span>),
+            Uuid::parse_str(<span class="string">"F9168C5E-CEB2-4faa-B6BFF329BF39FA1E4"</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::GroupCount { count: <span class="number">4 </span>}))
         );
 
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;F9168C5E-CEB2-4faa&quot;</span>),
+            Uuid::parse_str(<span class="string">"F9168C5E-CEB2-4faa"</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::GroupCount { count: <span class="number">3 </span>}))
         );
 
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;F9168C5E-CEB2-4faaXB6BFF329BF39FA1E4&quot;</span>),
+            Uuid::parse_str(<span class="string">"F9168C5E-CEB2-4faaXB6BFF329BF39FA1E4"</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::Char {
-                character: <span class="string">&#39;X&#39;</span>,
+                character: <span class="string">'X'</span>,
                 index: <span class="number">19</span>,
             }))
         );
 
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;{F9168C5E-CEB2-4faa9B6BFF329BF39FA1E41&quot;</span>),
+            Uuid::parse_str(<span class="string">"{F9168C5E-CEB2-4faa9B6BFF329BF39FA1E41"</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::Char {
-                character: <span class="string">&#39;{&#39;</span>,
+                character: <span class="string">'{'</span>,
                 index: <span class="number">1</span>,
             }))
         );
 
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;{F9168C5E-CEB2-4faa9B6BFF329BF39FA1E41}&quot;</span>),
+            Uuid::parse_str(<span class="string">"{F9168C5E-CEB2-4faa9B6BFF329BF39FA1E41}"</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::GroupCount { count: <span class="number">3 </span>}))
         );
 
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;F9168C5E-CEB-24fa-eB6BFF32-BF39FA1E4&quot;</span>),
+            Uuid::parse_str(<span class="string">"F9168C5E-CEB-24fa-eB6BFF32-BF39FA1E4"</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::GroupLength {
                 group: <span class="number">1</span>,
                 len: <span class="number">3</span>,
@@ -931,7 +932,7 @@
         <span class="comment">// // (group, found, expecting)
         // //
         </span><span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;01020304-1112-2122-3132-41424344&quot;</span>),
+            Uuid::parse_str(<span class="string">"01020304-1112-2122-3132-41424344"</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::GroupLength {
                 group: <span class="number">4</span>,
                 len: <span class="number">8</span>,
@@ -940,61 +941,61 @@
         );
 
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;67e5504410b1426f9247bb680e5fe0c&quot;</span>),
+            Uuid::parse_str(<span class="string">"67e5504410b1426f9247bb680e5fe0c"</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::SimpleLength { len: <span class="number">31 </span>}))
         );
 
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;67e5504410b1426f9247bb680e5fe0c88&quot;</span>),
+            Uuid::parse_str(<span class="string">"67e5504410b1426f9247bb680e5fe0c88"</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::SimpleLength { len: <span class="number">33 </span>}))
         );
 
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;67e5504410b1426f9247bb680e5fe0cg8&quot;</span>),
+            Uuid::parse_str(<span class="string">"67e5504410b1426f9247bb680e5fe0cg8"</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::Char {
-                character: <span class="string">&#39;g&#39;</span>,
+                character: <span class="string">'g'</span>,
                 index: <span class="number">32</span>,
             }))
         );
 
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;67e5504410b1426%9247bb680e5fe0c8&quot;</span>),
+            Uuid::parse_str(<span class="string">"67e5504410b1426%9247bb680e5fe0c8"</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::Char {
-                character: <span class="string">&#39;%&#39;</span>,
+                character: <span class="string">'%'</span>,
                 index: <span class="number">16</span>,
             }))
         );
 
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;231231212212423424324323477343246663&quot;</span>),
+            Uuid::parse_str(<span class="string">"231231212212423424324323477343246663"</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::SimpleLength { len: <span class="number">36 </span>}))
         );
 
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;{00000000000000000000000000000000}&quot;</span>),
+            Uuid::parse_str(<span class="string">"{00000000000000000000000000000000}"</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::GroupCount { count: <span class="number">1 </span>}))
         );
 
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;67e5504410b1426f9247bb680e5fe0c&quot;</span>),
+            Uuid::parse_str(<span class="string">"67e5504410b1426f9247bb680e5fe0c"</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::SimpleLength { len: <span class="number">31 </span>}))
         );
 
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;67e550X410b1426f9247bb680e5fe0cd&quot;</span>),
+            Uuid::parse_str(<span class="string">"67e550X410b1426f9247bb680e5fe0cd"</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::Char {
-                character: <span class="string">&#39;X&#39;</span>,
+                character: <span class="string">'X'</span>,
                 index: <span class="number">7</span>,
             }))
         );
 
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;67e550-4105b1426f9247bb680e5fe0c&quot;</span>),
+            Uuid::parse_str(<span class="string">"67e550-4105b1426f9247bb680e5fe0c"</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::GroupCount { count: <span class="number">2 </span>}))
         );
 
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;F9168C5E-CEB2-4faa-B6BF1-02BF39FA1E4&quot;</span>),
+            Uuid::parse_str(<span class="string">"F9168C5E-CEB2-4faa-B6BF1-02BF39FA1E4"</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::GroupLength {
                 group: <span class="number">3</span>,
                 len: <span class="number">5</span>,
@@ -1003,9 +1004,9 @@
         );
 
         <span class="macro">assert_eq!</span>(
-            Uuid::parse_str(<span class="string">&quot;\u{bcf3c}&quot;</span>),
+            Uuid::parse_str(<span class="string">"\u{bcf3c}"</span>),
             <span class="prelude-val">Err</span>(Error(ErrorKind::Char {
-                character: <span class="string">&#39;\u{bcf3c}&#39;</span>,
+                character: <span class="string">'\u{bcf3c}'</span>,
                 index: <span class="number">1
             </span>}))
         );
@@ -1053,7 +1054,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_try_parse_ascii_non_utf8() {
-        <span class="macro">assert!</span>(Uuid::try_parse_ascii(<span class="string">b&quot;67e55044-10b1-426f-9247-bb680e5\0e0c8&quot;</span>).is_err());
+        <span class="macro">assert!</span>(Uuid::try_parse_ascii(<span class="string">b"67e55044-10b1-426f-9247-bb680e5\0e0c8"</span>).is_err());
     }
 }
 </code></pre></div></section></main></body></html>

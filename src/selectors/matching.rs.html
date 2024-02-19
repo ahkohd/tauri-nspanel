@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/matching.rs`."><title>matching.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="selectors" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/matching.rs`."><title>matching.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="selectors" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1071,8 +1072,8 @@
 }
 
 <span class="doccomment">/// Holds per-compound-selector data.
-</span><span class="kw">struct </span>LocalMatchingContext&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span>: <span class="lifetime">&#39;a</span>, Impl: SelectorImpl&gt; {
-    shared: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>MatchingContext&lt;<span class="lifetime">&#39;b</span>, Impl&gt;,
+</span><span class="kw">struct </span>LocalMatchingContext&lt;<span class="lifetime">'a</span>, <span class="lifetime">'b</span>: <span class="lifetime">'a</span>, Impl: SelectorImpl&gt; {
+    shared: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>MatchingContext&lt;<span class="lifetime">'b</span>, Impl&gt;,
     matches_hover_and_active_quirk: MatchesHoverAndActiveQuirk,
 }
 
@@ -1104,7 +1105,7 @@
     // masking off the high bits, since if any of the first three hashes is
     // zero the fourth will be as well. We also take care to avoid the
     // special-case complexity of the fourth hash until we actually reach it,
-    // because we usually don&#39;t.
+    // because we usually don't.
     //
     // To be clear: this is all extremely hot.
     </span><span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="number">3 </span>{
@@ -1144,30 +1145,30 @@
 /// It is raised when
 ///   NextSibling combinator cannot find the candidate element.
 ///   LaterSibling combinator cannot find the candidate element.
-///   Child combinator doesn&#39;t match on the found element.
+///   Child combinator doesn't match on the found element.
 ///
 /// When NotMatchedAndRestartFromClosestLaterSibling appears, the selector
 /// matching does backtracking and restarts from the closest LaterSibling
 /// combinator.
 /// It is raised when
-///   NextSibling combinator doesn&#39;t match on the found element.
+///   NextSibling combinator doesn't match on the found element.
 ///
-/// For example, when the selector &quot;d1 d2 a&quot; is provided and we cannot *find*
-/// an appropriate ancestor element for &quot;d1&quot;, this selector matching raises
-/// NotMatchedGlobally since even if &quot;d2&quot; is moved to more upper element, the
-/// candidates for &quot;d1&quot; becomes less than before and d1 .
+/// For example, when the selector "d1 d2 a" is provided and we cannot *find*
+/// an appropriate ancestor element for "d1", this selector matching raises
+/// NotMatchedGlobally since even if "d2" is moved to more upper element, the
+/// candidates for "d1" becomes less than before and d1 .
 ///
-/// The next example is siblings. When the selector &quot;b1 + b2 ~ d1 a&quot; is
+/// The next example is siblings. When the selector "b1 + b2 ~ d1 a" is
 /// provided and we cannot *find* an appropriate brother element for b1,
 /// the selector matching raises NotMatchedAndRestartFromClosestDescendant.
-/// The selectors (&quot;b1 + b2 ~&quot;) doesn&#39;t match and matching restart from &quot;d1&quot;.
+/// The selectors ("b1 + b2 ~") doesn't match and matching restart from "d1".
 ///
 /// The additional example is child and sibling. When the selector
-/// &quot;b1 + c1 &gt; b2 ~ d1 a&quot; is provided and the selector &quot;b1&quot; doesn&#39;t match on
-/// the element, this &quot;b1&quot; raises NotMatchedAndRestartFromClosestLaterSibling.
-/// However since the selector &quot;c1&quot; raises
+/// "b1 + c1 &gt; b2 ~ d1 a" is provided and the selector "b1" doesn't match on
+/// the element, this "b1" raises NotMatchedAndRestartFromClosestLaterSibling.
+/// However since the selector "c1" raises
 /// NotMatchedAndRestartFromClosestDescendant. So the selector
-/// &quot;b1 + c1 &gt; b2 ~ &quot; doesn&#39;t match and restart matching from &quot;d1&quot;.
+/// "b1 + c1 &gt; b2 ~ " doesn't match and restart matching from "d1".
 </span><span class="attr">#[derive(Clone, Copy, Eq, PartialEq)]
 </span><span class="kw">enum </span>SelectorMatchingResult {
     Matched,
@@ -1226,7 +1227,7 @@
     <span class="doccomment">/// The compound selector matched, and the next combinator offset is
     /// `next_combinator_offset`.
     </span>Matched { next_combinator_offset: usize },
-    <span class="doccomment">/// The selector didn&#39;t match.
+    <span class="doccomment">/// The selector didn't match.
     </span>NotMatched,
 }
 
@@ -1235,8 +1236,8 @@
 ///
 /// Requires that `from_offset` points to a `Combinator`.
 ///
-/// NOTE(emilio): This doesn&#39;t allow to match in the leftmost sequence of the
-/// complex selector, but it happens to be the case we don&#39;t need it.
+/// NOTE(emilio): This doesn't allow to match in the leftmost sequence of the
+/// complex selector, but it happens to be the case we don't need it.
 </span><span class="kw">pub fn </span>matches_compound_selector_from&lt;E&gt;(
     selector: <span class="kw-2">&amp;</span>Selector&lt;E::Impl&gt;,
     <span class="kw-2">mut </span>from_offset: usize,
@@ -1261,7 +1262,7 @@
     </span><span class="kw">let </span>start_offset = from_offset;
     <span class="kw">for </span>component <span class="kw">in </span>selector.iter_raw_parse_order_from(from_offset) {
         <span class="kw">if </span><span class="macro">matches!</span>(<span class="kw-2">*</span>component, Component::Combinator(..)) {
-            <span class="macro">debug_assert_ne!</span>(from_offset, <span class="number">0</span>, <span class="string">&quot;Selector started with a combinator?&quot;</span>);
+            <span class="macro">debug_assert_ne!</span>(from_offset, <span class="number">0</span>, <span class="string">"Selector started with a combinator?"</span>);
             <span class="kw">break</span>;
         }
 
@@ -1279,7 +1280,7 @@
                     selector.combinator_at_parse_order(from_offset),
                     Combinator::SlotAssignment | Combinator::PseudoElement
                 )),
-        <span class="string">&quot;Got the math wrong: {:?} | {:?} | {} {}&quot;</span>,
+        <span class="string">"Got the math wrong: {:?} | {:?} | {} {}"</span>,
         selector,
         selector.iter_raw_match_order().as_slice(),
         from_offset,
@@ -1328,18 +1329,18 @@
             <span class="kw">_ </span>=&gt; {
                 <span class="macro">debug_assert!</span>(
                     <span class="bool-val">false</span>,
-                    <span class="string">&quot;Used MatchingMode::ForStatelessPseudoElement \
-                     in a non-pseudo selector&quot;
+                    <span class="string">"Used MatchingMode::ForStatelessPseudoElement \
+                     in a non-pseudo selector"
                 </span>);
             },
         }
 
         <span class="comment">// The only other parser-allowed Component in this sequence is a state
-        // class. We just don&#39;t match in that case.
+        // class. We just don't match in that case.
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(s) = iter.next() {
             <span class="macro">debug_assert!</span>(
                 <span class="macro">matches!</span>(<span class="kw-2">*</span>s, Component::NonTSPseudoClass(..)),
-                <span class="string">&quot;Someone messed up pseudo-element parsing&quot;
+                <span class="string">"Someone messed up pseudo-element parsing"
             </span>);
             <span class="kw">return </span><span class="bool-val">false</span>;
         }
@@ -1489,7 +1490,7 @@
     F: FnMut(<span class="kw-2">&amp;</span>E, ElementSelectorFlags),
 {
     <span class="macro">debug!</span>(
-        <span class="string">&quot;Matching complex selector {:?} for {:?}&quot;</span>,
+        <span class="string">"Matching complex selector {:?} for {:?}"</span>,
         selector_iter, element
     );
 
@@ -1533,7 +1534,7 @@
         next_element_for_combinator(element, combinator, <span class="kw-2">&amp;</span>selector_iter, <span class="kw-2">&amp;</span>context);
 
     <span class="comment">// Stop matching :visited as soon as we find a link, or a combinator for
-    // something that isn&#39;t an ancestor.
+    // something that isn't an ancestor.
     </span><span class="kw">let </span><span class="kw-2">mut </span>visited_handling = <span class="kw">if </span>element.is_link() || combinator.is_sibling() {
         VisitedHandlingMode::AllLinksUnvisited
     } <span class="kw">else </span>{
@@ -1698,7 +1699,7 @@
                     <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="bool-val">false</span>,
                 };
                 <span class="comment">// TODO(emilio): if worth it, we could early return if
-                // host doesn&#39;t have the exportparts attribute.
+                // host doesn't have the exportparts attribute.
                 </span>hosts.push(host);
                 host = outer_host;
             }
@@ -1873,7 +1874,7 @@
 }
 
 <span class="attr">#[inline(always)]
-</span><span class="kw">fn </span>select_name&lt;<span class="lifetime">&#39;a</span>, T&gt;(is_html: bool, local_name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T, local_name_lower: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T {
+</span><span class="kw">fn </span>select_name&lt;<span class="lifetime">'a</span>, T&gt;(is_html: bool, local_name: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>T, local_name_lower: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>T) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span>T {
     <span class="kw">if </span>is_html {
         local_name_lower
     } <span class="kw">else </span>{
@@ -1931,7 +1932,7 @@
     <span class="macro">debug_assert_eq!</span>(
         index,
         nth_child_index(element, is_of_type, is_from_end, <span class="prelude-val">None</span>),
-        <span class="string">&quot;invalid cache&quot;
+        <span class="string">"invalid cache"
     </span>);
 
     <span class="comment">// Is there a non-negative integer n such that An+B=index?
@@ -1955,7 +1956,7 @@
     </span>E: Element,
 {
     <span class="comment">// The traversal mostly processes siblings left to right. So when we walk
-    // siblings to the right when computing NthLast/NthLastOfType we&#39;re unlikely
+    // siblings to the right when computing NthLast/NthLastOfType we're unlikely
     // to get cache hits along the way. As such, we take the hit of walking the
     // siblings to the left checking the cache in the is_from_end case (this
     // matches what Gecko does). The indices-from-the-left is handled during the
@@ -1988,7 +1989,7 @@
     <span class="kw">while let </span><span class="prelude-val">Some</span>(e) = next(curr) {
         curr = e;
         <span class="kw">if </span>!is_of_type || element.is_same_type(<span class="kw-2">&amp;</span>curr) {
-            <span class="comment">// If we&#39;re computing indices from the left, check each element in the
+            <span class="comment">// If we're computing indices from the left, check each element in the
             // cache. We handle the indices-from-the-right case at the top of this
             // function.
             </span><span class="kw">if </span>!is_from_end {

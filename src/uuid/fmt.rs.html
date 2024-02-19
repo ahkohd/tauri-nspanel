@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/fmt.rs`."><title>fmt.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="uuid" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="icon" href="https://www.rust-lang.org/favicon.ico"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../uuid/index.html"><img src="https://www.rust-lang.org/logos/rust-logo-128x128-blk-v2.png" alt="uuid"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/fmt.rs`."><title>fmt.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="uuid" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="icon" href="https://www.rust-lang.org/favicon.ico"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><a class="sub-logo-container" href="../../uuid/index.html"><img src="https://www.rust-lang.org/logos/rust-logo-128x128-blk-v2.png" alt="uuid"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1056,23 +1057,23 @@
     Uuid, Variant,
 };
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::std::string::{String, ToString};
 
 <span class="kw">impl </span>std::fmt::Debug <span class="kw">for </span>Uuid {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+    </span><span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
         fmt::LowerHex::fmt(<span class="self">self</span>, f)
     }
 }
 
 <span class="kw">impl </span>fmt::Display <span class="kw">for </span>Uuid {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
         fmt::LowerHex::fmt(<span class="self">self</span>, f)
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
 </span><span class="kw">impl </span>From&lt;Uuid&gt; <span class="kw">for </span>String {
     <span class="kw">fn </span>from(uuid: Uuid) -&gt; <span class="self">Self </span>{
         uuid.to_string()
@@ -1080,25 +1081,25 @@
 }
 
 <span class="kw">impl </span>fmt::Display <span class="kw">for </span>Variant {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
-            Variant::NCS =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;NCS&quot;</span>),
-            Variant::RFC4122 =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;RFC4122&quot;</span>),
-            Variant::Microsoft =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;Microsoft&quot;</span>),
-            Variant::Future =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;Future&quot;</span>),
+            Variant::NCS =&gt; <span class="macro">write!</span>(f, <span class="string">"NCS"</span>),
+            Variant::RFC4122 =&gt; <span class="macro">write!</span>(f, <span class="string">"RFC4122"</span>),
+            Variant::Microsoft =&gt; <span class="macro">write!</span>(f, <span class="string">"Microsoft"</span>),
+            Variant::Future =&gt; <span class="macro">write!</span>(f, <span class="string">"Future"</span>),
         }
     }
 }
 
 <span class="kw">impl </span>fmt::LowerHex <span class="kw">for </span>Uuid {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
         fmt::LowerHex::fmt(<span class="self">self</span>.as_hyphenated(), f)
     }
 }
 
 <span class="kw">impl </span>fmt::UpperHex <span class="kw">for </span>Uuid {
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+    </span><span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
         fmt::UpperHex::fmt(<span class="self">self</span>.as_hyphenated(), f)
     }
 }
@@ -1182,10 +1183,10 @@
 }
 
 <span class="kw">const </span>UPPER: [u8; <span class="number">16</span>] = [
-    <span class="string">b&#39;0&#39;</span>, <span class="string">b&#39;1&#39;</span>, <span class="string">b&#39;2&#39;</span>, <span class="string">b&#39;3&#39;</span>, <span class="string">b&#39;4&#39;</span>, <span class="string">b&#39;5&#39;</span>, <span class="string">b&#39;6&#39;</span>, <span class="string">b&#39;7&#39;</span>, <span class="string">b&#39;8&#39;</span>, <span class="string">b&#39;9&#39;</span>, <span class="string">b&#39;A&#39;</span>, <span class="string">b&#39;B&#39;</span>, <span class="string">b&#39;C&#39;</span>, <span class="string">b&#39;D&#39;</span>, <span class="string">b&#39;E&#39;</span>, <span class="string">b&#39;F&#39;</span>,
+    <span class="string">b'0'</span>, <span class="string">b'1'</span>, <span class="string">b'2'</span>, <span class="string">b'3'</span>, <span class="string">b'4'</span>, <span class="string">b'5'</span>, <span class="string">b'6'</span>, <span class="string">b'7'</span>, <span class="string">b'8'</span>, <span class="string">b'9'</span>, <span class="string">b'A'</span>, <span class="string">b'B'</span>, <span class="string">b'C'</span>, <span class="string">b'D'</span>, <span class="string">b'E'</span>, <span class="string">b'F'</span>,
 ];
 <span class="kw">const </span>LOWER: [u8; <span class="number">16</span>] = [
-    <span class="string">b&#39;0&#39;</span>, <span class="string">b&#39;1&#39;</span>, <span class="string">b&#39;2&#39;</span>, <span class="string">b&#39;3&#39;</span>, <span class="string">b&#39;4&#39;</span>, <span class="string">b&#39;5&#39;</span>, <span class="string">b&#39;6&#39;</span>, <span class="string">b&#39;7&#39;</span>, <span class="string">b&#39;8&#39;</span>, <span class="string">b&#39;9&#39;</span>, <span class="string">b&#39;a&#39;</span>, <span class="string">b&#39;b&#39;</span>, <span class="string">b&#39;c&#39;</span>, <span class="string">b&#39;d&#39;</span>, <span class="string">b&#39;e&#39;</span>, <span class="string">b&#39;f&#39;</span>,
+    <span class="string">b'0'</span>, <span class="string">b'1'</span>, <span class="string">b'2'</span>, <span class="string">b'3'</span>, <span class="string">b'4'</span>, <span class="string">b'5'</span>, <span class="string">b'6'</span>, <span class="string">b'7'</span>, <span class="string">b'8'</span>, <span class="string">b'9'</span>, <span class="string">b'a'</span>, <span class="string">b'b'</span>, <span class="string">b'c'</span>, <span class="string">b'd'</span>, <span class="string">b'e'</span>, <span class="string">b'f'</span>,
 ];
 
 <span class="attr">#[inline]
@@ -1222,7 +1223,7 @@
             j += <span class="number">2</span>;
         }
         <span class="kw">if </span>group_idx &lt; <span class="number">4 </span>{
-            dst[end] = <span class="string">b&#39;-&#39;</span>;
+            dst[end] = <span class="string">b'-'</span>;
         }
         group_idx += <span class="number">1</span>;
     }
@@ -1230,7 +1231,7 @@
 }
 
 <span class="attr">#[inline]
-</span><span class="kw">fn </span>encode_simple&lt;<span class="lifetime">&#39;b</span>&gt;(src: <span class="kw-2">&amp;</span>[u8; <span class="number">16</span>], buffer: <span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span><span class="kw-2">mut </span>[u8], upper: bool) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span><span class="kw-2">mut </span>str {
+</span><span class="kw">fn </span>encode_simple&lt;<span class="lifetime">'b</span>&gt;(src: <span class="kw-2">&amp;</span>[u8; <span class="number">16</span>], buffer: <span class="kw-2">&amp;</span><span class="lifetime">'b </span><span class="kw-2">mut </span>[u8], upper: bool) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'b </span><span class="kw-2">mut </span>str {
     <span class="kw">let </span>buf = <span class="kw-2">&amp;mut </span>buffer[..Simple::LENGTH];
     <span class="kw">let </span>dst = buf.as_mut_ptr();
 
@@ -1243,7 +1244,7 @@
 }
 
 <span class="attr">#[inline]
-</span><span class="kw">fn </span>encode_hyphenated&lt;<span class="lifetime">&#39;b</span>&gt;(src: <span class="kw-2">&amp;</span>[u8; <span class="number">16</span>], buffer: <span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span><span class="kw-2">mut </span>[u8], upper: bool) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span><span class="kw-2">mut </span>str {
+</span><span class="kw">fn </span>encode_hyphenated&lt;<span class="lifetime">'b</span>&gt;(src: <span class="kw-2">&amp;</span>[u8; <span class="number">16</span>], buffer: <span class="kw-2">&amp;</span><span class="lifetime">'b </span><span class="kw-2">mut </span>[u8], upper: bool) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'b </span><span class="kw-2">mut </span>str {
     <span class="kw">let </span>buf = <span class="kw-2">&amp;mut </span>buffer[..Hyphenated::LENGTH];
     <span class="kw">let </span>dst = buf.as_mut_ptr();
 
@@ -1256,10 +1257,10 @@
 }
 
 <span class="attr">#[inline]
-</span><span class="kw">fn </span>encode_braced&lt;<span class="lifetime">&#39;b</span>&gt;(src: <span class="kw-2">&amp;</span>[u8; <span class="number">16</span>], buffer: <span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span><span class="kw-2">mut </span>[u8], upper: bool) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span><span class="kw-2">mut </span>str {
+</span><span class="kw">fn </span>encode_braced&lt;<span class="lifetime">'b</span>&gt;(src: <span class="kw-2">&amp;</span>[u8; <span class="number">16</span>], buffer: <span class="kw-2">&amp;</span><span class="lifetime">'b </span><span class="kw-2">mut </span>[u8], upper: bool) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'b </span><span class="kw-2">mut </span>str {
     <span class="kw">let </span>buf = <span class="kw-2">&amp;mut </span>buffer[..Braced::LENGTH];
-    buf[<span class="number">0</span>] = <span class="string">b&#39;{&#39;</span>;
-    buf[Braced::LENGTH - <span class="number">1</span>] = <span class="string">b&#39;}&#39;</span>;
+    buf[<span class="number">0</span>] = <span class="string">b'{'</span>;
+    buf[Braced::LENGTH - <span class="number">1</span>] = <span class="string">b'}'</span>;
 
     <span class="comment">// SAFETY: `buf` is guaranteed to be at least `LEN` bytes
     // SAFETY: The encoded buffer is ASCII encoded
@@ -1272,9 +1273,9 @@
 }
 
 <span class="attr">#[inline]
-</span><span class="kw">fn </span>encode_urn&lt;<span class="lifetime">&#39;b</span>&gt;(src: <span class="kw-2">&amp;</span>[u8; <span class="number">16</span>], buffer: <span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span><span class="kw-2">mut </span>[u8], upper: bool) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span><span class="kw-2">mut </span>str {
+</span><span class="kw">fn </span>encode_urn&lt;<span class="lifetime">'b</span>&gt;(src: <span class="kw-2">&amp;</span>[u8; <span class="number">16</span>], buffer: <span class="kw-2">&amp;</span><span class="lifetime">'b </span><span class="kw-2">mut </span>[u8], upper: bool) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'b </span><span class="kw-2">mut </span>str {
     <span class="kw">let </span>buf = <span class="kw-2">&amp;mut </span>buffer[..Urn::LENGTH];
-    buf[..<span class="number">9</span>].copy_from_slice(<span class="string">b&quot;urn:uuid:&quot;</span>);
+    buf[..<span class="number">9</span>].copy_from_slice(<span class="string">b"urn:uuid:"</span>);
 
     <span class="comment">// SAFETY: `buf` is guaranteed to be at least `LEN` bytes
     // SAFETY: The encoded buffer is ASCII encoded
@@ -1325,21 +1326,21 @@
     /// use uuid::Uuid;
     ///
     /// fn main() -&gt; Result&lt;(), uuid::Error&gt; {
-    ///     let uuid = Uuid::parse_str(&quot;936DA01f9abd4d9d80c702af85c822a8&quot;)?;
+    ///     let uuid = Uuid::parse_str("936DA01f9abd4d9d80c702af85c822a8")?;
     ///
     ///     // the encoded portion is returned
     ///     assert_eq!(
     ///         uuid.hyphenated()
     ///             .encode_lower(&amp;mut Uuid::encode_buffer()),
-    ///         &quot;936da01f-9abd-4d9d-80c7-02af85c822a8&quot;
+    ///         "936da01f-9abd-4d9d-80c7-02af85c822a8"
     ///     );
     ///
     ///     // the buffer is mutated directly, and trailing contents remains
-    ///     let mut buf = [b&#39;!&#39;; 40];
+    ///     let mut buf = [b'!'; 40];
     ///     uuid.hyphenated().encode_lower(&amp;mut buf);
     ///     assert_eq!(
     ///         &amp;buf as &amp;[_],
-    ///         b&quot;936da01f-9abd-4d9d-80c7-02af85c822a8!!!!&quot; as &amp;[_]
+    ///         b"936da01f-9abd-4d9d-80c7-02af85c822a8!!!!" as &amp;[_]
     ///     );
     ///
     ///     Ok(())
@@ -1347,7 +1348,7 @@
     /// ```
     /// */
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>encode_lower&lt;<span class="lifetime">&#39;buf</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span><span class="lifetime">&#39;buf </span><span class="kw-2">mut </span>[u8]) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;buf </span><span class="kw-2">mut </span>str {
+    </span><span class="kw">pub fn </span>encode_lower&lt;<span class="lifetime">'buf</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span><span class="lifetime">'buf </span><span class="kw-2">mut </span>[u8]) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'buf </span><span class="kw-2">mut </span>str {
         encode_hyphenated(<span class="self">self</span>.<span class="number">0</span>.as_bytes(), buffer, <span class="bool-val">false</span>)
     }
 
@@ -1376,21 +1377,21 @@
     /// use uuid::Uuid;
     ///
     /// fn main() -&gt; Result&lt;(), uuid::Error&gt; {
-    ///     let uuid = Uuid::parse_str(&quot;936da01f9abd4d9d80c702af85c822a8&quot;)?;
+    ///     let uuid = Uuid::parse_str("936da01f9abd4d9d80c702af85c822a8")?;
     ///
     ///     // the encoded portion is returned
     ///     assert_eq!(
     ///         uuid.hyphenated()
     ///             .encode_upper(&amp;mut Uuid::encode_buffer()),
-    ///         &quot;936DA01F-9ABD-4D9D-80C7-02AF85C822A8&quot;
+    ///         "936DA01F-9ABD-4D9D-80C7-02AF85C822A8"
     ///     );
     ///
     ///     // the buffer is mutated directly, and trailing contents remains
-    ///     let mut buf = [b&#39;!&#39;; 40];
+    ///     let mut buf = [b'!'; 40];
     ///     uuid.hyphenated().encode_upper(&amp;mut buf);
     ///     assert_eq!(
     ///         &amp;buf as &amp;[_],
-    ///         b&quot;936DA01F-9ABD-4D9D-80C7-02AF85C822A8!!!!&quot; as &amp;[_]
+    ///         b"936DA01F-9ABD-4D9D-80C7-02AF85C822A8!!!!" as &amp;[_]
     ///     );
     ///
     ///     Ok(())
@@ -1398,7 +1399,7 @@
     /// ```
     /// */
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>encode_upper&lt;<span class="lifetime">&#39;buf</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span><span class="lifetime">&#39;buf </span><span class="kw-2">mut </span>[u8]) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;buf </span><span class="kw-2">mut </span>str {
+    </span><span class="kw">pub fn </span>encode_upper&lt;<span class="lifetime">'buf</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span><span class="lifetime">'buf </span><span class="kw-2">mut </span>[u8]) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'buf </span><span class="kw-2">mut </span>str {
         encode_hyphenated(<span class="self">self</span>.<span class="number">0</span>.as_bytes(), buffer, <span class="bool-val">true</span>)
     }
 
@@ -1470,21 +1471,21 @@
     /// use uuid::Uuid;
     ///
     /// fn main() -&gt; Result&lt;(), uuid::Error&gt; {
-    ///     let uuid = Uuid::parse_str(&quot;936DA01f9abd4d9d80c702af85c822a8&quot;)?;
+    ///     let uuid = Uuid::parse_str("936DA01f9abd4d9d80c702af85c822a8")?;
     ///
     ///     // the encoded portion is returned
     ///     assert_eq!(
     ///         uuid.braced()
     ///             .encode_lower(&amp;mut Uuid::encode_buffer()),
-    ///         &quot;{936da01f-9abd-4d9d-80c7-02af85c822a8}&quot;
+    ///         "{936da01f-9abd-4d9d-80c7-02af85c822a8}"
     ///     );
     ///
     ///     // the buffer is mutated directly, and trailing contents remains
-    ///     let mut buf = [b&#39;!&#39;; 40];
+    ///     let mut buf = [b'!'; 40];
     ///     uuid.braced().encode_lower(&amp;mut buf);
     ///     assert_eq!(
     ///         &amp;buf as &amp;[_],
-    ///         b&quot;{936da01f-9abd-4d9d-80c7-02af85c822a8}!!&quot; as &amp;[_]
+    ///         b"{936da01f-9abd-4d9d-80c7-02af85c822a8}!!" as &amp;[_]
     ///     );
     ///
     ///     Ok(())
@@ -1492,7 +1493,7 @@
     /// ```
     /// */
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>encode_lower&lt;<span class="lifetime">&#39;buf</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span><span class="lifetime">&#39;buf </span><span class="kw-2">mut </span>[u8]) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;buf </span><span class="kw-2">mut </span>str {
+    </span><span class="kw">pub fn </span>encode_lower&lt;<span class="lifetime">'buf</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span><span class="lifetime">'buf </span><span class="kw-2">mut </span>[u8]) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'buf </span><span class="kw-2">mut </span>str {
         encode_braced(<span class="self">self</span>.<span class="number">0</span>.as_bytes(), buffer, <span class="bool-val">false</span>)
     }
 
@@ -1521,21 +1522,21 @@
     /// use uuid::Uuid;
     ///
     /// fn main() -&gt; Result&lt;(), uuid::Error&gt; {
-    ///     let uuid = Uuid::parse_str(&quot;936da01f9abd4d9d80c702af85c822a8&quot;)?;
+    ///     let uuid = Uuid::parse_str("936da01f9abd4d9d80c702af85c822a8")?;
     ///
     ///     // the encoded portion is returned
     ///     assert_eq!(
     ///         uuid.braced()
     ///             .encode_upper(&amp;mut Uuid::encode_buffer()),
-    ///         &quot;{936DA01F-9ABD-4D9D-80C7-02AF85C822A8}&quot;
+    ///         "{936DA01F-9ABD-4D9D-80C7-02AF85C822A8}"
     ///     );
     ///
     ///     // the buffer is mutated directly, and trailing contents remains
-    ///     let mut buf = [b&#39;!&#39;; 40];
+    ///     let mut buf = [b'!'; 40];
     ///     uuid.braced().encode_upper(&amp;mut buf);
     ///     assert_eq!(
     ///         &amp;buf as &amp;[_],
-    ///         b&quot;{936DA01F-9ABD-4D9D-80C7-02AF85C822A8}!!&quot; as &amp;[_]
+    ///         b"{936DA01F-9ABD-4D9D-80C7-02AF85C822A8}!!" as &amp;[_]
     ///     );
     ///
     ///     Ok(())
@@ -1543,7 +1544,7 @@
     /// ```
     /// */
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>encode_upper&lt;<span class="lifetime">&#39;buf</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span><span class="lifetime">&#39;buf </span><span class="kw-2">mut </span>[u8]) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;buf </span><span class="kw-2">mut </span>str {
+    </span><span class="kw">pub fn </span>encode_upper&lt;<span class="lifetime">'buf</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span><span class="lifetime">'buf </span><span class="kw-2">mut </span>[u8]) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'buf </span><span class="kw-2">mut </span>str {
         encode_braced(<span class="self">self</span>.<span class="number">0</span>.as_bytes(), buffer, <span class="bool-val">true</span>)
     }
 
@@ -1614,23 +1615,23 @@
     /// use uuid::Uuid;
     ///
     /// fn main() -&gt; Result&lt;(), uuid::Error&gt; {
-    ///     let uuid = Uuid::parse_str(&quot;936DA01f9abd4d9d80c702af85c822a8&quot;)?;
+    ///     let uuid = Uuid::parse_str("936DA01f9abd4d9d80c702af85c822a8")?;
     ///
     ///     // the encoded portion is returned
     ///     assert_eq!(
     ///         uuid.simple().encode_lower(&amp;mut Uuid::encode_buffer()),
-    ///         &quot;936da01f9abd4d9d80c702af85c822a8&quot;
+    ///         "936da01f9abd4d9d80c702af85c822a8"
     ///     );
     ///
     ///     // the buffer is mutated directly, and trailing contents remains
-    ///     let mut buf = [b&#39;!&#39;; 36];
+    ///     let mut buf = [b'!'; 36];
     ///     assert_eq!(
     ///         uuid.simple().encode_lower(&amp;mut buf),
-    ///         &quot;936da01f9abd4d9d80c702af85c822a8&quot;
+    ///         "936da01f9abd4d9d80c702af85c822a8"
     ///     );
     ///     assert_eq!(
     ///         &amp;buf as &amp;[_],
-    ///         b&quot;936da01f9abd4d9d80c702af85c822a8!!!!&quot; as &amp;[_]
+    ///         b"936da01f9abd4d9d80c702af85c822a8!!!!" as &amp;[_]
     ///     );
     ///
     ///     Ok(())
@@ -1638,7 +1639,7 @@
     /// ```
     /// */
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>encode_lower&lt;<span class="lifetime">&#39;buf</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span><span class="lifetime">&#39;buf </span><span class="kw-2">mut </span>[u8]) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;buf </span><span class="kw-2">mut </span>str {
+    </span><span class="kw">pub fn </span>encode_lower&lt;<span class="lifetime">'buf</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span><span class="lifetime">'buf </span><span class="kw-2">mut </span>[u8]) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'buf </span><span class="kw-2">mut </span>str {
         encode_simple(<span class="self">self</span>.<span class="number">0</span>.as_bytes(), buffer, <span class="bool-val">false</span>)
     }
 
@@ -1662,23 +1663,23 @@
     /// use uuid::Uuid;
     ///
     /// fn main() -&gt; Result&lt;(), uuid::Error&gt; {
-    ///     let uuid = Uuid::parse_str(&quot;936da01f9abd4d9d80c702af85c822a8&quot;)?;
+    ///     let uuid = Uuid::parse_str("936da01f9abd4d9d80c702af85c822a8")?;
     ///
     ///     // the encoded portion is returned
     ///     assert_eq!(
     ///         uuid.simple().encode_upper(&amp;mut Uuid::encode_buffer()),
-    ///         &quot;936DA01F9ABD4D9D80C702AF85C822A8&quot;
+    ///         "936DA01F9ABD4D9D80C702AF85C822A8"
     ///     );
     ///
     ///     // the buffer is mutated directly, and trailing contents remains
-    ///     let mut buf = [b&#39;!&#39;; 36];
+    ///     let mut buf = [b'!'; 36];
     ///     assert_eq!(
     ///         uuid.simple().encode_upper(&amp;mut buf),
-    ///         &quot;936DA01F9ABD4D9D80C702AF85C822A8&quot;
+    ///         "936DA01F9ABD4D9D80C702AF85C822A8"
     ///     );
     ///     assert_eq!(
     ///         &amp;buf as &amp;[_],
-    ///         b&quot;936DA01F9ABD4D9D80C702AF85C822A8!!!!&quot; as &amp;[_]
+    ///         b"936DA01F9ABD4D9D80C702AF85C822A8!!!!" as &amp;[_]
     ///     );
     ///
     ///     Ok(())
@@ -1686,7 +1687,7 @@
     /// ```
     /// */
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>encode_upper&lt;<span class="lifetime">&#39;buf</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span><span class="lifetime">&#39;buf </span><span class="kw-2">mut </span>[u8]) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;buf </span><span class="kw-2">mut </span>str {
+    </span><span class="kw">pub fn </span>encode_upper&lt;<span class="lifetime">'buf</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span><span class="lifetime">'buf </span><span class="kw-2">mut </span>[u8]) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'buf </span><span class="kw-2">mut </span>str {
         encode_simple(<span class="self">self</span>.<span class="number">0</span>.as_bytes(), buffer, <span class="bool-val">true</span>)
     }
 
@@ -1758,24 +1759,24 @@
     /// use uuid::Uuid;
     ///
     /// fn main() -&gt; Result&lt;(), uuid::Error&gt; {
-    ///     let uuid = Uuid::parse_str(&quot;936DA01f9abd4d9d80c702af85c822a8&quot;)?;
+    ///     let uuid = Uuid::parse_str("936DA01f9abd4d9d80c702af85c822a8")?;
     ///
     ///     // the encoded portion is returned
     ///     assert_eq!(
     ///         uuid.urn().encode_lower(&amp;mut Uuid::encode_buffer()),
-    ///         &quot;urn:uuid:936da01f-9abd-4d9d-80c7-02af85c822a8&quot;
+    ///         "urn:uuid:936da01f-9abd-4d9d-80c7-02af85c822a8"
     ///     );
     ///
     ///     // the buffer is mutated directly, and trailing contents remains
-    ///     let mut buf = [b&#39;!&#39;; 49];
+    ///     let mut buf = [b'!'; 49];
     ///     uuid.urn().encode_lower(&amp;mut buf);
     ///     assert_eq!(
     ///         uuid.urn().encode_lower(&amp;mut buf),
-    ///         &quot;urn:uuid:936da01f-9abd-4d9d-80c7-02af85c822a8&quot;
+    ///         "urn:uuid:936da01f-9abd-4d9d-80c7-02af85c822a8"
     ///     );
     ///     assert_eq!(
     ///         &amp;buf as &amp;[_],
-    ///         b&quot;urn:uuid:936da01f-9abd-4d9d-80c7-02af85c822a8!!!!&quot; as &amp;[_]
+    ///         b"urn:uuid:936da01f-9abd-4d9d-80c7-02af85c822a8!!!!" as &amp;[_]
     ///     );
     ///     
     ///     Ok(())
@@ -1783,7 +1784,7 @@
     /// ```
     /// */
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>encode_lower&lt;<span class="lifetime">&#39;buf</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span><span class="lifetime">&#39;buf </span><span class="kw-2">mut </span>[u8]) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;buf </span><span class="kw-2">mut </span>str {
+    </span><span class="kw">pub fn </span>encode_lower&lt;<span class="lifetime">'buf</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span><span class="lifetime">'buf </span><span class="kw-2">mut </span>[u8]) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'buf </span><span class="kw-2">mut </span>str {
         encode_urn(<span class="self">self</span>.<span class="number">0</span>.as_bytes(), buffer, <span class="bool-val">false</span>)
     }
 
@@ -1812,23 +1813,23 @@
     /// use uuid::Uuid;
     ///
     /// fn main() -&gt; Result&lt;(), uuid::Error&gt; {
-    ///     let uuid = Uuid::parse_str(&quot;936da01f9abd4d9d80c702af85c822a8&quot;)?;
+    ///     let uuid = Uuid::parse_str("936da01f9abd4d9d80c702af85c822a8")?;
     ///
     ///     // the encoded portion is returned
     ///     assert_eq!(
     ///         uuid.urn().encode_upper(&amp;mut Uuid::encode_buffer()),
-    ///         &quot;urn:uuid:936DA01F-9ABD-4D9D-80C7-02AF85C822A8&quot;
+    ///         "urn:uuid:936DA01F-9ABD-4D9D-80C7-02AF85C822A8"
     ///     );
     ///
     ///     // the buffer is mutated directly, and trailing contents remains
-    ///     let mut buf = [b&#39;!&#39;; 49];
+    ///     let mut buf = [b'!'; 49];
     ///     assert_eq!(
     ///         uuid.urn().encode_upper(&amp;mut buf),
-    ///         &quot;urn:uuid:936DA01F-9ABD-4D9D-80C7-02AF85C822A8&quot;
+    ///         "urn:uuid:936DA01F-9ABD-4D9D-80C7-02AF85C822A8"
     ///     );
     ///     assert_eq!(
     ///         &amp;buf as &amp;[_],
-    ///         b&quot;urn:uuid:936DA01F-9ABD-4D9D-80C7-02AF85C822A8!!!!&quot; as &amp;[_]
+    ///         b"urn:uuid:936DA01F-9ABD-4D9D-80C7-02AF85C822A8!!!!" as &amp;[_]
     ///     );
     ///
     ///     Ok(())
@@ -1836,7 +1837,7 @@
     /// ```
     /// */
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>encode_upper&lt;<span class="lifetime">&#39;buf</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span><span class="lifetime">&#39;buf </span><span class="kw-2">mut </span>[u8]) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;buf </span><span class="kw-2">mut </span>str {
+    </span><span class="kw">pub fn </span>encode_upper&lt;<span class="lifetime">'buf</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span><span class="lifetime">'buf </span><span class="kw-2">mut </span>[u8]) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'buf </span><span class="kw-2">mut </span>str {
         encode_urn(<span class="self">self</span>.<span class="number">0</span>.as_bytes(), buffer, <span class="bool-val">true</span>)
     }
 
@@ -1873,19 +1874,19 @@
     ($(<span class="macro-nonterminal">$T</span>:ident&lt;$(<span class="macro-nonterminal">$a</span>:lifetime),<span class="kw-2">*</span>&gt;),+) =&gt; {$(
         <span class="kw">impl</span>&lt;$(<span class="macro-nonterminal">$a</span>),<span class="kw-2">*</span>&gt; fmt::Display <span class="kw">for </span><span class="macro-nonterminal">$T</span>&lt;$(<span class="macro-nonterminal">$a</span>),<span class="kw-2">*</span>&gt; {
             <span class="attr">#[inline]
-            </span><span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+            </span><span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
                 fmt::LowerHex::fmt(<span class="self">self</span>, f)
             }
         }
 
         <span class="kw">impl</span>&lt;$(<span class="macro-nonterminal">$a</span>),<span class="kw-2">*</span>&gt; fmt::LowerHex <span class="kw">for </span><span class="macro-nonterminal">$T</span>&lt;$(<span class="macro-nonterminal">$a</span>),<span class="kw-2">*</span>&gt; {
-            <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+            <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
                 f.write_str(<span class="self">self</span>.encode_lower(<span class="kw-2">&amp;mut </span>[<span class="number">0</span>; <span class="self">Self</span>::LENGTH]))
             }
         }
 
         <span class="kw">impl</span>&lt;$(<span class="macro-nonterminal">$a</span>),<span class="kw-2">*</span>&gt; fmt::UpperHex <span class="kw">for </span><span class="macro-nonterminal">$T</span>&lt;$(<span class="macro-nonterminal">$a</span>),<span class="kw-2">*</span>&gt; {
-            <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+            <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
                 f.write_str(<span class="self">self</span>.encode_upper(<span class="kw-2">&amp;mut </span>[<span class="number">0</span>; <span class="self">Self</span>::LENGTH]))
             }
         }
@@ -1968,66 +1969,66 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>hyphenated_trailing() {
-        <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="string">b&#39;x&#39;</span>; <span class="number">100</span>];
+        <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="string">b'x'</span>; <span class="number">100</span>];
         <span class="kw">let </span>len = Uuid::nil().hyphenated().encode_lower(<span class="kw-2">&amp;mut </span>buf).len();
         <span class="macro">assert_eq!</span>(len, <span class="kw">super</span>::Hyphenated::LENGTH);
-        <span class="macro">assert!</span>(buf[len..].iter().all(|x| <span class="kw-2">*</span>x == <span class="string">b&#39;x&#39;</span>));
+        <span class="macro">assert!</span>(buf[len..].iter().all(|x| <span class="kw-2">*</span>x == <span class="string">b'x'</span>));
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>hyphenated_ref_trailing() {
-        <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="string">b&#39;x&#39;</span>; <span class="number">100</span>];
+        <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="string">b'x'</span>; <span class="number">100</span>];
         <span class="kw">let </span>len = Uuid::nil().as_hyphenated().encode_lower(<span class="kw-2">&amp;mut </span>buf).len();
         <span class="macro">assert_eq!</span>(len, <span class="kw">super</span>::Hyphenated::LENGTH);
-        <span class="macro">assert!</span>(buf[len..].iter().all(|x| <span class="kw-2">*</span>x == <span class="string">b&#39;x&#39;</span>));
+        <span class="macro">assert!</span>(buf[len..].iter().all(|x| <span class="kw-2">*</span>x == <span class="string">b'x'</span>));
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>simple_trailing() {
-        <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="string">b&#39;x&#39;</span>; <span class="number">100</span>];
+        <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="string">b'x'</span>; <span class="number">100</span>];
         <span class="kw">let </span>len = Uuid::nil().simple().encode_lower(<span class="kw-2">&amp;mut </span>buf).len();
         <span class="macro">assert_eq!</span>(len, <span class="kw">super</span>::Simple::LENGTH);
-        <span class="macro">assert!</span>(buf[len..].iter().all(|x| <span class="kw-2">*</span>x == <span class="string">b&#39;x&#39;</span>));
+        <span class="macro">assert!</span>(buf[len..].iter().all(|x| <span class="kw-2">*</span>x == <span class="string">b'x'</span>));
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>simple_ref_trailing() {
-        <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="string">b&#39;x&#39;</span>; <span class="number">100</span>];
+        <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="string">b'x'</span>; <span class="number">100</span>];
         <span class="kw">let </span>len = Uuid::nil().as_simple().encode_lower(<span class="kw-2">&amp;mut </span>buf).len();
         <span class="macro">assert_eq!</span>(len, <span class="kw">super</span>::Simple::LENGTH);
-        <span class="macro">assert!</span>(buf[len..].iter().all(|x| <span class="kw-2">*</span>x == <span class="string">b&#39;x&#39;</span>));
+        <span class="macro">assert!</span>(buf[len..].iter().all(|x| <span class="kw-2">*</span>x == <span class="string">b'x'</span>));
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>urn_trailing() {
-        <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="string">b&#39;x&#39;</span>; <span class="number">100</span>];
+        <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="string">b'x'</span>; <span class="number">100</span>];
         <span class="kw">let </span>len = Uuid::nil().urn().encode_lower(<span class="kw-2">&amp;mut </span>buf).len();
         <span class="macro">assert_eq!</span>(len, <span class="kw">super</span>::Urn::LENGTH);
-        <span class="macro">assert!</span>(buf[len..].iter().all(|x| <span class="kw-2">*</span>x == <span class="string">b&#39;x&#39;</span>));
+        <span class="macro">assert!</span>(buf[len..].iter().all(|x| <span class="kw-2">*</span>x == <span class="string">b'x'</span>));
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>urn_ref_trailing() {
-        <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="string">b&#39;x&#39;</span>; <span class="number">100</span>];
+        <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="string">b'x'</span>; <span class="number">100</span>];
         <span class="kw">let </span>len = Uuid::nil().as_urn().encode_lower(<span class="kw-2">&amp;mut </span>buf).len();
         <span class="macro">assert_eq!</span>(len, <span class="kw">super</span>::Urn::LENGTH);
-        <span class="macro">assert!</span>(buf[len..].iter().all(|x| <span class="kw-2">*</span>x == <span class="string">b&#39;x&#39;</span>));
+        <span class="macro">assert!</span>(buf[len..].iter().all(|x| <span class="kw-2">*</span>x == <span class="string">b'x'</span>));
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>braced_trailing() {
-        <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="string">b&#39;x&#39;</span>; <span class="number">100</span>];
+        <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="string">b'x'</span>; <span class="number">100</span>];
         <span class="kw">let </span>len = Uuid::nil().braced().encode_lower(<span class="kw-2">&amp;mut </span>buf).len();
         <span class="macro">assert_eq!</span>(len, <span class="kw">super</span>::Braced::LENGTH);
-        <span class="macro">assert!</span>(buf[len..].iter().all(|x| <span class="kw-2">*</span>x == <span class="string">b&#39;x&#39;</span>));
+        <span class="macro">assert!</span>(buf[len..].iter().all(|x| <span class="kw-2">*</span>x == <span class="string">b'x'</span>));
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>braced_ref_trailing() {
-        <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="string">b&#39;x&#39;</span>; <span class="number">100</span>];
+        <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="string">b'x'</span>; <span class="number">100</span>];
         <span class="kw">let </span>len = Uuid::nil().as_braced().encode_lower(<span class="kw-2">&amp;mut </span>buf).len();
         <span class="macro">assert_eq!</span>(len, <span class="kw">super</span>::Braced::LENGTH);
-        <span class="macro">assert!</span>(buf[len..].iter().all(|x| <span class="kw-2">*</span>x == <span class="string">b&#39;x&#39;</span>));
+        <span class="macro">assert!</span>(buf[len..].iter().all(|x| <span class="kw-2">*</span>x == <span class="string">b'x'</span>));
     }
 
     <span class="attr">#[test]

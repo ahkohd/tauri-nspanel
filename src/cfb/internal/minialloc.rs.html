@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cfb-0.7.3/src/internal/minialloc.rs`."><title>minialloc.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="cfb" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cfb-0.7.3/src/internal/minialloc.rs`."><title>minialloc.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="cfb" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -471,9 +472,9 @@
 <span class="comment">//===========================================================================//
 
 </span><span class="macro">macro_rules! </span>malformed {
-    (<span class="macro-nonterminal">$e</span>:expr) =&gt; { <span class="macro">invalid_data!</span>(<span class="string">&quot;Malformed MiniFAT ({})&quot;</span>, <span class="macro-nonterminal">$e</span>) };
+    (<span class="macro-nonterminal">$e</span>:expr) =&gt; { <span class="macro">invalid_data!</span>(<span class="string">"Malformed MiniFAT ({})"</span>, <span class="macro-nonterminal">$e</span>) };
     (<span class="macro-nonterminal">$fmt</span>:expr, $(<span class="macro-nonterminal">$arg</span>:tt)+) =&gt; {
-        <span class="macro">invalid_data!</span>(<span class="string">&quot;Malformed MiniFAT ({})&quot;</span>, <span class="macro">format!</span>(<span class="macro-nonterminal">$fmt</span>, $(<span class="macro-nonterminal">$arg</span>)+))
+        <span class="macro">invalid_data!</span>(<span class="string">"Malformed MiniFAT ({})"</span>, <span class="macro">format!</span>(<span class="macro-nonterminal">$fmt</span>, $(<span class="macro-nonterminal">$arg</span>)+))
     };
 }
 
@@ -507,8 +508,8 @@
         <span class="kw">let </span>index = sector_id <span class="kw">as </span>usize;
         <span class="kw">if </span>index &gt;= <span class="self">self</span>.minifat.len() {
             <span class="macro">invalid_data!</span>(
-                <span class="string">&quot;Found reference to mini sector {}, but MiniFAT has only {} \
-                 entries&quot;</span>,
+                <span class="string">"Found reference to mini sector {}, but MiniFAT has only {} \
+                 entries"</span>,
                 index,
                 <span class="self">self</span>.minifat.len()
             );
@@ -518,7 +519,7 @@
             &amp;&amp; (next_id &gt; consts::MAX_REGULAR_SECTOR
                 || next_id <span class="kw">as </span>usize &gt;= <span class="self">self</span>.minifat.len())
         {
-            <span class="macro">invalid_data!</span>(<span class="string">&quot;next_id ({}) is invalid&quot;</span>, next_id);
+            <span class="macro">invalid_data!</span>(<span class="string">"next_id ({}) is invalid"</span>, next_id);
         }
         <span class="prelude-val">Ok</span>(next_id)
     }
@@ -584,8 +585,8 @@
             root_entry.stream_len / (consts::MINI_SECTOR_LEN <span class="kw">as </span>u64);
         <span class="kw">if </span>root_stream_mini_sectors &lt; (<span class="self">self</span>.minifat.len() <span class="kw">as </span>u64) {
             <span class="macro">malformed!</span>(
-                <span class="string">&quot;MiniFAT has {} entries, but root stream has only {} mini \
-                 sectors&quot;</span>,
+                <span class="string">"MiniFAT has {} entries, but root stream has only {} mini \
+                 sectors"</span>,
                 <span class="self">self</span>.minifat.len(),
                 root_stream_mini_sectors
             );
@@ -597,8 +598,8 @@
             <span class="kw">if </span>to_mini_sector &lt;= consts::MAX_REGULAR_SECTOR {
                 <span class="kw">if </span>to_mini_sector <span class="kw">as </span>usize &gt;= <span class="self">self</span>.minifat.len() {
                     <span class="macro">malformed!</span>(
-                        <span class="string">&quot;MiniFAT has {} entries, but mini sector {} points to \
-                         {}&quot;</span>,
+                        <span class="string">"MiniFAT has {} entries, but mini sector {} points to \
+                         {}"</span>,
                         <span class="self">self</span>.minifat.len(),
                         from_mini_sector,
                         to_mini_sector
@@ -606,7 +607,7 @@
                 }
                 <span class="kw">if </span>pointees.contains(<span class="kw-2">&amp;</span>to_mini_sector) {
                     <span class="macro">malformed!</span>(
-                        <span class="string">&quot;mini sector {} pointed to twice&quot;</span>,
+                        <span class="string">"mini sector {} pointed to twice"</span>,
                         to_mini_sector
                     );
                 }
@@ -710,7 +711,7 @@
     <span class="doccomment">/// Allocates a new entry in the MiniFAT, sets its value to `value`, and
     /// returns the new mini sector number.
     </span><span class="kw">fn </span>allocate_mini_sector(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: u32) -&gt; io::Result&lt;u32&gt; {
-        <span class="comment">// If there&#39;s an existing free mini sector, use that.
+        <span class="comment">// If there's an existing free mini sector, use that.
         </span><span class="kw">for </span>mini_sector <span class="kw">in </span><span class="number">0</span>..<span class="self">self</span>.minifat.len() {
             <span class="kw">if </span><span class="self">self</span>.minifat[mini_sector] == consts::FREE_SECTOR {
                 <span class="kw">let </span>mini_sector = mini_sector <span class="kw">as </span>u32;
@@ -718,7 +719,7 @@
                 <span class="kw">return </span><span class="prelude-val">Ok</span>(mini_sector);
             }
         }
-        <span class="comment">// Otherwise, we need a new mini sector; if there&#39;s not room in the
+        <span class="comment">// Otherwise, we need a new mini sector; if there's not room in the
         // MiniFAT to add it, then first we need to allocate a new MiniFAT
         // sector.
         </span><span class="kw">let </span>minifat_entries_per_sector = <span class="self">self</span>.directory.sector_len() / <span class="number">4</span>;
@@ -754,7 +755,7 @@
         <span class="macro">debug_assert_eq!</span>(mini_stream_len % consts::MINI_SECTOR_LEN <span class="kw">as </span>u64, <span class="number">0</span>);
         <span class="kw">let </span>sector_len = <span class="self">self</span>.directory.sector_len();
 
-        <span class="comment">// If the mini stream doesn&#39;t have room for new mini sector, add
+        <span class="comment">// If the mini stream doesn't have room for new mini sector, add
         // another regular sector to its chain.
         </span><span class="kw">let </span>new_start_sector =
             <span class="kw">if </span>mini_stream_start_sector == consts::END_OF_CHAIN {
@@ -878,7 +879,7 @@
         root_entry.child = <span class="number">1</span>;
         root_entry.start_sector = <span class="number">3</span>;
         root_entry.stream_len = root_stream_len;
-        <span class="kw">let </span><span class="kw-2">mut </span>stream_entry = DirEntry::new(<span class="string">&quot;foo&quot;</span>, ObjType::Stream, <span class="number">0</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>stream_entry = DirEntry::new(<span class="string">"foo"</span>, ObjType::Stream, <span class="number">0</span>);
         stream_entry.start_sector = <span class="number">0</span>;
         stream_entry.stream_len = root_entry.stream_len;
         <span class="kw">let </span>entries = <span class="macro">vec!</span>[root_entry, stream_entry];
@@ -888,8 +889,8 @@
 
     <span class="attr">#[test]
     #[should_panic(
-        expected = <span class="string">&quot;Malformed MiniFAT (MiniFAT has 3 entries, but root stream \
-                    has only 2 mini sectors)&quot;
+        expected = <span class="string">"Malformed MiniFAT (MiniFAT has 3 entries, but root stream \
+                    has only 2 mini sectors)"
     </span>)]
     </span><span class="kw">fn </span>root_stream_too_short() {
         <span class="kw">let </span>minifat = <span class="macro">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, consts::END_OF_CHAIN];
@@ -899,8 +900,8 @@
 
     <span class="attr">#[test]
     #[should_panic(
-        expected = <span class="string">&quot;Malformed MiniFAT (MiniFAT has 2 entries, but mini sector \
-                    1 points to 3)&quot;
+        expected = <span class="string">"Malformed MiniFAT (MiniFAT has 2 entries, but mini sector \
+                    1 points to 3)"
     </span>)]
     </span><span class="kw">fn </span>pointee_out_of_range() {
         <span class="kw">let </span>minifat = <span class="macro">vec!</span>[<span class="number">1</span>, <span class="number">3</span>];
@@ -909,7 +910,7 @@
 
     <span class="attr">#[test]
     #[should_panic(
-        expected = <span class="string">&quot;Malformed MiniFAT (mini sector 1 pointed to twice)&quot;
+        expected = <span class="string">"Malformed MiniFAT (mini sector 1 pointed to twice)"
     </span>)]
     </span><span class="kw">fn </span>double_pointee() {
         <span class="kw">let </span>minifat = <span class="macro">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>];

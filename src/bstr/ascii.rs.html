@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bstr-1.9.0/src/ascii.rs`."><title>ascii.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bstr" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bstr-1.9.0/src/ascii.rs`."><title>ascii.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bstr" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -353,23 +354,23 @@
 // https://github.com/BurntSushi/rust-memchr/blob/b0a29f267f4a7fad8ffcc8fe8377a06498202883/src/x86/sse2.rs#L19-L106
 //
 // The primary difference with memchr is that for ASCII, we can do a bit less
-// work. In particular, we don&#39;t need to detect the presence of a specific
+// work. In particular, we don't need to detect the presence of a specific
 // byte, but rather, whether any byte has its most significant bit set. That
 // means we can effectively skip the _mm_cmpeq_epi8 step and jump straight to
 // _mm_movemask_epi8.
 
-</span><span class="attr">#[cfg(any(test, miri, not(target_arch = <span class="string">&quot;x86_64&quot;</span>)))]
+</span><span class="attr">#[cfg(any(test, miri, not(target_arch = <span class="string">"x86_64"</span>)))]
 </span><span class="kw">const </span>USIZE_BYTES: usize = core::mem::size_of::&lt;usize&gt;();
-<span class="attr">#[cfg(any(test, miri, not(target_arch = <span class="string">&quot;x86_64&quot;</span>)))]
+<span class="attr">#[cfg(any(test, miri, not(target_arch = <span class="string">"x86_64"</span>)))]
 </span><span class="kw">const </span>FALLBACK_LOOP_SIZE: usize = <span class="number">2 </span>* USIZE_BYTES;
 
 <span class="comment">// This is a mask where the most significant bit of each byte in the usize
 // is set. We test this bit to determine whether a character is ASCII or not.
-// Namely, a single byte is regarded as an ASCII codepoint if and only if it&#39;s
+// Namely, a single byte is regarded as an ASCII codepoint if and only if it's
 // most significant bit is not set.
-</span><span class="attr">#[cfg(any(test, miri, not(target_arch = <span class="string">&quot;x86_64&quot;</span>)))]
+</span><span class="attr">#[cfg(any(test, miri, not(target_arch = <span class="string">"x86_64"</span>)))]
 </span><span class="kw">const </span>ASCII_MASK_U64: u64 = <span class="number">0x8080808080808080</span>;
-<span class="attr">#[cfg(any(test, miri, not(target_arch = <span class="string">&quot;x86_64&quot;</span>)))]
+<span class="attr">#[cfg(any(test, miri, not(target_arch = <span class="string">"x86_64"</span>)))]
 </span><span class="kw">const </span>ASCII_MASK: usize = ASCII_MASK_U64 <span class="kw">as </span>usize;
 
 <span class="doccomment">/// Returns the index of the first non ASCII byte in the given slice.
@@ -377,18 +378,18 @@
 /// If slice only contains ASCII bytes, then the length of the slice is
 /// returned.
 </span><span class="kw">pub fn </span>first_non_ascii_byte(slice: <span class="kw-2">&amp;</span>[u8]) -&gt; usize {
-    <span class="attr">#[cfg(any(miri, not(target_arch = <span class="string">&quot;x86_64&quot;</span>)))]
+    <span class="attr">#[cfg(any(miri, not(target_arch = <span class="string">"x86_64"</span>)))]
     </span>{
         first_non_ascii_byte_fallback(slice)
     }
 
-    <span class="attr">#[cfg(all(not(miri), target_arch = <span class="string">&quot;x86_64&quot;</span>))]
+    <span class="attr">#[cfg(all(not(miri), target_arch = <span class="string">"x86_64"</span>))]
     </span>{
         first_non_ascii_byte_sse2(slice)
     }
 }
 
-<span class="attr">#[cfg(any(test, miri, not(target_arch = <span class="string">&quot;x86_64&quot;</span>)))]
+<span class="attr">#[cfg(any(test, miri, not(target_arch = <span class="string">"x86_64"</span>)))]
 </span><span class="kw">fn </span>first_non_ascii_byte_fallback(slice: <span class="kw-2">&amp;</span>[u8]) -&gt; usize {
     <span class="kw">let </span>align = USIZE_BYTES - <span class="number">1</span>;
     <span class="kw">let </span>start_ptr = slice.as_ptr();
@@ -450,7 +451,7 @@
     }
 }
 
-<span class="attr">#[cfg(all(not(miri), target_arch = <span class="string">&quot;x86_64&quot;</span>))]
+<span class="attr">#[cfg(all(not(miri), target_arch = <span class="string">"x86_64"</span>))]
 </span><span class="kw">fn </span>first_non_ascii_byte_sse2(slice: <span class="kw-2">&amp;</span>[u8]) -&gt; usize {
     <span class="kw">use </span>core::arch::x86_64::<span class="kw-2">*</span>;
 
@@ -556,13 +557,13 @@
 /// bytes is not an ASCII byte.
 ///
 /// The position returned is always in the inclusive range [0, 7].
-</span><span class="attr">#[cfg(any(test, miri, not(target_arch = <span class="string">&quot;x86_64&quot;</span>)))]
+</span><span class="attr">#[cfg(any(test, miri, not(target_arch = <span class="string">"x86_64"</span>)))]
 </span><span class="kw">fn </span>first_non_ascii_byte_mask(mask: usize) -&gt; usize {
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;little&quot;</span>)]
+    <span class="attr">#[cfg(target_endian = <span class="string">"little"</span>)]
     </span>{
         mask.trailing_zeros() <span class="kw">as </span>usize / <span class="number">8
     </span>}
-    <span class="attr">#[cfg(target_endian = <span class="string">&quot;big&quot;</span>)]
+    <span class="attr">#[cfg(target_endian = <span class="string">"big"</span>)]
     </span>{
         mask.leading_zeros() <span class="kw">as </span>usize / <span class="number">8
     </span>}
@@ -580,7 +581,7 @@
     ptr.offset((amt <span class="kw">as </span>isize).wrapping_neg())
 }
 
-<span class="attr">#[cfg(any(test, miri, not(target_arch = <span class="string">&quot;x86_64&quot;</span>)))]
+<span class="attr">#[cfg(any(test, miri, not(target_arch = <span class="string">"x86_64"</span>)))]
 </span><span class="kw">unsafe fn </span>read_unaligned_usize(ptr: <span class="kw-2">*const </span>u8) -&gt; usize {
     <span class="kw">use </span>core::ptr;
 
@@ -602,16 +603,16 @@
 
     <span class="comment">// Our testing approach here is to try and exhaustively test every case.
     // This includes the position at which a non-ASCII byte occurs in addition
-    // to the alignment of the slice that we&#39;re searching.
+    // to the alignment of the slice that we're searching.
 
     </span><span class="attr">#[test]
     </span><span class="kw">fn </span>positive_fallback_forward() {
         <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="number">517 </span>{
-            <span class="kw">let </span>s = <span class="string">&quot;a&quot;</span>.repeat(i);
+            <span class="kw">let </span>s = <span class="string">"a"</span>.repeat(i);
             <span class="macro">assert_eq!</span>(
                 i,
                 first_non_ascii_byte_fallback(s.as_bytes()),
-                <span class="string">&quot;i: {:?}, len: {:?}, s: {:?}&quot;</span>,
+                <span class="string">"i: {:?}, len: {:?}, s: {:?}"</span>,
                 i,
                 s.len(),
                 s
@@ -620,11 +621,11 @@
     }
 
     <span class="attr">#[test]
-    #[cfg(target_arch = <span class="string">&quot;x86_64&quot;</span>)]
+    #[cfg(target_arch = <span class="string">"x86_64"</span>)]
     #[cfg(not(miri))]
     </span><span class="kw">fn </span>positive_sse2_forward() {
         <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="number">517 </span>{
-            <span class="kw">let </span>b = <span class="string">&quot;a&quot;</span>.repeat(i).into_bytes();
+            <span class="kw">let </span>b = <span class="string">"a"</span>.repeat(i).into_bytes();
             <span class="macro">assert_eq!</span>(b.len(), first_non_ascii_byte_sse2(<span class="kw-2">&amp;</span>b));
         }
     }
@@ -634,13 +635,13 @@
     </span><span class="kw">fn </span>negative_fallback_forward() {
         <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="number">517 </span>{
             <span class="kw">for </span>align <span class="kw">in </span><span class="number">0</span>..<span class="number">65 </span>{
-                <span class="kw">let </span><span class="kw-2">mut </span>s = <span class="string">&quot;a&quot;</span>.repeat(i);
-                s.push_str(<span class="string">&quot;☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃&quot;</span>);
-                <span class="kw">let </span>s = s.get(align..).unwrap_or(<span class="string">&quot;&quot;</span>);
+                <span class="kw">let </span><span class="kw-2">mut </span>s = <span class="string">"a"</span>.repeat(i);
+                s.push_str(<span class="string">"☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃"</span>);
+                <span class="kw">let </span>s = s.get(align..).unwrap_or(<span class="string">""</span>);
                 <span class="macro">assert_eq!</span>(
                     i.saturating_sub(align),
                     first_non_ascii_byte_fallback(s.as_bytes()),
-                    <span class="string">&quot;i: {:?}, align: {:?}, len: {:?}, s: {:?}&quot;</span>,
+                    <span class="string">"i: {:?}, align: {:?}, len: {:?}, s: {:?}"</span>,
                     i,
                     align,
                     s.len(),
@@ -651,18 +652,18 @@
     }
 
     <span class="attr">#[test]
-    #[cfg(target_arch = <span class="string">&quot;x86_64&quot;</span>)]
+    #[cfg(target_arch = <span class="string">"x86_64"</span>)]
     #[cfg(not(miri))]
     </span><span class="kw">fn </span>negative_sse2_forward() {
         <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="number">517 </span>{
             <span class="kw">for </span>align <span class="kw">in </span><span class="number">0</span>..<span class="number">65 </span>{
-                <span class="kw">let </span><span class="kw-2">mut </span>s = <span class="string">&quot;a&quot;</span>.repeat(i);
-                s.push_str(<span class="string">&quot;☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃&quot;</span>);
-                <span class="kw">let </span>s = s.get(align..).unwrap_or(<span class="string">&quot;&quot;</span>);
+                <span class="kw">let </span><span class="kw-2">mut </span>s = <span class="string">"a"</span>.repeat(i);
+                s.push_str(<span class="string">"☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃☃"</span>);
+                <span class="kw">let </span>s = s.get(align..).unwrap_or(<span class="string">""</span>);
                 <span class="macro">assert_eq!</span>(
                     i.saturating_sub(align),
                     first_non_ascii_byte_sse2(s.as_bytes()),
-                    <span class="string">&quot;i: {:?}, align: {:?}, len: {:?}, s: {:?}&quot;</span>,
+                    <span class="string">"i: {:?}, align: {:?}, len: {:?}, s: {:?}"</span>,
                     i,
                     align,
                     s.len(),

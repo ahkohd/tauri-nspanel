@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/dispatch-0.2.0/src/queue.rs`."><title>queue.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="dispatch" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/dispatch-0.2.0/src/queue.rs`."><title>queue.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="dispatch" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -526,7 +527,7 @@
 }
 
 <span class="kw">impl </span>QueueAttribute {
-    <span class="attr">#[cfg(not(all(test, target_os = <span class="string">&quot;linux&quot;</span>)))]
+    <span class="attr">#[cfg(not(all(test, target_os = <span class="string">"linux"</span>)))]
     </span><span class="kw">fn </span>as_raw(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; dispatch_queue_attr_t {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
             QueueAttribute::Serial =&gt; DISPATCH_QUEUE_SERIAL,
@@ -534,9 +535,9 @@
         }
     }
 
-    <span class="attr">#[cfg(all(test, target_os = <span class="string">&quot;linux&quot;</span>))]
+    <span class="attr">#[cfg(all(test, target_os = <span class="string">"linux"</span>))]
     </span><span class="kw">fn </span>as_raw(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; dispatch_queue_attr_t {
-        <span class="comment">// The Linux tests use Ubuntu&#39;s libdispatch-dev package, which is
+        <span class="comment">// The Linux tests use Ubuntu's libdispatch-dev package, which is
         // apparently really old from before OSX 10.7.
         // Back then, the attr for dispatch_queue_create must be NULL.
         </span>ptr::null()
@@ -575,7 +576,7 @@
 
 <span class="doccomment">/// A Grand Central Dispatch queue.
 ///
-/// For more information, see Apple&#39;s [Grand Central Dispatch reference](
+/// For more information, see Apple's [Grand Central Dispatch reference](
 /// https://developer.apple.com/library/mac/documentation/Performance/Reference/GCD_libdispatch_Ref/index.html).
 </span><span class="attr">#[derive(Debug)]
 </span><span class="kw">pub struct </span>Queue {
@@ -583,7 +584,7 @@
 }
 
 <span class="kw">impl </span>Queue {
-    <span class="doccomment">/// Returns the serial dispatch `Queue` associated with the application&#39;s
+    <span class="doccomment">/// Returns the serial dispatch `Queue` associated with the application's
     /// main thread.
     </span><span class="kw">pub fn </span>main() -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>queue = dispatch_get_main_queue();
@@ -614,7 +615,7 @@
 
     <span class="doccomment">/// Creates a new dispatch `Queue` with the given target queue.
     ///
-    /// A dispatch queue&#39;s priority is inherited from its target queue.
+    /// A dispatch queue's priority is inherited from its target queue.
     /// Additionally, if both the queue and its target are serial queues,
     /// their blocks will not be invoked concurrently.
     </span><span class="kw">pub fn </span>with_target_queue(label: <span class="kw-2">&amp;</span>str, attr: QueueAttribute, target: <span class="kw-2">&amp;</span>Queue)
@@ -631,7 +632,7 @@
         <span class="kw">let </span>label = <span class="kw">unsafe </span>{
             <span class="kw">let </span>label_ptr = dispatch_queue_get_label(<span class="self">self</span>.ptr);
             <span class="kw">if </span>label_ptr.is_null() {
-                <span class="kw">return </span><span class="string">&quot;&quot;</span>;
+                <span class="kw">return </span><span class="string">""</span>;
             }
             CStr::from_ptr(label_ptr)
         };
@@ -654,13 +655,13 @@
                 dispatch_sync_f(<span class="self">self</span>.ptr, context, work);
             }
         }
-        <span class="comment">// This was set so it&#39;s safe to unwrap
+        <span class="comment">// This was set so it's safe to unwrap
         </span>result.unwrap()
     }
 
     <span class="doccomment">/// Submits a closure for asynchronous execution on self and returns
     /// immediately.
-    </span><span class="kw">pub fn </span>exec_async&lt;F&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, work: F) <span class="kw">where </span>F: <span class="lifetime">&#39;static </span>+ Send + FnOnce() {
+    </span><span class="kw">pub fn </span>exec_async&lt;F&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, work: F) <span class="kw">where </span>F: <span class="lifetime">'static </span>+ Send + FnOnce() {
         <span class="kw">let </span>(context, work) = context_and_function(work);
         <span class="kw">unsafe </span>{
             dispatch_async_f(<span class="self">self</span>.ptr, context, work);
@@ -670,7 +671,7 @@
     <span class="doccomment">/// After the specified delay, submits a closure for asynchronous execution
     /// on self.
     </span><span class="kw">pub fn </span>exec_after&lt;F&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, delay: Duration, work: F)
-            <span class="kw">where </span>F: <span class="lifetime">&#39;static </span>+ Send + FnOnce() {
+            <span class="kw">where </span>F: <span class="lifetime">'static </span>+ Send + FnOnce() {
         <span class="kw">let </span>when = time_after_delay(delay);
         <span class="kw">let </span>(context, work) = context_and_function(work);
         <span class="kw">unsafe </span>{
@@ -754,7 +755,7 @@
                 dispatch_barrier_sync_f(<span class="self">self</span>.ptr, context, work);
             }
         }
-        <span class="comment">// This was set so it&#39;s safe to unwrap
+        <span class="comment">// This was set so it's safe to unwrap
         </span>result.unwrap()
     }
 
@@ -771,7 +772,7 @@
     /// If self is a serial queue or one of the global concurrent queues,
     /// this method behaves like the normal `async` method.
     </span><span class="kw">pub fn </span>barrier_async&lt;F&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, work: F)
-            <span class="kw">where </span>F: <span class="lifetime">&#39;static </span>+ Send + FnOnce() {
+            <span class="kw">where </span>F: <span class="lifetime">'static </span>+ Send + FnOnce() {
         <span class="kw">let </span>(context, work) = context_and_function(work);
         <span class="kw">unsafe </span>{
             dispatch_barrier_async_f(<span class="self">self</span>.ptr, context, work);
@@ -858,7 +859,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_serial_queue() {
-        <span class="kw">let </span>q = Queue::create(<span class="string">&quot;&quot;</span>, QueueAttribute::Serial);
+        <span class="kw">let </span>q = Queue::create(<span class="string">""</span>, QueueAttribute::Serial);
         <span class="kw">let </span><span class="kw-2">mut </span>num = <span class="number">0</span>;
 
         q.exec_sync(|| num = <span class="number">1</span>);
@@ -869,16 +870,16 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_sync_owned() {
-        <span class="kw">let </span>q = Queue::create(<span class="string">&quot;&quot;</span>, QueueAttribute::Serial);
+        <span class="kw">let </span>q = Queue::create(<span class="string">""</span>, QueueAttribute::Serial);
 
-        <span class="kw">let </span>s = <span class="string">&quot;Hello, world!&quot;</span>.to_string();
+        <span class="kw">let </span>s = <span class="string">"Hello, world!"</span>.to_string();
         <span class="kw">let </span>len = q.exec_sync(<span class="kw">move </span>|| s.len());
         <span class="macro">assert_eq!</span>(len, <span class="number">13</span>);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_serial_queue_async() {
-        <span class="kw">let </span>q = Queue::create(<span class="string">&quot;&quot;</span>, QueueAttribute::Serial);
+        <span class="kw">let </span>q = Queue::create(<span class="string">""</span>, QueueAttribute::Serial);
         <span class="kw">let </span>num = Arc::new(Mutex::new(<span class="number">0</span>));
 
         async_increment(<span class="kw-2">&amp;</span>q, <span class="kw-2">&amp;</span>num);
@@ -890,7 +891,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_after() {
-        <span class="kw">let </span>q = Queue::create(<span class="string">&quot;&quot;</span>, QueueAttribute::Serial);
+        <span class="kw">let </span>q = Queue::create(<span class="string">""</span>, QueueAttribute::Serial);
         <span class="kw">let </span>group = Group::create();
         <span class="kw">let </span>num = Arc::new(Mutex::new(<span class="number">0</span>));
 
@@ -912,13 +913,13 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_queue_label() {
-        <span class="kw">let </span>q = Queue::create(<span class="string">&quot;com.example.rust&quot;</span>, QueueAttribute::Serial);
-        <span class="macro">assert_eq!</span>(q.label(), <span class="string">&quot;com.example.rust&quot;</span>);
+        <span class="kw">let </span>q = Queue::create(<span class="string">"com.example.rust"</span>, QueueAttribute::Serial);
+        <span class="macro">assert_eq!</span>(q.label(), <span class="string">"com.example.rust"</span>);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_apply() {
-        <span class="kw">let </span>q = Queue::create(<span class="string">&quot;&quot;</span>, QueueAttribute::Serial);
+        <span class="kw">let </span>q = Queue::create(<span class="string">""</span>, QueueAttribute::Serial);
         <span class="kw">let </span>num = Arc::new(Mutex::new(<span class="number">0</span>));
 
         q.apply(<span class="number">5</span>, |<span class="kw">_</span>| <span class="kw-2">*</span>num.lock().unwrap() += <span class="number">1</span>);
@@ -927,7 +928,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_for_each() {
-        <span class="kw">let </span>q = Queue::create(<span class="string">&quot;&quot;</span>, QueueAttribute::Serial);
+        <span class="kw">let </span>q = Queue::create(<span class="string">""</span>, QueueAttribute::Serial);
         <span class="kw">let </span><span class="kw-2">mut </span>nums = [<span class="number">0</span>, <span class="number">1</span>];
 
         q.for_each(<span class="kw-2">&amp;mut </span>nums, |x| <span class="kw-2">*</span>x += <span class="number">1</span>);
@@ -936,7 +937,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_map() {
-        <span class="kw">let </span>q = Queue::create(<span class="string">&quot;&quot;</span>, QueueAttribute::Serial);
+        <span class="kw">let </span>q = Queue::create(<span class="string">""</span>, QueueAttribute::Serial);
         <span class="kw">let </span>nums = <span class="macro">vec!</span>[<span class="number">0</span>, <span class="number">1</span>];
 
         <span class="kw">let </span>result = q.map(nums, |x| x + <span class="number">1</span>);
@@ -945,7 +946,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_barrier_sync() {
-        <span class="kw">let </span>q = Queue::create(<span class="string">&quot;&quot;</span>, QueueAttribute::Concurrent);
+        <span class="kw">let </span>q = Queue::create(<span class="string">""</span>, QueueAttribute::Concurrent);
         <span class="kw">let </span>num = Arc::new(Mutex::new(<span class="number">0</span>));
 
         async_increment(<span class="kw-2">&amp;</span>q, <span class="kw-2">&amp;</span>num);
@@ -970,7 +971,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_barrier_async() {
-        <span class="kw">let </span>q = Queue::create(<span class="string">&quot;&quot;</span>, QueueAttribute::Concurrent);
+        <span class="kw">let </span>q = Queue::create(<span class="string">""</span>, QueueAttribute::Concurrent);
         <span class="kw">let </span>num = Arc::new(Mutex::new(<span class="number">0</span>));
 
         async_increment(<span class="kw-2">&amp;</span>q, <span class="kw-2">&amp;</span>num);
@@ -993,14 +994,14 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_suspend() {
-        <span class="kw">let </span>q = Queue::create(<span class="string">&quot;&quot;</span>, QueueAttribute::Serial);
+        <span class="kw">let </span>q = Queue::create(<span class="string">""</span>, QueueAttribute::Serial);
         <span class="kw">let </span>num = Arc::new(Mutex::new(<span class="number">0</span>));
 
         <span class="comment">// Suspend the queue and then dispatch some work to it
         </span><span class="kw">let </span>guard = q.suspend();
         async_increment(<span class="kw-2">&amp;</span>q, <span class="kw-2">&amp;</span>num);
 
-        <span class="comment">// Sleep and ensure the work doesn&#39;t occur
+        <span class="comment">// Sleep and ensure the work doesn't occur
         </span>::std::thread::sleep(Duration::from_millis(<span class="number">5</span>));
         <span class="macro">assert_eq!</span>(<span class="kw-2">*</span>num.lock().unwrap(), <span class="number">0</span>);
 

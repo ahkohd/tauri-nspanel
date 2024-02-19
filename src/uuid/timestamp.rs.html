@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/timestamp.rs`."><title>timestamp.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="uuid" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="icon" href="https://www.rust-lang.org/favicon.ico"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../uuid/index.html"><img src="https://www.rust-lang.org/logos/rust-logo-128x128-blk-v2.png" alt="uuid"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/timestamp.rs`."><title>timestamp.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="uuid" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="icon" href="https://www.rust-lang.org/favicon.ico"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><a class="sub-logo-container" href="../../uuid/index.html"><img src="https://www.rust-lang.org/logos/rust-logo-128x128-blk-v2.png" alt="uuid"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -470,7 +471,7 @@
 //!
 //! Timestamps are used in a few UUID versions as a source of decentralized
 //! uniqueness (as in versions 1 and 6), and as a way to enable sorting (as
-//! in versions 6 and 7). Timestamps aren&#39;t encoded the same way by all UUID
+//! in versions 6 and 7). Timestamps aren't encoded the same way by all UUID
 //! versions so this module provides a single [`Timestamp`] type that can
 //! convert between them.
 //!
@@ -509,21 +510,21 @@
 </span><span class="kw">pub struct </span>Timestamp {
     <span class="kw">pub</span>(<span class="kw">crate</span>) seconds: u64,
     <span class="kw">pub</span>(<span class="kw">crate</span>) nanos: u32,
-    <span class="attr">#[cfg(any(feature = <span class="string">&quot;v1&quot;</span>, feature = <span class="string">&quot;v6&quot;</span>))]
+    <span class="attr">#[cfg(any(feature = <span class="string">"v1"</span>, feature = <span class="string">"v6"</span>))]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) counter: u16,
 }
 
 <span class="kw">impl </span>Timestamp {
     <span class="doccomment">/// Get a timestamp representing the current system time.
     ///
-    /// This method defers to the standard library&#39;s `SystemTime` type.
+    /// This method defers to the standard library's `SystemTime` type.
     ///
     /// # Panics
     ///
     /// This method will panic if calculating the elapsed time since the Unix epoch fails.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
     </span><span class="kw">pub fn </span>now(context: <span class="kw">impl </span>ClockSequence&lt;Output = u16&gt;) -&gt; <span class="self">Self </span>{
-        <span class="attr">#[cfg(not(any(feature = <span class="string">&quot;v1&quot;</span>, feature = <span class="string">&quot;v6&quot;</span>)))]
+        <span class="attr">#[cfg(not(any(feature = <span class="string">"v1"</span>, feature = <span class="string">"v6"</span>)))]
         </span>{
             <span class="kw">let _ </span>= context;
         }
@@ -533,7 +534,7 @@
         Timestamp {
             seconds,
             nanos,
-            <span class="attr">#[cfg(any(feature = <span class="string">&quot;v1&quot;</span>, feature = <span class="string">&quot;v6&quot;</span>))]
+            <span class="attr">#[cfg(any(feature = <span class="string">"v1"</span>, feature = <span class="string">"v6"</span>))]
             </span>counter: context.generate_sequence(seconds, nanos),
         }
     }
@@ -546,7 +547,7 @@
     /// If conversion from RFC4122 ticks to the internal timestamp format would overflow
     /// it will wrap.
     </span><span class="kw">pub const fn </span>from_rfc4122(ticks: u64, counter: u16) -&gt; <span class="self">Self </span>{
-        <span class="attr">#[cfg(not(any(feature = <span class="string">&quot;v1&quot;</span>, feature = <span class="string">&quot;v6&quot;</span>)))]
+        <span class="attr">#[cfg(not(any(feature = <span class="string">"v1"</span>, feature = <span class="string">"v6"</span>)))]
         </span>{
             <span class="kw">let _ </span>= counter;
         }
@@ -556,7 +557,7 @@
         Timestamp {
             seconds,
             nanos,
-            <span class="attr">#[cfg(any(feature = <span class="string">&quot;v1&quot;</span>, feature = <span class="string">&quot;v6&quot;</span>))]
+            <span class="attr">#[cfg(any(feature = <span class="string">"v1"</span>, feature = <span class="string">"v6"</span>))]
             </span>counter,
         }
     }
@@ -568,13 +569,13 @@
     /// If conversion from RFC4122 ticks to the internal timestamp format would overflow
     /// it will wrap.
     </span><span class="kw">pub fn </span>from_unix(context: <span class="kw">impl </span>ClockSequence&lt;Output = u16&gt;, seconds: u64, nanos: u32) -&gt; <span class="self">Self </span>{
-        <span class="attr">#[cfg(not(any(feature = <span class="string">&quot;v1&quot;</span>, feature = <span class="string">&quot;v6&quot;</span>)))]
+        <span class="attr">#[cfg(not(any(feature = <span class="string">"v1"</span>, feature = <span class="string">"v6"</span>)))]
         </span>{
             <span class="kw">let _ </span>= context;
 
             Timestamp { seconds, nanos }
         }
-        <span class="attr">#[cfg(any(feature = <span class="string">&quot;v1&quot;</span>, feature = <span class="string">&quot;v6&quot;</span>))]
+        <span class="attr">#[cfg(any(feature = <span class="string">"v1"</span>, feature = <span class="string">"v6"</span>))]
         </span>{
             <span class="kw">let </span>counter = context.generate_sequence(seconds, nanos);
 
@@ -593,7 +594,7 @@
     ///
     /// If conversion from RFC4122 ticks to the internal timestamp format would overflow
     /// it will wrap.
-    </span><span class="attr">#[cfg(any(feature = <span class="string">&quot;v1&quot;</span>, feature = <span class="string">&quot;v6&quot;</span>))]
+    </span><span class="attr">#[cfg(any(feature = <span class="string">"v1"</span>, feature = <span class="string">"v6"</span>))]
     </span><span class="kw">pub const fn </span>to_rfc4122(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (u64, u16) {
         (
             <span class="self">Self</span>::unix_to_rfc4122_ticks(<span class="self">self</span>.seconds, <span class="self">self</span>.nanos),
@@ -611,7 +612,7 @@
         (<span class="self">self</span>.seconds, <span class="self">self</span>.nanos)
     }
 
-    <span class="attr">#[cfg(any(feature = <span class="string">&quot;v1&quot;</span>, feature = <span class="string">&quot;v6&quot;</span>))]
+    <span class="attr">#[cfg(any(feature = <span class="string">"v1"</span>, feature = <span class="string">"v6"</span>))]
     </span><span class="kw">const fn </span>unix_to_rfc4122_ticks(seconds: u64, nanos: u32) -&gt; u64 {
         UUID_TICKS_BETWEEN_EPOCHS
             .wrapping_add(seconds.wrapping_mul(<span class="number">10_000_000</span>))
@@ -625,14 +626,14 @@
         )
     }
 
-    <span class="attr">#[deprecated(note = <span class="string">&quot;use `to_unix` instead; this method will be removed in a future release&quot;</span>)]
+    <span class="attr">#[deprecated(note = <span class="string">"use `to_unix` instead; this method will be removed in a future release"</span>)]
     </span><span class="doccomment">/// Get the number of fractional nanoseconds in the Unix timestamp.
     ///
-    /// This method is deprecated and probably doesn&#39;t do what you&#39;re expecting it to.
-    /// It doesn&#39;t return the timestamp as nanoseconds since the Unix epoch, it returns
+    /// This method is deprecated and probably doesn't do what you're expecting it to.
+    /// It doesn't return the timestamp as nanoseconds since the Unix epoch, it returns
     /// the fractional seconds of the timestamp.
     </span><span class="kw">pub const fn </span>to_unix_nanos(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
-        <span class="macro">panic!</span>(<span class="string">&quot;`Timestamp::to_unix_nanos` is deprecated and will be removed: use `Timestamp::to_unix` instead&quot;</span>)
+        <span class="macro">panic!</span>(<span class="string">"`Timestamp::to_unix_nanos` is deprecated and will be removed: use `Timestamp::to_unix` instead"</span>)
     }
 }
 
@@ -747,19 +748,19 @@
 }
 
 <span class="attr">#[cfg(all(
-    feature = <span class="string">&quot;std&quot;</span>,
-    feature = <span class="string">&quot;js&quot;</span>,
+    feature = <span class="string">"std"</span>,
+    feature = <span class="string">"js"</span>,
     all(
-        target_arch = <span class="string">&quot;wasm32&quot;</span>,
-        target_vendor = <span class="string">&quot;unknown&quot;</span>,
-        target_os = <span class="string">&quot;unknown&quot;
+        target_arch = <span class="string">"wasm32"</span>,
+        target_vendor = <span class="string">"unknown"</span>,
+        target_os = <span class="string">"unknown"
     </span>)
 ))]
 </span><span class="kw">fn </span>now() -&gt; (u64, u32) {
     <span class="kw">use </span>wasm_bindgen::prelude::<span class="kw-2">*</span>;
 
     <span class="attr">#[wasm_bindgen]
-    </span><span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
+    </span><span class="kw">extern </span><span class="string">"C" </span>{
         <span class="comment">// NOTE: This signature works around https://bugzilla.mozilla.org/show_bug.cgi?id=1787770
         </span><span class="attr">#[wasm_bindgen(js_namespace = Date, catch)]
         </span><span class="kw">fn </span>now() -&gt; <span class="prelude-ty">Result</span>&lt;f64, JsValue&gt;;
@@ -774,19 +775,19 @@
 }
 
 <span class="attr">#[cfg(all(
-    feature = <span class="string">&quot;std&quot;</span>,
+    feature = <span class="string">"std"</span>,
     any(
-        not(feature = <span class="string">&quot;js&quot;</span>),
+        not(feature = <span class="string">"js"</span>),
         not(all(
-            target_arch = <span class="string">&quot;wasm32&quot;</span>,
-            target_vendor = <span class="string">&quot;unknown&quot;</span>,
-            target_os = <span class="string">&quot;unknown&quot;
+            target_arch = <span class="string">"wasm32"</span>,
+            target_vendor = <span class="string">"unknown"</span>,
+            target_os = <span class="string">"unknown"
         </span>))
     )
 ))]
 </span><span class="kw">fn </span>now() -&gt; (u64, u32) {
     <span class="kw">let </span>dur = std::time::SystemTime::UNIX_EPOCH.elapsed().expect(
-        <span class="string">&quot;Getting elapsed time since UNIX_EPOCH. If this fails, we&#39;ve somehow violated causality&quot;</span>,
+        <span class="string">"Getting elapsed time since UNIX_EPOCH. If this fails, we've somehow violated causality"</span>,
     );
 
     (dur.as_secs(), dur.subsec_nanos())
@@ -808,7 +809,7 @@
     </span><span class="kw">fn </span>generate_sequence(<span class="kw-2">&amp;</span><span class="self">self</span>, seconds: u64, subsec_nanos: u32) -&gt; <span class="self">Self</span>::Output;
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, T: ClockSequence + <span class="question-mark">?</span>Sized&gt; ClockSequence <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T: ClockSequence + <span class="question-mark">?</span>Sized&gt; ClockSequence <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>T {
     <span class="kw">type </span>Output = T::Output;
     <span class="kw">fn </span>generate_sequence(<span class="kw-2">&amp;</span><span class="self">self</span>, seconds: u64, subsec_nanos: u32) -&gt; <span class="self">Self</span>::Output {
         (<span class="kw-2">**</span><span class="self">self</span>).generate_sequence(seconds, subsec_nanos)
@@ -819,13 +820,13 @@
 </span><span class="kw">pub mod </span>context {
     <span class="kw">use </span><span class="kw">super</span>::ClockSequence;
 
-    <span class="attr">#[cfg(any(feature = <span class="string">&quot;v1&quot;</span>, feature = <span class="string">&quot;v6&quot;</span>))]
+    <span class="attr">#[cfg(any(feature = <span class="string">"v1"</span>, feature = <span class="string">"v6"</span>))]
     </span><span class="kw">use </span>atomic::{Atomic, Ordering};
 
     <span class="doccomment">/// An empty counter that will always return the value `0`.
     ///
     /// This type should be used when constructing timestamps for version 7 UUIDs,
-    /// since they don&#39;t need a counter for uniqueness.
+    /// since they don't need a counter for uniqueness.
     </span><span class="attr">#[derive(Debug, Clone, Copy, Default)]
     </span><span class="kw">pub struct </span>NoContext;
 
@@ -837,18 +838,18 @@
         </span>}
     }
 
-    <span class="attr">#[cfg(all(any(feature = <span class="string">&quot;v1&quot;</span>, feature = <span class="string">&quot;v6&quot;</span>), feature = <span class="string">&quot;std&quot;</span>, feature = <span class="string">&quot;rng&quot;</span>))]
+    <span class="attr">#[cfg(all(any(feature = <span class="string">"v1"</span>, feature = <span class="string">"v6"</span>), feature = <span class="string">"std"</span>, feature = <span class="string">"rng"</span>))]
     </span><span class="kw">static </span>CONTEXT: Context = Context {
         count: Atomic::new(<span class="number">0</span>),
     };
 
-    <span class="attr">#[cfg(all(any(feature = <span class="string">&quot;v1&quot;</span>, feature = <span class="string">&quot;v6&quot;</span>), feature = <span class="string">&quot;std&quot;</span>, feature = <span class="string">&quot;rng&quot;</span>))]
+    <span class="attr">#[cfg(all(any(feature = <span class="string">"v1"</span>, feature = <span class="string">"v6"</span>), feature = <span class="string">"std"</span>, feature = <span class="string">"rng"</span>))]
     </span><span class="kw">static </span>CONTEXT_INITIALIZED: Atomic&lt;bool&gt; = Atomic::new(<span class="bool-val">false</span>);
 
-    <span class="attr">#[cfg(all(any(feature = <span class="string">&quot;v1&quot;</span>, feature = <span class="string">&quot;v6&quot;</span>), feature = <span class="string">&quot;std&quot;</span>, feature = <span class="string">&quot;rng&quot;</span>))]
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>shared_context() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>Context {
+    <span class="attr">#[cfg(all(any(feature = <span class="string">"v1"</span>, feature = <span class="string">"v6"</span>), feature = <span class="string">"std"</span>, feature = <span class="string">"rng"</span>))]
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>shared_context() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>Context {
         <span class="comment">// If the context is in its initial state then assign it to a random value
-        // It doesn&#39;t matter if multiple threads observe `false` here and initialize the context
+        // It doesn't matter if multiple threads observe `false` here and initialize the context
         </span><span class="kw">if </span>CONTEXT_INITIALIZED
             .compare_exchange(<span class="bool-val">false</span>, <span class="bool-val">true</span>, Ordering::Relaxed, Ordering::Relaxed)
             .is_ok()
@@ -863,14 +864,14 @@
     ///
     /// This type should be used when constructing version 1 and version 6 UUIDs.
     </span><span class="attr">#[derive(Debug)]
-    #[cfg(any(feature = <span class="string">&quot;v1&quot;</span>, feature = <span class="string">&quot;v6&quot;</span>))]
+    #[cfg(any(feature = <span class="string">"v1"</span>, feature = <span class="string">"v6"</span>))]
     </span><span class="kw">pub struct </span>Context {
         count: Atomic&lt;u16&gt;,
     }
 
-    <span class="attr">#[cfg(any(feature = <span class="string">&quot;v1&quot;</span>, feature = <span class="string">&quot;v6&quot;</span>))]
+    <span class="attr">#[cfg(any(feature = <span class="string">"v1"</span>, feature = <span class="string">"v6"</span>))]
     </span><span class="kw">impl </span>Context {
-        <span class="doccomment">/// Construct a new context that&#39;s initialized with the given value.
+        <span class="doccomment">/// Construct a new context that's initialized with the given value.
         ///
         /// The starting value should be a random number, so that UUIDs from
         /// different systems with the same timestamps are less likely to collide.
@@ -881,8 +882,8 @@
             }
         }
 
-        <span class="doccomment">/// Construct a new context that&#39;s initialized with a random value.
-        </span><span class="attr">#[cfg(feature = <span class="string">&quot;rng&quot;</span>)]
+        <span class="doccomment">/// Construct a new context that's initialized with a random value.
+        </span><span class="attr">#[cfg(feature = <span class="string">"rng"</span>)]
         </span><span class="kw">pub fn </span>new_random() -&gt; <span class="self">Self </span>{
             <span class="self">Self </span>{
                 count: Atomic::&lt;u16&gt;::new(<span class="kw">crate</span>::rng::u16()),
@@ -890,7 +891,7 @@
         }
     }
 
-    <span class="attr">#[cfg(any(feature = <span class="string">&quot;v1&quot;</span>, feature = <span class="string">&quot;v6&quot;</span>))]
+    <span class="attr">#[cfg(any(feature = <span class="string">"v1"</span>, feature = <span class="string">"v6"</span>))]
     </span><span class="kw">impl </span>ClockSequence <span class="kw">for </span>Context {
         <span class="kw">type </span>Output = u16;
 
@@ -898,30 +899,30 @@
             <span class="comment">// RFC4122 reserves 2 bits of the clock sequence so the actual
             // maximum value is smaller than `u16::MAX`. Since we unconditionally
             // increment the clock sequence we want to wrap once it becomes larger
-            // than what we can represent in a &quot;u14&quot;. Otherwise there&#39;d be patches
-            // where the clock sequence doesn&#39;t change regardless of the timestamp
+            // than what we can represent in a "u14". Otherwise there'd be patches
+            // where the clock sequence doesn't change regardless of the timestamp
             </span><span class="self">self</span>.count.fetch_add(<span class="number">1</span>, Ordering::AcqRel) &amp; (u16::MAX &gt;&gt; <span class="number">2</span>)
         }
     }
 }
 
-<span class="attr">#[cfg(all(test, any(feature = <span class="string">&quot;v1&quot;</span>, feature = <span class="string">&quot;v6&quot;</span>)))]
+<span class="attr">#[cfg(all(test, any(feature = <span class="string">"v1"</span>, feature = <span class="string">"v6"</span>)))]
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
     <span class="attr">#[cfg(all(
-        target_arch = <span class="string">&quot;wasm32&quot;</span>,
-        target_vendor = <span class="string">&quot;unknown&quot;</span>,
-        target_os = <span class="string">&quot;unknown&quot;
+        target_arch = <span class="string">"wasm32"</span>,
+        target_vendor = <span class="string">"unknown"</span>,
+        target_os = <span class="string">"unknown"
     </span>))]
     </span><span class="kw">use </span>wasm_bindgen_test::<span class="kw-2">*</span>;
 
     <span class="attr">#[test]
     #[cfg_attr(
         all(
-            target_arch = <span class="string">&quot;wasm32&quot;</span>,
-            target_vendor = <span class="string">&quot;unknown&quot;</span>,
-            target_os = <span class="string">&quot;unknown&quot;
+            target_arch = <span class="string">"wasm32"</span>,
+            target_vendor = <span class="string">"unknown"</span>,
+            target_os = <span class="string">"unknown"
         </span>),
         wasm_bindgen_test
     )]

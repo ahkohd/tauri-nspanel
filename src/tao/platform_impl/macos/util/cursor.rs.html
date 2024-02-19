@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tao-0.16.7/src/platform_impl/macos/util/cursor.rs`."><title>cursor.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="tao" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tao-0.16.7/src/platform_impl/macos/util/cursor.rs`."><title>cursor.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="tao" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -181,9 +182,9 @@
 
 <span class="kw">pub enum </span>Cursor {
   Default,
-  Native(<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str),
-  Undocumented(<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str),
-  WebKit(<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str),
+  Native(<span class="kw-2">&amp;</span><span class="lifetime">'static </span>str),
+  Undocumented(<span class="kw-2">&amp;</span><span class="lifetime">'static </span>str),
+  WebKit(<span class="kw-2">&amp;</span><span class="lifetime">'static </span>str),
 }
 
 <span class="kw">impl </span>From&lt;CursorIcon&gt; <span class="kw">for </span>Cursor {
@@ -191,52 +192,52 @@
     <span class="comment">// See native cursors at https://developer.apple.com/documentation/appkit/nscursor?language=objc.
     </span><span class="kw">match </span>cursor {
       CursorIcon::Default =&gt; Cursor::Default,
-      CursorIcon::Arrow =&gt; Cursor::Native(<span class="string">&quot;arrowCursor&quot;</span>),
-      CursorIcon::Hand =&gt; Cursor::Native(<span class="string">&quot;pointingHandCursor&quot;</span>),
-      CursorIcon::Grab =&gt; Cursor::Native(<span class="string">&quot;openHandCursor&quot;</span>),
-      CursorIcon::Grabbing =&gt; Cursor::Native(<span class="string">&quot;closedHandCursor&quot;</span>),
-      CursorIcon::Text =&gt; Cursor::Native(<span class="string">&quot;IBeamCursor&quot;</span>),
-      CursorIcon::VerticalText =&gt; Cursor::Native(<span class="string">&quot;IBeamCursorForVerticalLayout&quot;</span>),
-      CursorIcon::Copy =&gt; Cursor::Native(<span class="string">&quot;dragCopyCursor&quot;</span>),
-      CursorIcon::Alias =&gt; Cursor::Native(<span class="string">&quot;dragLinkCursor&quot;</span>),
-      CursorIcon::NotAllowed | CursorIcon::NoDrop =&gt; Cursor::Native(<span class="string">&quot;operationNotAllowedCursor&quot;</span>),
-      CursorIcon::ContextMenu =&gt; Cursor::Native(<span class="string">&quot;contextualMenuCursor&quot;</span>),
-      CursorIcon::Crosshair =&gt; Cursor::Native(<span class="string">&quot;crosshairCursor&quot;</span>),
-      CursorIcon::EResize =&gt; Cursor::Native(<span class="string">&quot;resizeRightCursor&quot;</span>),
-      CursorIcon::NResize =&gt; Cursor::Native(<span class="string">&quot;resizeUpCursor&quot;</span>),
-      CursorIcon::WResize =&gt; Cursor::Native(<span class="string">&quot;resizeLeftCursor&quot;</span>),
-      CursorIcon::SResize =&gt; Cursor::Native(<span class="string">&quot;resizeDownCursor&quot;</span>),
-      CursorIcon::EwResize | CursorIcon::ColResize =&gt; Cursor::Native(<span class="string">&quot;resizeLeftRightCursor&quot;</span>),
-      CursorIcon::NsResize | CursorIcon::RowResize =&gt; Cursor::Native(<span class="string">&quot;resizeUpDownCursor&quot;</span>),
+      CursorIcon::Arrow =&gt; Cursor::Native(<span class="string">"arrowCursor"</span>),
+      CursorIcon::Hand =&gt; Cursor::Native(<span class="string">"pointingHandCursor"</span>),
+      CursorIcon::Grab =&gt; Cursor::Native(<span class="string">"openHandCursor"</span>),
+      CursorIcon::Grabbing =&gt; Cursor::Native(<span class="string">"closedHandCursor"</span>),
+      CursorIcon::Text =&gt; Cursor::Native(<span class="string">"IBeamCursor"</span>),
+      CursorIcon::VerticalText =&gt; Cursor::Native(<span class="string">"IBeamCursorForVerticalLayout"</span>),
+      CursorIcon::Copy =&gt; Cursor::Native(<span class="string">"dragCopyCursor"</span>),
+      CursorIcon::Alias =&gt; Cursor::Native(<span class="string">"dragLinkCursor"</span>),
+      CursorIcon::NotAllowed | CursorIcon::NoDrop =&gt; Cursor::Native(<span class="string">"operationNotAllowedCursor"</span>),
+      CursorIcon::ContextMenu =&gt; Cursor::Native(<span class="string">"contextualMenuCursor"</span>),
+      CursorIcon::Crosshair =&gt; Cursor::Native(<span class="string">"crosshairCursor"</span>),
+      CursorIcon::EResize =&gt; Cursor::Native(<span class="string">"resizeRightCursor"</span>),
+      CursorIcon::NResize =&gt; Cursor::Native(<span class="string">"resizeUpCursor"</span>),
+      CursorIcon::WResize =&gt; Cursor::Native(<span class="string">"resizeLeftCursor"</span>),
+      CursorIcon::SResize =&gt; Cursor::Native(<span class="string">"resizeDownCursor"</span>),
+      CursorIcon::EwResize | CursorIcon::ColResize =&gt; Cursor::Native(<span class="string">"resizeLeftRightCursor"</span>),
+      CursorIcon::NsResize | CursorIcon::RowResize =&gt; Cursor::Native(<span class="string">"resizeUpDownCursor"</span>),
 
       <span class="comment">// Undocumented cursors: https://stackoverflow.com/a/46635398/5435443
-      </span>CursorIcon::Help =&gt; Cursor::Undocumented(<span class="string">&quot;_helpCursor&quot;</span>),
-      CursorIcon::ZoomIn =&gt; Cursor::Undocumented(<span class="string">&quot;_zoomInCursor&quot;</span>),
-      CursorIcon::ZoomOut =&gt; Cursor::Undocumented(<span class="string">&quot;_zoomOutCursor&quot;</span>),
-      CursorIcon::NeResize =&gt; Cursor::Undocumented(<span class="string">&quot;_windowResizeNorthEastCursor&quot;</span>),
-      CursorIcon::NwResize =&gt; Cursor::Undocumented(<span class="string">&quot;_windowResizeNorthWestCursor&quot;</span>),
-      CursorIcon::SeResize =&gt; Cursor::Undocumented(<span class="string">&quot;_windowResizeSouthEastCursor&quot;</span>),
-      CursorIcon::SwResize =&gt; Cursor::Undocumented(<span class="string">&quot;_windowResizeSouthWestCursor&quot;</span>),
-      CursorIcon::NeswResize =&gt; Cursor::Undocumented(<span class="string">&quot;_windowResizeNorthEastSouthWestCursor&quot;</span>),
-      CursorIcon::NwseResize =&gt; Cursor::Undocumented(<span class="string">&quot;_windowResizeNorthWestSouthEastCursor&quot;</span>),
+      </span>CursorIcon::Help =&gt; Cursor::Undocumented(<span class="string">"_helpCursor"</span>),
+      CursorIcon::ZoomIn =&gt; Cursor::Undocumented(<span class="string">"_zoomInCursor"</span>),
+      CursorIcon::ZoomOut =&gt; Cursor::Undocumented(<span class="string">"_zoomOutCursor"</span>),
+      CursorIcon::NeResize =&gt; Cursor::Undocumented(<span class="string">"_windowResizeNorthEastCursor"</span>),
+      CursorIcon::NwResize =&gt; Cursor::Undocumented(<span class="string">"_windowResizeNorthWestCursor"</span>),
+      CursorIcon::SeResize =&gt; Cursor::Undocumented(<span class="string">"_windowResizeSouthEastCursor"</span>),
+      CursorIcon::SwResize =&gt; Cursor::Undocumented(<span class="string">"_windowResizeSouthWestCursor"</span>),
+      CursorIcon::NeswResize =&gt; Cursor::Undocumented(<span class="string">"_windowResizeNorthEastSouthWestCursor"</span>),
+      CursorIcon::NwseResize =&gt; Cursor::Undocumented(<span class="string">"_windowResizeNorthWestSouthEastCursor"</span>),
 
       <span class="comment">// While these are available, the former just loads a white arrow,
       // and the latter loads an ugly deflated beachball!
-      // CursorIcon::Move =&gt; Cursor::Undocumented(&quot;_moveCursor&quot;),
-      // CursorIcon::Wait =&gt; Cursor::Undocumented(&quot;_waitCursor&quot;),
+      // CursorIcon::Move =&gt; Cursor::Undocumented("_moveCursor"),
+      // CursorIcon::Wait =&gt; Cursor::Undocumented("_waitCursor"),
 
       // An even more undocumented cursor...
       // https://bugs.eclipse.org/bugs/show_bug.cgi?id=522349
-      // This is the wrong semantics for `Wait`, but it&#39;s the same as
-      // what&#39;s used in Safari and Chrome.
-      </span>CursorIcon::Wait | CursorIcon::Progress =&gt; Cursor::Undocumented(<span class="string">&quot;busyButClickableCursor&quot;</span>),
+      // This is the wrong semantics for `Wait`, but it's the same as
+      // what's used in Safari and Chrome.
+      </span>CursorIcon::Wait | CursorIcon::Progress =&gt; Cursor::Undocumented(<span class="string">"busyButClickableCursor"</span>),
 
       <span class="comment">// For the rest, we can just snatch the cursors from WebKit...
       // They fit the style of the native cursors, and will seem
       // completely standard to macOS users.
       // https://stackoverflow.com/a/21786835/5435443
-      </span>CursorIcon::Move | CursorIcon::AllScroll =&gt; Cursor::WebKit(<span class="string">&quot;move&quot;</span>),
-      CursorIcon::Cell =&gt; Cursor::WebKit(<span class="string">&quot;cell&quot;</span>),
+      </span>CursorIcon::Move | CursorIcon::AllScroll =&gt; Cursor::WebKit(<span class="string">"move"</span>),
+      CursorIcon::Cell =&gt; Cursor::WebKit(<span class="string">"cell"</span>),
     }
   }
 }
@@ -261,7 +262,7 @@
         <span class="kw">let </span>sel = <span class="kw">if </span><span class="macro">msg_send!</span>[class, respondsToSelector: sel] {
           sel
         } <span class="kw">else </span>{
-          <span class="macro">warn!</span>(<span class="string">&quot;Cursor `{}` appears to be invalid&quot;</span>, cursor_name);
+          <span class="macro">warn!</span>(<span class="string">"Cursor `{}` appears to be invalid"</span>, cursor_name);
           <span class="macro">sel!</span>(arrowCursor)
         };
         <span class="macro">msg_send!</span>[class, performSelector: sel]
@@ -271,16 +272,16 @@
   }
 }
 
-<span class="comment">// Note that loading `busybutclickable` with this code won&#39;t animate the frames;
-// instead you&#39;ll just get them all in a column.
+<span class="comment">// Note that loading `busybutclickable` with this code won't animate the frames;
+// instead you'll just get them all in a column.
 </span><span class="kw">pub unsafe fn </span>load_webkit_cursor(cursor_name: <span class="kw-2">&amp;</span>str) -&gt; id {
-  <span class="kw">static </span>CURSOR_ROOT: <span class="kw-2">&amp;</span>str = <span class="string">&quot;/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/HIServices.framework/Versions/A/Resources/cursors&quot;</span>;
+  <span class="kw">static </span>CURSOR_ROOT: <span class="kw-2">&amp;</span>str = <span class="string">"/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/HIServices.framework/Versions/A/Resources/cursors"</span>;
   <span class="kw">let </span>cursor_root = NSString::alloc(nil).init_str(CURSOR_ROOT);
   <span class="kw">let </span>cursor_name = NSString::alloc(nil).init_str(cursor_name);
-  <span class="kw">let </span>cursor_pdf = NSString::alloc(nil).init_str(<span class="string">&quot;cursor.pdf&quot;</span>);
-  <span class="kw">let </span>cursor_plist = NSString::alloc(nil).init_str(<span class="string">&quot;info.plist&quot;</span>);
-  <span class="kw">let </span>key_x = NSString::alloc(nil).init_str(<span class="string">&quot;hotx&quot;</span>);
-  <span class="kw">let </span>key_y = NSString::alloc(nil).init_str(<span class="string">&quot;hoty&quot;</span>);
+  <span class="kw">let </span>cursor_pdf = NSString::alloc(nil).init_str(<span class="string">"cursor.pdf"</span>);
+  <span class="kw">let </span>cursor_plist = NSString::alloc(nil).init_str(<span class="string">"info.plist"</span>);
+  <span class="kw">let </span>key_x = NSString::alloc(nil).init_str(<span class="string">"hotx"</span>);
+  <span class="kw">let </span>key_y = NSString::alloc(nil).init_str(<span class="string">"hoty"</span>);
 
   <span class="kw">let </span>cursor_path: id = <span class="macro">msg_send!</span>[cursor_root, stringByAppendingPathComponent: cursor_name];
   <span class="kw">let </span>pdf_path: id = <span class="macro">msg_send!</span>[cursor_path, stringByAppendingPathComponent: cursor_pdf];
@@ -310,7 +311,7 @@
   ];
 
   <span class="macro">thread_local! </span>{
-      <span class="comment">// We can&#39;t initialize this at startup.
+      <span class="comment">// We can't initialize this at startup.
       </span><span class="kw">static </span>CURSOR_OBJECT: RefCell&lt;id&gt; = RefCell::new(nil);
   }
 

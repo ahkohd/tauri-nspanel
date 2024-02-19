@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tendril-0.4.3/src/stream.rs`."><title>stream.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tendril" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tendril-0.4.3/src/stream.rs`."><title>stream.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tendril" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -767,15 +768,15 @@
 <span class="kw">use </span>std::marker::PhantomData;
 <span class="kw">use </span>std::path::Path;
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;encoding&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"encoding"</span>)]
 </span><span class="kw">use </span>encoding;
-<span class="attr">#[cfg(feature = <span class="string">&quot;encoding_rs&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"encoding_rs"</span>)]
 </span><span class="kw">use </span>encoding_rs::{<span class="self">self</span>, DecoderResult};
 <span class="kw">use </span>utf8;
 
 <span class="doccomment">/// Trait for types that can process a tendril.
 ///
-/// This is a &quot;push&quot; interface, unlike the &quot;pull&quot; interface of
+/// This is a "push" interface, unlike the "pull" interface of
 /// `Iterator&lt;Item=Tendril&lt;F&gt;&gt;`. The push interface matches
 /// [html5ever][] and other incremental parsers with a similar
 /// architecture.
@@ -790,7 +791,7 @@
     </span><span class="kw">fn </span>process(<span class="kw-2">&amp;mut </span><span class="self">self</span>, t: Tendril&lt;F, A&gt;);
 
     <span class="doccomment">/// Indicates that an error has occurred.
-    </span><span class="kw">fn </span>error(<span class="kw-2">&amp;mut </span><span class="self">self</span>, desc: Cow&lt;<span class="lifetime">&#39;static</span>, str&gt;);
+    </span><span class="kw">fn </span>error(<span class="kw-2">&amp;mut </span><span class="self">self</span>, desc: Cow&lt;<span class="lifetime">'static</span>, str&gt;);
 
     <span class="doccomment">/// What the overall result of processing is.
     </span><span class="kw">type </span>Output;
@@ -911,7 +912,7 @@
                 <span class="kw">match </span>result {
                     <span class="prelude-val">Ok</span>(s) =&gt; <span class="self">self</span>.inner_sink.process(Tendril::from_slice(s)),
                     <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
-                        <span class="self">self</span>.inner_sink.error(<span class="string">&quot;invalid byte sequence&quot;</span>.into());
+                        <span class="self">self</span>.inner_sink.error(<span class="string">"invalid byte sequence"</span>.into());
                         <span class="self">self</span>.inner_sink
                             .process(Tendril::from_slice(utf8::REPLACEMENT_CHARACTER));
                     }
@@ -973,7 +974,7 @@
                             <span class="kw">return</span>;
                         }
                         <span class="prelude-val">Err</span>(offset) =&gt; {
-                            <span class="self">self</span>.inner_sink.error(<span class="string">&quot;invalid byte sequence&quot;</span>.into());
+                            <span class="self">self</span>.inner_sink.error(<span class="string">"invalid byte sequence"</span>.into());
                             <span class="self">self</span>.inner_sink
                                 .process(Tendril::from_slice(utf8::REPLACEMENT_CHARACTER));
                             t.pop_front(offset <span class="kw">as </span>u32);
@@ -985,7 +986,7 @@
     }
 
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>error(<span class="kw-2">&amp;mut </span><span class="self">self</span>, desc: Cow&lt;<span class="lifetime">&#39;static</span>, str&gt;) {
+    </span><span class="kw">fn </span>error(<span class="kw-2">&amp;mut </span><span class="self">self</span>, desc: Cow&lt;<span class="lifetime">'static</span>, str&gt;) {
         <span class="self">self</span>.inner_sink.error(desc);
     }
 
@@ -995,7 +996,7 @@
     </span><span class="kw">fn </span>finish(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; Sink::Output {
         <span class="kw">if </span><span class="self">self</span>.incomplete.is_some() {
             <span class="self">self</span>.inner_sink
-                .error(<span class="string">&quot;incomplete byte sequence at end of stream&quot;</span>.into());
+                .error(<span class="string">"incomplete byte sequence at end of stream"</span>.into());
             <span class="self">self</span>.inner_sink
                 .process(Tendril::from_slice(utf8::REPLACEMENT_CHARACTER));
         }
@@ -1008,7 +1009,7 @@
 /// and emits Unicode (`StrTendril`).
 ///
 /// This allocates new tendrils for encodings other than UTF-8.
-</span><span class="attr">#[cfg(any(feature = <span class="string">&quot;encoding&quot;</span>, feature = <span class="string">&quot;encoding_rs&quot;</span>))]
+</span><span class="attr">#[cfg(any(feature = <span class="string">"encoding"</span>, feature = <span class="string">"encoding_rs"</span>))]
 </span><span class="kw">pub struct </span>LossyDecoder&lt;Sink, A = NonAtomic&gt;
 <span class="kw">where
     </span>Sink: TendrilSink&lt;fmt::UTF8, A&gt;,
@@ -1017,30 +1018,30 @@
     inner: LossyDecoderInner&lt;Sink, A&gt;,
 }
 
-<span class="attr">#[cfg(any(feature = <span class="string">&quot;encoding&quot;</span>, feature = <span class="string">&quot;encoding_rs&quot;</span>))]
+<span class="attr">#[cfg(any(feature = <span class="string">"encoding"</span>, feature = <span class="string">"encoding_rs"</span>))]
 </span><span class="kw">enum </span>LossyDecoderInner&lt;Sink, A&gt;
 <span class="kw">where
     </span>Sink: TendrilSink&lt;fmt::UTF8, A&gt;,
     A: Atomicity,
 {
     Utf8(Utf8LossyDecoder&lt;Sink, A&gt;),
-    <span class="attr">#[cfg(feature = <span class="string">&quot;encoding&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"encoding"</span>)]
     </span>Encoding(Box&lt;encoding::RawDecoder&gt;, Sink),
-    <span class="attr">#[cfg(feature = <span class="string">&quot;encoding_rs&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"encoding_rs"</span>)]
     </span>EncodingRs(encoding_rs::Decoder, Sink),
 }
 
-<span class="attr">#[cfg(any(feature = <span class="string">&quot;encoding&quot;</span>, feature = <span class="string">&quot;encoding_rs&quot;</span>))]
+<span class="attr">#[cfg(any(feature = <span class="string">"encoding"</span>, feature = <span class="string">"encoding_rs"</span>))]
 </span><span class="kw">impl</span>&lt;Sink, A&gt; LossyDecoder&lt;Sink, A&gt;
 <span class="kw">where
     </span>Sink: TendrilSink&lt;fmt::UTF8, A&gt;,
     A: Atomicity,
 {
     <span class="doccomment">/// Create a new incremental decoder using the encoding crate.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;encoding&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"encoding"</span>)]
     #[inline]
     </span><span class="kw">pub fn </span>new(encoding: encoding::EncodingRef, sink: Sink) -&gt; <span class="self">Self </span>{
-        <span class="kw">if </span>encoding.name() == <span class="string">&quot;utf-8&quot; </span>{
+        <span class="kw">if </span>encoding.name() == <span class="string">"utf-8" </span>{
             LossyDecoder::utf8(sink)
         } <span class="kw">else </span>{
             LossyDecoder {
@@ -1050,9 +1051,9 @@
     }
 
     <span class="doccomment">/// Create a new incremental decoder using the encoding_rs crate.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;encoding_rs&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"encoding_rs"</span>)]
     #[inline]
-    </span><span class="kw">pub fn </span>new_encoding_rs(encoding: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>encoding_rs::Encoding, sink: Sink) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>new_encoding_rs(encoding: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>encoding_rs::Encoding, sink: Sink) -&gt; <span class="self">Self </span>{
         <span class="kw">if </span>encoding == encoding_rs::UTF_8 {
             <span class="kw">return </span><span class="self">Self</span>::utf8(sink);
         }
@@ -1076,9 +1077,9 @@
     </span><span class="kw">pub fn </span>inner_sink(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Sink {
         <span class="kw">match </span><span class="self">self</span>.inner {
             LossyDecoderInner::Utf8(<span class="kw-2">ref </span>utf8) =&gt; <span class="kw-2">&amp;</span>utf8.inner_sink,
-            <span class="attr">#[cfg(feature = <span class="string">&quot;encoding&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"encoding"</span>)]
             </span>LossyDecoderInner::Encoding(<span class="kw">_</span>, <span class="kw-2">ref </span>inner_sink) =&gt; inner_sink,
-            <span class="attr">#[cfg(feature = <span class="string">&quot;encoding_rs&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"encoding_rs"</span>)]
             </span>LossyDecoderInner::EncodingRs(<span class="kw">_</span>, <span class="kw-2">ref </span>inner_sink) =&gt; inner_sink,
         }
     }
@@ -1087,15 +1088,15 @@
     </span><span class="kw">pub fn </span>inner_sink_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>Sink {
         <span class="kw">match </span><span class="self">self</span>.inner {
             LossyDecoderInner::Utf8(<span class="kw-2">ref mut </span>utf8) =&gt; <span class="kw-2">&amp;mut </span>utf8.inner_sink,
-            <span class="attr">#[cfg(feature = <span class="string">&quot;encoding&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"encoding"</span>)]
             </span>LossyDecoderInner::Encoding(<span class="kw">_</span>, <span class="kw-2">ref mut </span>inner_sink) =&gt; inner_sink,
-            <span class="attr">#[cfg(feature = <span class="string">&quot;encoding_rs&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"encoding_rs"</span>)]
             </span>LossyDecoderInner::EncodingRs(<span class="kw">_</span>, <span class="kw-2">ref mut </span>inner_sink) =&gt; inner_sink,
         }
     }
 }
 
-<span class="attr">#[cfg(any(feature = <span class="string">&quot;encoding&quot;</span>, feature = <span class="string">&quot;encoding_rs&quot;</span>))]
+<span class="attr">#[cfg(any(feature = <span class="string">"encoding"</span>, feature = <span class="string">"encoding_rs"</span>))]
 </span><span class="kw">impl</span>&lt;Sink, A&gt; TendrilSink&lt;fmt::Bytes, A&gt; <span class="kw">for </span>LossyDecoder&lt;Sink, A&gt;
 <span class="kw">where
     </span>Sink: TendrilSink&lt;fmt::UTF8, A&gt;,
@@ -1105,14 +1106,14 @@
     </span><span class="kw">fn </span>process(<span class="kw-2">&amp;mut </span><span class="self">self</span>, t: Tendril&lt;fmt::Bytes, A&gt;) {
         <span class="kw">match </span><span class="self">self</span>.inner {
             LossyDecoderInner::Utf8(<span class="kw-2">ref mut </span>utf8) =&gt; <span class="kw">return </span>utf8.process(t),
-            <span class="attr">#[cfg(feature = <span class="string">&quot;encoding&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"encoding"</span>)]
             </span>LossyDecoderInner::Encoding(<span class="kw-2">ref mut </span>decoder, <span class="kw-2">ref mut </span>sink) =&gt; {
                 <span class="kw">let </span><span class="kw-2">mut </span>out = Tendril::new();
                 <span class="kw">let </span><span class="kw-2">mut </span>t = t;
                 <span class="kw">loop </span>{
                     <span class="kw">match </span>decoder.raw_feed(<span class="kw-2">&amp;*</span>t, <span class="kw-2">&amp;mut </span>out) {
                         (<span class="kw">_</span>, <span class="prelude-val">Some</span>(err)) =&gt; {
-                            out.push_char(<span class="string">&#39;\u{fffd}&#39;</span>);
+                            out.push_char(<span class="string">'\u{fffd}'</span>);
                             sink.error(err.cause);
                             <span class="macro">debug_assert!</span>(err.upto &gt;= <span class="number">0</span>);
                             t.pop_front(err.upto <span class="kw">as </span>u32);
@@ -1125,7 +1126,7 @@
                     sink.process(out);
                 }
             }
-            <span class="attr">#[cfg(feature = <span class="string">&quot;encoding_rs&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"encoding_rs"</span>)]
             </span>LossyDecoderInner::EncodingRs(<span class="kw-2">ref mut </span>decoder, <span class="kw-2">ref mut </span>sink) =&gt; {
                 <span class="kw">if </span>t.is_empty() {
                     <span class="kw">return</span>;
@@ -1136,12 +1137,12 @@
     }
 
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>error(<span class="kw-2">&amp;mut </span><span class="self">self</span>, desc: Cow&lt;<span class="lifetime">&#39;static</span>, str&gt;) {
+    </span><span class="kw">fn </span>error(<span class="kw-2">&amp;mut </span><span class="self">self</span>, desc: Cow&lt;<span class="lifetime">'static</span>, str&gt;) {
         <span class="kw">match </span><span class="self">self</span>.inner {
             LossyDecoderInner::Utf8(<span class="kw-2">ref mut </span>utf8) =&gt; utf8.error(desc),
-            <span class="attr">#[cfg(feature = <span class="string">&quot;encoding&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"encoding"</span>)]
             </span>LossyDecoderInner::Encoding(<span class="kw">_</span>, <span class="kw-2">ref mut </span>sink) =&gt; sink.error(desc),
-            <span class="attr">#[cfg(feature = <span class="string">&quot;encoding_rs&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"encoding_rs"</span>)]
             </span>LossyDecoderInner::EncodingRs(<span class="kw">_</span>, <span class="kw-2">ref mut </span>sink) =&gt; sink.error(desc),
         }
     }
@@ -1152,11 +1153,11 @@
     </span><span class="kw">fn </span>finish(<span class="self">self</span>) -&gt; Sink::Output {
         <span class="kw">match </span><span class="self">self</span>.inner {
             LossyDecoderInner::Utf8(utf8) =&gt; <span class="kw">return </span>utf8.finish(),
-            <span class="attr">#[cfg(feature = <span class="string">&quot;encoding&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"encoding"</span>)]
             </span>LossyDecoderInner::Encoding(<span class="kw-2">mut </span>decoder, <span class="kw-2">mut </span>sink) =&gt; {
                 <span class="kw">let </span><span class="kw-2">mut </span>out = Tendril::new();
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(err) = decoder.raw_finish(<span class="kw-2">&amp;mut </span>out) {
-                    out.push_char(<span class="string">&#39;\u{fffd}&#39;</span>);
+                    out.push_char(<span class="string">'\u{fffd}'</span>);
                     sink.error(err.cause);
                 }
                 <span class="kw">if </span>out.len() &gt; <span class="number">0 </span>{
@@ -1164,7 +1165,7 @@
                 }
                 sink.finish()
             }
-            <span class="attr">#[cfg(feature = <span class="string">&quot;encoding_rs&quot;</span>)]
+            <span class="attr">#[cfg(feature = <span class="string">"encoding_rs"</span>)]
             </span>LossyDecoderInner::EncodingRs(<span class="kw-2">mut </span>decoder, <span class="kw-2">mut </span>sink) =&gt; {
                 decode_to_sink(Tendril::new(), <span class="kw-2">&amp;mut </span>decoder, <span class="kw-2">&amp;mut </span>sink, <span class="bool-val">true</span>);
                 sink.finish()
@@ -1173,7 +1174,7 @@
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;encoding_rs&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"encoding_rs"</span>)]
 </span><span class="kw">fn </span>decode_to_sink&lt;Sink, A&gt;(
     <span class="kw-2">mut </span>t: Tendril&lt;fmt::Bytes, A&gt;,
     decoder: <span class="kw-2">&amp;mut </span>encoding_rs::Decoder,
@@ -1203,8 +1204,8 @@
             DecoderResult::InputEmpty =&gt; <span class="kw">return</span>,
             DecoderResult::OutputFull =&gt; {}
             DecoderResult::Malformed(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; {
-                sink.error(Cow::Borrowed(<span class="string">&quot;invalid sequence&quot;</span>));
-                sink.process(<span class="string">&quot;\u{FFFD}&quot;</span>.into());
+                sink.error(Cow::Borrowed(<span class="string">"invalid sequence"</span>));
+                sink.process(<span class="string">"\u{FFFD}"</span>.into());
             }
         }
         t.pop_front(bytes_read <span class="kw">as </span>u32);
@@ -1221,14 +1222,14 @@
     <span class="kw">use </span>std::borrow::Cow;
     <span class="kw">use </span>tendril::{Atomicity, NonAtomic, Tendril};
 
-    <span class="attr">#[cfg(any(feature = <span class="string">&quot;encoding&quot;</span>, feature = <span class="string">&quot;encoding_rs&quot;</span>))]
+    <span class="attr">#[cfg(any(feature = <span class="string">"encoding"</span>, feature = <span class="string">"encoding_rs"</span>))]
     </span><span class="kw">use </span><span class="kw">super</span>::LossyDecoder;
-    <span class="attr">#[cfg(any(feature = <span class="string">&quot;encoding&quot;</span>, feature = <span class="string">&quot;encoding_rs&quot;</span>))]
+    <span class="attr">#[cfg(any(feature = <span class="string">"encoding"</span>, feature = <span class="string">"encoding_rs"</span>))]
     </span><span class="kw">use </span>tendril::SliceExt;
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;encoding&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"encoding"</span>)]
     </span><span class="kw">use </span>encoding::all <span class="kw">as </span>enc;
-    <span class="attr">#[cfg(feature = <span class="string">&quot;encoding_rs&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"encoding_rs"</span>)]
     </span><span class="kw">use </span>encoding_rs <span class="kw">as </span>enc_rs;
 
     <span class="kw">struct </span>Accumulate&lt;A&gt;
@@ -1259,7 +1260,7 @@
             <span class="self">self</span>.tendrils.push(t);
         }
 
-        <span class="kw">fn </span>error(<span class="kw-2">&amp;mut </span><span class="self">self</span>, desc: Cow&lt;<span class="lifetime">&#39;static</span>, str&gt;) {
+        <span class="kw">fn </span>error(<span class="kw-2">&amp;mut </span><span class="self">self</span>, desc: Cow&lt;<span class="lifetime">'static</span>, str&gt;) {
             <span class="self">self</span>.errors.push(desc.into_owned());
         }
 
@@ -1283,59 +1284,59 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>utf8() {
         check_utf8(<span class="kw-2">&amp;</span>[], <span class="kw-2">&amp;</span>[], <span class="number">0</span>);
-        check_utf8(<span class="kw-2">&amp;</span>[<span class="string">b&quot;&quot;</span>], <span class="kw-2">&amp;</span>[], <span class="number">0</span>);
-        check_utf8(<span class="kw-2">&amp;</span>[<span class="string">b&quot;xyz&quot;</span>], <span class="kw-2">&amp;</span>[<span class="string">&quot;xyz&quot;</span>], <span class="number">0</span>);
-        check_utf8(<span class="kw-2">&amp;</span>[<span class="string">b&quot;x&quot;</span>, <span class="string">b&quot;y&quot;</span>, <span class="string">b&quot;z&quot;</span>], <span class="kw-2">&amp;</span>[<span class="string">&quot;x&quot;</span>, <span class="string">&quot;y&quot;</span>, <span class="string">&quot;z&quot;</span>], <span class="number">0</span>);
+        check_utf8(<span class="kw-2">&amp;</span>[<span class="string">b""</span>], <span class="kw-2">&amp;</span>[], <span class="number">0</span>);
+        check_utf8(<span class="kw-2">&amp;</span>[<span class="string">b"xyz"</span>], <span class="kw-2">&amp;</span>[<span class="string">"xyz"</span>], <span class="number">0</span>);
+        check_utf8(<span class="kw-2">&amp;</span>[<span class="string">b"x"</span>, <span class="string">b"y"</span>, <span class="string">b"z"</span>], <span class="kw-2">&amp;</span>[<span class="string">"x"</span>, <span class="string">"y"</span>, <span class="string">"z"</span>], <span class="number">0</span>);
 
-        check_utf8(<span class="kw-2">&amp;</span>[<span class="string">b&quot;xy\xEA\x99\xAEzw&quot;</span>], <span class="kw-2">&amp;</span>[<span class="string">&quot;xy\u{a66e}zw&quot;</span>], <span class="number">0</span>);
-        check_utf8(<span class="kw-2">&amp;</span>[<span class="string">b&quot;xy\xEA&quot;</span>, <span class="string">b&quot;\x99\xAEzw&quot;</span>], <span class="kw-2">&amp;</span>[<span class="string">&quot;xy&quot;</span>, <span class="string">&quot;\u{a66e}z&quot;</span>, <span class="string">&quot;w&quot;</span>], <span class="number">0</span>);
-        check_utf8(<span class="kw-2">&amp;</span>[<span class="string">b&quot;xy\xEA\x99&quot;</span>, <span class="string">b&quot;\xAEzw&quot;</span>], <span class="kw-2">&amp;</span>[<span class="string">&quot;xy&quot;</span>, <span class="string">&quot;\u{a66e}z&quot;</span>, <span class="string">&quot;w&quot;</span>], <span class="number">0</span>);
+        check_utf8(<span class="kw-2">&amp;</span>[<span class="string">b"xy\xEA\x99\xAEzw"</span>], <span class="kw-2">&amp;</span>[<span class="string">"xy\u{a66e}zw"</span>], <span class="number">0</span>);
+        check_utf8(<span class="kw-2">&amp;</span>[<span class="string">b"xy\xEA"</span>, <span class="string">b"\x99\xAEzw"</span>], <span class="kw-2">&amp;</span>[<span class="string">"xy"</span>, <span class="string">"\u{a66e}z"</span>, <span class="string">"w"</span>], <span class="number">0</span>);
+        check_utf8(<span class="kw-2">&amp;</span>[<span class="string">b"xy\xEA\x99"</span>, <span class="string">b"\xAEzw"</span>], <span class="kw-2">&amp;</span>[<span class="string">"xy"</span>, <span class="string">"\u{a66e}z"</span>, <span class="string">"w"</span>], <span class="number">0</span>);
         check_utf8(
-            <span class="kw-2">&amp;</span>[<span class="string">b&quot;xy\xEA&quot;</span>, <span class="string">b&quot;\x99&quot;</span>, <span class="string">b&quot;\xAEzw&quot;</span>],
-            <span class="kw-2">&amp;</span>[<span class="string">&quot;xy&quot;</span>, <span class="string">&quot;\u{a66e}z&quot;</span>, <span class="string">&quot;w&quot;</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">b"xy\xEA"</span>, <span class="string">b"\x99"</span>, <span class="string">b"\xAEzw"</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">"xy"</span>, <span class="string">"\u{a66e}z"</span>, <span class="string">"w"</span>],
             <span class="number">0</span>,
         );
-        check_utf8(<span class="kw-2">&amp;</span>[<span class="string">b&quot;\xEA&quot;</span>, <span class="string">b&quot;&quot;</span>, <span class="string">b&quot;\x99&quot;</span>, <span class="string">b&quot;&quot;</span>, <span class="string">b&quot;\xAE&quot;</span>], <span class="kw-2">&amp;</span>[<span class="string">&quot;\u{a66e}&quot;</span>], <span class="number">0</span>);
+        check_utf8(<span class="kw-2">&amp;</span>[<span class="string">b"\xEA"</span>, <span class="string">b""</span>, <span class="string">b"\x99"</span>, <span class="string">b""</span>, <span class="string">b"\xAE"</span>], <span class="kw-2">&amp;</span>[<span class="string">"\u{a66e}"</span>], <span class="number">0</span>);
         check_utf8(
-            <span class="kw-2">&amp;</span>[<span class="string">b&quot;&quot;</span>, <span class="string">b&quot;\xEA&quot;</span>, <span class="string">b&quot;&quot;</span>, <span class="string">b&quot;\x99&quot;</span>, <span class="string">b&quot;&quot;</span>, <span class="string">b&quot;\xAE&quot;</span>, <span class="string">b&quot;&quot;</span>],
-            <span class="kw-2">&amp;</span>[<span class="string">&quot;\u{a66e}&quot;</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">b""</span>, <span class="string">b"\xEA"</span>, <span class="string">b""</span>, <span class="string">b"\x99"</span>, <span class="string">b""</span>, <span class="string">b"\xAE"</span>, <span class="string">b""</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">"\u{a66e}"</span>],
             <span class="number">0</span>,
         );
 
         check_utf8(
-            <span class="kw-2">&amp;</span>[<span class="string">b&quot;xy\xEA&quot;</span>, <span class="string">b&quot;\xFF&quot;</span>, <span class="string">b&quot;\x99\xAEz&quot;</span>],
-            <span class="kw-2">&amp;</span>[<span class="string">&quot;xy&quot;</span>, <span class="string">&quot;\u{fffd}&quot;</span>, <span class="string">&quot;\u{fffd}&quot;</span>, <span class="string">&quot;\u{fffd}&quot;</span>, <span class="string">&quot;\u{fffd}&quot;</span>, <span class="string">&quot;z&quot;</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">b"xy\xEA"</span>, <span class="string">b"\xFF"</span>, <span class="string">b"\x99\xAEz"</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">"xy"</span>, <span class="string">"\u{fffd}"</span>, <span class="string">"\u{fffd}"</span>, <span class="string">"\u{fffd}"</span>, <span class="string">"\u{fffd}"</span>, <span class="string">"z"</span>],
             <span class="number">4</span>,
         );
         check_utf8(
-            <span class="kw-2">&amp;</span>[<span class="string">b&quot;xy\xEA\x99&quot;</span>, <span class="string">b&quot;\xFFz&quot;</span>],
-            <span class="kw-2">&amp;</span>[<span class="string">&quot;xy&quot;</span>, <span class="string">&quot;\u{fffd}&quot;</span>, <span class="string">&quot;\u{fffd}&quot;</span>, <span class="string">&quot;z&quot;</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">b"xy\xEA\x99"</span>, <span class="string">b"\xFFz"</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">"xy"</span>, <span class="string">"\u{fffd}"</span>, <span class="string">"\u{fffd}"</span>, <span class="string">"z"</span>],
             <span class="number">2</span>,
         );
 
-        check_utf8(<span class="kw-2">&amp;</span>[<span class="string">b&quot;\xC5\x91\xC5\x91\xC5\x91&quot;</span>], <span class="kw-2">&amp;</span>[<span class="string">&quot;őőő&quot;</span>], <span class="number">0</span>);
+        check_utf8(<span class="kw-2">&amp;</span>[<span class="string">b"\xC5\x91\xC5\x91\xC5\x91"</span>], <span class="kw-2">&amp;</span>[<span class="string">"őőő"</span>], <span class="number">0</span>);
         check_utf8(
-            <span class="kw-2">&amp;</span>[<span class="string">b&quot;\xC5\x91&quot;</span>, <span class="string">b&quot;\xC5\x91&quot;</span>, <span class="string">b&quot;\xC5\x91&quot;</span>],
-            <span class="kw-2">&amp;</span>[<span class="string">&quot;ő&quot;</span>, <span class="string">&quot;ő&quot;</span>, <span class="string">&quot;ő&quot;</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">b"\xC5\x91"</span>, <span class="string">b"\xC5\x91"</span>, <span class="string">b"\xC5\x91"</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">"ő"</span>, <span class="string">"ő"</span>, <span class="string">"ő"</span>],
             <span class="number">0</span>,
         );
         check_utf8(
-            <span class="kw-2">&amp;</span>[<span class="string">b&quot;\xC5&quot;</span>, <span class="string">b&quot;\x91\xC5&quot;</span>, <span class="string">b&quot;\x91\xC5&quot;</span>, <span class="string">b&quot;\x91&quot;</span>],
-            <span class="kw-2">&amp;</span>[<span class="string">&quot;ő&quot;</span>, <span class="string">&quot;ő&quot;</span>, <span class="string">&quot;ő&quot;</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">b"\xC5"</span>, <span class="string">b"\x91\xC5"</span>, <span class="string">b"\x91\xC5"</span>, <span class="string">b"\x91"</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">"ő"</span>, <span class="string">"ő"</span>, <span class="string">"ő"</span>],
             <span class="number">0</span>,
         );
         check_utf8(
-            <span class="kw-2">&amp;</span>[<span class="string">b&quot;\xC5&quot;</span>, <span class="string">b&quot;\x91\xff&quot;</span>, <span class="string">b&quot;\x91\xC5&quot;</span>, <span class="string">b&quot;\x91&quot;</span>],
-            <span class="kw-2">&amp;</span>[<span class="string">&quot;ő&quot;</span>, <span class="string">&quot;\u{fffd}&quot;</span>, <span class="string">&quot;\u{fffd}&quot;</span>, <span class="string">&quot;ő&quot;</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">b"\xC5"</span>, <span class="string">b"\x91\xff"</span>, <span class="string">b"\x91\xC5"</span>, <span class="string">b"\x91"</span>],
+            <span class="kw-2">&amp;</span>[<span class="string">"ő"</span>, <span class="string">"\u{fffd}"</span>, <span class="string">"\u{fffd}"</span>, <span class="string">"ő"</span>],
             <span class="number">2</span>,
         );
 
         <span class="comment">// incomplete char at end of input
-        </span>check_utf8(<span class="kw-2">&amp;</span>[<span class="string">b&quot;\xC0&quot;</span>], <span class="kw-2">&amp;</span>[<span class="string">&quot;\u{fffd}&quot;</span>], <span class="number">1</span>);
-        check_utf8(<span class="kw-2">&amp;</span>[<span class="string">b&quot;\xEA\x99&quot;</span>], <span class="kw-2">&amp;</span>[<span class="string">&quot;\u{fffd}&quot;</span>], <span class="number">1</span>);
+        </span>check_utf8(<span class="kw-2">&amp;</span>[<span class="string">b"\xC0"</span>], <span class="kw-2">&amp;</span>[<span class="string">"\u{fffd}"</span>], <span class="number">1</span>);
+        check_utf8(<span class="kw-2">&amp;</span>[<span class="string">b"\xEA\x99"</span>], <span class="kw-2">&amp;</span>[<span class="string">"\u{fffd}"</span>], <span class="number">1</span>);
     }
 
-    <span class="attr">#[cfg(any(feature = <span class="string">&quot;encoding&quot;</span>, feature = <span class="string">&quot;encoding_rs&quot;</span>))]
+    <span class="attr">#[cfg(any(feature = <span class="string">"encoding"</span>, feature = <span class="string">"encoding_rs"</span>))]
     </span><span class="kw">fn </span>check_decode(
         <span class="kw-2">mut </span>decoder: LossyDecoder&lt;Accumulate&lt;NonAtomic&gt;&gt;,
         input: <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>[u8]],
@@ -1354,23 +1355,23 @@
         <span class="macro">assert_eq!</span>(errs, errors.len());
     }
 
-    <span class="attr">#[cfg(any(feature = <span class="string">&quot;encoding&quot;</span>, feature = <span class="string">&quot;encoding_rs&quot;</span>))]
-    </span><span class="kw">pub type </span>Tests = <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[(<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[u8]], <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str, usize)];
+    <span class="attr">#[cfg(any(feature = <span class="string">"encoding"</span>, feature = <span class="string">"encoding_rs"</span>))]
+    </span><span class="kw">pub type </span>Tests = <span class="kw-2">&amp;</span><span class="lifetime">'static </span>[(<span class="kw-2">&amp;</span><span class="lifetime">'static </span>[<span class="kw-2">&amp;</span><span class="lifetime">'static </span>[u8]], <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str, usize)];
 
-    <span class="attr">#[cfg(any(feature = <span class="string">&quot;encoding&quot;</span>))]
+    <span class="attr">#[cfg(any(feature = <span class="string">"encoding"</span>))]
     </span><span class="kw">const </span>ASCII: Tests = <span class="kw-2">&amp;</span>[
-        (<span class="kw-2">&amp;</span>[], <span class="string">&quot;&quot;</span>, <span class="number">0</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;&quot;</span>], <span class="string">&quot;&quot;</span>, <span class="number">0</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;xyz&quot;</span>], <span class="string">&quot;xyz&quot;</span>, <span class="number">0</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;xy&quot;</span>, <span class="string">b&quot;&quot;</span>, <span class="string">b&quot;&quot;</span>, <span class="string">b&quot;z&quot;</span>], <span class="string">&quot;xyz&quot;</span>, <span class="number">0</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;x&quot;</span>, <span class="string">b&quot;y&quot;</span>, <span class="string">b&quot;z&quot;</span>], <span class="string">&quot;xyz&quot;</span>, <span class="number">0</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;\xFF&quot;</span>], <span class="string">&quot;\u{fffd}&quot;</span>, <span class="number">1</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;x\xC0yz&quot;</span>], <span class="string">&quot;x\u{fffd}yz&quot;</span>, <span class="number">1</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;x&quot;</span>, <span class="string">b&quot;\xC0y&quot;</span>, <span class="string">b&quot;z&quot;</span>], <span class="string">&quot;x\u{fffd}yz&quot;</span>, <span class="number">1</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;x\xC0yz\xFF\xFFw&quot;</span>], <span class="string">&quot;x\u{fffd}yz\u{fffd}\u{fffd}w&quot;</span>, <span class="number">3</span>),
+        (<span class="kw-2">&amp;</span>[], <span class="string">""</span>, <span class="number">0</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b""</span>], <span class="string">""</span>, <span class="number">0</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"xyz"</span>], <span class="string">"xyz"</span>, <span class="number">0</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"xy"</span>, <span class="string">b""</span>, <span class="string">b""</span>, <span class="string">b"z"</span>], <span class="string">"xyz"</span>, <span class="number">0</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"x"</span>, <span class="string">b"y"</span>, <span class="string">b"z"</span>], <span class="string">"xyz"</span>, <span class="number">0</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"\xFF"</span>], <span class="string">"\u{fffd}"</span>, <span class="number">1</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"x\xC0yz"</span>], <span class="string">"x\u{fffd}yz"</span>, <span class="number">1</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"x"</span>, <span class="string">b"\xC0y"</span>, <span class="string">b"z"</span>], <span class="string">"x\u{fffd}yz"</span>, <span class="number">1</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"x\xC0yz\xFF\xFFw"</span>], <span class="string">"x\u{fffd}yz\u{fffd}\u{fffd}w"</span>, <span class="number">3</span>),
     ];
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;encoding&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"encoding"</span>)]
     #[test]
     </span><span class="kw">fn </span>decode_ascii() {
         <span class="kw">for </span><span class="kw-2">&amp;</span>(input, expected, errs) <span class="kw">in </span>ASCII {
@@ -1379,35 +1380,35 @@
         }
     }
 
-    <span class="attr">#[cfg(any(feature = <span class="string">&quot;encoding&quot;</span>, feature = <span class="string">&quot;encoding_rs&quot;</span>))]
+    <span class="attr">#[cfg(any(feature = <span class="string">"encoding"</span>, feature = <span class="string">"encoding_rs"</span>))]
     </span><span class="kw">const </span>UTF_8: Tests = <span class="kw-2">&amp;</span>[
-        (<span class="kw-2">&amp;</span>[], <span class="string">&quot;&quot;</span>, <span class="number">0</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;&quot;</span>], <span class="string">&quot;&quot;</span>, <span class="number">0</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;xyz&quot;</span>], <span class="string">&quot;xyz&quot;</span>, <span class="number">0</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;x&quot;</span>, <span class="string">b&quot;y&quot;</span>, <span class="string">b&quot;z&quot;</span>], <span class="string">&quot;xyz&quot;</span>, <span class="number">0</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;\xEA\x99\xAE&quot;</span>], <span class="string">&quot;\u{a66e}&quot;</span>, <span class="number">0</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;\xEA&quot;</span>, <span class="string">b&quot;\x99\xAE&quot;</span>], <span class="string">&quot;\u{a66e}&quot;</span>, <span class="number">0</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;\xEA\x99&quot;</span>, <span class="string">b&quot;\xAE&quot;</span>], <span class="string">&quot;\u{a66e}&quot;</span>, <span class="number">0</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;\xEA&quot;</span>, <span class="string">b&quot;\x99&quot;</span>, <span class="string">b&quot;\xAE&quot;</span>], <span class="string">&quot;\u{a66e}&quot;</span>, <span class="number">0</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;\xEA&quot;</span>, <span class="string">b&quot;&quot;</span>, <span class="string">b&quot;\x99&quot;</span>, <span class="string">b&quot;&quot;</span>, <span class="string">b&quot;\xAE&quot;</span>], <span class="string">&quot;\u{a66e}&quot;</span>, <span class="number">0</span>),
+        (<span class="kw-2">&amp;</span>[], <span class="string">""</span>, <span class="number">0</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b""</span>], <span class="string">""</span>, <span class="number">0</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"xyz"</span>], <span class="string">"xyz"</span>, <span class="number">0</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"x"</span>, <span class="string">b"y"</span>, <span class="string">b"z"</span>], <span class="string">"xyz"</span>, <span class="number">0</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"\xEA\x99\xAE"</span>], <span class="string">"\u{a66e}"</span>, <span class="number">0</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"\xEA"</span>, <span class="string">b"\x99\xAE"</span>], <span class="string">"\u{a66e}"</span>, <span class="number">0</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"\xEA\x99"</span>, <span class="string">b"\xAE"</span>], <span class="string">"\u{a66e}"</span>, <span class="number">0</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"\xEA"</span>, <span class="string">b"\x99"</span>, <span class="string">b"\xAE"</span>], <span class="string">"\u{a66e}"</span>, <span class="number">0</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"\xEA"</span>, <span class="string">b""</span>, <span class="string">b"\x99"</span>, <span class="string">b""</span>, <span class="string">b"\xAE"</span>], <span class="string">"\u{a66e}"</span>, <span class="number">0</span>),
         (
-            <span class="kw-2">&amp;</span>[<span class="string">b&quot;&quot;</span>, <span class="string">b&quot;\xEA&quot;</span>, <span class="string">b&quot;&quot;</span>, <span class="string">b&quot;\x99&quot;</span>, <span class="string">b&quot;&quot;</span>, <span class="string">b&quot;\xAE&quot;</span>, <span class="string">b&quot;&quot;</span>],
-            <span class="string">&quot;\u{a66e}&quot;</span>,
+            <span class="kw-2">&amp;</span>[<span class="string">b""</span>, <span class="string">b"\xEA"</span>, <span class="string">b""</span>, <span class="string">b"\x99"</span>, <span class="string">b""</span>, <span class="string">b"\xAE"</span>, <span class="string">b""</span>],
+            <span class="string">"\u{a66e}"</span>,
             <span class="number">0</span>,
         ),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;xy\xEA&quot;</span>, <span class="string">b&quot;\x99\xAEz&quot;</span>], <span class="string">&quot;xy\u{a66e}z&quot;</span>, <span class="number">0</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"xy\xEA"</span>, <span class="string">b"\x99\xAEz"</span>], <span class="string">"xy\u{a66e}z"</span>, <span class="number">0</span>),
         (
-            <span class="kw-2">&amp;</span>[<span class="string">b&quot;xy\xEA&quot;</span>, <span class="string">b&quot;\xFF&quot;</span>, <span class="string">b&quot;\x99\xAEz&quot;</span>],
-            <span class="string">&quot;xy\u{fffd}\u{fffd}\u{fffd}\u{fffd}z&quot;</span>,
+            <span class="kw-2">&amp;</span>[<span class="string">b"xy\xEA"</span>, <span class="string">b"\xFF"</span>, <span class="string">b"\x99\xAEz"</span>],
+            <span class="string">"xy\u{fffd}\u{fffd}\u{fffd}\u{fffd}z"</span>,
             <span class="number">4</span>,
         ),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;xy\xEA\x99&quot;</span>, <span class="string">b&quot;\xFFz&quot;</span>], <span class="string">&quot;xy\u{fffd}\u{fffd}z&quot;</span>, <span class="number">2</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"xy\xEA\x99"</span>, <span class="string">b"\xFFz"</span>], <span class="string">"xy\u{fffd}\u{fffd}z"</span>, <span class="number">2</span>),
         <span class="comment">// incomplete char at end of input
-        </span>(<span class="kw-2">&amp;</span>[<span class="string">b&quot;\xC0&quot;</span>], <span class="string">&quot;\u{fffd}&quot;</span>, <span class="number">1</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;\xEA\x99&quot;</span>], <span class="string">&quot;\u{fffd}&quot;</span>, <span class="number">1</span>),
+        </span>(<span class="kw-2">&amp;</span>[<span class="string">b"\xC0"</span>], <span class="string">"\u{fffd}"</span>, <span class="number">1</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"\xEA\x99"</span>], <span class="string">"\u{fffd}"</span>, <span class="number">1</span>),
     ];
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;encoding&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"encoding"</span>)]
     #[test]
     </span><span class="kw">fn </span>decode_utf8() {
         <span class="kw">for </span><span class="kw-2">&amp;</span>(input, expected, errs) <span class="kw">in </span>UTF_8 {
@@ -1416,7 +1417,7 @@
         }
     }
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;encoding_rs&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"encoding_rs"</span>)]
     #[test]
     </span><span class="kw">fn </span>decode_utf8_encoding_rs() {
         <span class="kw">for </span><span class="kw-2">&amp;</span>(input, expected, errs) <span class="kw">in </span>UTF_8 {
@@ -1425,19 +1426,19 @@
         }
     }
 
-    <span class="attr">#[cfg(any(feature = <span class="string">&quot;encoding&quot;</span>, feature = <span class="string">&quot;encoding_rs&quot;</span>))]
+    <span class="attr">#[cfg(any(feature = <span class="string">"encoding"</span>, feature = <span class="string">"encoding_rs"</span>))]
     </span><span class="kw">const </span>KOI8_U: Tests = <span class="kw-2">&amp;</span>[
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;\xfc\xce\xc5\xd2\xc7\xc9\xd1&quot;</span>], <span class="string">&quot;Энергия&quot;</span>, <span class="number">0</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;\xfc\xce&quot;</span>, <span class="string">b&quot;\xc5\xd2\xc7\xc9\xd1&quot;</span>], <span class="string">&quot;Энергия&quot;</span>, <span class="number">0</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;\xfc\xce&quot;</span>, <span class="string">b&quot;\xc5\xd2\xc7&quot;</span>, <span class="string">b&quot;\xc9\xd1&quot;</span>], <span class="string">&quot;Энергия&quot;</span>, <span class="number">0</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"\xfc\xce\xc5\xd2\xc7\xc9\xd1"</span>], <span class="string">"Энергия"</span>, <span class="number">0</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"\xfc\xce"</span>, <span class="string">b"\xc5\xd2\xc7\xc9\xd1"</span>], <span class="string">"Энергия"</span>, <span class="number">0</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"\xfc\xce"</span>, <span class="string">b"\xc5\xd2\xc7"</span>, <span class="string">b"\xc9\xd1"</span>], <span class="string">"Энергия"</span>, <span class="number">0</span>),
         (
-            <span class="kw-2">&amp;</span>[<span class="string">b&quot;\xfc\xce&quot;</span>, <span class="string">b&quot;&quot;</span>, <span class="string">b&quot;\xc5\xd2\xc7&quot;</span>, <span class="string">b&quot;\xc9\xd1&quot;</span>, <span class="string">b&quot;&quot;</span>],
-            <span class="string">&quot;Энергия&quot;</span>,
+            <span class="kw-2">&amp;</span>[<span class="string">b"\xfc\xce"</span>, <span class="string">b""</span>, <span class="string">b"\xc5\xd2\xc7"</span>, <span class="string">b"\xc9\xd1"</span>, <span class="string">b""</span>],
+            <span class="string">"Энергия"</span>,
             <span class="number">0</span>,
         ),
     ];
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;encoding&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"encoding"</span>)]
     #[test]
     </span><span class="kw">fn </span>decode_koi8_u() {
         <span class="kw">for </span><span class="kw-2">&amp;</span>(input, expected, errs) <span class="kw">in </span>KOI8_U {
@@ -1446,7 +1447,7 @@
         }
     }
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;encoding_rs&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"encoding_rs"</span>)]
     #[test]
     </span><span class="kw">fn </span>decode_koi8_u_encoding_rs() {
         <span class="kw">for </span><span class="kw-2">&amp;</span>(input, expected, errs) <span class="kw">in </span>KOI8_U {
@@ -1455,24 +1456,24 @@
         }
     }
 
-    <span class="attr">#[cfg(any(feature = <span class="string">&quot;encoding&quot;</span>, feature = <span class="string">&quot;encoding_rs&quot;</span>))]
+    <span class="attr">#[cfg(any(feature = <span class="string">"encoding"</span>, feature = <span class="string">"encoding_rs"</span>))]
     </span><span class="kw">const </span>WINDOWS_949: Tests = <span class="kw-2">&amp;</span>[
-        (<span class="kw-2">&amp;</span>[], <span class="string">&quot;&quot;</span>, <span class="number">0</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;&quot;</span>], <span class="string">&quot;&quot;</span>, <span class="number">0</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;\xbe\xc8\xb3\xe7&quot;</span>], <span class="string">&quot;안녕&quot;</span>, <span class="number">0</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;\xbe&quot;</span>, <span class="string">b&quot;\xc8\xb3\xe7&quot;</span>], <span class="string">&quot;안녕&quot;</span>, <span class="number">0</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;\xbe&quot;</span>, <span class="string">b&quot;&quot;</span>, <span class="string">b&quot;\xc8\xb3\xe7&quot;</span>], <span class="string">&quot;안녕&quot;</span>, <span class="number">0</span>),
+        (<span class="kw-2">&amp;</span>[], <span class="string">""</span>, <span class="number">0</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b""</span>], <span class="string">""</span>, <span class="number">0</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"\xbe\xc8\xb3\xe7"</span>], <span class="string">"안녕"</span>, <span class="number">0</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"\xbe"</span>, <span class="string">b"\xc8\xb3\xe7"</span>], <span class="string">"안녕"</span>, <span class="number">0</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"\xbe"</span>, <span class="string">b""</span>, <span class="string">b"\xc8\xb3\xe7"</span>], <span class="string">"안녕"</span>, <span class="number">0</span>),
         (
-            <span class="kw-2">&amp;</span>[<span class="string">b&quot;\xbe\xc8\xb3\xe7\xc7\xcf\xbc\xbc\xbf\xe4&quot;</span>],
-            <span class="string">&quot;안녕하세요&quot;</span>,
+            <span class="kw-2">&amp;</span>[<span class="string">b"\xbe\xc8\xb3\xe7\xc7\xcf\xbc\xbc\xbf\xe4"</span>],
+            <span class="string">"안녕하세요"</span>,
             <span class="number">0</span>,
         ),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;\xbe\xc8\xb3\xe7\xc7&quot;</span>], <span class="string">&quot;안녕\u{fffd}&quot;</span>, <span class="number">1</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;\xbe&quot;</span>, <span class="string">b&quot;&quot;</span>, <span class="string">b&quot;\xc8\xb3&quot;</span>], <span class="string">&quot;안\u{fffd}&quot;</span>, <span class="number">1</span>),
-        (<span class="kw-2">&amp;</span>[<span class="string">b&quot;\xbe\x28\xb3\xe7&quot;</span>], <span class="string">&quot;\u{fffd}(녕&quot;</span>, <span class="number">1</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"\xbe\xc8\xb3\xe7\xc7"</span>], <span class="string">"안녕\u{fffd}"</span>, <span class="number">1</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"\xbe"</span>, <span class="string">b""</span>, <span class="string">b"\xc8\xb3"</span>], <span class="string">"안\u{fffd}"</span>, <span class="number">1</span>),
+        (<span class="kw-2">&amp;</span>[<span class="string">b"\xbe\x28\xb3\xe7"</span>], <span class="string">"\u{fffd}(녕"</span>, <span class="number">1</span>),
     ];
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;encoding&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"encoding"</span>)]
     #[test]
     </span><span class="kw">fn </span>decode_windows_949() {
         <span class="kw">for </span><span class="kw-2">&amp;</span>(input, expected, errs) <span class="kw">in </span>WINDOWS_949 {
@@ -1481,7 +1482,7 @@
         }
     }
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;encoding_rs&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"encoding_rs"</span>)]
     #[test]
     </span><span class="kw">fn </span>decode_windows_949_encoding_rs() {
         <span class="kw">for </span><span class="kw-2">&amp;</span>(input, expected, errs) <span class="kw">in </span>WINDOWS_949 {
@@ -1493,13 +1494,13 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>read_from() {
         <span class="kw">let </span>decoder = Utf8LossyDecoder::new(Accumulate::&lt;NonAtomic&gt;::new());
-        <span class="kw">let </span><span class="kw-2">mut </span>bytes: <span class="kw-2">&amp;</span>[u8] = <span class="string">b&quot;foo\xffbar&quot;</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>bytes: <span class="kw-2">&amp;</span>[u8] = <span class="string">b"foo\xffbar"</span>;
         <span class="kw">let </span>(tendrils, errors) = decoder.read_from(<span class="kw-2">&amp;mut </span>bytes).unwrap();
         <span class="macro">assert_eq!</span>(
             <span class="kw-2">&amp;*</span>tendrils.iter().map(|t| <span class="kw-2">&amp;**</span>t).collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;(),
-            <span class="kw-2">&amp;</span>[<span class="string">&quot;foo&quot;</span>, <span class="string">&quot;\u{FFFD}&quot;</span>, <span class="string">&quot;bar&quot;</span>]
+            <span class="kw-2">&amp;</span>[<span class="string">"foo"</span>, <span class="string">"\u{FFFD}"</span>, <span class="string">"bar"</span>]
         );
-        <span class="macro">assert_eq!</span>(errors, <span class="kw-2">&amp;</span>[<span class="string">&quot;invalid byte sequence&quot;</span>]);
+        <span class="macro">assert_eq!</span>(errors, <span class="kw-2">&amp;</span>[<span class="string">"invalid byte sequence"</span>]);
     }
 }
 </code></pre></div></section></main></body></html>

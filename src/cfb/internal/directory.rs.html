@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cfb-0.7.3/src/internal/directory.rs`."><title>directory.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="cfb" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cfb-0.7.3/src/internal/directory.rs`."><title>directory.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="cfb" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -642,9 +643,9 @@
 <span class="comment">//===========================================================================//
 
 </span><span class="macro">macro_rules! </span>malformed {
-    (<span class="macro-nonterminal">$e</span>:expr) =&gt; { <span class="macro">invalid_data!</span>(<span class="string">&quot;Malformed directory ({})&quot;</span>, <span class="macro-nonterminal">$e</span>) };
+    (<span class="macro-nonterminal">$e</span>:expr) =&gt; { <span class="macro">invalid_data!</span>(<span class="string">"Malformed directory ({})"</span>, <span class="macro-nonterminal">$e</span>) };
     (<span class="macro-nonterminal">$fmt</span>:expr, $(<span class="macro-nonterminal">$arg</span>:tt)+) =&gt; {
-        <span class="macro">invalid_data!</span>(<span class="string">&quot;Malformed directory ({})&quot;</span>, <span class="macro">format!</span>(<span class="macro-nonterminal">$fmt</span>, $(<span class="macro-nonterminal">$arg</span>)+))
+        <span class="macro">invalid_data!</span>(<span class="string">"Malformed directory ({})"</span>, <span class="macro">format!</span>(<span class="macro-nonterminal">$fmt</span>, $(<span class="macro-nonterminal">$arg</span>)+))
     };
 }
 
@@ -717,12 +718,12 @@
         <span class="kw">let </span>path = internal::path::path_from_name_chain(<span class="kw-2">&amp;</span>names);
         <span class="kw">let </span>stream_id = <span class="kw">match </span><span class="self">self</span>.stream_id_for_name_chain(<span class="kw-2">&amp;</span>names) {
             <span class="prelude-val">Some</span>(stream_id) =&gt; stream_id,
-            <span class="prelude-val">None </span>=&gt; <span class="macro">not_found!</span>(<span class="string">&quot;No such storage: {:?}&quot;</span>, path),
+            <span class="prelude-val">None </span>=&gt; <span class="macro">not_found!</span>(<span class="string">"No such storage: {:?}"</span>, path),
         };
         <span class="kw">let </span>start = {
             <span class="kw">let </span>dir_entry = <span class="self">self</span>.dir_entry(stream_id);
             <span class="kw">if </span>dir_entry.obj_type == ObjType::Stream {
-                <span class="macro">invalid_input!</span>(<span class="string">&quot;Not a storage: {:?}&quot;</span>, path);
+                <span class="macro">invalid_input!</span>(<span class="string">"Not a storage: {:?}"</span>, path);
             }
             <span class="macro">debug_assert!</span>(
                 dir_entry.obj_type == ObjType::Storage
@@ -759,7 +760,7 @@
             <span class="prelude-val">Some</span>(stream_id) =&gt; stream_id,
             <span class="prelude-val">None </span>=&gt; {
                 <span class="macro">not_found!</span>(
-                    <span class="string">&quot;No such object: {:?}&quot;</span>,
+                    <span class="string">"No such object: {:?}"</span>,
                     internal::path::path_from_name_chain(<span class="kw-2">&amp;</span>names)
                 );
             }
@@ -796,12 +797,12 @@
 
     <span class="kw">fn </span>validate(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; io::Result&lt;()&gt; {
         <span class="kw">if </span><span class="self">self</span>.dir_entries.is_empty() {
-            <span class="macro">malformed!</span>(<span class="string">&quot;root entry is missing&quot;</span>);
+            <span class="macro">malformed!</span>(<span class="string">"root entry is missing"</span>);
         }
         <span class="kw">let </span>root_entry = <span class="self">self</span>.root_dir_entry();
         <span class="kw">if </span>root_entry.stream_len % consts::MINI_SECTOR_LEN <span class="kw">as </span>u64 != <span class="number">0 </span>{
             <span class="macro">malformed!</span>(
-                <span class="string">&quot;root stream len is {}, but should be multiple of {}&quot;</span>,
+                <span class="string">"root stream len is {}, but should be multiple of {}"</span>,
                 root_entry.stream_len,
                 consts::MINI_SECTOR_LEN
             );
@@ -810,14 +811,14 @@
         <span class="kw">let </span><span class="kw-2">mut </span>stack = <span class="macro">vec!</span>[consts::ROOT_STREAM_ID];
         <span class="kw">while let </span><span class="prelude-val">Some</span>(stream_id) = stack.pop() {
             <span class="kw">if </span>visited.contains(<span class="kw-2">&amp;</span>stream_id) {
-                <span class="macro">malformed!</span>(<span class="string">&quot;loop in tree&quot;</span>);
+                <span class="macro">malformed!</span>(<span class="string">"loop in tree"</span>);
             }
             visited.insert(stream_id);
             <span class="kw">let </span>dir_entry = <span class="self">self</span>.dir_entry(stream_id);
             <span class="kw">if </span>stream_id == consts::ROOT_STREAM_ID {
                 <span class="kw">if </span>dir_entry.obj_type != ObjType::Root {
                     <span class="macro">malformed!</span>(
-                        <span class="string">&quot;root entry has object type {:?}&quot;</span>,
+                        <span class="string">"root entry has object type {:?}"</span>,
                         dir_entry.obj_type
                     );
                 }
@@ -825,7 +826,7 @@
                 &amp;&amp; dir_entry.obj_type != ObjType::Stream
             {
                 <span class="macro">malformed!</span>(
-                    <span class="string">&quot;non-root entry with object type {:?}&quot;</span>,
+                    <span class="string">"non-root entry with object type {:?}"</span>,
                     dir_entry.obj_type
                 );
             }
@@ -833,8 +834,8 @@
             <span class="kw">if </span>left_sibling != consts::NO_STREAM {
                 <span class="kw">if </span>left_sibling <span class="kw">as </span>usize &gt;= <span class="self">self</span>.dir_entries.len() {
                     <span class="macro">malformed!</span>(
-                        <span class="string">&quot;left sibling index is {}, but directory entry count \
-                         is {}&quot;</span>,
+                        <span class="string">"left sibling index is {}, but directory entry count \
+                         is {}"</span>,
                         left_sibling,
                         <span class="self">self</span>.dir_entries.len()
                     );
@@ -844,7 +845,7 @@
                     != Ordering::Less
                 {
                     <span class="macro">malformed!</span>(
-                        <span class="string">&quot;name ordering, {:?} vs {:?}&quot;</span>,
+                        <span class="string">"name ordering, {:?} vs {:?}"</span>,
                         dir_entry.name,
                         entry.name
                     );
@@ -855,8 +856,8 @@
             <span class="kw">if </span>right_sibling != consts::NO_STREAM {
                 <span class="kw">if </span>right_sibling <span class="kw">as </span>usize &gt;= <span class="self">self</span>.dir_entries.len() {
                     <span class="macro">malformed!</span>(
-                        <span class="string">&quot;right sibling index is {}, but directory entry count \
-                         is {}&quot;</span>,
+                        <span class="string">"right sibling index is {}, but directory entry count \
+                         is {}"</span>,
                         right_sibling, <span class="self">self</span>.dir_entries.len());
                 }
                 <span class="kw">let </span>entry = <span class="kw-2">&amp;</span><span class="self">self</span>.dir_entry(right_sibling);
@@ -864,7 +865,7 @@
                     != Ordering::Less
                 {
                     <span class="macro">malformed!</span>(
-                        <span class="string">&quot;name ordering, {:?} vs {:?}&quot;</span>,
+                        <span class="string">"name ordering, {:?} vs {:?}"</span>,
                         dir_entry.name,
                         entry.name
                     );
@@ -875,7 +876,7 @@
             <span class="kw">if </span>child != consts::NO_STREAM {
                 <span class="kw">if </span>child <span class="kw">as </span>usize &gt;= <span class="self">self</span>.dir_entries.len() {
                     <span class="macro">malformed!</span>(
-                        <span class="string">&quot;child index is {}, but directory entry count is {}&quot;</span>,
+                        <span class="string">"child index is {}, but directory entry count is {}"</span>,
                         child,
                         <span class="self">self</span>.dir_entries.len()
                     );
@@ -971,7 +972,7 @@
             sibling_id = <span class="kw">match </span>ordering {
                 Ordering::Less =&gt; sibling.left_sibling,
                 Ordering::Greater =&gt; sibling.right_sibling,
-                Ordering::Equal =&gt; <span class="macro">panic!</span>(<span class="string">&quot;internal error: insert duplicate&quot;</span>),
+                Ordering::Equal =&gt; <span class="macro">panic!</span>(<span class="string">"internal error: insert duplicate"</span>),
             };
         }
         <span class="kw">match </span>ordering {
@@ -1087,13 +1088,13 @@
     <span class="doccomment">/// Adds a new (uninitialized) entry to the directory and returns the new
     /// stream ID.
     </span><span class="kw">fn </span>allocate_dir_entry(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; io::Result&lt;u32&gt; {
-        <span class="comment">// If there&#39;s an existing unalloated directory entry, use that.
+        <span class="comment">// If there's an existing unalloated directory entry, use that.
         </span><span class="kw">for </span>(stream_id, entry) <span class="kw">in </span><span class="self">self</span>.dir_entries.iter().enumerate() {
             <span class="kw">if </span>entry.obj_type == ObjType::Unallocated {
                 <span class="kw">return </span><span class="prelude-val">Ok</span>(stream_id <span class="kw">as </span>u32);
             }
         }
-        <span class="comment">// Otherwise, we need a new entry; if there&#39;s not room in the directory
+        <span class="comment">// Otherwise, we need a new entry; if there's not room in the directory
         // chain to add it, then first we need to add a new directory sector.
         </span><span class="kw">let </span>dir_entries_per_sector = <span class="self">self</span>.version().dir_entries_per_sector();
         <span class="kw">let </span>unallocated_dir_entry = DirEntry::unallocated();
@@ -1181,15 +1182,15 @@
     }
 
     <span class="attr">#[test]
-    #[should_panic(expected = <span class="string">&quot;Malformed directory (root entry is missing)&quot;</span>)]
+    #[should_panic(expected = <span class="string">"Malformed directory (root entry is missing)"</span>)]
     </span><span class="kw">fn </span>no_root_entry() {
         make_directory(<span class="macro">vec!</span>[]);
     }
 
     <span class="attr">#[test]
     #[should_panic(
-        expected = <span class="string">&quot;Malformed directory (root stream len is 147, but should \
-                    be multiple of 64)&quot;
+        expected = <span class="string">"Malformed directory (root stream len is 147, but should \
+                    be multiple of 64)"
     </span>)]
     </span><span class="kw">fn </span>invalid_mini_stream_len() {
         <span class="kw">let </span><span class="kw-2">mut </span>root_entry = DirEntry::empty_root_entry();
@@ -1199,18 +1200,18 @@
     }
 
     <span class="attr">#[test]
-    #[should_panic(expected = <span class="string">&quot;Malformed directory (loop in tree)&quot;</span>)]
+    #[should_panic(expected = <span class="string">"Malformed directory (loop in tree)"</span>)]
     </span><span class="kw">fn </span>storage_is_child_of_itself() {
         <span class="kw">let </span><span class="kw-2">mut </span>root_entry = DirEntry::empty_root_entry();
         root_entry.child = <span class="number">1</span>;
-        <span class="kw">let </span><span class="kw-2">mut </span>storage = DirEntry::new(<span class="string">&quot;foo&quot;</span>, ObjType::Storage, <span class="number">0</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>storage = DirEntry::new(<span class="string">"foo"</span>, ObjType::Storage, <span class="number">0</span>);
         storage.child = <span class="number">1</span>;
         make_directory(<span class="macro">vec!</span>[root_entry, storage]);
     }
 
     <span class="attr">#[test]
     #[should_panic(
-        expected = <span class="string">&quot;Malformed directory (root entry has object type Storage)&quot;
+        expected = <span class="string">"Malformed directory (root entry has object type Storage)"
     </span>)]
     </span><span class="kw">fn </span>root_has_wrong_type() {
         <span class="kw">let </span><span class="kw-2">mut </span>root_entry = DirEntry::empty_root_entry();
@@ -1220,22 +1221,22 @@
 
     <span class="attr">#[test]
     #[should_panic(
-        expected = <span class="string">&quot;Malformed directory (non-root entry with object type Root)&quot;
+        expected = <span class="string">"Malformed directory (non-root entry with object type Root)"
     </span>)]
     </span><span class="kw">fn </span>nonroot_has_wrong_type() {
         <span class="kw">let </span><span class="kw-2">mut </span>root_entry = DirEntry::empty_root_entry();
         root_entry.child = <span class="number">1</span>;
-        <span class="kw">let </span>storage = DirEntry::new(<span class="string">&quot;foo&quot;</span>, ObjType::Root, <span class="number">0</span>);
+        <span class="kw">let </span>storage = DirEntry::new(<span class="string">"foo"</span>, ObjType::Root, <span class="number">0</span>);
         make_directory(<span class="macro">vec!</span>[root_entry, storage]);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>tolerate_red_root() {
         <span class="comment">// The MS-CFB spec section 2.6.4 says the root entry MUST be colored
-        // black, but apparently some implementations don&#39;t do this (see
+        // black, but apparently some implementations don't do this (see
         // https://social.msdn.microsoft.com/Forums/sqlserver/en-US/
         // 9290d877-d91f-4509-ace9-cb4575c48514/red-black-tree-in-mscfb).  So
-        // we shouldn&#39;t complain if the root is red.
+        // we shouldn't complain if the root is red.
         </span><span class="kw">let </span><span class="kw-2">mut </span>root_entry = DirEntry::empty_root_entry();
         root_entry.color = Color::Red;
         make_directory(<span class="macro">vec!</span>[root_entry]);
@@ -1244,16 +1245,16 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>tolerate_two_red_nodes_in_a_row() {
         <span class="comment">// The MS-CFB spec section 2.6.4 says that two consecutive nodes in the
-        // tree MUST NOT both be red, but apparently some implementations don&#39;t
+        // tree MUST NOT both be red, but apparently some implementations don't
         // obey this (see https://github.com/mdsteele/rust-cfb/issues/10).  We
-        // still want to be able to read these files, so we shouldn&#39;t complain
+        // still want to be able to read these files, so we shouldn't complain
         // if there are two red nodes in a row.
         </span><span class="kw">let </span><span class="kw-2">mut </span>root_entry = DirEntry::empty_root_entry();
         root_entry.child = <span class="number">1</span>;
-        <span class="kw">let </span><span class="kw-2">mut </span>storage1 = DirEntry::new(<span class="string">&quot;foo&quot;</span>, ObjType::Storage, <span class="number">0</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>storage1 = DirEntry::new(<span class="string">"foo"</span>, ObjType::Storage, <span class="number">0</span>);
         storage1.color = Color::Red;
         storage1.left_sibling = <span class="number">2</span>;
-        <span class="kw">let </span><span class="kw-2">mut </span>storage2 = DirEntry::new(<span class="string">&quot;bar&quot;</span>, ObjType::Storage, <span class="number">0</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>storage2 = DirEntry::new(<span class="string">"bar"</span>, ObjType::Storage, <span class="number">0</span>);
         storage2.color = Color::Red;
         make_directory(<span class="macro">vec!</span>[root_entry, storage1, storage2]);
     }

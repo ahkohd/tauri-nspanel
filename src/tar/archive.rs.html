@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tar-0.4.40/src/archive.rs`."><title>archive.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tar" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tar-0.4.40/src/archive.rs`."><title>archive.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tar" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -648,17 +649,17 @@
 }
 
 <span class="doccomment">/// An iterator over the entries of an archive.
-</span><span class="kw">pub struct </span>Entries&lt;<span class="lifetime">&#39;a</span>, R: <span class="lifetime">&#39;a </span>+ Read&gt; {
-    fields: EntriesFields&lt;<span class="lifetime">&#39;a</span>&gt;,
-    _ignored: marker::PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Archive&lt;R&gt;&gt;,
+</span><span class="kw">pub struct </span>Entries&lt;<span class="lifetime">'a</span>, R: <span class="lifetime">'a </span>+ Read&gt; {
+    fields: EntriesFields&lt;<span class="lifetime">'a</span>&gt;,
+    _ignored: marker::PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>Archive&lt;R&gt;&gt;,
 }
 
 <span class="kw">trait </span>SeekRead: Read + Seek {}
 <span class="kw">impl</span>&lt;R: Read + Seek&gt; SeekRead <span class="kw">for </span>R {}
 
-<span class="kw">struct </span>EntriesFields&lt;<span class="lifetime">&#39;a</span>&gt; {
-    archive: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Archive&lt;<span class="kw">dyn </span>Read + <span class="lifetime">&#39;a</span>&gt;,
-    seekable_archive: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Archive&lt;<span class="kw">dyn </span>SeekRead + <span class="lifetime">&#39;a</span>&gt;&gt;,
+<span class="kw">struct </span>EntriesFields&lt;<span class="lifetime">'a</span>&gt; {
+    archive: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Archive&lt;<span class="kw">dyn </span>Read + <span class="lifetime">'a</span>&gt;,
+    seekable_archive: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>Archive&lt;<span class="kw">dyn </span>SeekRead + <span class="lifetime">'a</span>&gt;&gt;,
     next: u64,
     done: bool,
     raw: bool,
@@ -704,12 +705,12 @@
     <span class="doccomment">/// Unpacks the contents tarball into the specified `dst`.
     ///
     /// This function will iterate over the entire contents of this tarball,
-    /// extracting each file in turn to the location specified by the entry&#39;s
+    /// extracting each file in turn to the location specified by the entry's
     /// path name.
     ///
     /// This operation is relatively sensitive in that it will not write files
     /// outside of the path specified by `dst`. Files in the archive which have
-    /// a &#39;..&#39; in their path are skipped during the unpacking process.
+    /// a '..' in their path are skipped during the unpacking process.
     ///
     /// # Examples
     ///
@@ -717,8 +718,8 @@
     /// use std::fs::File;
     /// use tar::Archive;
     ///
-    /// let mut ar = Archive::new(File::open(&quot;foo.tar&quot;).unwrap());
-    /// ar.unpack(&quot;foo&quot;).unwrap();
+    /// let mut ar = Archive::new(File::open("foo.tar").unwrap());
+    /// ar.unpack("foo").unwrap();
     /// ```
     </span><span class="kw">pub fn </span>unpack&lt;P: AsRef&lt;Path&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, dst: P) -&gt; io::Result&lt;()&gt; {
         <span class="kw">let </span>me: <span class="kw-2">&amp;mut </span>Archive&lt;<span class="kw">dyn </span>Read&gt; = <span class="self">self</span>;
@@ -808,15 +809,15 @@
     }
 }
 
-<span class="kw">impl </span>Archive&lt;<span class="kw">dyn </span>Read + <span class="lifetime">&#39;_</span>&gt; {
-    <span class="kw">fn </span>_entries&lt;<span class="lifetime">&#39;a</span>&gt;(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
-        seekable_archive: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Archive&lt;<span class="kw">dyn </span>SeekRead + <span class="lifetime">&#39;a</span>&gt;&gt;,
-    ) -&gt; io::Result&lt;EntriesFields&lt;<span class="lifetime">&#39;a</span>&gt;&gt; {
+<span class="kw">impl </span>Archive&lt;<span class="kw">dyn </span>Read + <span class="lifetime">'_</span>&gt; {
+    <span class="kw">fn </span>_entries&lt;<span class="lifetime">'a</span>&gt;(
+        <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="self">self</span>,
+        seekable_archive: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>Archive&lt;<span class="kw">dyn </span>SeekRead + <span class="lifetime">'a</span>&gt;&gt;,
+    ) -&gt; io::Result&lt;EntriesFields&lt;<span class="lifetime">'a</span>&gt;&gt; {
         <span class="kw">if </span><span class="self">self</span>.inner.pos.get() != <span class="number">0 </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(other(
-                <span class="string">&quot;cannot call entries unless archive is at \
-                 position 0&quot;</span>,
+                <span class="string">"cannot call entries unless archive is at \
+                 position 0"</span>,
             ));
         }
         <span class="prelude-val">Ok</span>(EntriesFields {
@@ -831,10 +832,10 @@
     <span class="kw">fn </span>_unpack(<span class="kw-2">&amp;mut </span><span class="self">self</span>, dst: <span class="kw-2">&amp;</span>Path) -&gt; io::Result&lt;()&gt; {
         <span class="kw">if </span>dst.symlink_metadata().is_err() {
             fs::create_dir_all(<span class="kw-2">&amp;</span>dst)
-                .map_err(|e| TarError::new(<span class="macro">format!</span>(<span class="string">&quot;failed to create `{}`&quot;</span>, dst.display()), e))<span class="question-mark">?</span>;
+                .map_err(|e| TarError::new(<span class="macro">format!</span>(<span class="string">"failed to create `{}`"</span>, dst.display()), e))<span class="question-mark">?</span>;
         }
 
-        <span class="comment">// Canonicalizing the dst directory will prepend the path with &#39;\\?\&#39;
+        <span class="comment">// Canonicalizing the dst directory will prepend the path with '\\?\'
         // on windows which will allow windows APIs to treat the path as an
         // extended-length path with a 32,767 character limit. Otherwise all
         // unpacked paths over 260 characters will fail on creation with a
@@ -846,7 +847,7 @@
         // extraction.
         </span><span class="kw">let </span><span class="kw-2">mut </span>directories = Vec::new();
         <span class="kw">for </span>entry <span class="kw">in </span><span class="self">self</span>._entries(<span class="prelude-val">None</span>)<span class="question-mark">? </span>{
-            <span class="kw">let </span><span class="kw-2">mut </span>file = entry.map_err(|e| TarError::new(<span class="string">&quot;failed to iterate over archive&quot;</span>, e))<span class="question-mark">?</span>;
+            <span class="kw">let </span><span class="kw-2">mut </span>file = entry.map_err(|e| TarError::new(<span class="string">"failed to iterate over archive"</span>, e))<span class="question-mark">?</span>;
             <span class="kw">if </span>file.header().entry_type() == <span class="kw">crate</span>::EntryType::Directory {
                 directories.push(file);
             } <span class="kw">else </span>{
@@ -861,13 +862,13 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, R: Read&gt; Entries&lt;<span class="lifetime">&#39;a</span>, R&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, R: Read&gt; Entries&lt;<span class="lifetime">'a</span>, R&gt; {
     <span class="doccomment">/// Indicates whether this iterator will return raw entries or not.
     ///
     /// If the raw list of entries are returned, then no preprocessing happens
     /// on account of this library, for example taking into account GNU long name
     /// or long link archive members. Raw iteration is disabled by default.
-    </span><span class="kw">pub fn </span>raw(<span class="self">self</span>, raw: bool) -&gt; Entries&lt;<span class="lifetime">&#39;a</span>, R&gt; {
+    </span><span class="kw">pub fn </span>raw(<span class="self">self</span>, raw: bool) -&gt; Entries&lt;<span class="lifetime">'a</span>, R&gt; {
         Entries {
             fields: EntriesFields {
                 raw: raw,
@@ -877,21 +878,21 @@
         }
     }
 }
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, R: Read&gt; Iterator <span class="kw">for </span>Entries&lt;<span class="lifetime">&#39;a</span>, R&gt; {
-    <span class="kw">type </span>Item = io::Result&lt;Entry&lt;<span class="lifetime">&#39;a</span>, R&gt;&gt;;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, R: Read&gt; Iterator <span class="kw">for </span>Entries&lt;<span class="lifetime">'a</span>, R&gt; {
+    <span class="kw">type </span>Item = io::Result&lt;Entry&lt;<span class="lifetime">'a</span>, R&gt;&gt;;
 
-    <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;io::Result&lt;Entry&lt;<span class="lifetime">&#39;a</span>, R&gt;&gt;&gt; {
+    <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;io::Result&lt;Entry&lt;<span class="lifetime">'a</span>, R&gt;&gt;&gt; {
         <span class="self">self</span>.fields
             .next()
             .map(|result| result.map(|e| EntryFields::from(e).into_entry()))
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; EntriesFields&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; EntriesFields&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">fn </span>next_entry_raw(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         pax_extensions: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>[u8]&gt;,
-    ) -&gt; io::Result&lt;<span class="prelude-ty">Option</span>&lt;Entry&lt;<span class="lifetime">&#39;a</span>, io::Empty&gt;&gt;&gt; {
+    ) -&gt; io::Result&lt;<span class="prelude-ty">Option</span>&lt;Entry&lt;<span class="lifetime">'a</span>, io::Empty&gt;&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>header = Header::new_old();
         <span class="kw">let </span><span class="kw-2">mut </span>header_pos = <span class="self">self</span>.next;
         <span class="kw">loop </span>{
@@ -927,7 +928,7 @@
             + <span class="number">8 </span>* <span class="number">32</span>;
         <span class="kw">let </span>cksum = header.cksum()<span class="question-mark">?</span>;
         <span class="kw">if </span>sum != cksum {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(other(<span class="string">&quot;archive header checksum mismatch&quot;</span>));
+            <span class="kw">return </span><span class="prelude-val">Err</span>(other(<span class="string">"archive header checksum mismatch"</span>));
         }
 
         <span class="kw">let </span><span class="kw-2">mut </span>pax_size: <span class="prelude-ty">Option</span>&lt;u64&gt; = <span class="prelude-val">None</span>;
@@ -971,16 +972,16 @@
         // a header);
         </span><span class="kw">let </span>size = size
             .checked_add(<span class="number">511</span>)
-            .ok_or_else(|| other(<span class="string">&quot;size overflow&quot;</span>))<span class="question-mark">?</span>;
+            .ok_or_else(|| other(<span class="string">"size overflow"</span>))<span class="question-mark">?</span>;
         <span class="self">self</span>.next = <span class="self">self
             </span>.next
             .checked_add(size &amp; !(<span class="number">512 </span>- <span class="number">1</span>))
-            .ok_or_else(|| other(<span class="string">&quot;size overflow&quot;</span>))<span class="question-mark">?</span>;
+            .ok_or_else(|| other(<span class="string">"size overflow"</span>))<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(ret.into_entry()))
     }
 
-    <span class="kw">fn </span>next_entry(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; io::Result&lt;<span class="prelude-ty">Option</span>&lt;Entry&lt;<span class="lifetime">&#39;a</span>, io::Empty&gt;&gt;&gt; {
+    <span class="kw">fn </span>next_entry(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; io::Result&lt;<span class="prelude-ty">Option</span>&lt;Entry&lt;<span class="lifetime">'a</span>, io::Empty&gt;&gt;&gt; {
         <span class="kw">if </span><span class="self">self</span>.raw {
             <span class="kw">return </span><span class="self">self</span>.next_entry_raw(<span class="prelude-val">None</span>);
         }
@@ -995,8 +996,8 @@
                 <span class="prelude-val">Some</span>(entry) =&gt; entry,
                 <span class="prelude-val">None </span><span class="kw">if </span>processed &gt; <span class="number">1 </span>=&gt; {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(other(
-                        <span class="string">&quot;members found describing a future member \
-                         but no future member found&quot;</span>,
+                        <span class="string">"members found describing a future member \
+                         but no future member found"</span>,
                     ));
                 }
                 <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
@@ -1008,8 +1009,8 @@
             <span class="kw">if </span>is_recognized_header &amp;&amp; entry.header().entry_type().is_gnu_longname() {
                 <span class="kw">if </span>gnu_longname.is_some() {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(other(
-                        <span class="string">&quot;two long name entries describing \
-                         the same member&quot;</span>,
+                        <span class="string">"two long name entries describing \
+                         the same member"</span>,
                     ));
                 }
                 gnu_longname = <span class="prelude-val">Some</span>(EntryFields::from(entry).read_all()<span class="question-mark">?</span>);
@@ -1019,8 +1020,8 @@
             <span class="kw">if </span>is_recognized_header &amp;&amp; entry.header().entry_type().is_gnu_longlink() {
                 <span class="kw">if </span>gnu_longlink.is_some() {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(other(
-                        <span class="string">&quot;two long name entries describing \
-                         the same member&quot;</span>,
+                        <span class="string">"two long name entries describing \
+                         the same member"</span>,
                     ));
                 }
                 gnu_longlink = <span class="prelude-val">Some</span>(EntryFields::from(entry).read_all()<span class="question-mark">?</span>);
@@ -1030,8 +1031,8 @@
             <span class="kw">if </span>is_recognized_header &amp;&amp; entry.header().entry_type().is_pax_local_extensions() {
                 <span class="kw">if </span>pax_extensions.is_some() {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(other(
-                        <span class="string">&quot;two pax extensions entries describing \
-                         the same member&quot;</span>,
+                        <span class="string">"two pax extensions entries describing \
+                         the same member"</span>,
                     ));
                 }
                 pax_extensions = <span class="prelude-val">Some</span>(EntryFields::from(entry).read_all()<span class="question-mark">?</span>);
@@ -1047,17 +1048,17 @@
         }
     }
 
-    <span class="kw">fn </span>parse_sparse_header(<span class="kw-2">&amp;mut </span><span class="self">self</span>, entry: <span class="kw-2">&amp;mut </span>EntryFields&lt;<span class="lifetime">&#39;a</span>&gt;) -&gt; io::Result&lt;()&gt; {
+    <span class="kw">fn </span>parse_sparse_header(<span class="kw-2">&amp;mut </span><span class="self">self</span>, entry: <span class="kw-2">&amp;mut </span>EntryFields&lt;<span class="lifetime">'a</span>&gt;) -&gt; io::Result&lt;()&gt; {
         <span class="kw">if </span>!entry.header.entry_type().is_gnu_sparse() {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(());
         }
         <span class="kw">let </span>gnu = <span class="kw">match </span>entry.header.as_gnu() {
             <span class="prelude-val">Some</span>(gnu) =&gt; gnu,
-            <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(other(<span class="string">&quot;sparse entry type listed but not GNU header&quot;</span>)),
+            <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(other(<span class="string">"sparse entry type listed but not GNU header"</span>)),
         };
 
         <span class="comment">// Sparse files are represented internally as a list of blocks that are
-        // read. Blocks are either a bunch of 0&#39;s or they&#39;re data from the
+        // read. Blocks are either a bunch of 0's or they're data from the
         // underlying archive.
         //
         // Blocks of a sparse file are described by the `GnuSparseHeader`
@@ -1068,7 +1069,7 @@
         // We read off all the blocks here and use the `add_block` function to
         // incrementally add them to the list of I/O block (in `entry.data`).
         // The `add_block` function also validates that each chunk comes after
-        // the previous, we don&#39;t overrun the end of the file, and each block is
+        // the previous, we don't overrun the end of the file, and each block is
         // aligned to a 512-byte boundary in the archive itself.
         //
         // At the end we verify that the sparse file size (`Header::size`) is
@@ -1091,13 +1092,13 @@
                 <span class="kw">let </span>len = block.length()<span class="question-mark">?</span>;
                 <span class="kw">if </span>len != <span class="number">0 </span>&amp;&amp; (size - remaining) % <span class="number">512 </span>!= <span class="number">0 </span>{
                     <span class="kw">return </span><span class="prelude-val">Err</span>(other(
-                        <span class="string">&quot;previous block in sparse file was not \
-                         aligned to 512-byte boundary&quot;</span>,
+                        <span class="string">"previous block in sparse file was not \
+                         aligned to 512-byte boundary"</span>,
                     ));
                 } <span class="kw">else if </span>off &lt; cur {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(other(
-                        <span class="string">&quot;out of order or overlapping sparse \
-                         blocks&quot;</span>,
+                        <span class="string">"out of order or overlapping sparse \
+                         blocks"</span>,
                     ));
                 } <span class="kw">else if </span>cur &lt; off {
                     <span class="kw">let </span>block = io::repeat(<span class="number">0</span>).take(off - cur);
@@ -1105,11 +1106,11 @@
                 }
                 cur = off
                     .checked_add(len)
-                    .ok_or_else(|| other(<span class="string">&quot;more bytes listed in sparse file than u64 can hold&quot;</span>))<span class="question-mark">?</span>;
+                    .ok_or_else(|| other(<span class="string">"more bytes listed in sparse file than u64 can hold"</span>))<span class="question-mark">?</span>;
                 remaining = remaining.checked_sub(len).ok_or_else(|| {
                     other(
-                        <span class="string">&quot;sparse file consumed more data than the header \
-                         listed&quot;</span>,
+                        <span class="string">"sparse file consumed more data than the header \
+                         listed"</span>,
                     )
                 })<span class="question-mark">?</span>;
                 data.push(EntryIo::Data(reader.take(len)));
@@ -1123,7 +1124,7 @@
                 ext.isextended[<span class="number">0</span>] = <span class="number">1</span>;
                 <span class="kw">while </span>ext.is_extended() {
                     <span class="kw">if </span>!try_read_all(<span class="kw-2">&amp;mut &amp;</span><span class="self">self</span>.archive.inner, ext.as_mut_bytes())<span class="question-mark">? </span>{
-                        <span class="kw">return </span><span class="prelude-val">Err</span>(other(<span class="string">&quot;failed to read extension&quot;</span>));
+                        <span class="kw">return </span><span class="prelude-val">Err</span>(other(<span class="string">"failed to read extension"</span>));
                     }
 
                     <span class="self">self</span>.next += <span class="number">512</span>;
@@ -1135,15 +1136,15 @@
         }
         <span class="kw">if </span>cur != gnu.real_size()<span class="question-mark">? </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(other(
-                <span class="string">&quot;mismatch in sparse file chunks and \
-                 size in header&quot;</span>,
+                <span class="string">"mismatch in sparse file chunks and \
+                 size in header"</span>,
             ));
         }
         entry.size = cur;
         <span class="kw">if </span>remaining &gt; <span class="number">0 </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(other(
-                <span class="string">&quot;mismatch in sparse file chunks and \
-                 entry size in header&quot;</span>,
+                <span class="string">"mismatch in sparse file chunks and \
+                 entry size in header"</span>,
             ));
         }
         <span class="prelude-val">Ok</span>(())
@@ -1152,7 +1153,7 @@
     <span class="kw">fn </span>skip(<span class="kw-2">&amp;mut </span><span class="self">self</span>, <span class="kw-2">mut </span>amt: u64) -&gt; io::Result&lt;()&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(seekable_archive) = <span class="self">self</span>.seekable_archive {
             <span class="kw">let </span>pos = io::SeekFrom::Current(
-                i64::try_from(amt).map_err(|<span class="kw">_</span>| other(<span class="string">&quot;seek position out of bounds&quot;</span>))<span class="question-mark">?</span>,
+                i64::try_from(amt).map_err(|<span class="kw">_</span>| other(<span class="string">"seek position out of bounds"</span>))<span class="question-mark">?</span>,
             );
             (<span class="kw-2">&amp;</span>seekable_archive.inner).seek(pos)<span class="question-mark">?</span>;
         } <span class="kw">else </span>{
@@ -1161,7 +1162,7 @@
                 <span class="kw">let </span>n = cmp::min(amt, buf.len() <span class="kw">as </span>u64);
                 <span class="kw">let </span>n = (<span class="kw-2">&amp;</span><span class="self">self</span>.archive.inner).read(<span class="kw-2">&amp;mut </span>buf[..n <span class="kw">as </span>usize])<span class="question-mark">?</span>;
                 <span class="kw">if </span>n == <span class="number">0 </span>{
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(other(<span class="string">&quot;unexpected EOF during skip&quot;</span>));
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(other(<span class="string">"unexpected EOF during skip"</span>));
                 }
                 amt -= n <span class="kw">as </span>u64;
             }
@@ -1170,10 +1171,10 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Iterator <span class="kw">for </span>EntriesFields&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">type </span>Item = io::Result&lt;Entry&lt;<span class="lifetime">&#39;a</span>, io::Empty&gt;&gt;;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Iterator <span class="kw">for </span>EntriesFields&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">type </span>Item = io::Result&lt;Entry&lt;<span class="lifetime">'a</span>, io::Empty&gt;&gt;;
 
-    <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;io::Result&lt;Entry&lt;<span class="lifetime">&#39;a</span>, io::Empty&gt;&gt;&gt; {
+    <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;io::Result&lt;Entry&lt;<span class="lifetime">'a</span>, io::Empty&gt;&gt;&gt; {
         <span class="kw">if </span><span class="self">self</span>.done {
             <span class="prelude-val">None
         </span>} <span class="kw">else </span>{
@@ -1192,7 +1193,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, R: <span class="question-mark">?</span>Sized + Read&gt; Read <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>ArchiveInner&lt;R&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, R: <span class="question-mark">?</span>Sized + Read&gt; Read <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>ArchiveInner&lt;R&gt; {
     <span class="kw">fn </span>read(<span class="kw-2">&amp;mut </span><span class="self">self</span>, into: <span class="kw-2">&amp;mut </span>[u8]) -&gt; io::Result&lt;usize&gt; {
         <span class="kw">let </span>i = <span class="self">self</span>.obj.borrow_mut().read(into)<span class="question-mark">?</span>;
         <span class="self">self</span>.pos.set(<span class="self">self</span>.pos.get() + i <span class="kw">as </span>u64);
@@ -1200,7 +1201,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, R: <span class="question-mark">?</span>Sized + Seek&gt; Seek <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>ArchiveInner&lt;R&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, R: <span class="question-mark">?</span>Sized + Seek&gt; Seek <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span>ArchiveInner&lt;R&gt; {
     <span class="kw">fn </span>seek(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pos: SeekFrom) -&gt; io::Result&lt;u64&gt; {
         <span class="kw">let </span>pos = <span class="self">self</span>.obj.borrow_mut().seek(pos)<span class="question-mark">?</span>;
         <span class="self">self</span>.pos.set(pos);
@@ -1221,7 +1222,7 @@
                     <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="bool-val">false</span>);
                 }
 
-                <span class="kw">return </span><span class="prelude-val">Err</span>(other(<span class="string">&quot;failed to read entire block&quot;</span>));
+                <span class="kw">return </span><span class="prelude-val">Err</span>(other(<span class="string">"failed to read entire block"</span>));
             }
             n =&gt; read += n,
         }

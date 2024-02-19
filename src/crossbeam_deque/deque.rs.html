@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/crossbeam-deque-0.8.5/src/deque.rs`."><title>deque.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="crossbeam_deque" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/crossbeam-deque-0.8.5/src/deque.rs`."><title>deque.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="crossbeam_deque" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2261,7 +2262,7 @@
     </span><span class="kw">unsafe fn </span>at(<span class="kw-2">&amp;</span><span class="self">self</span>, index: isize) -&gt; <span class="kw-2">*mut </span>T {
         <span class="comment">// `self.cap` is always a power of two.
         // We do all the loads at `MaybeUninit` because we might realize, after loading, that we
-        // don&#39;t actually have the right to access this memory.
+        // don't actually have the right to access this memory.
         </span><span class="self">self</span>.ptr.offset(index &amp; (<span class="self">self</span>.cap - <span class="number">1</span>) <span class="kw">as </span>isize)
     }
 
@@ -2620,7 +2621,7 @@
         <span class="comment">// Increment the back index.
         //
         // This ordering could be `Relaxed`, but then thread sanitizer would falsely report data
-        // races because it doesn&#39;t understand fences.
+        // races because it doesn't understand fences.
         </span><span class="self">self</span>.inner.back.store(b.wrapping_add(<span class="number">1</span>), Ordering::Release);
     }
 
@@ -2715,7 +2716,7 @@
                             )
                             .is_err()
                         {
-                            <span class="comment">// Failed. We didn&#39;t pop anything. Reset to `None`.
+                            <span class="comment">// Failed. We didn't pop anything. Reset to `None`.
                             </span>task.take();
                         }
 
@@ -2738,8 +2739,8 @@
 }
 
 <span class="kw">impl</span>&lt;T&gt; fmt::Debug <span class="kw">for </span>Worker&lt;T&gt; {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        f.pad(<span class="string">&quot;Worker { .. }&quot;</span>)
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
+        f.pad(<span class="string">"Worker { .. }"</span>)
     }
 }
 
@@ -2837,7 +2838,7 @@
         <span class="comment">// A SeqCst fence is needed here.
         //
         // If the current thread is already pinned (reentrantly), we must manually issue the
-        // fence. Otherwise, the following pinning will issue the fence anyway, so we don&#39;t
+        // fence. Otherwise, the following pinning will issue the fence anyway, so we don't
         // have to.
         </span><span class="kw">if </span>epoch::is_pinned() {
             atomic::fence(Ordering::SeqCst);
@@ -2866,7 +2867,7 @@
                 .compare_exchange(f, f.wrapping_add(<span class="number">1</span>), Ordering::SeqCst, Ordering::Relaxed)
                 .is_err()
         {
-            <span class="comment">// We didn&#39;t steal this task, forget it.
+            <span class="comment">// We didn't steal this task, forget it.
             </span><span class="kw">return </span>Steal::Retry;
         }
 
@@ -2951,7 +2952,7 @@
         <span class="comment">// A SeqCst fence is needed here.
         //
         // If the current thread is already pinned (reentrantly), we must manually issue the
-        // fence. Otherwise, the following pinning will issue the fence anyway, so we don&#39;t
+        // fence. Otherwise, the following pinning will issue the fence anyway, so we don't
         // have to.
         </span><span class="kw">if </span>epoch::is_pinned() {
             atomic::fence(Ordering::SeqCst);
@@ -3026,14 +3027,14 @@
             <span class="comment">// Steal a batch of tasks from the front one by one.
             </span>Flavor::Lifo =&gt; {
                 <span class="comment">// This loop may modify the batch_size, which triggers a clippy lint warning.
-                // Use a new variable to avoid the warning, and to make it clear we aren&#39;t
+                // Use a new variable to avoid the warning, and to make it clear we aren't
                 // modifying the loop exit condition during iteration.
                 </span><span class="kw">let </span>original_batch_size = batch_size;
 
                 <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..original_batch_size {
                     <span class="comment">// If this is not the first steal, check whether the queue is empty.
                     </span><span class="kw">if </span>i &gt; <span class="number">0 </span>{
-                        <span class="comment">// We&#39;ve already got the current front index. Now execute the fence to
+                        <span class="comment">// We've already got the current front index. Now execute the fence to
                         // synchronize with other threads.
                         </span>atomic::fence(Ordering::SeqCst);
 
@@ -3064,7 +3065,7 @@
                             )
                             .is_err()
                     {
-                        <span class="comment">// We didn&#39;t steal this task, forget it and break from the loop.
+                        <span class="comment">// We didn't steal this task, forget it and break from the loop.
                         </span>batch_size = i;
                         <span class="kw">break</span>;
                     }
@@ -3079,7 +3080,7 @@
                     dest_b = dest_b.wrapping_add(<span class="number">1</span>);
                 }
 
-                <span class="comment">// If we didn&#39;t steal anything, the operation needs to be retried.
+                <span class="comment">// If we didn't steal anything, the operation needs to be retried.
                 </span><span class="kw">if </span>batch_size == <span class="number">0 </span>{
                     <span class="kw">return </span>Steal::Retry;
                 }
@@ -3105,7 +3106,7 @@
         <span class="comment">// Update the back index in the destination queue.
         //
         // This ordering could be `Relaxed`, but then thread sanitizer would falsely report data
-        // races because it doesn&#39;t understand fences.
+        // races because it doesn't understand fences.
         </span>dest.inner.back.store(dest_b, Ordering::Release);
 
         <span class="comment">// Return with success.
@@ -3189,7 +3190,7 @@
         <span class="comment">// A SeqCst fence is needed here.
         //
         // If the current thread is already pinned (reentrantly), we must manually issue the
-        // fence. Otherwise, the following pinning will issue the fence anyway, so we don&#39;t
+        // fence. Otherwise, the following pinning will issue the fence anyway, so we don't
         // have to.
         </span><span class="kw">if </span>epoch::is_pinned() {
             atomic::fence(Ordering::SeqCst);
@@ -3258,7 +3259,7 @@
                         )
                         .is_err()
                 {
-                    <span class="comment">// We didn&#39;t steal this task, forget it.
+                    <span class="comment">// We didn't steal this task, forget it.
                     </span><span class="kw">return </span>Steal::Retry;
                 }
 
@@ -3274,7 +3275,7 @@
                     .compare_exchange(f, f.wrapping_add(<span class="number">1</span>), Ordering::SeqCst, Ordering::Relaxed)
                     .is_err()
                 {
-                    <span class="comment">// We didn&#39;t steal this task, forget it.
+                    <span class="comment">// We didn't steal this task, forget it.
                     </span><span class="kw">return </span>Steal::Retry;
                 }
 
@@ -3284,11 +3285,11 @@
                 <span class="comment">// Repeat the same procedure for the batch steals.
                 //
                 // This loop may modify the batch_size, which triggers a clippy lint warning.
-                // Use a new variable to avoid the warning, and to make it clear we aren&#39;t
+                // Use a new variable to avoid the warning, and to make it clear we aren't
                 // modifying the loop exit condition during iteration.
                 </span><span class="kw">let </span>original_batch_size = batch_size;
                 <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..original_batch_size {
-                    <span class="comment">// We&#39;ve already got the current front index. Now execute the fence to
+                    <span class="comment">// We've already got the current front index. Now execute the fence to
                     // synchronize with other threads.
                     </span>atomic::fence(Ordering::SeqCst);
 
@@ -3318,7 +3319,7 @@
                             )
                             .is_err()
                     {
-                        <span class="comment">// We didn&#39;t steal this task, forget it and break from the loop.
+                        <span class="comment">// We didn't steal this task, forget it and break from the loop.
                         </span>batch_size = i;
                         <span class="kw">break</span>;
                     }
@@ -3354,7 +3355,7 @@
         <span class="comment">// Update the back index in the destination queue.
         //
         // This ordering could be `Relaxed`, but then thread sanitizer would falsely report data
-        // races because it doesn&#39;t understand fences.
+        // races because it doesn't understand fences.
         </span>dest.inner.back.store(dest_b, Ordering::Release);
 
         <span class="comment">// Return with success.
@@ -3372,8 +3373,8 @@
 }
 
 <span class="kw">impl</span>&lt;T&gt; fmt::Debug <span class="kw">for </span>Stealer&lt;T&gt; {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        f.pad(<span class="string">&quot;Stealer { .. }&quot;</span>)
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
+        f.pad(<span class="string">"Stealer { .. }"</span>)
     }
 }
 
@@ -3385,7 +3386,7 @@
 <span class="kw">const </span>READ: usize = <span class="number">2</span>;
 <span class="kw">const </span>DESTROY: usize = <span class="number">4</span>;
 
-<span class="comment">// Each block covers one &quot;lap&quot; of indices.
+<span class="comment">// Each block covers one "lap" of indices.
 </span><span class="kw">const </span>LAP: usize = <span class="number">64</span>;
 <span class="comment">// The maximum number of values a block can hold.
 </span><span class="kw">const </span>BLOCK_CAP: usize = LAP - <span class="number">1</span>;
@@ -3572,7 +3573,7 @@
                 <span class="kw">continue</span>;
             }
 
-            <span class="comment">// If we&#39;re going to have to install the next block, allocate it in advance in order to
+            <span class="comment">// If we're going to have to install the next block, allocate it in advance in order to
             // make the wait for other threads as short as possible.
             </span><span class="kw">if </span>offset + <span class="number">1 </span>== BLOCK_CAP &amp;&amp; next_block.is_none() {
                 next_block = <span class="prelude-val">Some</span>(Box::new(Block::&lt;T&gt;::new()));
@@ -3588,7 +3589,7 @@
                 Ordering::Acquire,
             ) {
                 <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; <span class="kw">unsafe </span>{
-                    <span class="comment">// If we&#39;ve reached the end of the block, install the next one.
+                    <span class="comment">// If we've reached the end of the block, install the next one.
                     </span><span class="kw">if </span>offset + <span class="number">1 </span>== BLOCK_CAP {
                         <span class="kw">let </span>next_block = Box::into_raw(next_block.unwrap());
                         <span class="kw">let </span>next_index = new_tail.wrapping_add(<span class="number">1 </span>&lt;&lt; SHIFT);
@@ -3678,7 +3679,7 @@
         }
 
         <span class="kw">unsafe </span>{
-            <span class="comment">// If we&#39;ve reached the end of the block, move to the next one.
+            <span class="comment">// If we've reached the end of the block, move to the next one.
             </span><span class="kw">if </span>offset + <span class="number">1 </span>== BLOCK_CAP {
                 <span class="kw">let </span>next = (<span class="kw-2">*</span>block).wait_next();
                 <span class="kw">let </span><span class="kw-2">mut </span>next_index = (new_head &amp; !HAS_NEXT).wrapping_add(<span class="number">1 </span>&lt;&lt; SHIFT);
@@ -3695,8 +3696,8 @@
             slot.wait_write();
             <span class="kw">let </span>task = slot.task.get().read().assume_init();
 
-            <span class="comment">// Destroy the block if we&#39;ve reached the end, or if another thread wanted to destroy
-            // but couldn&#39;t because we were busy reading from the slot.
+            <span class="comment">// Destroy the block if we've reached the end, or if another thread wanted to destroy
+            // but couldn't because we were busy reading from the slot.
             </span><span class="kw">if </span>(offset + <span class="number">1 </span>== BLOCK_CAP)
                 || (slot.state.fetch_or(READ, Ordering::AcqRel) &amp; DESTROY != <span class="number">0</span>)
             {
@@ -3836,7 +3837,7 @@
         <span class="kw">let </span>dest_b = dest.inner.back.load(Ordering::Relaxed);
 
         <span class="kw">unsafe </span>{
-            <span class="comment">// If we&#39;ve reached the end of the block, move to the next one.
+            <span class="comment">// If we've reached the end of the block, move to the next one.
             </span><span class="kw">if </span>new_offset == BLOCK_CAP {
                 <span class="kw">let </span>next = (<span class="kw-2">*</span>block).wait_next();
                 <span class="kw">let </span><span class="kw-2">mut </span>next_index = (new_head &amp; !HAS_NEXT).wrapping_add(<span class="number">1 </span>&lt;&lt; SHIFT);
@@ -3880,13 +3881,13 @@
             <span class="comment">// Update the back index in the destination queue.
             //
             // This ordering could be `Relaxed`, but then thread sanitizer would falsely report
-            // data races because it doesn&#39;t understand fences.
+            // data races because it doesn't understand fences.
             </span>dest.inner
                 .back
                 .store(dest_b.wrapping_add(batch_size <span class="kw">as </span>isize), Ordering::Release);
 
-            <span class="comment">// Destroy the block if we&#39;ve reached the end, or if another thread wanted to destroy
-            // but couldn&#39;t because we were busy reading from the slot.
+            <span class="comment">// Destroy the block if we've reached the end, or if another thread wanted to destroy
+            // but couldn't because we were busy reading from the slot.
             </span><span class="kw">if </span>new_offset == BLOCK_CAP {
                 Block::destroy(block, offset);
             } <span class="kw">else </span>{
@@ -4033,7 +4034,7 @@
         <span class="kw">let </span>dest_b = dest.inner.back.load(Ordering::Relaxed);
 
         <span class="kw">unsafe </span>{
-            <span class="comment">// If we&#39;ve reached the end of the block, move to the next one.
+            <span class="comment">// If we've reached the end of the block, move to the next one.
             </span><span class="kw">if </span>new_offset == BLOCK_CAP {
                 <span class="kw">let </span>next = (<span class="kw-2">*</span>block).wait_next();
                 <span class="kw">let </span><span class="kw-2">mut </span>next_index = (new_head &amp; !HAS_NEXT).wrapping_add(<span class="number">1 </span>&lt;&lt; SHIFT);
@@ -4083,13 +4084,13 @@
             <span class="comment">// Update the back index in the destination queue.
             //
             // This ordering could be `Relaxed`, but then thread sanitizer would falsely report
-            // data races because it doesn&#39;t understand fences.
+            // data races because it doesn't understand fences.
             </span>dest.inner
                 .back
                 .store(dest_b.wrapping_add(batch_size <span class="kw">as </span>isize), Ordering::Release);
 
-            <span class="comment">// Destroy the block if we&#39;ve reached the end, or if another thread wanted to destroy
-            // but couldn&#39;t because we were busy reading from the slot.
+            <span class="comment">// Destroy the block if we've reached the end, or if another thread wanted to destroy
+            // but couldn't because we were busy reading from the slot.
             </span><span class="kw">if </span>new_offset == BLOCK_CAP {
                 Block::destroy(block, offset);
             } <span class="kw">else </span>{
@@ -4147,7 +4148,7 @@
             </span><span class="kw">let </span><span class="kw-2">mut </span>tail = <span class="self">self</span>.tail.index.load(Ordering::SeqCst);
             <span class="kw">let </span><span class="kw-2">mut </span>head = <span class="self">self</span>.head.index.load(Ordering::SeqCst);
 
-            <span class="comment">// If the tail index didn&#39;t change, we&#39;ve got consistent indices to work with.
+            <span class="comment">// If the tail index didn't change, we've got consistent indices to work with.
             </span><span class="kw">if </span><span class="self">self</span>.tail.index.load(Ordering::SeqCst) == tail {
                 <span class="comment">// Erase the lower bits.
                 </span>tail &amp;= !((<span class="number">1 </span>&lt;&lt; SHIFT) - <span class="number">1</span>);
@@ -4213,8 +4214,8 @@
 }
 
 <span class="kw">impl</span>&lt;T&gt; fmt::Debug <span class="kw">for </span>Injector&lt;T&gt; {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        f.pad(<span class="string">&quot;Worker { .. }&quot;</span>)
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
+        f.pad(<span class="string">"Worker { .. }"</span>)
     }
 }
 
@@ -4366,11 +4367,11 @@
 }
 
 <span class="kw">impl</span>&lt;T&gt; fmt::Debug <span class="kw">for </span>Steal&lt;T&gt; {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
         <span class="kw">match </span><span class="self">self </span>{
-            Steal::Empty =&gt; f.pad(<span class="string">&quot;Empty&quot;</span>),
-            Steal::Success(<span class="kw">_</span>) =&gt; f.pad(<span class="string">&quot;Success(..)&quot;</span>),
-            Steal::Retry =&gt; f.pad(<span class="string">&quot;Retry&quot;</span>),
+            Steal::Empty =&gt; f.pad(<span class="string">"Empty"</span>),
+            Steal::Success(<span class="kw">_</span>) =&gt; f.pad(<span class="string">"Success(..)"</span>),
+            Steal::Retry =&gt; f.pad(<span class="string">"Retry"</span>),
         }
     }
 }

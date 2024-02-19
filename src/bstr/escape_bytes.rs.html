@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bstr-1.9.0/src/escape_bytes.rs`."><title>escape_bytes.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bstr" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bstr-1.9.0/src/escape_bytes.rs`."><title>escape_bytes.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bstr" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -451,24 +452,24 @@
 <a href="#451" id="451">451</a>
 </pre></div><pre class="rust"><code><span class="doccomment">/// An iterator of `char` values that represent an escaping of arbitrary bytes.
 ///
-/// The lifetime parameter `&#39;a` refers to the lifetime of the bytes being
+/// The lifetime parameter `'a` refers to the lifetime of the bytes being
 /// escaped.
 ///
 /// This iterator is created by the
 /// [`ByteSlice::escape_bytes`](crate::ByteSlice::escape_bytes) method.
 </span><span class="attr">#[derive(Clone, Debug)]
-</span><span class="kw">pub struct </span>EscapeBytes&lt;<span class="lifetime">&#39;a</span>&gt; {
-    remaining: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8],
+</span><span class="kw">pub struct </span>EscapeBytes&lt;<span class="lifetime">'a</span>&gt; {
+    remaining: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8],
     state: EscapeState,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; EscapeBytes&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(bytes: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8]) -&gt; EscapeBytes {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; EscapeBytes&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(bytes: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8]) -&gt; EscapeBytes {
         EscapeBytes { remaining: bytes, state: EscapeState::Start }
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Iterator <span class="kw">for </span>EscapeBytes&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Iterator <span class="kw">for </span>EscapeBytes&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">type </span>Item = char;
 
     <span class="attr">#[inline]
@@ -480,7 +481,7 @@
                 <span class="kw">let </span>byte = <span class="kw">match </span><span class="kw">crate</span>::decode_utf8(<span class="self">self</span>.remaining) {
                     (<span class="prelude-val">None</span>, <span class="number">0</span>) =&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
                     <span class="comment">// If we see invalid UTF-8 or ASCII, then we always just
-                    // peel one byte off. If it&#39;s printable ASCII, we&#39;ll pass
+                    // peel one byte off. If it's printable ASCII, we'll pass
                     // it through as-is below. Otherwise, below, it will get
                     // escaped in some way.
                     </span>(<span class="prelude-val">None</span>, <span class="kw">_</span>) | (<span class="prelude-val">Some</span>(<span class="kw">_</span>), <span class="number">1</span>) =&gt; {
@@ -489,7 +490,7 @@
                         byte
                     }
                     <span class="comment">// For any valid UTF-8 that is not ASCII, we pass it
-                    // through as-is. We don&#39;t do any Unicode escaping.
+                    // through as-is. We don't do any Unicode escaping.
                     </span>(<span class="prelude-val">Some</span>(ch), size) =&gt; {
                         <span class="self">self</span>.remaining = <span class="kw-2">&amp;</span><span class="self">self</span>.remaining[size..];
                         <span class="kw">return </span><span class="prelude-val">Some</span>(ch);
@@ -499,14 +500,14 @@
                     <span class="number">0x21</span>..=<span class="number">0x5B </span>| <span class="number">0x5D</span>..=<span class="number">0x7E </span>=&gt; {
                         <span class="kw">return </span><span class="prelude-val">Some</span>(char::from(byte))
                     }
-                    <span class="string">b&#39;\0&#39; </span>=&gt; SpecialEscape(<span class="string">&#39;0&#39;</span>),
-                    <span class="string">b&#39;\n&#39; </span>=&gt; SpecialEscape(<span class="string">&#39;n&#39;</span>),
-                    <span class="string">b&#39;\r&#39; </span>=&gt; SpecialEscape(<span class="string">&#39;r&#39;</span>),
-                    <span class="string">b&#39;\t&#39; </span>=&gt; SpecialEscape(<span class="string">&#39;t&#39;</span>),
-                    <span class="string">b&#39;\\&#39; </span>=&gt; SpecialEscape(<span class="string">&#39;\\&#39;</span>),
+                    <span class="string">b'\0' </span>=&gt; SpecialEscape(<span class="string">'0'</span>),
+                    <span class="string">b'\n' </span>=&gt; SpecialEscape(<span class="string">'n'</span>),
+                    <span class="string">b'\r' </span>=&gt; SpecialEscape(<span class="string">'r'</span>),
+                    <span class="string">b'\t' </span>=&gt; SpecialEscape(<span class="string">'t'</span>),
+                    <span class="string">b'\\' </span>=&gt; SpecialEscape(<span class="string">'\\'</span>),
                     <span class="kw">_ </span>=&gt; HexEscapeX(byte),
                 };
-                <span class="prelude-val">Some</span>(<span class="string">&#39;\\&#39;</span>)
+                <span class="prelude-val">Some</span>(<span class="string">'\\'</span>)
             }
             SpecialEscape(ch) =&gt; {
                 <span class="self">self</span>.state = Start;
@@ -514,7 +515,7 @@
             }
             HexEscapeX(byte) =&gt; {
                 <span class="self">self</span>.state = HexEscapeHighNybble(byte);
-                <span class="prelude-val">Some</span>(<span class="string">&#39;x&#39;</span>)
+                <span class="prelude-val">Some</span>(<span class="string">'x'</span>)
             }
             HexEscapeHighNybble(byte) =&gt; {
                 <span class="self">self</span>.state = HexEscapeLowNybble(byte);
@@ -530,7 +531,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; core::fmt::Display <span class="kw">for </span>EscapeBytes&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; core::fmt::Display <span class="kw">for </span>EscapeBytes&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>core::fmt::Formatter) -&gt; core::fmt::Result {
         <span class="kw">use </span>core::fmt::Write;
         <span class="kw">for </span>ch <span class="kw">in </span><span class="self">self</span>.clone() {
@@ -543,28 +544,28 @@
 <span class="doccomment">/// The state used by the FSM in the escaping iterator.
 </span><span class="attr">#[derive(Clone, Debug)]
 </span><span class="kw">enum </span>EscapeState {
-    <span class="doccomment">/// Read and remove the next byte from &#39;remaining&#39;. If &#39;remaining&#39; is
+    <span class="doccomment">/// Read and remove the next byte from 'remaining'. If 'remaining' is
     /// empty, then return None. Otherwise, escape the byte according to the
     /// following rules or emit it as-is.
     ///
-    /// If it&#39;s \n, \r, \t, \\ or \0, then emit a &#39;\&#39; and set the current
-    /// state to &#39;SpecialEscape(n | r | t | \ | 0)&#39;. Otherwise, if the &#39;byte&#39;
-    /// is not in [\x21-\x5B\x5D-\x7E], then emit a &#39;\&#39; and set the state to
-    /// to &#39;HexEscapeX(byte)&#39;.
+    /// If it's \n, \r, \t, \\ or \0, then emit a '\' and set the current
+    /// state to 'SpecialEscape(n | r | t | \ | 0)'. Otherwise, if the 'byte'
+    /// is not in [\x21-\x5B\x5D-\x7E], then emit a '\' and set the state to
+    /// to 'HexEscapeX(byte)'.
     </span>Start,
-    <span class="doccomment">/// Emit the given codepoint as is. This assumes &#39;\&#39; has just been emitted.
-    /// Then set the state to &#39;Start&#39;.
+    <span class="doccomment">/// Emit the given codepoint as is. This assumes '\' has just been emitted.
+    /// Then set the state to 'Start'.
     </span>SpecialEscape(char),
-    <span class="doccomment">/// Emit the &#39;x&#39; part of a hex escape. This assumes &#39;\&#39; has just been
-    /// emitted. Then set the state to &#39;HexEscapeHighNybble(byte)&#39;.
+    <span class="doccomment">/// Emit the 'x' part of a hex escape. This assumes '\' has just been
+    /// emitted. Then set the state to 'HexEscapeHighNybble(byte)'.
     </span>HexEscapeX(u8),
     <span class="doccomment">/// Emit the high nybble of the byte as a hexadecimal digit. This
-    /// assumes &#39;\x&#39; has just been emitted. Then set the state to
-    /// &#39;HexEscapeLowNybble(byte)&#39;.
+    /// assumes '\x' has just been emitted. Then set the state to
+    /// 'HexEscapeLowNybble(byte)'.
     </span>HexEscapeHighNybble(u8),
     <span class="doccomment">/// Emit the low nybble of the byte as a hexadecimal digit. This assume
-    /// &#39;\xZ&#39; has just been emitted, where &#39;Z&#39; is the high nybble of this byte.
-    /// Then set the state to &#39;Start&#39;.
+    /// '\xZ' has just been emitted, where 'Z' is the high nybble of this byte.
+    /// Then set the state to 'Start'.
     </span>HexEscapeLowNybble(u8),
 }
 
@@ -576,17 +577,17 @@
 ///
 /// Currently this iterator is not exposed in the crate API, and instead all
 /// we expose is a `ByteVec::unescape` method. Which of course requires an
-/// alloc. That&#39;s the most convenient form of this, but in theory, we could
-/// expose this for core-only use cases too. I&#39;m just not quite sure what the
+/// alloc. That's the most convenient form of this, but in theory, we could
+/// expose this for core-only use cases too. I'm just not quite sure what the
 /// API should be.
 </span><span class="attr">#[derive(Clone, Debug)]
-#[cfg(feature = <span class="string">&quot;alloc&quot;</span>)]
+#[cfg(feature = <span class="string">"alloc"</span>)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>UnescapeBytes&lt;I&gt; {
     it: I,
     state: UnescapeState,
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;alloc&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"alloc"</span>)]
 </span><span class="kw">impl</span>&lt;I: Iterator&lt;Item = char&gt;&gt; UnescapeBytes&lt;I&gt; {
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new&lt;T: IntoIterator&lt;IntoIter = I&gt;&gt;(
         t: T,
@@ -595,7 +596,7 @@
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;alloc&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"alloc"</span>)]
 </span><span class="kw">impl</span>&lt;I: Iterator&lt;Item = char&gt;&gt; Iterator <span class="kw">for </span>UnescapeBytes&lt;I&gt; {
     <span class="kw">type </span>Item = u8;
 
@@ -607,7 +608,7 @@
                 Start =&gt; {
                     <span class="kw">let </span>ch = <span class="self">self</span>.it.next()<span class="question-mark">?</span>;
                     <span class="kw">match </span>ch {
-                        <span class="string">&#39;\\&#39; </span>=&gt; {
+                        <span class="string">'\\' </span>=&gt; {
                             <span class="self">self</span>.state = Escape;
                         }
                         ch =&gt; {
@@ -632,36 +633,36 @@
                             <span class="self">self</span>.state = Start;
                             <span class="comment">// Incomplete escape sequences unescape as
                             // themselves.
-                            </span><span class="kw">return </span><span class="prelude-val">Some</span>(<span class="string">b&#39;\\&#39;</span>);
+                            </span><span class="kw">return </span><span class="prelude-val">Some</span>(<span class="string">b'\\'</span>);
                         }
                     };
                     <span class="kw">match </span>ch {
-                        <span class="string">&#39;0&#39; </span>=&gt; {
+                        <span class="string">'0' </span>=&gt; {
                             <span class="self">self</span>.state = Start;
-                            <span class="kw">return </span><span class="prelude-val">Some</span>(<span class="string">b&#39;\x00&#39;</span>);
+                            <span class="kw">return </span><span class="prelude-val">Some</span>(<span class="string">b'\x00'</span>);
                         }
-                        <span class="string">&#39;\\&#39; </span>=&gt; {
+                        <span class="string">'\\' </span>=&gt; {
                             <span class="self">self</span>.state = Start;
-                            <span class="kw">return </span><span class="prelude-val">Some</span>(<span class="string">b&#39;\\&#39;</span>);
+                            <span class="kw">return </span><span class="prelude-val">Some</span>(<span class="string">b'\\'</span>);
                         }
-                        <span class="string">&#39;r&#39; </span>=&gt; {
+                        <span class="string">'r' </span>=&gt; {
                             <span class="self">self</span>.state = Start;
-                            <span class="kw">return </span><span class="prelude-val">Some</span>(<span class="string">b&#39;\r&#39;</span>);
+                            <span class="kw">return </span><span class="prelude-val">Some</span>(<span class="string">b'\r'</span>);
                         }
-                        <span class="string">&#39;n&#39; </span>=&gt; {
+                        <span class="string">'n' </span>=&gt; {
                             <span class="self">self</span>.state = Start;
-                            <span class="kw">return </span><span class="prelude-val">Some</span>(<span class="string">b&#39;\n&#39;</span>);
+                            <span class="kw">return </span><span class="prelude-val">Some</span>(<span class="string">b'\n'</span>);
                         }
-                        <span class="string">&#39;t&#39; </span>=&gt; {
+                        <span class="string">'t' </span>=&gt; {
                             <span class="self">self</span>.state = Start;
-                            <span class="kw">return </span><span class="prelude-val">Some</span>(<span class="string">b&#39;\t&#39;</span>);
+                            <span class="kw">return </span><span class="prelude-val">Some</span>(<span class="string">b'\t'</span>);
                         }
-                        <span class="string">&#39;x&#39; </span>=&gt; {
+                        <span class="string">'x' </span>=&gt; {
                             <span class="self">self</span>.state = HexFirst;
                         }
                         ch =&gt; {
                             <span class="comment">// An invalid escape sequence unescapes as itself.
-                            </span><span class="self">self</span>.state = UnescapeState::bytes(<span class="kw-2">&amp;</span>[<span class="string">b&#39;\\&#39;</span>], ch);
+                            </span><span class="self">self</span>.state = UnescapeState::bytes(<span class="kw-2">&amp;</span>[<span class="string">b'\\'</span>], ch);
                         }
                     }
                 }
@@ -671,18 +672,18 @@
                         <span class="prelude-val">None </span>=&gt; {
                             <span class="comment">// An incomplete escape sequence unescapes as
                             // itself.
-                            </span><span class="self">self</span>.state = UnescapeState::bytes_raw(<span class="kw-2">&amp;</span>[<span class="string">b&#39;x&#39;</span>]);
-                            <span class="kw">return </span><span class="prelude-val">Some</span>(<span class="string">b&#39;\\&#39;</span>);
+                            </span><span class="self">self</span>.state = UnescapeState::bytes_raw(<span class="kw-2">&amp;</span>[<span class="string">b'x'</span>]);
+                            <span class="kw">return </span><span class="prelude-val">Some</span>(<span class="string">b'\\'</span>);
                         }
                     };
                     <span class="kw">match </span>ch {
-                        <span class="string">&#39;0&#39;</span>..=<span class="string">&#39;9&#39; </span>| <span class="string">&#39;A&#39;</span>..=<span class="string">&#39;F&#39; </span>| <span class="string">&#39;a&#39;</span>..=<span class="string">&#39;f&#39; </span>=&gt; {
+                        <span class="string">'0'</span>..=<span class="string">'9' </span>| <span class="string">'A'</span>..=<span class="string">'F' </span>| <span class="string">'a'</span>..=<span class="string">'f' </span>=&gt; {
                             <span class="self">self</span>.state = HexSecond(ch);
                         }
                         ch =&gt; {
                             <span class="comment">// An invalid escape sequence unescapes as itself.
-                            </span><span class="self">self</span>.state = UnescapeState::bytes(<span class="kw-2">&amp;</span>[<span class="string">b&#39;x&#39;</span>], ch);
-                            <span class="kw">return </span><span class="prelude-val">Some</span>(<span class="string">b&#39;\\&#39;</span>);
+                            </span><span class="self">self</span>.state = UnescapeState::bytes(<span class="kw-2">&amp;</span>[<span class="string">b'x'</span>], ch);
+                            <span class="kw">return </span><span class="prelude-val">Some</span>(<span class="string">b'\\'</span>);
                         }
                     }
                 }
@@ -692,12 +693,12 @@
                         <span class="prelude-val">None </span>=&gt; {
                             <span class="comment">// An incomplete escape sequence unescapes as
                             // itself.
-                            </span><span class="self">self</span>.state = UnescapeState::bytes(<span class="kw-2">&amp;</span>[<span class="string">b&#39;x&#39;</span>], first);
-                            <span class="kw">return </span><span class="prelude-val">Some</span>(<span class="string">b&#39;\\&#39;</span>);
+                            </span><span class="self">self</span>.state = UnescapeState::bytes(<span class="kw-2">&amp;</span>[<span class="string">b'x'</span>], first);
+                            <span class="kw">return </span><span class="prelude-val">Some</span>(<span class="string">b'\\'</span>);
                         }
                     };
                     <span class="kw">match </span>second {
-                        <span class="string">&#39;0&#39;</span>..=<span class="string">&#39;9&#39; </span>| <span class="string">&#39;A&#39;</span>..=<span class="string">&#39;F&#39; </span>| <span class="string">&#39;a&#39;</span>..=<span class="string">&#39;f&#39; </span>=&gt; {
+                        <span class="string">'0'</span>..=<span class="string">'9' </span>| <span class="string">'A'</span>..=<span class="string">'F' </span>| <span class="string">'a'</span>..=<span class="string">'f' </span>=&gt; {
                             <span class="self">self</span>.state = Start;
                             <span class="kw">let </span>hinybble = char_to_hexdigit(first);
                             <span class="kw">let </span>lonybble = char_to_hexdigit(second);
@@ -707,8 +708,8 @@
                         ch =&gt; {
                             <span class="comment">// An invalid escape sequence unescapes as itself.
                             </span><span class="self">self</span>.state =
-                                UnescapeState::bytes2(<span class="kw-2">&amp;</span>[<span class="string">b&#39;x&#39;</span>], first, ch);
-                            <span class="kw">return </span><span class="prelude-val">Some</span>(<span class="string">b&#39;\\&#39;</span>);
+                                UnescapeState::bytes2(<span class="kw-2">&amp;</span>[<span class="string">b'x'</span>], first, ch);
+                            <span class="kw">return </span><span class="prelude-val">Some</span>(<span class="string">b'\\'</span>);
                         }
                     }
                 }
@@ -719,7 +720,7 @@
 
 <span class="doccomment">/// The state used by the FSM in the unescaping iterator.
 </span><span class="attr">#[derive(Clone, Debug)]
-#[cfg(feature = <span class="string">&quot;alloc&quot;</span>)]
+#[cfg(feature = <span class="string">"alloc"</span>)]
 </span><span class="kw">enum </span>UnescapeState {
     <span class="doccomment">/// The start state. Look for an escape sequence, otherwise emit the next
     /// codepoint as-is.
@@ -738,7 +739,7 @@
     </span>HexSecond(char),
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;alloc&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"alloc"</span>)]
 </span><span class="kw">impl </span>UnescapeState {
     <span class="doccomment">/// Create a new `Bytes` variant with the given slice.
     ///
@@ -746,9 +747,9 @@
     ///
     /// Panics if `bytes.len() &gt; 11`.
     </span><span class="kw">fn </span>bytes_raw(bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; UnescapeState {
-        <span class="comment">// This can be increased, you just need to make sure &#39;buf&#39; in the
-        // &#39;Bytes&#39; state has enough room.
-        </span><span class="macro">assert!</span>(bytes.len() &lt;= <span class="number">11</span>, <span class="string">&quot;no more than 11 bytes allowed&quot;</span>);
+        <span class="comment">// This can be increased, you just need to make sure 'buf' in the
+        // 'Bytes' state has enough room.
+        </span><span class="macro">assert!</span>(bytes.len() &lt;= <span class="number">11</span>, <span class="string">"no more than 11 bytes allowed"</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="number">0</span>; <span class="number">11</span>];
         buf[..bytes.len()].copy_from_slice(bytes);
         UnescapeState::Bytes { buf, cur: <span class="number">0</span>, len: bytes.len() }
@@ -761,9 +762,9 @@
     ///
     /// Panics if `prefix.len() &gt; 3`.
     </span><span class="kw">fn </span>bytes(prefix: <span class="kw-2">&amp;</span>[u8], ch: char) -&gt; UnescapeState {
-        <span class="comment">// This can be increased, you just need to make sure &#39;buf&#39; in the
-        // &#39;Bytes&#39; state has enough room.
-        </span><span class="macro">assert!</span>(prefix.len() &lt;= <span class="number">3</span>, <span class="string">&quot;no more than 3 bytes allowed&quot;</span>);
+        <span class="comment">// This can be increased, you just need to make sure 'buf' in the
+        // 'Bytes' state has enough room.
+        </span><span class="macro">assert!</span>(prefix.len() &lt;= <span class="number">3</span>, <span class="string">"no more than 3 bytes allowed"</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="number">0</span>; <span class="number">11</span>];
         buf[..prefix.len()].copy_from_slice(prefix);
         <span class="kw">let </span>chlen = ch.encode_utf8(<span class="kw-2">&amp;mut </span>buf[prefix.len()..]).len();
@@ -777,9 +778,9 @@
     ///
     /// Panics if `prefix.len() &gt; 3`.
     </span><span class="kw">fn </span>bytes2(prefix: <span class="kw-2">&amp;</span>[u8], ch1: char, ch2: char) -&gt; UnescapeState {
-        <span class="comment">// This can be increased, you just need to make sure &#39;buf&#39; in the
-        // &#39;Bytes&#39; state has enough room.
-        </span><span class="macro">assert!</span>(prefix.len() &lt;= <span class="number">3</span>, <span class="string">&quot;no more than 3 bytes allowed&quot;</span>);
+        <span class="comment">// This can be increased, you just need to make sure 'buf' in the
+        // 'Bytes' state has enough room.
+        </span><span class="macro">assert!</span>(prefix.len() &lt;= <span class="number">3</span>, <span class="string">"no more than 3 bytes allowed"</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="number">0</span>; <span class="number">11</span>];
         buf[..prefix.len()].copy_from_slice(prefix);
         <span class="kw">let </span>len1 = ch1.encode_utf8(<span class="kw-2">&amp;mut </span>buf[prefix.len()..]).len();
@@ -793,7 +794,7 @@
 /// # Panics
 ///
 /// This panics if `ch` is not in `[0-9A-Fa-f]`.
-</span><span class="attr">#[cfg(feature = <span class="string">&quot;alloc&quot;</span>)]
+</span><span class="attr">#[cfg(feature = <span class="string">"alloc"</span>)]
 </span><span class="kw">fn </span>char_to_hexdigit(ch: char) -&gt; u8 {
     u8::try_from(ch.to_digit(<span class="number">16</span>).unwrap()).unwrap()
 }
@@ -807,7 +808,7 @@
     char::from_digit(u32::from(digit), <span class="number">16</span>).unwrap().to_ascii_uppercase()
 }
 
-<span class="attr">#[cfg(all(test, feature = <span class="string">&quot;std&quot;</span>))]
+<span class="attr">#[cfg(all(test, feature = <span class="string">"std"</span>))]
 </span><span class="kw">mod </span>tests {
     <span class="kw">use </span><span class="kw">crate</span>::BString;
 
@@ -828,76 +829,76 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>escape() {
-        <span class="macro">assert_eq!</span>(<span class="string">r&quot;a&quot;</span>, e(<span class="string">br&quot;a&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">r&quot;\\x61&quot;</span>, e(<span class="string">br&quot;\x61&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">r&quot;a&quot;</span>, e(<span class="string">b&quot;\x61&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">r&quot;~&quot;</span>, e(<span class="string">b&quot;\x7E&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">r&quot;\x7F&quot;</span>, e(<span class="string">b&quot;\x7F&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="string">r"a"</span>, e(<span class="string">br"a"</span>));
+        <span class="macro">assert_eq!</span>(<span class="string">r"\\x61"</span>, e(<span class="string">br"\x61"</span>));
+        <span class="macro">assert_eq!</span>(<span class="string">r"a"</span>, e(<span class="string">b"\x61"</span>));
+        <span class="macro">assert_eq!</span>(<span class="string">r"~"</span>, e(<span class="string">b"\x7E"</span>));
+        <span class="macro">assert_eq!</span>(<span class="string">r"\x7F"</span>, e(<span class="string">b"\x7F"</span>));
 
-        <span class="macro">assert_eq!</span>(<span class="string">r&quot;\n&quot;</span>, e(<span class="string">b&quot;\n&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">r&quot;\r&quot;</span>, e(<span class="string">b&quot;\r&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">r&quot;\t&quot;</span>, e(<span class="string">b&quot;\t&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">r&quot;\\&quot;</span>, e(<span class="string">b&quot;\\&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">r&quot;\0&quot;</span>, e(<span class="string">b&quot;\0&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">r&quot;\0&quot;</span>, e(<span class="string">b&quot;\x00&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="string">r"\n"</span>, e(<span class="string">b"\n"</span>));
+        <span class="macro">assert_eq!</span>(<span class="string">r"\r"</span>, e(<span class="string">b"\r"</span>));
+        <span class="macro">assert_eq!</span>(<span class="string">r"\t"</span>, e(<span class="string">b"\t"</span>));
+        <span class="macro">assert_eq!</span>(<span class="string">r"\\"</span>, e(<span class="string">b"\\"</span>));
+        <span class="macro">assert_eq!</span>(<span class="string">r"\0"</span>, e(<span class="string">b"\0"</span>));
+        <span class="macro">assert_eq!</span>(<span class="string">r"\0"</span>, e(<span class="string">b"\x00"</span>));
 
-        <span class="macro">assert_eq!</span>(<span class="string">r&quot;\x88&quot;</span>, e(<span class="string">b&quot;\x88&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">r&quot;\x8F&quot;</span>, e(<span class="string">b&quot;\x8F&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">r&quot;\xF8&quot;</span>, e(<span class="string">b&quot;\xF8&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">r&quot;\xFF&quot;</span>, e(<span class="string">b&quot;\xFF&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="string">r"\x88"</span>, e(<span class="string">b"\x88"</span>));
+        <span class="macro">assert_eq!</span>(<span class="string">r"\x8F"</span>, e(<span class="string">b"\x8F"</span>));
+        <span class="macro">assert_eq!</span>(<span class="string">r"\xF8"</span>, e(<span class="string">b"\xF8"</span>));
+        <span class="macro">assert_eq!</span>(<span class="string">r"\xFF"</span>, e(<span class="string">b"\xFF"</span>));
 
-        <span class="macro">assert_eq!</span>(<span class="string">r&quot;\xE2&quot;</span>, e(<span class="string">b&quot;\xE2&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">r&quot;\xE2\x98&quot;</span>, e(<span class="string">b&quot;\xE2\x98&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">r&quot;☃&quot;</span>, e(<span class="string">b&quot;\xE2\x98\x83&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="string">r"\xE2"</span>, e(<span class="string">b"\xE2"</span>));
+        <span class="macro">assert_eq!</span>(<span class="string">r"\xE2\x98"</span>, e(<span class="string">b"\xE2\x98"</span>));
+        <span class="macro">assert_eq!</span>(<span class="string">r"☃"</span>, e(<span class="string">b"\xE2\x98\x83"</span>));
 
-        <span class="macro">assert_eq!</span>(<span class="string">r&quot;\xF0&quot;</span>, e(<span class="string">b&quot;\xF0&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">r&quot;\xF0\x9F&quot;</span>, e(<span class="string">b&quot;\xF0\x9F&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">r&quot;\xF0\x9F\x92&quot;</span>, e(<span class="string">b&quot;\xF0\x9F\x92&quot;</span>));
-        <span class="macro">assert_eq!</span>(<span class="string">r&quot;💩&quot;</span>, e(<span class="string">b&quot;\xF0\x9F\x92\xA9&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="string">r"\xF0"</span>, e(<span class="string">b"\xF0"</span>));
+        <span class="macro">assert_eq!</span>(<span class="string">r"\xF0\x9F"</span>, e(<span class="string">b"\xF0\x9F"</span>));
+        <span class="macro">assert_eq!</span>(<span class="string">r"\xF0\x9F\x92"</span>, e(<span class="string">b"\xF0\x9F\x92"</span>));
+        <span class="macro">assert_eq!</span>(<span class="string">r"💩"</span>, e(<span class="string">b"\xF0\x9F\x92\xA9"</span>));
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>unescape() {
-        <span class="macro">assert_eq!</span>(B(<span class="string">r&quot;a&quot;</span>), u(<span class="string">r&quot;a&quot;</span>));
-        <span class="macro">assert_eq!</span>(B(<span class="string">r&quot;\x61&quot;</span>), u(<span class="string">r&quot;\\x61&quot;</span>));
-        <span class="macro">assert_eq!</span>(B(<span class="string">r&quot;a&quot;</span>), u(<span class="string">r&quot;\x61&quot;</span>));
-        <span class="macro">assert_eq!</span>(B(<span class="string">r&quot;~&quot;</span>), u(<span class="string">r&quot;\x7E&quot;</span>));
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\x7F&quot;</span>), u(<span class="string">r&quot;\x7F&quot;</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">r"a"</span>), u(<span class="string">r"a"</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">r"\x61"</span>), u(<span class="string">r"\\x61"</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">r"a"</span>), u(<span class="string">r"\x61"</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">r"~"</span>), u(<span class="string">r"\x7E"</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\x7F"</span>), u(<span class="string">r"\x7F"</span>));
 
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\n&quot;</span>), u(<span class="string">r&quot;\n&quot;</span>));
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\r&quot;</span>), u(<span class="string">r&quot;\r&quot;</span>));
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\t&quot;</span>), u(<span class="string">r&quot;\t&quot;</span>));
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\\&quot;</span>), u(<span class="string">r&quot;\\&quot;</span>));
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\0&quot;</span>), u(<span class="string">r&quot;\0&quot;</span>));
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\0&quot;</span>), u(<span class="string">r&quot;\x00&quot;</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\n"</span>), u(<span class="string">r"\n"</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\r"</span>), u(<span class="string">r"\r"</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\t"</span>), u(<span class="string">r"\t"</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\\"</span>), u(<span class="string">r"\\"</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\0"</span>), u(<span class="string">r"\0"</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\0"</span>), u(<span class="string">r"\x00"</span>));
 
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\x88&quot;</span>), u(<span class="string">r&quot;\x88&quot;</span>));
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\x8F&quot;</span>), u(<span class="string">r&quot;\x8F&quot;</span>));
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\xF8&quot;</span>), u(<span class="string">r&quot;\xF8&quot;</span>));
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\xFF&quot;</span>), u(<span class="string">r&quot;\xFF&quot;</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\x88"</span>), u(<span class="string">r"\x88"</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\x8F"</span>), u(<span class="string">r"\x8F"</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\xF8"</span>), u(<span class="string">r"\xF8"</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\xFF"</span>), u(<span class="string">r"\xFF"</span>));
 
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\xE2&quot;</span>), u(<span class="string">r&quot;\xE2&quot;</span>));
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\xE2\x98&quot;</span>), u(<span class="string">r&quot;\xE2\x98&quot;</span>));
-        <span class="macro">assert_eq!</span>(B(<span class="string">&quot;☃&quot;</span>), u(<span class="string">r&quot;\xE2\x98\x83&quot;</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\xE2"</span>), u(<span class="string">r"\xE2"</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\xE2\x98"</span>), u(<span class="string">r"\xE2\x98"</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">"☃"</span>), u(<span class="string">r"\xE2\x98\x83"</span>));
 
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\xF0&quot;</span>), u(<span class="string">r&quot;\xf0&quot;</span>));
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\xF0\x9F&quot;</span>), u(<span class="string">r&quot;\xf0\x9f&quot;</span>));
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\xF0\x9F\x92&quot;</span>), u(<span class="string">r&quot;\xf0\x9f\x92&quot;</span>));
-        <span class="macro">assert_eq!</span>(B(<span class="string">&quot;💩&quot;</span>), u(<span class="string">r&quot;\xf0\x9f\x92\xa9&quot;</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\xF0"</span>), u(<span class="string">r"\xf0"</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\xF0\x9F"</span>), u(<span class="string">r"\xf0\x9f"</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\xF0\x9F\x92"</span>), u(<span class="string">r"\xf0\x9f\x92"</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">"💩"</span>), u(<span class="string">r"\xf0\x9f\x92\xa9"</span>));
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>unescape_weird() {
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\\&quot;</span>), u(<span class="string">r&quot;\&quot;</span>));
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\\&quot;</span>), u(<span class="string">r&quot;\\&quot;</span>));
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\\x&quot;</span>), u(<span class="string">r&quot;\x&quot;</span>));
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\\xA&quot;</span>), u(<span class="string">r&quot;\xA&quot;</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\\"</span>), u(<span class="string">r"\"</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\\"</span>), u(<span class="string">r"\\"</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\\x"</span>), u(<span class="string">r"\x"</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\\xA"</span>), u(<span class="string">r"\xA"</span>));
 
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\\xZ&quot;</span>), u(<span class="string">r&quot;\xZ&quot;</span>));
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\\xZZ&quot;</span>), u(<span class="string">r&quot;\xZZ&quot;</span>));
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\\i&quot;</span>), u(<span class="string">r&quot;\i&quot;</span>));
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\\u&quot;</span>), u(<span class="string">r&quot;\u&quot;</span>));
-        <span class="macro">assert_eq!</span>(B(<span class="string">b&quot;\\u{2603}&quot;</span>), u(<span class="string">r&quot;\u{2603}&quot;</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\\xZ"</span>), u(<span class="string">r"\xZ"</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\\xZZ"</span>), u(<span class="string">r"\xZZ"</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\\i"</span>), u(<span class="string">r"\i"</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\\u"</span>), u(<span class="string">r"\u"</span>));
+        <span class="macro">assert_eq!</span>(B(<span class="string">b"\\u{2603}"</span>), u(<span class="string">r"\u{2603}"</span>));
     }
 }
 </code></pre></div></section></main></body></html>

@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-1.5.4/src/scope/fs.rs`."><title>fs.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="tauri" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-1.6.0/src/scope/fs.rs`."><title>fs.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="tauri" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -433,10 +434,10 @@
 }
 
 <span class="kw">impl </span>fmt::Debug <span class="kw">for </span>Scope {
-  <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-    f.debug_struct(<span class="string">&quot;Scope&quot;</span>)
+  <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
+    f.debug_struct(<span class="string">"Scope"</span>)
       .field(
-        <span class="string">&quot;allowed_patterns&quot;</span>,
+        <span class="string">"allowed_patterns"</span>,
         <span class="kw-2">&amp;</span><span class="self">self
           </span>.allowed_patterns
           .lock()
@@ -446,7 +447,7 @@
           .collect::&lt;Vec&lt;<span class="kw-2">&amp;</span>str&gt;&gt;(),
       )
       .field(
-        <span class="string">&quot;forbidden_patterns&quot;</span>,
+        <span class="string">"forbidden_patterns"</span>,
         <span class="kw-2">&amp;</span><span class="self">self
           </span>.forbidden_patterns
           .lock()
@@ -471,7 +472,7 @@
     <span class="kw">if let </span><span class="prelude-val">Ok</span>(p) = std::fs::canonicalize(<span class="kw-2">&amp;</span>path) {
       list.insert(f(<span class="kw-2">&amp;</span>p.to_string_lossy())<span class="question-mark">?</span>);
     } <span class="kw">else </span>{
-      list.insert(f(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;\\\\?\\{}&quot;</span>, path.display()))<span class="question-mark">?</span>);
+      list.insert(f(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"\\\\?\\{}"</span>, path.display()))<span class="question-mark">?</span>);
     }
   }
   <span class="prelude-val">Ok</span>(())
@@ -518,7 +519,7 @@
       forbidden_patterns: Arc::new(Mutex::new(forbidden_patterns)),
       event_listeners: Default::default(),
       match_options: glob::MatchOptions {
-        <span class="comment">// this is needed so `/dir/*` doesn&#39;t match files within subdirectories such as `/dir/subdir/file.txt`
+        <span class="comment">// this is needed so `/dir/*` doesn't match files within subdirectories such as `/dir/subdir/file.txt`
         // see: https://github.com/tauri-apps/tauri/security/advisories/GHSA-6mv3-wm7j-h4w5
         </span>require_literal_separator: <span class="bool-val">true</span>,
         require_literal_leading_dot,
@@ -538,7 +539,7 @@
   }
 
   <span class="doccomment">/// Listen to an event on this scope.
-  </span><span class="kw">pub fn </span>listen&lt;F: Fn(<span class="kw-2">&amp;</span>Event) + Send + <span class="lifetime">&#39;static</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, f: F) -&gt; Uuid {
+  </span><span class="kw">pub fn </span>listen&lt;F: Fn(<span class="kw-2">&amp;</span>Event) + Send + <span class="lifetime">'static</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, f: F) -&gt; Uuid {
     <span class="kw">let </span>id = Uuid::new_v4();
     <span class="self">self</span>.event_listeners.lock().unwrap().insert(id, Box::new(f));
     id
@@ -565,7 +566,7 @@
       </span>push_pattern(<span class="kw-2">&amp;mut </span>list, path, escaped_pattern)<span class="question-mark">?</span>;
       <span class="comment">// allow its files and subdirectories to be read
       </span>push_pattern(<span class="kw-2">&amp;mut </span>list, path, |p| {
-        escaped_pattern_with(p, <span class="kw">if </span>recursive { <span class="string">&quot;**&quot; </span>} <span class="kw">else </span>{ <span class="string">&quot;*&quot; </span>})
+        escaped_pattern_with(p, <span class="kw">if </span>recursive { <span class="string">"**" </span>} <span class="kw">else </span>{ <span class="string">"*" </span>})
       })<span class="question-mark">?</span>;
     }
     <span class="self">self</span>.trigger(Event::PathAllowed(path.to_path_buf()));
@@ -598,7 +599,7 @@
       </span>push_pattern(<span class="kw-2">&amp;mut </span>list, path, escaped_pattern)<span class="question-mark">?</span>;
       <span class="comment">// allow its files and subdirectories to be read
       </span>push_pattern(<span class="kw-2">&amp;mut </span>list, path, |p| {
-        escaped_pattern_with(p, <span class="kw">if </span>recursive { <span class="string">&quot;**&quot; </span>} <span class="kw">else </span>{ <span class="string">&quot;*&quot; </span>})
+        escaped_pattern_with(p, <span class="kw">if </span>recursive { <span class="string">"**" </span>} <span class="kw">else </span>{ <span class="string">"*" </span>})
       })<span class="question-mark">?</span>;
     }
     <span class="self">self</span>.trigger(Event::PathForbidden(path.to_path_buf()));
@@ -660,7 +661,7 @@
 
 <span class="kw">fn </span>escaped_pattern_with(p: <span class="kw-2">&amp;</span>str, append: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;Pattern, glob::PatternError&gt; {
   Pattern::new(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
-    <span class="string">&quot;{}{}{append}&quot;</span>,
+    <span class="string">"{}{}{append}"</span>,
     glob::Pattern::escape(p),
     MAIN_SEPARATOR
   ))
@@ -676,7 +677,7 @@
       forbidden_patterns: Default::default(),
       event_listeners: Default::default(),
       match_options: glob::MatchOptions {
-        <span class="comment">// this is needed so `/dir/*` doesn&#39;t match files within subdirectories such as `/dir/subdir/file.txt`
+        <span class="comment">// this is needed so `/dir/*` doesn't match files within subdirectories such as `/dir/subdir/file.txt`
         // see: https://github.com/tauri-apps/tauri/security/advisories/GHSA-6mv3-wm7j-h4w5
         </span>require_literal_separator: <span class="bool-val">true</span>,
         <span class="comment">// dotfiles are not supposed to be exposed by default on unix
@@ -694,95 +695,95 @@
     <span class="kw">let </span>scope = new_scope();
     <span class="attr">#[cfg(unix)]
     </span>{
-      scope.allow_directory(<span class="string">&quot;/home/tauri/**&quot;</span>, <span class="bool-val">false</span>).unwrap();
-      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">&quot;/home/tauri/**&quot;</span>));
-      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">&quot;/home/tauri/**/file&quot;</span>));
-      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">&quot;/home/tauri/anyfile&quot;</span>));
+      scope.allow_directory(<span class="string">"/home/tauri/**"</span>, <span class="bool-val">false</span>).unwrap();
+      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">"/home/tauri/**"</span>));
+      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">"/home/tauri/**/file"</span>));
+      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">"/home/tauri/anyfile"</span>));
     }
     <span class="attr">#[cfg(windows)]
     </span>{
-      scope.allow_directory(<span class="string">&quot;C:\\home\\tauri\\**&quot;</span>, <span class="bool-val">false</span>).unwrap();
-      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">&quot;C:\\home\\tauri\\**&quot;</span>));
-      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">&quot;C:\\home\\tauri\\**\\file&quot;</span>));
-      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">&quot;C:\\home\\tauri\\anyfile&quot;</span>));
+      scope.allow_directory(<span class="string">"C:\\home\\tauri\\**"</span>, <span class="bool-val">false</span>).unwrap();
+      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">"C:\\home\\tauri\\**"</span>));
+      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">"C:\\home\\tauri\\**\\file"</span>));
+      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">"C:\\home\\tauri\\anyfile"</span>));
     }
 
     <span class="kw">let </span>scope = new_scope();
     <span class="attr">#[cfg(unix)]
     </span>{
-      scope.allow_file(<span class="string">&quot;/home/tauri/**&quot;</span>).unwrap();
-      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">&quot;/home/tauri/**&quot;</span>));
-      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">&quot;/home/tauri/**/file&quot;</span>));
-      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">&quot;/home/tauri/anyfile&quot;</span>));
+      scope.allow_file(<span class="string">"/home/tauri/**"</span>).unwrap();
+      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">"/home/tauri/**"</span>));
+      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">"/home/tauri/**/file"</span>));
+      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">"/home/tauri/anyfile"</span>));
     }
     <span class="attr">#[cfg(windows)]
     </span>{
-      scope.allow_file(<span class="string">&quot;C:\\home\\tauri\\**&quot;</span>).unwrap();
-      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">&quot;C:\\home\\tauri\\**&quot;</span>));
-      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">&quot;C:\\home\\tauri\\**\\file&quot;</span>));
-      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">&quot;C:\\home\\tauri\\anyfile&quot;</span>));
+      scope.allow_file(<span class="string">"C:\\home\\tauri\\**"</span>).unwrap();
+      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">"C:\\home\\tauri\\**"</span>));
+      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">"C:\\home\\tauri\\**\\file"</span>));
+      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">"C:\\home\\tauri\\anyfile"</span>));
     }
 
     <span class="kw">let </span>scope = new_scope();
     <span class="attr">#[cfg(unix)]
     </span>{
-      scope.allow_directory(<span class="string">&quot;/home/tauri&quot;</span>, <span class="bool-val">true</span>).unwrap();
-      scope.forbid_directory(<span class="string">&quot;/home/tauri/**&quot;</span>, <span class="bool-val">false</span>).unwrap();
-      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">&quot;/home/tauri/**&quot;</span>));
-      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">&quot;/home/tauri/**/file&quot;</span>));
-      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">&quot;/home/tauri/**/inner/file&quot;</span>));
-      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">&quot;/home/tauri/inner/folder/anyfile&quot;</span>));
-      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">&quot;/home/tauri/anyfile&quot;</span>));
+      scope.allow_directory(<span class="string">"/home/tauri"</span>, <span class="bool-val">true</span>).unwrap();
+      scope.forbid_directory(<span class="string">"/home/tauri/**"</span>, <span class="bool-val">false</span>).unwrap();
+      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">"/home/tauri/**"</span>));
+      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">"/home/tauri/**/file"</span>));
+      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">"/home/tauri/**/inner/file"</span>));
+      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">"/home/tauri/inner/folder/anyfile"</span>));
+      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">"/home/tauri/anyfile"</span>));
     }
     <span class="attr">#[cfg(windows)]
     </span>{
-      scope.allow_directory(<span class="string">&quot;C:\\home\\tauri&quot;</span>, <span class="bool-val">true</span>).unwrap();
+      scope.allow_directory(<span class="string">"C:\\home\\tauri"</span>, <span class="bool-val">true</span>).unwrap();
       scope
-        .forbid_directory(<span class="string">&quot;C:\\home\\tauri\\**&quot;</span>, <span class="bool-val">false</span>)
+        .forbid_directory(<span class="string">"C:\\home\\tauri\\**"</span>, <span class="bool-val">false</span>)
         .unwrap();
-      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">&quot;C:\\home\\tauri\\**&quot;</span>));
-      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">&quot;C:\\home\\tauri\\**\\file&quot;</span>));
-      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">&quot;C:\\home\\tauri\\**\\inner\\file&quot;</span>));
-      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">&quot;C:\\home\\tauri\\inner\\folder\\anyfile&quot;</span>));
-      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">&quot;C:\\home\\tauri\\anyfile&quot;</span>));
+      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">"C:\\home\\tauri\\**"</span>));
+      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">"C:\\home\\tauri\\**\\file"</span>));
+      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">"C:\\home\\tauri\\**\\inner\\file"</span>));
+      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">"C:\\home\\tauri\\inner\\folder\\anyfile"</span>));
+      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">"C:\\home\\tauri\\anyfile"</span>));
     }
 
     <span class="kw">let </span>scope = new_scope();
     <span class="attr">#[cfg(unix)]
     </span>{
-      scope.allow_directory(<span class="string">&quot;/home/tauri&quot;</span>, <span class="bool-val">true</span>).unwrap();
-      scope.forbid_file(<span class="string">&quot;/home/tauri/**&quot;</span>).unwrap();
-      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">&quot;/home/tauri/**&quot;</span>));
-      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">&quot;/home/tauri/**/file&quot;</span>));
-      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">&quot;/home/tauri/**/inner/file&quot;</span>));
-      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">&quot;/home/tauri/anyfile&quot;</span>));
+      scope.allow_directory(<span class="string">"/home/tauri"</span>, <span class="bool-val">true</span>).unwrap();
+      scope.forbid_file(<span class="string">"/home/tauri/**"</span>).unwrap();
+      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">"/home/tauri/**"</span>));
+      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">"/home/tauri/**/file"</span>));
+      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">"/home/tauri/**/inner/file"</span>));
+      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">"/home/tauri/anyfile"</span>));
     }
     <span class="attr">#[cfg(windows)]
     </span>{
-      scope.allow_directory(<span class="string">&quot;C:\\home\\tauri&quot;</span>, <span class="bool-val">true</span>).unwrap();
-      scope.forbid_file(<span class="string">&quot;C:\\home\\tauri\\**&quot;</span>).unwrap();
-      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">&quot;C:\\home\\tauri\\**&quot;</span>));
-      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">&quot;C:\\home\\tauri\\**\\file&quot;</span>));
-      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">&quot;C:\\home\\tauri\\**\\inner\\file&quot;</span>));
-      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">&quot;C:\\home\\tauri\\anyfile&quot;</span>));
+      scope.allow_directory(<span class="string">"C:\\home\\tauri"</span>, <span class="bool-val">true</span>).unwrap();
+      scope.forbid_file(<span class="string">"C:\\home\\tauri\\**"</span>).unwrap();
+      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">"C:\\home\\tauri\\**"</span>));
+      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">"C:\\home\\tauri\\**\\file"</span>));
+      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">"C:\\home\\tauri\\**\\inner\\file"</span>));
+      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">"C:\\home\\tauri\\anyfile"</span>));
     }
 
     <span class="kw">let </span>scope = new_scope();
     <span class="attr">#[cfg(unix)]
     </span>{
-      scope.allow_directory(<span class="string">&quot;/home/tauri&quot;</span>, <span class="bool-val">false</span>).unwrap();
-      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">&quot;/home/tauri/**&quot;</span>));
-      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">&quot;/home/tauri/**/file&quot;</span>));
-      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">&quot;/home/tauri/**/inner/file&quot;</span>));
-      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">&quot;/home/tauri/anyfile&quot;</span>));
+      scope.allow_directory(<span class="string">"/home/tauri"</span>, <span class="bool-val">false</span>).unwrap();
+      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">"/home/tauri/**"</span>));
+      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">"/home/tauri/**/file"</span>));
+      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">"/home/tauri/**/inner/file"</span>));
+      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">"/home/tauri/anyfile"</span>));
     }
     <span class="attr">#[cfg(windows)]
     </span>{
-      scope.allow_directory(<span class="string">&quot;C:\\home\\tauri&quot;</span>, <span class="bool-val">false</span>).unwrap();
-      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">&quot;C:\\home\\tauri\\**&quot;</span>));
-      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">&quot;C:\\home\\tauri\\**\\file&quot;</span>));
-      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">&quot;C:\\home\\tauri\\**\\inner\\file&quot;</span>));
-      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">&quot;C:\\home\\tauri\\anyfile&quot;</span>));
+      scope.allow_directory(<span class="string">"C:\\home\\tauri"</span>, <span class="bool-val">false</span>).unwrap();
+      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">"C:\\home\\tauri\\**"</span>));
+      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">"C:\\home\\tauri\\**\\file"</span>));
+      <span class="macro">assert!</span>(!scope.is_allowed(<span class="string">"C:\\home\\tauri\\**\\inner\\file"</span>));
+      <span class="macro">assert!</span>(scope.is_allowed(<span class="string">"C:\\home\\tauri\\anyfile"</span>));
     }
   }
 }

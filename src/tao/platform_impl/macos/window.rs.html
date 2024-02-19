@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tao-0.16.7/src/platform_impl/macos/window.rs`."><title>window.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="tao" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tao-0.16.7/src/platform_impl/macos/window.rs`."><title>window.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="tao" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1728,7 +1729,7 @@
     <span class="comment">// On Mojave, views automatically become layer-backed shortly after being added to
     // a window. Changing the layer-backedness of a view breaks the association between
     // the view and its associated OpenGL context. To work around this, on Mojave we
-    // explicitly make the view layer-backed up front so that AppKit doesn&#39;t do it
+    // explicitly make the view layer-backed up front so that AppKit doesn't do it
     // itself and break the association with its context.
     </span><span class="kw">if </span>f64::floor(appkit::NSAppKitVersionNumber) &gt; appkit::NSAppKitVersionNumber10_12 {
       ns_view.setWantsLayer(YES);
@@ -1908,8 +1909,8 @@
 <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>get_ns_theme() -&gt; Theme {
   <span class="kw">unsafe </span>{
     <span class="kw">let </span><span class="kw-2">mut </span>appearances: Vec&lt;id&gt; = Vec::new();
-    appearances.push(NSString::alloc(nil).init_str(<span class="string">&quot;NSAppearanceNameAqua&quot;</span>));
-    appearances.push(NSString::alloc(nil).init_str(<span class="string">&quot;NSAppearanceNameDarkAqua&quot;</span>));
+    appearances.push(NSString::alloc(nil).init_str(<span class="string">"NSAppearanceNameAqua"</span>));
+    appearances.push(NSString::alloc(nil).init_str(<span class="string">"NSAppearanceNameDarkAqua"</span>));
     <span class="kw">let </span>app_class = <span class="macro">class!</span>(NSApplication);
     <span class="kw">let </span>app: id = <span class="macro">msg_send!</span>[app_class, sharedApplication];
     <span class="kw">let </span>has_theme: BOOL = <span class="macro">msg_send!</span>[app, respondsToSelector: <span class="macro">sel!</span>(effectiveAppearance)];
@@ -1923,7 +1924,7 @@
     ];
     <span class="kw">let </span>name = ns_string_to_rust(name);
     <span class="kw">match </span><span class="kw-2">&amp;</span>name[..] {
-      <span class="string">&quot;NSAppearanceNameDarkAqua&quot; </span>=&gt; Theme::Dark,
+      <span class="string">"NSAppearanceNameDarkAqua" </span>=&gt; Theme::Dark,
       <span class="kw">_ </span>=&gt; Theme::Light,
     }
   }
@@ -1931,8 +1932,8 @@
 
 <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>set_ns_theme(theme: Theme) {
   <span class="kw">let </span>name = <span class="kw">match </span>theme {
-    Theme::Dark =&gt; <span class="string">&quot;NSAppearanceNameDarkAqua&quot;</span>,
-    Theme::Light =&gt; <span class="string">&quot;NSAppearanceNameAqua&quot;</span>,
+    Theme::Dark =&gt; <span class="string">"NSAppearanceNameDarkAqua"</span>,
+    Theme::Light =&gt; <span class="string">"NSAppearanceNameAqua"</span>,
   };
   <span class="kw">unsafe </span>{
     <span class="kw">let </span>app_class = <span class="macro">class!</span>(NSApplication);
@@ -1953,24 +1954,24 @@
 <span class="macro">lazy_static! </span>{
   <span class="kw">static </span><span class="kw-2">ref </span>WINDOW_CLASS: WindowClass = <span class="kw">unsafe </span>{
     <span class="kw">let </span>window_superclass = <span class="macro">class!</span>(NSWindow);
-    <span class="kw">let </span><span class="kw-2">mut </span>decl = ClassDecl::new(<span class="string">&quot;TaoWindow&quot;</span>, window_superclass).unwrap();
+    <span class="kw">let </span><span class="kw-2">mut </span>decl = ClassDecl::new(<span class="string">"TaoWindow"</span>, window_superclass).unwrap();
     decl.add_method(
       <span class="macro">sel!</span>(canBecomeMainWindow),
-      util::yes <span class="kw">as extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn</span>(<span class="kw-2">&amp;</span>Object, Sel) -&gt; BOOL,
+      util::yes <span class="kw">as extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">&amp;</span>Object, Sel) -&gt; BOOL,
     );
     decl.add_method(
       <span class="macro">sel!</span>(canBecomeKeyWindow),
-      util::yes <span class="kw">as extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn</span>(<span class="kw-2">&amp;</span>Object, Sel) -&gt; BOOL,
+      util::yes <span class="kw">as extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">&amp;</span>Object, Sel) -&gt; BOOL,
     );
     decl.add_method(
       <span class="macro">sel!</span>(sendEvent:),
-      send_event <span class="kw">as extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn</span>(<span class="kw-2">&amp;</span>Object, Sel, id),
+      send_event <span class="kw">as extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">&amp;</span>Object, Sel, id),
     );
     WindowClass(decl.register())
   };
 }
 
-<span class="kw">extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span>send_event(this: <span class="kw-2">&amp;</span>Object, _sel: Sel, event: id) {
+<span class="kw">extern </span><span class="string">"C" </span><span class="kw">fn </span>send_event(this: <span class="kw-2">&amp;</span>Object, _sel: Sel, event: id) {
   <span class="kw">unsafe </span>{
     <span class="kw">let </span>event_type = event.eventType();
     <span class="kw">match </span>event_type {
@@ -2027,8 +2028,8 @@
     SharedState {
       resizable: attribs.resizable,
       <span class="comment">// This fullscreen field tracks the current state of the window
-      // (as seen by `WindowDelegate`), and since the window hasn&#39;t
-      // actually been fullscreened yet, we can&#39;t set it yet. This is
+      // (as seen by `WindowDelegate`), and since the window hasn't
+      // actually been fullscreened yet, we can't set it yet. This is
       // necessary for state transitions to work right, since otherwise
       // the initial value and the first `set_fullscreen` call would be
       // identical, resulting in a no-op.
@@ -2060,24 +2061,24 @@
     <span class="kw">unsafe </span>{
       <span class="kw">let </span>is_main_thread: BOOL = <span class="macro">msg_send!</span>(<span class="macro">class!</span>(NSThread), isMainThread);
       <span class="kw">if </span>is_main_thread == NO {
-        <span class="macro">panic!</span>(<span class="string">&quot;Windows can only be created on the main thread on macOS&quot;</span>);
+        <span class="macro">panic!</span>(<span class="string">"Windows can only be created on the main thread on macOS"</span>);
       }
     }
-    <span class="macro">trace!</span>(<span class="string">&quot;Creating new window&quot;</span>);
+    <span class="macro">trace!</span>(<span class="string">"Creating new window"</span>);
 
     <span class="kw">let </span>pool = <span class="kw">unsafe </span>{ NSAutoreleasePool::new(nil) };
     <span class="kw">let </span>ns_window = create_window(<span class="kw-2">&amp;</span>win_attribs, <span class="kw-2">&amp;</span>pl_attribs).ok_or_else(|| {
       <span class="kw">unsafe </span>{ pool.drain() };
-      <span class="macro">os_error!</span>(OsError::CreationError(<span class="string">&quot;Couldn&#39;t create `NSWindow`&quot;</span>))
+      <span class="macro">os_error!</span>(OsError::CreationError(<span class="string">"Couldn't create `NSWindow`"</span>))
     })<span class="question-mark">?</span>;
 
     <span class="kw">let </span>(ns_view, cursor_state) =
       <span class="kw">unsafe </span>{ create_view(<span class="kw-2">*</span>ns_window, <span class="kw-2">&amp;</span>pl_attribs) }.ok_or_else(|| {
         <span class="kw">unsafe </span>{ pool.drain() };
-        <span class="macro">os_error!</span>(OsError::CreationError(<span class="string">&quot;Couldn&#39;t create `NSView`&quot;</span>))
+        <span class="macro">os_error!</span>(OsError::CreationError(<span class="string">"Couldn't create `NSView`"</span>))
       })<span class="question-mark">?</span>;
 
-    <span class="comment">// Configure the new view as the &quot;key view&quot; for the window
+    <span class="comment">// Configure the new view as the "key view" for the window
     </span><span class="kw">unsafe </span>{
       ns_window.setContentView_(<span class="kw-2">*</span>ns_view);
       ns_window.setInitialFirstResponder_(<span class="kw-2">*</span>ns_view);
@@ -2109,9 +2110,9 @@
       ];
     }
 
-    <span class="comment">// Since `win_attribs` is put into a mutex below, we&#39;ll just copy these
+    <span class="comment">// Since `win_attribs` is put into a mutex below, we'll just copy these
     // attributes now instead of bothering to lock it later.
-    // Also, `SharedState` doesn&#39;t carry `fullscreen` over; it&#39;s set
+    // Also, `SharedState` doesn't carry `fullscreen` over; it's set
     // indirectly by us calling `set_fullscreen` below, causing handlers in
     // `WindowDelegate` to update the state.
     </span><span class="kw">let </span>fullscreen = win_attribs.fullscreen.take();
@@ -2155,7 +2156,7 @@
     window.set_visible_on_all_workspaces(visible_on_all_workspaces);
 
     <span class="comment">// Setting the window as key has to happen *after* we set the fullscreen
-    // state, since otherwise we&#39;ll briefly see the window at normal size
+    // state, since otherwise we'll briefly see the window at normal size
     // before it transitions.
     </span><span class="kw">if </span>visible {
       <span class="kw">if </span>focused {
@@ -2202,7 +2203,7 @@
 
   <span class="kw">pub fn </span>set_menu(<span class="kw-2">&amp;</span><span class="self">self</span>, menu: <span class="prelude-ty">Option</span>&lt;Menu&gt;) {
     <span class="comment">// TODO if None we should set an empty menu
-    // On windows we can remove it, in macOS we can&#39;t
+    // On windows we can remove it, in macOS we can't
     </span><span class="kw">if let </span><span class="prelude-val">Some</span>(menu) = menu {
       menu::initialize(menu);
     }
@@ -2319,10 +2320,10 @@
   <span class="attr">#[inline]
   </span><span class="kw">pub fn </span>set_resizable(<span class="kw-2">&amp;</span><span class="self">self</span>, resizable: bool) {
     <span class="kw">let </span>fullscreen = {
-      <span class="macro">trace!</span>(<span class="string">&quot;Locked shared state in `set_resizable`&quot;</span>);
+      <span class="macro">trace!</span>(<span class="string">"Locked shared state in `set_resizable`"</span>);
       <span class="kw">let </span><span class="kw-2">mut </span>shared_state_lock = <span class="self">self</span>.shared_state.lock().unwrap();
       shared_state_lock.resizable = resizable;
-      <span class="macro">trace!</span>(<span class="string">&quot;Unlocked shared state in `set_resizable`&quot;</span>);
+      <span class="macro">trace!</span>(<span class="string">"Unlocked shared state in `set_resizable`"</span>);
       shared_state_lock.fullscreen.is_some()
     };
     <span class="kw">if </span>!fullscreen {
@@ -2333,7 +2334,7 @@
         mask &amp;= !NSWindowStyleMask::NSResizableWindowMask;
       }
       <span class="self">self</span>.set_style_mask_async(mask);
-    } <span class="comment">// Otherwise, we don&#39;t change the mask until we exit fullscreen.
+    } <span class="comment">// Otherwise, we don't change the mask until we exit fullscreen.
   </span>}
 
   <span class="attr">#[inline]
@@ -2446,7 +2447,7 @@
   }
 
   <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>is_zoomed(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-    <span class="comment">// because `isZoomed` doesn&#39;t work if the window&#39;s borderless,
+    <span class="comment">// because `isZoomed` doesn't work if the window's borderless,
     // we make it resizable temporalily.
     </span><span class="kw">let </span>curr_mask = <span class="kw">unsafe </span>{ <span class="self">self</span>.ns_window.styleMask() };
 
@@ -2482,7 +2483,7 @@
   /// user clicking on the green fullscreen button or programmatically by
   /// `toggleFullScreen:`
   </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>restore_state_from_fullscreen(<span class="kw-2">&amp;</span><span class="self">self</span>) {
-    <span class="macro">trace!</span>(<span class="string">&quot;Locked shared state in `restore_state_from_fullscreen`&quot;</span>);
+    <span class="macro">trace!</span>(<span class="string">"Locked shared state in `restore_state_from_fullscreen`"</span>);
     <span class="kw">let </span><span class="kw-2">mut </span>shared_state_lock = <span class="self">self</span>.shared_state.lock().unwrap();
 
     shared_state_lock.fullscreen = <span class="prelude-val">None</span>;
@@ -2491,7 +2492,7 @@
     <span class="kw">let </span>mask = <span class="self">self</span>.saved_style(<span class="kw-2">&amp;mut *</span>shared_state_lock);
 
     drop(shared_state_lock);
-    <span class="macro">trace!</span>(<span class="string">&quot;Unocked shared state in `restore_state_from_fullscreen`&quot;</span>);
+    <span class="macro">trace!</span>(<span class="string">"Unocked shared state in `restore_state_from_fullscreen`"</span>);
 
     <span class="self">self</span>.set_style_mask_async(mask);
     <span class="self">self</span>.set_maximized(maximized);
@@ -2592,25 +2593,25 @@
 
   <span class="attr">#[inline]
   </span><span class="kw">pub fn </span>set_fullscreen(<span class="kw-2">&amp;</span><span class="self">self</span>, fullscreen: <span class="prelude-ty">Option</span>&lt;Fullscreen&gt;) {
-    <span class="macro">trace!</span>(<span class="string">&quot;Locked shared state in `set_fullscreen`&quot;</span>);
+    <span class="macro">trace!</span>(<span class="string">"Locked shared state in `set_fullscreen`"</span>);
     <span class="kw">let </span><span class="kw-2">mut </span>shared_state_lock = <span class="self">self</span>.shared_state.lock().unwrap();
     <span class="kw">if </span>shared_state_lock.is_simple_fullscreen {
-      <span class="macro">trace!</span>(<span class="string">&quot;Unlocked shared state in `set_fullscreen`&quot;</span>);
+      <span class="macro">trace!</span>(<span class="string">"Unlocked shared state in `set_fullscreen`"</span>);
       <span class="kw">return</span>;
     }
     <span class="kw">if </span>shared_state_lock.in_fullscreen_transition {
-      <span class="comment">// We can&#39;t set fullscreen here.
+      <span class="comment">// We can't set fullscreen here.
       // Set fullscreen after transition.
       </span>shared_state_lock.target_fullscreen = <span class="prelude-val">Some</span>(fullscreen);
-      <span class="macro">trace!</span>(<span class="string">&quot;Unlocked shared state in `set_fullscreen`&quot;</span>);
+      <span class="macro">trace!</span>(<span class="string">"Unlocked shared state in `set_fullscreen`"</span>);
       <span class="kw">return</span>;
     }
     <span class="kw">let </span>old_fullscreen = shared_state_lock.fullscreen.clone();
     <span class="kw">if </span>fullscreen == old_fullscreen {
-      <span class="macro">trace!</span>(<span class="string">&quot;Unlocked shared state in `set_fullscreen`&quot;</span>);
+      <span class="macro">trace!</span>(<span class="string">"Unlocked shared state in `set_fullscreen`"</span>);
       <span class="kw">return</span>;
     }
-    <span class="macro">trace!</span>(<span class="string">&quot;Unlocked shared state in `set_fullscreen`&quot;</span>);
+    <span class="macro">trace!</span>(<span class="string">"Unlocked shared state in `set_fullscreen`"</span>);
     drop(shared_state_lock);
 
     <span class="comment">// If the fullscreen is on a different monitor, we must move the window
@@ -2645,14 +2646,14 @@
 
     <span class="kw">if let </span><span class="prelude-val">Some</span>(Fullscreen::Exclusive(<span class="kw-2">ref </span>video_mode)) = fullscreen {
       <span class="comment">// Note: `enterFullScreenMode:withOptions:` seems to do the exact
-      // same thing as we&#39;re doing here (captures the display, sets the
+      // same thing as we're doing here (captures the display, sets the
       // video mode, and hides the menu bar and dock), with the exception
-      // of that I couldn&#39;t figure out how to set the display mode with
+      // of that I couldn't figure out how to set the display mode with
       // it. I think `enterFullScreenMode:withOptions:` is still using the
       // older display mode API where display modes were of the type
-      // `CFDictionary`, but this has changed, so we can&#39;t obtain the
-      // correct parameter for this any longer. Apple&#39;s code samples for
-      // this function seem to just pass in &quot;YES&quot; for the display mode
+      // `CFDictionary`, but this has changed, so we can't obtain the
+      // correct parameter for this any longer. Apple's code samples for
+      // this function seem to just pass in "YES" for the display mode
       // parameter, which is not consistent with the docs saying that it
       // takes a `NSDictionary`..
 
@@ -2663,7 +2664,7 @@
       <span class="kw">if </span><span class="macro">matches!</span>(old_fullscreen, <span class="prelude-val">Some</span>(Fullscreen::Borderless(<span class="kw">_</span>))) {
         <span class="kw">unsafe </span>{
           <span class="kw">let </span>app = NSApp();
-          <span class="macro">trace!</span>(<span class="string">&quot;Locked shared state in `set_fullscreen`&quot;</span>);
+          <span class="macro">trace!</span>(<span class="string">"Locked shared state in `set_fullscreen`"</span>);
           <span class="kw">let </span><span class="kw-2">mut </span>shared_state_lock = <span class="self">self</span>.shared_state.lock().unwrap();
           shared_state_lock.save_presentation_opts = <span class="prelude-val">Some</span>(app.presentationOptions_());
         }
@@ -2694,7 +2695,7 @@
           video_mode.video_mode.native_mode.<span class="number">0</span>,
           std::ptr::null(),
         );
-        <span class="macro">assert!</span>(result == ffi::kCGErrorSuccess, <span class="string">&quot;failed to set video mode&quot;</span>);
+        <span class="macro">assert!</span>(result == ffi::kCGErrorSuccess, <span class="string">"failed to set video mode"</span>);
 
         <span class="comment">// After the display has been configured, fade back in
         // asynchronously
@@ -2714,10 +2715,10 @@
       }
     }
 
-    <span class="macro">trace!</span>(<span class="string">&quot;Locked shared state in `set_fullscreen`&quot;</span>);
+    <span class="macro">trace!</span>(<span class="string">"Locked shared state in `set_fullscreen`"</span>);
     <span class="kw">let </span><span class="kw-2">mut </span>shared_state_lock = <span class="self">self</span>.shared_state.lock().unwrap();
     shared_state_lock.fullscreen = fullscreen.clone();
-    <span class="macro">trace!</span>(<span class="string">&quot;Unlocked shared state in `set_fullscreen`&quot;</span>);
+    <span class="macro">trace!</span>(<span class="string">"Unlocked shared state in `set_fullscreen`"</span>);
 
     <span class="kw">match </span>(<span class="kw-2">&amp;</span>old_fullscreen, <span class="kw-2">&amp;</span>fullscreen) {
       (<span class="kw-2">&amp;</span><span class="prelude-val">None</span>, <span class="kw-2">&amp;</span><span class="prelude-val">Some</span>(<span class="kw">_</span>)) =&gt; <span class="kw">unsafe </span>{
@@ -2748,7 +2749,7 @@
         );
       },
       (<span class="kw-2">&amp;</span><span class="prelude-val">Some</span>(Fullscreen::Borderless(<span class="kw">_</span>)), <span class="kw-2">&amp;</span><span class="prelude-val">Some</span>(Fullscreen::Exclusive(<span class="kw">_</span>))) =&gt; <span class="kw">unsafe </span>{
-        <span class="comment">// If we&#39;re already in fullscreen mode, calling
+        <span class="comment">// If we're already in fullscreen mode, calling
         // `CGDisplayCapture` will place the shielding window on top of
         // our window, which results in a black display and is not what
         // we want. So, we must place our window on top of the shielding
@@ -2757,7 +2758,7 @@
         // that the menu bar is disabled. This is done in the window
         // delegate in `window:willUseFullScreenPresentationOptions:`.
         </span><span class="kw">let </span>app = NSApp();
-        <span class="macro">trace!</span>(<span class="string">&quot;Locked shared state in `set_fullscreen`&quot;</span>);
+        <span class="macro">trace!</span>(<span class="string">"Locked shared state in `set_fullscreen`"</span>);
         shared_state_lock.save_presentation_opts = <span class="prelude-val">Some</span>(app.presentationOptions_());
 
         <span class="kw">let </span>presentation_options =
@@ -2790,7 +2791,7 @@
       },
       <span class="kw">_ </span>=&gt; {}
     }
-    <span class="macro">trace!</span>(<span class="string">&quot;Unlocked shared state in `set_fullscreen`&quot;</span>);
+    <span class="macro">trace!</span>(<span class="string">"Unlocked shared state in `set_fullscreen`"</span>);
   }
 
   <span class="attr">#[inline]
@@ -2799,17 +2800,17 @@
       <span class="self">self</span>.decorations.store(decorations, Ordering::Release);
 
       <span class="kw">let </span>(fullscreen, resizable) = {
-        <span class="macro">trace!</span>(<span class="string">&quot;Locked shared state in `set_decorations`&quot;</span>);
+        <span class="macro">trace!</span>(<span class="string">"Locked shared state in `set_decorations`"</span>);
         <span class="kw">let </span>shared_state_lock = <span class="self">self</span>.shared_state.lock().unwrap();
-        <span class="macro">trace!</span>(<span class="string">&quot;Unlocked shared state in `set_decorations`&quot;</span>);
+        <span class="macro">trace!</span>(<span class="string">"Unlocked shared state in `set_decorations`"</span>);
         (
           shared_state_lock.fullscreen.is_some(),
           shared_state_lock.resizable,
         )
       };
 
-      <span class="comment">// If we&#39;re in fullscreen mode, we wait to apply decoration changes
-      // until we&#39;re in `window_did_exit_fullscreen`.
+      <span class="comment">// If we're in fullscreen mode, we wait to apply decoration changes
+      // until we're in `window_did_exit_fullscreen`.
       </span><span class="kw">if </span>fullscreen {
         <span class="kw">return</span>;
       }
@@ -2854,12 +2855,12 @@
 
   <span class="attr">#[inline]
   </span><span class="kw">pub fn </span>set_window_icon(<span class="kw-2">&amp;</span><span class="self">self</span>, _icon: <span class="prelude-ty">Option</span>&lt;Icon&gt;) {
-    <span class="comment">// macOS doesn&#39;t have window icons. Though, there is
-    // `setRepresentedFilename`, but that&#39;s semantically distinct and should
+    <span class="comment">// macOS doesn't have window icons. Though, there is
+    // `setRepresentedFilename`, but that's semantically distinct and should
     // only be used when the window is in some way representing a specific
     // file/directory. For instance, Terminal.app uses this for the CWD.
     // Anyway, that should eventually be implemented as
-    // `WindowBuilderExt::with_represented_file` or something, and doesn&#39;t
+    // `WindowBuilderExt::with_represented_file` or something, and doesn't
     // have anything to do with `set_window_icon`.
     // https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/WinPanel/Tasks/SettingWindowTitle.html
   </span>}
@@ -2899,7 +2900,7 @@
 
   <span class="attr">#[inline]
   </span><span class="kw">pub fn </span>is_menu_visible(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-    <span class="macro">warn!</span>(<span class="string">&quot;`Window::is_menu_visible` always return true on macOS&quot;</span>);
+    <span class="macro">warn!</span>(<span class="string">"`Window::is_menu_visible` always return true on macOS"</span>);
     <span class="bool-val">true
   </span>}
 
@@ -2909,7 +2910,7 @@
     <span class="kw">unsafe </span>{
       <span class="kw">let </span>screen: id = <span class="macro">msg_send!</span>[<span class="kw-2">*</span><span class="self">self</span>.ns_window, screen];
       <span class="kw">let </span>desc = NSScreen::deviceDescription(screen);
-      <span class="kw">let </span>key = util::ns_string_id_ref(<span class="string">&quot;NSScreenNumber&quot;</span>);
+      <span class="kw">let </span>key = util::ns_string_id_ref(<span class="string">"NSScreenNumber"</span>);
       <span class="kw">let </span>value = NSDictionary::valueForKey_(desc, <span class="kw-2">*</span>key);
       <span class="kw">let </span>display_id: NSUInteger = <span class="macro">msg_send!</span>[value, unsignedIntegerValue];
       RootMonitorHandle {
@@ -3013,7 +3014,7 @@
       }
 
       <span class="kw">if </span>fullscreen {
-        <span class="comment">// Remember the original window&#39;s settings
+        <span class="comment">// Remember the original window's settings
         // Exclude title bar
         </span>shared_state_lock.standard_frame = <span class="prelude-val">Some</span>(NSWindow::contentRectForFrameRect_(
           <span class="kw-2">*</span><span class="self">self</span>.ns_window,
@@ -3022,7 +3023,7 @@
         shared_state_lock.saved_style = <span class="prelude-val">Some</span>(<span class="self">self</span>.ns_window.styleMask());
         shared_state_lock.save_presentation_opts = <span class="prelude-val">Some</span>(app.presentationOptions_());
 
-        <span class="comment">// Tell our window&#39;s state that we&#39;re in fullscreen
+        <span class="comment">// Tell our window's state that we're in fullscreen
         </span>shared_state_lock.is_simple_fullscreen = <span class="bool-val">true</span>;
 
         <span class="comment">// Simulate pre-Lion fullscreen by hiding the dock and menu bar
@@ -3044,7 +3045,7 @@
         <span class="kw">let </span>screen_frame = NSScreen::frame(screen);
         NSWindow::setFrame_display_(<span class="kw-2">*</span><span class="self">self</span>.ns_window, screen_frame, YES);
 
-        <span class="comment">// Fullscreen windows can&#39;t be resized, minimized, or moved
+        <span class="comment">// Fullscreen windows can't be resized, minimized, or moved
         </span>util::toggle_style_mask(
           <span class="kw-2">*</span><span class="self">self</span>.ns_window,
           <span class="kw-2">*</span><span class="self">self</span>.ns_view,
@@ -3143,7 +3144,7 @@
 
 <span class="kw">impl </span>Drop <span class="kw">for </span>UnownedWindow {
   <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-    <span class="macro">trace!</span>(<span class="string">&quot;Dropping `UnownedWindow` ({:?})&quot;</span>, <span class="self">self </span><span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">_</span>);
+    <span class="macro">trace!</span>(<span class="string">"Dropping `UnownedWindow` ({:?})"</span>, <span class="self">self </span><span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">_</span>);
     <span class="comment">// Close the window if it has not yet been closed.
     </span><span class="kw">if </span><span class="kw-2">*</span><span class="self">self</span>.ns_window != nil {
       <span class="kw">unsafe </span>{ util::close_async(<span class="self">self</span>.ns_window.clone()) };
@@ -3168,7 +3169,7 @@
   }
   <span class="kw">if </span>current_rect.size.height &lt; min_size.height {
     <span class="comment">// The origin point of a rectangle is at its bottom left in Cocoa.
-    // To ensure the window&#39;s top-left point remains the same:
+    // To ensure the window's top-left point remains the same:
     </span>current_rect.origin.y += current_rect.size.height - min_size.height;
     current_rect.size.height = min_size.height;
     window.setFrame_display_(current_rect, NO)
@@ -3192,7 +3193,7 @@
   }
   <span class="kw">if </span>current_rect.size.height &gt; max_size.height {
     <span class="comment">// The origin point of a rectangle is at its bottom left in Cocoa.
-    // To ensure the window&#39;s top-left point remains the same:
+    // To ensure the window's top-left point remains the same:
     </span>current_rect.origin.y += current_rect.size.height - max_size.height;
     current_rect.size.height = max_size.height;
     window.setFrame_display_(current_rect, NO)

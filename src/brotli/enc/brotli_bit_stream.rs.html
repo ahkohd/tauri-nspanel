@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-3.4.0/src/enc/brotli_bit_stream.rs`."><title>brotli_bit_stream.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-3.4.0/src/enc/brotli_bit_stream.rs`."><title>brotli_bit_stream.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2841,7 +2842,7 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 #![allow(unused_macros)]
-#[cfg(feature=<span class="string">&quot;std&quot;</span>)]
+#[cfg(feature=<span class="string">"std"</span>)]
 </span><span class="kw">use </span>std::io::Write;
 <span class="kw">use </span>VERSION;
 <span class="kw">use super</span>::{v8, s16};
@@ -2889,22 +2890,22 @@
     (<span class="number">1usize </span>&lt;&lt; lgwin) - <span class="number">16usize
 </span>}
 
-<span class="kw">fn </span>context_type_str(context_type:ContextType) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
+<span class="kw">fn </span>context_type_str(context_type:ContextType) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str {
    <span class="kw">match </span>context_type {
-         ContextType::CONTEXT_LSB6 =&gt; <span class="string">&quot;lsb6&quot;</span>,
-         ContextType::CONTEXT_MSB6 =&gt; <span class="string">&quot;msb6&quot;</span>,
-         ContextType::CONTEXT_UTF8 =&gt; <span class="string">&quot;utf8&quot;</span>,
-         ContextType::CONTEXT_SIGNED =&gt; <span class="string">&quot;sign&quot;</span>,
+         ContextType::CONTEXT_LSB6 =&gt; <span class="string">"lsb6"</span>,
+         ContextType::CONTEXT_MSB6 =&gt; <span class="string">"msb6"</span>,
+         ContextType::CONTEXT_UTF8 =&gt; <span class="string">"utf8"</span>,
+         ContextType::CONTEXT_SIGNED =&gt; <span class="string">"sign"</span>,
    }
 }
 
-<span class="kw">fn </span>prediction_mode_str(prediction_mode_nibble:interface::LiteralPredictionModeNibble) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
+<span class="kw">fn </span>prediction_mode_str(prediction_mode_nibble:interface::LiteralPredictionModeNibble) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str {
    <span class="kw">match </span>prediction_mode_nibble.prediction_mode() {
-         interface::LITERAL_PREDICTION_MODE_SIGN =&gt; <span class="string">&quot;sign&quot;</span>,
-         interface::LITERAL_PREDICTION_MODE_LSB6 =&gt; <span class="string">&quot;lsb6&quot;</span>,
-         interface::LITERAL_PREDICTION_MODE_MSB6 =&gt; <span class="string">&quot;msb6&quot;</span>,
-         interface::LITERAL_PREDICTION_MODE_UTF8 =&gt; <span class="string">&quot;utf8&quot;</span>,
-         <span class="kw">_ </span>=&gt; <span class="string">&quot;unknown&quot;</span>,
+         interface::LITERAL_PREDICTION_MODE_SIGN =&gt; <span class="string">"sign"</span>,
+         interface::LITERAL_PREDICTION_MODE_LSB6 =&gt; <span class="string">"lsb6"</span>,
+         interface::LITERAL_PREDICTION_MODE_MSB6 =&gt; <span class="string">"msb6"</span>,
+         interface::LITERAL_PREDICTION_MODE_UTF8 =&gt; <span class="string">"utf8"</span>,
+         <span class="kw">_ </span>=&gt; <span class="string">"unknown"</span>,
    }
 }
 
@@ -2927,18 +2928,18 @@
 }
 <span class="kw">const </span>COMMAND_BUFFER_SIZE: usize = <span class="number">4096</span>;
 
-<span class="kw">struct </span>CommandQueue&lt;<span class="lifetime">&#39;a</span>,
-                    Alloc:BrotliAlloc+<span class="lifetime">&#39;a</span>&gt; {
-    mb: InputPair&lt;<span class="lifetime">&#39;a</span>&gt;,
+<span class="kw">struct </span>CommandQueue&lt;<span class="lifetime">'a</span>,
+                    Alloc:BrotliAlloc+<span class="lifetime">'a</span>&gt; {
+    mb: InputPair&lt;<span class="lifetime">'a</span>&gt;,
     mb_byte_offset: usize,
-    mc: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Alloc,
+    mc: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Alloc,
     queue: &lt;Alloc <span class="kw">as </span>Allocator&lt;StaticCommand&gt;&gt;::AllocatedMemory,
-    pred_mode: interface::PredictionModeContextMap&lt;InputReferenceMut&lt;<span class="lifetime">&#39;a</span>&gt;&gt;,
+    pred_mode: interface::PredictionModeContextMap&lt;InputReferenceMut&lt;<span class="lifetime">'a</span>&gt;&gt;,
     loc: usize,
     entropy_tally_scratch: find_stride::EntropyTally&lt;Alloc&gt;,
     best_strides_per_block_type: &lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory,
     entropy_pyramid: find_stride::EntropyPyramid&lt;Alloc&gt;,
-    context_map_entropy: ContextMapEntropy&lt;<span class="lifetime">&#39;a</span>, Alloc&gt;,
+    context_map_entropy: ContextMapEntropy&lt;<span class="lifetime">'a</span>, Alloc&gt;,
     stride_detection_quality: u8,
     high_entropy_detection_quality: u8,
     block_type_literal: u8,
@@ -2946,21 +2947,21 @@
     overfull: bool,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Alloc:BrotliAlloc&gt; CommandQueue&lt;<span class="lifetime">&#39;a</span>, Alloc&gt; {
-    <span class="kw">fn </span>new(alloc: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Alloc,
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Alloc:BrotliAlloc&gt; CommandQueue&lt;<span class="lifetime">'a</span>, Alloc&gt; {
+    <span class="kw">fn </span>new(alloc: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Alloc,
            num_commands: usize,
-           pred_mode: interface::PredictionModeContextMap&lt;InputReferenceMut&lt;<span class="lifetime">&#39;a</span>&gt;&gt;,
-           mb: InputPair&lt;<span class="lifetime">&#39;a</span>&gt;,
+           pred_mode: interface::PredictionModeContextMap&lt;InputReferenceMut&lt;<span class="lifetime">'a</span>&gt;&gt;,
+           mb: InputPair&lt;<span class="lifetime">'a</span>&gt;,
            stride_detection_quality: u8,
            high_entropy_detection_quality: u8,
-           context_map_entropy: ContextMapEntropy&lt;<span class="lifetime">&#39;a</span>, Alloc&gt;,
+           context_map_entropy: ContextMapEntropy&lt;<span class="lifetime">'a</span>, Alloc&gt;,
            best_strides: &lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory,
            entropy_tally_scratch: find_stride::EntropyTally&lt;Alloc&gt;,
            entropy_pyramid: find_stride::EntropyPyramid&lt;Alloc&gt;,
-           ) -&gt; CommandQueue &lt;<span class="lifetime">&#39;a</span>, Alloc&gt; {
+           ) -&gt; CommandQueue &lt;<span class="lifetime">'a</span>, Alloc&gt; {
 
         <span class="comment">// assume no more than 1/16 of the stream is block_types which may chop up literals
-        // also there&#39;s the first btypel and a potential wrap around the ring buffer
+        // also there's the first btypel and a potential wrap around the ring buffer
         </span><span class="kw">let </span>queue = &lt;Alloc <span class="kw">as </span>Allocator&lt;StaticCommand&gt;&gt;::alloc_cell(alloc, num_commands * <span class="number">17 </span>/ <span class="number">16 </span>+ <span class="number">4</span>);
         CommandQueue {
             mc:alloc,
@@ -3017,8 +3018,8 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Alloc: BrotliAlloc&gt; interface::CommandProcessor&lt;<span class="lifetime">&#39;a</span>&gt; <span class="kw">for </span>CommandQueue&lt;<span class="lifetime">&#39;a</span>, Alloc&gt; {
-    <span class="kw">fn </span>push (<span class="kw-2">&amp;mut </span><span class="self">self</span>, val: interface::Command&lt;InputReference&lt;<span class="lifetime">&#39;a</span>&gt; &gt;) {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Alloc: BrotliAlloc&gt; interface::CommandProcessor&lt;<span class="lifetime">'a</span>&gt; <span class="kw">for </span>CommandQueue&lt;<span class="lifetime">'a</span>, Alloc&gt; {
+    <span class="kw">fn </span>push (<span class="kw-2">&amp;mut </span><span class="self">self</span>, val: interface::Command&lt;InputReference&lt;<span class="lifetime">'a</span>&gt; &gt;) {
         <span class="kw">if </span><span class="self">self</span>.full() {
             <span class="kw">let </span><span class="kw-2">mut </span>tmp = &lt;Alloc <span class="kw">as </span>Allocator&lt;StaticCommand&gt;&gt;::alloc_cell(<span class="self">self</span>.mc, <span class="self">self</span>.queue.slice().len() * <span class="number">2</span>);
             tmp.slice_mut().split_at_mut(<span class="self">self</span>.queue.slice().len()).<span class="number">0</span>.clone_from_slice(<span class="self">self</span>.queue.slice());
@@ -3038,46 +3039,46 @@
 }
 
 
-<span class="attr">#[cfg(feature=<span class="string">&quot;std&quot;</span>)]
+<span class="attr">#[cfg(feature=<span class="string">"std"</span>)]
 </span><span class="kw">fn </span>warn_on_missing_free() {
-    <span class="kw">let </span>_err = ::std::io::stderr().write(<span class="string">b&quot;Need to free entropy_tally_scratch before dropping CommandQueue\n&quot;</span>);
+    <span class="kw">let </span>_err = ::std::io::stderr().write(<span class="string">b"Need to free entropy_tally_scratch before dropping CommandQueue\n"</span>);
 }
-<span class="attr">#[cfg(not(feature=<span class="string">&quot;std&quot;</span>))]
+<span class="attr">#[cfg(not(feature=<span class="string">"std"</span>))]
 </span><span class="kw">fn </span>warn_on_missing_free() {
      <span class="comment">// no way to warn in this case
 </span>}
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Alloc: BrotliAlloc&gt; Drop <span class="kw">for </span>CommandQueue&lt;<span class="lifetime">&#39;a</span>, Alloc&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Alloc: BrotliAlloc&gt; Drop <span class="kw">for </span>CommandQueue&lt;<span class="lifetime">'a</span>, Alloc&gt; {
   <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
       <span class="kw">if </span>!<span class="self">self</span>.entropy_tally_scratch.is_free() {
           warn_on_missing_free();
       }
   }
 }
-<span class="attr">#[cfg(not(feature=<span class="string">&quot;billing&quot;</span>))]
+<span class="attr">#[cfg(not(feature=<span class="string">"billing"</span>))]
 </span><span class="kw">fn </span>best_singleton_speed_log(_name:<span class="kw-2">&amp;</span>str,
                             _data:<span class="kw-2">&amp;</span>[SpeedAndMax;<span class="number">2</span>],
                             _cost:<span class="kw-2">&amp;</span>[floatX;<span class="number">2</span>]) {
 }
-<span class="attr">#[cfg(feature=<span class="string">&quot;billing&quot;</span>)]
+<span class="attr">#[cfg(feature=<span class="string">"billing"</span>)]
 </span><span class="kw">fn </span>best_singleton_speed_log(name:<span class="kw-2">&amp;</span>str,
                             data:<span class="kw-2">&amp;</span>[SpeedAndMax;<span class="number">2</span>],
                             cost:<span class="kw-2">&amp;</span>[floatX;<span class="number">2</span>]) {
-    <span class="macro">println!</span>(<span class="string">&quot;{} hi cost: {} lo cost: {}   speeds {:?} {:?}&quot;</span>, name, cost[<span class="number">1</span>], cost[<span class="number">0</span>], data[<span class="number">1</span>], data[<span class="number">0</span>]);
+    <span class="macro">println!</span>(<span class="string">"{} hi cost: {} lo cost: {}   speeds {:?} {:?}"</span>, name, cost[<span class="number">1</span>], cost[<span class="number">0</span>], data[<span class="number">1</span>], data[<span class="number">0</span>]);
 }
     
 
-<span class="attr">#[cfg(not(feature=<span class="string">&quot;billing&quot;</span>))]
+<span class="attr">#[cfg(not(feature=<span class="string">"billing"</span>))]
 </span><span class="kw">fn </span>best_speed_log(_name:<span class="kw-2">&amp;</span>str,
                   _data:<span class="kw-2">&amp;</span>[SpeedAndMax;<span class="number">2</span>],
                   _cost:<span class="kw-2">&amp;</span>[floatX;<span class="number">2</span>]) {}
-<span class="attr">#[cfg(feature=<span class="string">&quot;billing&quot;</span>)]
+<span class="attr">#[cfg(feature=<span class="string">"billing"</span>)]
 </span><span class="kw">fn </span>best_speed_log(name:<span class="kw-2">&amp;</span>str,
                   data:<span class="kw-2">&amp;</span>[SpeedAndMax;<span class="number">2</span>],
                   cost:<span class="kw-2">&amp;</span>[floatX;<span class="number">2</span>]) {
   <span class="kw">for </span>high <span class="kw">in </span><span class="number">0</span>..<span class="number">2 </span>{
-     <span class="macro">println!</span>(<span class="string">&quot;{} Speed [ inc: {}, max: {}, algo: 0 ] cost: {}&quot;</span>,
+     <span class="macro">println!</span>(<span class="string">"{} Speed [ inc: {}, max: {}, algo: 0 ] cost: {}"</span>,
               name,
-              <span class="kw">if </span>high != <span class="number">0 </span>{<span class="string">&quot;hi&quot; </span>} <span class="kw">else </span>{<span class="string">&quot;lo&quot;</span>},
+              <span class="kw">if </span>high != <span class="number">0 </span>{<span class="string">"hi" </span>} <span class="kw">else </span>{<span class="string">"lo"</span>},
               data[high].<span class="number">0</span>,
               data[high].<span class="number">1</span>,
               cost[high]);
@@ -3085,9 +3086,9 @@
 
 }
 
-<span class="kw">fn </span>process_command_queue&lt;<span class="lifetime">&#39;a</span>, CmdProcessor: interface::CommandProcessor&lt;<span class="lifetime">&#39;a</span>&gt; &gt; (
+<span class="kw">fn </span>process_command_queue&lt;<span class="lifetime">'a</span>, CmdProcessor: interface::CommandProcessor&lt;<span class="lifetime">'a</span>&gt; &gt; (
     command_queue: <span class="kw-2">&amp;mut </span>CmdProcessor,
-    input: InputPair&lt;<span class="lifetime">&#39;a</span>&gt;,
+    input: InputPair&lt;<span class="lifetime">'a</span>&gt;,
     commands: <span class="kw-2">&amp;</span>[Command],
     dist_cache: <span class="kw-2">&amp;</span>[i32;kNumDistanceCacheEntries],
     <span class="kw-2">mut </span>recoder_state :RecoderState,
@@ -3192,7 +3193,7 @@
                            interim.split_at(actual_copy_len).<span class="number">0</span>);
             } <span class="kw">else if </span>mb_len != <span class="number">0 </span>{
                 <span class="comment">// truncated dictionary word: represent it as literals instead
-                // won&#39;t be random noise since it fits in the dictionary, so we won&#39;t check for rand
+                // won't be random noise since it fits in the dictionary, so we won't check for rand
                 </span>command_queue.push_literals(<span class="kw-2">&amp;</span>interim.split_at(mb_len).<span class="number">0</span>);
                 mb_len = <span class="number">0</span>;
                 <span class="macro">assert_eq!</span>(InputPair(InputReference{data:transformed_word.split_at(mb_len).<span class="number">0</span>, orig_offset:<span class="number">0</span>},
@@ -3209,7 +3210,7 @@
                     }));
             }
             mb_len -= actual_copy_len;
-            <span class="kw">if </span>prev_dist_index != <span class="number">1 </span>|| dist_offset != <span class="number">0 </span>{ <span class="comment">// update distance cache unless it&#39;s the &quot;0 distance symbol&quot;
+            <span class="kw">if </span>prev_dist_index != <span class="number">1 </span>|| dist_offset != <span class="number">0 </span>{ <span class="comment">// update distance cache unless it's the "0 distance symbol"
                </span><span class="kw">let </span><span class="kw-2">mut </span>tmp_dist_cache = [<span class="number">0i32</span>;kNumDistanceCacheEntries - <span class="number">1</span>];
                tmp_dist_cache.clone_from_slice(<span class="kw-2">&amp;</span>local_dist_cache[..kNumDistanceCacheEntries - <span class="number">1</span>]);
                local_dist_cache[<span class="number">1</span>..].clone_from_slice(<span class="kw-2">&amp;</span>tmp_dist_cache[..]);
@@ -3251,10 +3252,10 @@
     recoder_state
 }
 
-<span class="kw">fn </span>LogMetaBlock&lt;<span class="lifetime">&#39;a</span>,
+<span class="kw">fn </span>LogMetaBlock&lt;<span class="lifetime">'a</span>,
                 Alloc: BrotliAlloc,
                 Cb&gt;(alloc: <span class="kw-2">&amp;mut </span>Alloc,
-                    commands: <span class="kw-2">&amp;</span>[Command], input0: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span>[u8],input1: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span>[u8],
+                    commands: <span class="kw-2">&amp;</span>[Command], input0: <span class="kw-2">&amp;</span><span class="lifetime">'a</span>[u8],input1: <span class="kw-2">&amp;</span><span class="lifetime">'a</span>[u8],
                     dist_cache: <span class="kw-2">&amp;</span>[i32;kNumDistanceCacheEntries],
                     recoder_state :<span class="kw-2">&amp;mut </span>RecoderState,
                     block_type: MetaBlockSplitRefs,
@@ -3345,9 +3346,9 @@
             <span class="kw">let </span>(cm_speed, cm_cost) = context_map_entropy.best_singleton_speeds(<span class="bool-val">true</span>, <span class="bool-val">false</span>);
             <span class="kw">let </span>(stride_speed, stride_cost) = context_map_entropy.best_singleton_speeds(<span class="bool-val">false</span>, <span class="bool-val">false</span>);
             <span class="kw">let </span>(combined_speed, combined_cost) = context_map_entropy.best_singleton_speeds(<span class="bool-val">false</span>, <span class="bool-val">true</span>);
-            best_singleton_speed_log(<span class="string">&quot;CM&quot;</span>, <span class="kw-2">&amp;</span>cm_speed, <span class="kw-2">&amp;</span>cm_cost);
-            best_singleton_speed_log(<span class="string">&quot;stride&quot;</span>, <span class="kw-2">&amp;</span>stride_speed, <span class="kw-2">&amp;</span>stride_cost);
-            best_singleton_speed_log(<span class="string">&quot;combined&quot;</span>, <span class="kw-2">&amp;</span>combined_speed, <span class="kw-2">&amp;</span>combined_cost);
+            best_singleton_speed_log(<span class="string">"CM"</span>, <span class="kw-2">&amp;</span>cm_speed, <span class="kw-2">&amp;</span>cm_cost);
+            best_singleton_speed_log(<span class="string">"stride"</span>, <span class="kw-2">&amp;</span>stride_speed, <span class="kw-2">&amp;</span>stride_cost);
+            best_singleton_speed_log(<span class="string">"combined"</span>, <span class="kw-2">&amp;</span>combined_speed, <span class="kw-2">&amp;</span>combined_cost);
         }
     
         <span class="kw">let </span>cm_speed = context_map_entropy.best_speeds(<span class="bool-val">true</span>, <span class="bool-val">false</span>);
@@ -3360,9 +3361,9 @@
         context_map_entropy.prediction_mode_mut().set_context_map_speed(speed_to_tuple(cm_speed));
         context_map_entropy.prediction_mode_mut().set_combined_stride_context_speed(speed_to_tuple(combined_speed));
      
-        best_speed_log(<span class="string">&quot;CM&quot;</span>, <span class="kw-2">&amp;</span>cm_speed, <span class="kw-2">&amp;</span>acost);
-        best_speed_log(<span class="string">&quot;Stride&quot;</span>, <span class="kw-2">&amp;</span>stride_speed, <span class="kw-2">&amp;</span>bcost);
-        best_speed_log(<span class="string">&quot;StrideCombined&quot;</span>, <span class="kw-2">&amp;</span>combined_speed, <span class="kw-2">&amp;</span>ccost);
+        best_speed_log(<span class="string">"CM"</span>, <span class="kw-2">&amp;</span>cm_speed, <span class="kw-2">&amp;</span>acost);
+        best_speed_log(<span class="string">"Stride"</span>, <span class="kw-2">&amp;</span>stride_speed, <span class="kw-2">&amp;</span>bcost);
+        best_speed_log(<span class="string">"StrideCombined"</span>, <span class="kw-2">&amp;</span>combined_speed, <span class="kw-2">&amp;</span>ccost);
      }
      <span class="kw">let </span><span class="kw-2">mut </span>prior_selector = prior_eval::PriorEval::&lt;Alloc&gt;::new(alloc, input,
                                                                    entropy_pyramid.stride_last_level_range(),
@@ -3563,12 +3564,12 @@
   <span class="kw">let </span><span class="kw-2">mut </span>skip_some: u64 = <span class="number">0u64</span>;
   <span class="kw">let </span><span class="kw-2">mut </span>codes_to_store: u64 = <span class="number">18</span>;
   <span class="kw">if </span>num_codes &gt; <span class="number">1i32 </span>{
-    <span class="lifetime">&#39;break5</span>: <span class="kw">while </span>codes_to_store &gt; <span class="number">0 </span>{
+    <span class="lifetime">'break5</span>: <span class="kw">while </span>codes_to_store &gt; <span class="number">0 </span>{
       {
         <span class="kw">if </span>code_length_bitdepth[(kStorageOrder[codes_to_store.wrapping_sub(<span class="number">1</span>) <span class="kw">as
             </span>usize] <span class="kw">as </span>(usize))] <span class="kw">as </span>(i32) != <span class="number">0i32 </span>{
           {
-            <span class="kw">break </span><span class="lifetime">&#39;break5</span>;
+            <span class="kw">break </span><span class="lifetime">'break5</span>;
           }
         }
       }
@@ -3681,7 +3682,7 @@
     i = i.wrapping_add(<span class="number">1 </span><span class="kw">as </span>(usize));
   }
   i = <span class="number">0usize</span>;
-  <span class="lifetime">&#39;break3</span>: <span class="kw">while </span>i &lt; <span class="number">18usize </span>{
+  <span class="lifetime">'break3</span>: <span class="kw">while </span>i &lt; <span class="number">18usize </span>{
     {
       <span class="kw">if </span>huffman_tree_histogram[i] != <span class="number">0 </span>{
         <span class="kw">if </span>num_codes == <span class="number">0i32 </span>{
@@ -3691,7 +3692,7 @@
           num_codes = <span class="number">2i32</span>;
           {
             {
-              <span class="kw">break </span><span class="lifetime">&#39;break3</span>;
+              <span class="kw">break </span><span class="lifetime">'break3</span>;
             }
           }
         }
@@ -3784,7 +3785,7 @@
       <span class="kw">return</span>;
     }
     count_limit = <span class="number">1u32</span>;
-    <span class="lifetime">&#39;break11</span>: <span class="kw">loop </span>{
+    <span class="lifetime">'break11</span>: <span class="kw">loop </span>{
       {
         <span class="kw">let </span><span class="kw-2">mut </span>node_index: u32 = <span class="number">0u32</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>l: u64;
@@ -3852,7 +3853,7 @@
           }
           <span class="kw">if </span>BrotliSetDepth(<span class="number">2i32 </span>* n - <span class="number">1i32</span>, tree.slice_mut(), depth, <span class="number">14i32</span>) {
             {
-              <span class="kw">break </span><span class="lifetime">&#39;break11</span>;
+              <span class="kw">break </span><span class="lifetime">'break11</span>;
             }
           }
         }
@@ -4031,15 +4032,15 @@
   <span class="kw">pub </span>length_bits: [u16; <span class="number">26</span>],
 }
 
-<span class="kw">pub struct </span>BlockEncoder&lt;<span class="lifetime">&#39;a</span>, Alloc: alloc::Allocator&lt;u8&gt; + alloc::Allocator&lt;u16&gt;&gt; {
+<span class="kw">pub struct </span>BlockEncoder&lt;<span class="lifetime">'a</span>, Alloc: alloc::Allocator&lt;u8&gt; + alloc::Allocator&lt;u16&gt;&gt; {
   <span class="comment">/*    pub alloc_u8 : AllocU8,
     pub alloc_u16 : AllocU16,
     pub alloc_u32 : AllocU32,
     pub alloc_ht : AllocHT,*/
   </span><span class="kw">pub </span>histogram_length_: usize,
   <span class="kw">pub </span>num_block_types_: usize,
-  <span class="kw">pub </span>block_types_: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8],
-  <span class="kw">pub </span>block_lengths_: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u32],
+  <span class="kw">pub </span>block_types_: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8],
+  <span class="kw">pub </span>block_lengths_: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u32],
   <span class="kw">pub </span>num_blocks_: usize,
   <span class="kw">pub </span>block_split_code_: BlockSplitCode,
   <span class="kw">pub </span>block_ix_: usize,
@@ -4051,15 +4052,15 @@
 
 <span class="kw">fn </span>Log2FloorNonZero(<span class="kw-2">mut </span>n: u64) -&gt; u32 {
   <span class="kw">let </span><span class="kw-2">mut </span>result: u32 = <span class="number">0u32</span>;
-  <span class="lifetime">&#39;loop1</span>: <span class="kw">loop </span>{
+  <span class="lifetime">'loop1</span>: <span class="kw">loop </span>{
     <span class="kw">if </span>{
          n = n &gt;&gt; <span class="number">1i32</span>;
          n
        } != <span class="number">0 </span>{
       result = result.wrapping_add(<span class="number">1 </span><span class="kw">as </span>(u32));
-      <span class="kw">continue </span><span class="lifetime">&#39;loop1</span>;
+      <span class="kw">continue </span><span class="lifetime">'loop1</span>;
     } <span class="kw">else </span>{
-      <span class="kw">break </span><span class="lifetime">&#39;loop1</span>;
+      <span class="kw">break </span><span class="lifetime">'loop1</span>;
     }
   }
   result
@@ -4115,13 +4116,13 @@
          };
 }
 
-<span class="kw">fn </span>NewBlockEncoder&lt;<span class="lifetime">&#39;a</span>, Alloc: alloc::Allocator&lt;u8&gt; + alloc::Allocator&lt;u16&gt;&gt;
+<span class="kw">fn </span>NewBlockEncoder&lt;<span class="lifetime">'a</span>, Alloc: alloc::Allocator&lt;u8&gt; + alloc::Allocator&lt;u16&gt;&gt;
   (histogram_length: usize,
    num_block_types: usize,
-   block_types: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8],
-   block_lengths: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u32],
+   block_types: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8],
+   block_lengths: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u32],
    num_blocks: usize)
-   -&gt; BlockEncoder&lt;<span class="lifetime">&#39;a</span>, Alloc&gt; {
+   -&gt; BlockEncoder&lt;<span class="lifetime">'a</span>, Alloc&gt; {
   <span class="kw">let </span>block_len: usize;
   <span class="kw">if </span>num_blocks != <span class="number">0 </span>&amp;&amp; block_lengths.len() != <span class="number">0 </span>{
     block_len = block_lengths[<span class="number">0</span>] <span class="kw">as </span>usize;
@@ -4287,14 +4288,14 @@
   <span class="kw">let </span><span class="kw-2">mut </span>i: usize;
   <span class="kw">let </span><span class="kw-2">mut </span>max_bits: usize = <span class="number">0usize</span>;
   i = <span class="number">0usize</span>;
-  <span class="lifetime">&#39;break31</span>: <span class="kw">while </span>i &lt; histogram_length {
+  <span class="lifetime">'break31</span>: <span class="kw">while </span>i &lt; histogram_length {
     {
       <span class="kw">if </span>histogram[(i <span class="kw">as </span>(usize))] != <span class="number">0 </span>{
         <span class="kw">if </span>count &lt; <span class="number">4usize </span>{
           s4[count] = i;
         } <span class="kw">else if </span>count &gt; <span class="number">4usize </span>{
           {
-            <span class="kw">break </span><span class="lifetime">&#39;break31</span>;
+            <span class="kw">break </span><span class="lifetime">'break31</span>;
           }
         }
         count = count.wrapping_add(<span class="number">1 </span><span class="kw">as </span>(usize));
@@ -4418,9 +4419,9 @@
   }
 }
 
-<span class="kw">fn </span>BuildAndStoreBlockSwitchEntropyCodes&lt;<span class="lifetime">&#39;a</span>,
+<span class="kw">fn </span>BuildAndStoreBlockSwitchEntropyCodes&lt;<span class="lifetime">'a</span>,
                                         Alloc: alloc::Allocator&lt;u8&gt; + alloc::Allocator&lt;u16&gt;&gt;
-  (xself: <span class="kw-2">&amp;mut </span>BlockEncoder&lt;<span class="lifetime">&#39;a</span>, Alloc&gt;,
+  (xself: <span class="kw-2">&amp;mut </span>BlockEncoder&lt;<span class="lifetime">'a</span>, Alloc&gt;,
    tree: <span class="kw-2">&amp;mut </span>[HuffmanTree],
    storage_ix: <span class="kw-2">&amp;mut </span>usize,
    storage: <span class="kw-2">&amp;mut </span>[u8]) {
@@ -4908,9 +4909,9 @@ context_bits: usize){
 }
 
 
-<span class="kw">pub fn </span>BrotliStoreMetaBlock&lt;<span class="lifetime">&#39;a</span>, Alloc: BrotliAlloc, Cb&gt;
+<span class="kw">pub fn </span>BrotliStoreMetaBlock&lt;<span class="lifetime">'a</span>, Alloc: BrotliAlloc, Cb&gt;
   (alloc: <span class="kw-2">&amp;mut </span>Alloc,
-   input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span>[u8],
+   input: <span class="kw-2">&amp;</span><span class="lifetime">'a</span>[u8],
    start_pos: usize,
    length: usize,
    mask: usize,
@@ -5209,11 +5210,11 @@ context_bits: usize){
   }
 }
 
-<span class="kw">fn </span>nop&lt;<span class="lifetime">&#39;a</span>&gt;(_data:<span class="kw-2">&amp;</span>[interface::Command&lt;InputReference&gt;]){
+<span class="kw">fn </span>nop&lt;<span class="lifetime">'a</span>&gt;(_data:<span class="kw-2">&amp;</span>[interface::Command&lt;InputReference&gt;]){
 }
-<span class="kw">pub fn </span>BrotliStoreMetaBlockTrivial&lt;<span class="lifetime">&#39;a</span>, Alloc: BrotliAlloc, Cb&gt;
+<span class="kw">pub fn </span>BrotliStoreMetaBlockTrivial&lt;<span class="lifetime">'a</span>, Alloc: BrotliAlloc, Cb&gt;
     (alloc: <span class="kw-2">&amp;mut </span>Alloc,
-     input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8],
+     input: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8],
      start_pos: usize,
      length: usize,
      mask: usize,
@@ -5322,12 +5323,12 @@ context_bits: usize){
 }
 
 
-<span class="kw">struct </span>BlockSplitRef&lt;<span class="lifetime">&#39;a</span>&gt; {
-    types: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8],
-    lengths:<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u32],
+<span class="kw">struct </span>BlockSplitRef&lt;<span class="lifetime">'a</span>&gt; {
+    types: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8],
+    lengths:<span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u32],
     num_types: u32,
 }
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Default <span class="kw">for </span>BlockSplitRef&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Default <span class="kw">for </span>BlockSplitRef&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
         BlockSplitRef {
             types:<span class="kw-2">&amp;</span>[],
@@ -5339,23 +5340,23 @@ context_bits: usize){
 
 
 <span class="attr">#[derive(Default)]
-</span><span class="kw">struct </span>MetaBlockSplitRefs&lt;<span class="lifetime">&#39;a</span>&gt; {
-    btypel : BlockSplitRef&lt;<span class="lifetime">&#39;a</span>&gt;,
-    literal_context_map:<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u32],
-    btypec : BlockSplitRef&lt;<span class="lifetime">&#39;a</span>&gt;,
-    btyped : BlockSplitRef&lt;<span class="lifetime">&#39;a</span>&gt;,
-    distance_context_map:<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u32],
+</span><span class="kw">struct </span>MetaBlockSplitRefs&lt;<span class="lifetime">'a</span>&gt; {
+    btypel : BlockSplitRef&lt;<span class="lifetime">'a</span>&gt;,
+    literal_context_map:<span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u32],
+    btypec : BlockSplitRef&lt;<span class="lifetime">'a</span>&gt;,
+    btyped : BlockSplitRef&lt;<span class="lifetime">'a</span>&gt;,
+    distance_context_map:<span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u32],
 }
 
-<span class="kw">fn </span>block_split_nop() -&gt; MetaBlockSplitRefs&lt;<span class="lifetime">&#39;static</span>&gt; {
+<span class="kw">fn </span>block_split_nop() -&gt; MetaBlockSplitRefs&lt;<span class="lifetime">'static</span>&gt; {
     <span class="kw">return </span>MetaBlockSplitRefs::default()
 
 }
 
-<span class="kw">fn </span>block_split_reference&lt;<span class="lifetime">&#39;a</span>,
+<span class="kw">fn </span>block_split_reference&lt;<span class="lifetime">'a</span>,
                          Alloc: BrotliAlloc&gt;
-    (mb:<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>MetaBlockSplit&lt;Alloc&gt;) -&gt; MetaBlockSplitRefs&lt;<span class="lifetime">&#39;a</span>&gt; {
-        <span class="kw">return </span>MetaBlockSplitRefs::&lt;<span class="lifetime">&#39;a</span>&gt; {
+    (mb:<span class="kw-2">&amp;</span><span class="lifetime">'a </span>MetaBlockSplit&lt;Alloc&gt;) -&gt; MetaBlockSplitRefs&lt;<span class="lifetime">'a</span>&gt; {
+        <span class="kw">return </span>MetaBlockSplitRefs::&lt;<span class="lifetime">'a</span>&gt; {
             btypel:BlockSplitRef {
                 types: mb.literal_split.types.slice().split_at(mb.literal_split.num_blocks).<span class="number">0</span>,
                 lengths:mb.literal_split.lengths.slice().split_at(mb.literal_split.num_blocks).<span class="number">0</span>,
@@ -5548,7 +5549,7 @@ context_bits: usize){
   BrotliWriteBits(<span class="number">1</span>, <span class="number">1</span>, storage_ix, storage);
 }
 
-<span class="kw">fn </span>InputPairFromMaskedInput&lt;<span class="lifetime">&#39;a</span>&gt;(input:<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8], position: usize, len: usize, mask:usize) -&gt; (<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8], <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8]) {
+<span class="kw">fn </span>InputPairFromMaskedInput&lt;<span class="lifetime">'a</span>&gt;(input:<span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8], position: usize, len: usize, mask:usize) -&gt; (<span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8], <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8]) {
   <span class="kw">let </span>masked_pos: usize = position &amp; mask;
   <span class="kw">if </span>masked_pos.wrapping_add(len) &gt; mask.wrapping_add(<span class="number">1usize</span>) {
     <span class="kw">let </span>len1: usize = mask.wrapping_add(<span class="number">1usize</span>).wrapping_sub(masked_pos);

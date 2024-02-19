@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wry-0.24.7/src/webview/wkwebview/download.rs`."><title>download.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="wry" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wry-0.24.7/src/webview/wkwebview/download.rs`."><title>download.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="wry" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -133,18 +134,18 @@
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>set_download_delegate(webview: <span class="kw-2">*mut </span>Object, download_delegate: <span class="kw-2">*mut </span>Object) {
   (<span class="kw-2">*</span>webview).set_ivar(
-    <span class="string">&quot;DownloadDelegate&quot;</span>,
+    <span class="string">"DownloadDelegate"</span>,
     download_delegate <span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">_ as </span><span class="kw-2">*mut </span>c_void,
   );
 }
 
 <span class="kw">unsafe fn </span>get_download_delegate(this: <span class="kw-2">&amp;mut </span>Object) -&gt; <span class="kw-2">*mut </span>objc::runtime::Object {
-  <span class="kw">let </span>delegate: <span class="kw-2">*mut </span>c_void = <span class="kw-2">*</span>this.get_ivar(<span class="string">&quot;DownloadDelegate&quot;</span>);
+  <span class="kw">let </span>delegate: <span class="kw-2">*mut </span>c_void = <span class="kw-2">*</span>this.get_ivar(<span class="string">"DownloadDelegate"</span>);
   delegate <span class="kw">as </span><span class="kw-2">*mut </span>Object
 }
 
 <span class="comment">// Download action handler
-</span><span class="kw">extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span>navigation_download_action(this: <span class="kw-2">&amp;mut </span>Object, <span class="kw">_</span>: Sel, <span class="kw">_</span>: id, <span class="kw">_</span>: id, download: id) {
+</span><span class="kw">extern </span><span class="string">"C" </span><span class="kw">fn </span>navigation_download_action(this: <span class="kw-2">&amp;mut </span>Object, <span class="kw">_</span>: Sel, <span class="kw">_</span>: id, <span class="kw">_</span>: id, download: id) {
   <span class="kw">unsafe </span>{
     <span class="kw">let </span>delegate = get_download_delegate(this);
     <span class="kw">let _</span>: () = <span class="macro">msg_send!</span>[download, setDelegate: delegate];
@@ -152,7 +153,7 @@
 }
 
 <span class="comment">// Download response handler
-</span><span class="kw">extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span>navigation_download_response(this: <span class="kw-2">&amp;mut </span>Object, <span class="kw">_</span>: Sel, <span class="kw">_</span>: id, <span class="kw">_</span>: id, download: id) {
+</span><span class="kw">extern </span><span class="string">"C" </span><span class="kw">fn </span>navigation_download_response(this: <span class="kw-2">&amp;mut </span>Object, <span class="kw">_</span>: Sel, <span class="kw">_</span>: id, <span class="kw">_</span>: id, download: id) {
   <span class="kw">unsafe </span>{
     <span class="kw">let </span>delegate = get_download_delegate(this);
     <span class="kw">let _</span>: () = <span class="macro">msg_send!</span>[download, setDelegate: delegate];
@@ -160,20 +161,20 @@
 }
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>add_download_methods(decl: <span class="kw-2">&amp;mut </span>ClassDecl) {
-  decl.add_ivar::&lt;<span class="kw-2">*mut </span>c_void&gt;(<span class="string">&quot;DownloadDelegate&quot;</span>);
+  decl.add_ivar::&lt;<span class="kw-2">*mut </span>c_void&gt;(<span class="string">"DownloadDelegate"</span>);
 
   decl.add_method(
     <span class="macro">sel!</span>(webView:navigationAction:didBecomeDownload:),
-    navigation_download_action <span class="kw">as extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn</span>(<span class="kw-2">&amp;mut </span>Object, Sel, id, id, id),
+    navigation_download_action <span class="kw">as extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">&amp;mut </span>Object, Sel, id, id, id),
   );
 
   decl.add_method(
     <span class="macro">sel!</span>(webView:navigationResponse:didBecomeDownload:),
-    navigation_download_response <span class="kw">as extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn</span>(<span class="kw-2">&amp;mut </span>Object, Sel, id, id, id),
+    navigation_download_response <span class="kw">as extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">&amp;mut </span>Object, Sel, id, id, id),
   );
 }
 
-<span class="kw">pub extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span>download_policy(
+<span class="kw">pub extern </span><span class="string">"C" </span><span class="kw">fn </span>download_policy(
   this: <span class="kw-2">&amp;</span>Object,
   <span class="kw">_</span>: Sel,
   download: id,
@@ -190,9 +191,9 @@
     <span class="kw">let </span><span class="kw-2">mut </span>path = PathBuf::from(path.to_str());
     <span class="kw">let </span>handler = handler <span class="kw">as </span><span class="kw-2">*mut </span>block::Block&lt;(id,), c_void&gt;;
 
-    <span class="kw">let </span>function = this.get_ivar::&lt;<span class="kw-2">*mut </span>c_void&gt;(<span class="string">&quot;started&quot;</span>);
+    <span class="kw">let </span>function = this.get_ivar::&lt;<span class="kw-2">*mut </span>c_void&gt;(<span class="string">"started"</span>);
     <span class="kw">if </span>!function.is_null() {
-      <span class="kw">let </span>function = <span class="kw-2">&amp;mut *</span>(<span class="kw-2">*</span>function <span class="kw">as </span><span class="kw-2">*mut </span>Box&lt;<span class="kw">dyn for</span>&lt;<span class="lifetime">&#39;s</span>&gt; FnMut(String, <span class="kw-2">&amp;mut </span>PathBuf) -&gt; bool&gt;);
+      <span class="kw">let </span>function = <span class="kw-2">&amp;mut *</span>(<span class="kw-2">*</span>function <span class="kw">as </span><span class="kw-2">*mut </span>Box&lt;<span class="kw">dyn for</span>&lt;<span class="lifetime">'s</span>&gt; FnMut(String, <span class="kw-2">&amp;mut </span>PathBuf) -&gt; bool&gt;);
       <span class="kw">match </span>(function)(url.to_str().to_string(), <span class="kw-2">&amp;mut </span>path) {
         <span class="bool-val">true </span>=&gt; {
           <span class="kw">let </span>nsurl: id = <span class="macro">msg_send!</span>[<span class="macro">class!</span>(NSURL), fileURLWithPath: NSString::new(<span class="kw-2">&amp;</span>path.display().to_string()) isDirectory: <span class="bool-val">false</span>];
@@ -201,33 +202,33 @@
         <span class="bool-val">false </span>=&gt; (<span class="kw-2">*</span>handler).call((null_mut(),)),
       };
     } <span class="kw">else </span>{
-      <span class="macro">log::warn!</span>(<span class="string">&quot;WebView instance is dropped! This navigation handler shouldn&#39;t be called.&quot;</span>);
+      <span class="macro">log::warn!</span>(<span class="string">"WebView instance is dropped! This navigation handler shouldn't be called."</span>);
       (<span class="kw-2">*</span>handler).call((null_mut(),));
     }
   }
 }
 
-<span class="kw">pub extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span>download_did_finish(this: <span class="kw-2">&amp;</span>Object, <span class="kw">_</span>: Sel, download: id) {
+<span class="kw">pub extern </span><span class="string">"C" </span><span class="kw">fn </span>download_did_finish(this: <span class="kw-2">&amp;</span>Object, <span class="kw">_</span>: Sel, download: id) {
   <span class="kw">unsafe </span>{
-    <span class="kw">let </span>function = this.get_ivar::&lt;<span class="kw-2">*mut </span>c_void&gt;(<span class="string">&quot;completed&quot;</span>);
+    <span class="kw">let </span>function = this.get_ivar::&lt;<span class="kw-2">*mut </span>c_void&gt;(<span class="string">"completed"</span>);
     <span class="kw">let </span>original_request: id = <span class="macro">msg_send!</span>[download, originalRequest];
     <span class="kw">let </span>url: id = <span class="macro">msg_send!</span>[original_request, URL];
     <span class="kw">let </span>url: id = <span class="macro">msg_send!</span>[url, absoluteString];
     <span class="kw">let </span>url = NSString(url).to_str().to_string();
     <span class="kw">if </span>!function.is_null() {
-      <span class="kw">let </span>function = <span class="kw-2">&amp;mut *</span>(<span class="kw-2">*</span>function <span class="kw">as </span><span class="kw-2">*mut </span>Rc&lt;<span class="kw">dyn for</span>&lt;<span class="lifetime">&#39;s</span>&gt; Fn(String, <span class="prelude-ty">Option</span>&lt;PathBuf&gt;, bool)&gt;);
+      <span class="kw">let </span>function = <span class="kw-2">&amp;mut *</span>(<span class="kw-2">*</span>function <span class="kw">as </span><span class="kw-2">*mut </span>Rc&lt;<span class="kw">dyn for</span>&lt;<span class="lifetime">'s</span>&gt; Fn(String, <span class="prelude-ty">Option</span>&lt;PathBuf&gt;, bool)&gt;);
       function(url, <span class="prelude-val">None</span>, <span class="bool-val">true</span>);
     }
   }
 }
 
-<span class="kw">pub extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span>download_did_fail(this: <span class="kw-2">&amp;</span>Object, <span class="kw">_</span>: Sel, download: id, _error: id, <span class="kw">_</span>: id) {
+<span class="kw">pub extern </span><span class="string">"C" </span><span class="kw">fn </span>download_did_fail(this: <span class="kw-2">&amp;</span>Object, <span class="kw">_</span>: Sel, download: id, _error: id, <span class="kw">_</span>: id) {
   <span class="kw">unsafe </span>{
     <span class="attr">#[cfg(debug_assertions)]
     </span>{
       <span class="kw">let </span>description: id = <span class="macro">msg_send!</span>[_error, localizedDescription];
       <span class="kw">let </span>description = NSString(description).to_str().to_string();
-      <span class="macro">eprintln!</span>(<span class="string">&quot;Download failed with error: {}&quot;</span>, description);
+      <span class="macro">eprintln!</span>(<span class="string">"Download failed with error: {}"</span>, description);
     }
 
     <span class="kw">let </span>original_request: id = <span class="macro">msg_send!</span>[download, originalRequest];
@@ -235,9 +236,9 @@
     <span class="kw">let </span>url: id = <span class="macro">msg_send!</span>[url, absoluteString];
     <span class="kw">let </span>url = NSString(url).to_str().to_string();
 
-    <span class="kw">let </span>function = this.get_ivar::&lt;<span class="kw-2">*mut </span>c_void&gt;(<span class="string">&quot;completed&quot;</span>);
+    <span class="kw">let </span>function = this.get_ivar::&lt;<span class="kw-2">*mut </span>c_void&gt;(<span class="string">"completed"</span>);
     <span class="kw">if </span>!function.is_null() {
-      <span class="kw">let </span>function = <span class="kw-2">&amp;mut *</span>(<span class="kw-2">*</span>function <span class="kw">as </span><span class="kw-2">*mut </span>Rc&lt;<span class="kw">dyn for</span>&lt;<span class="lifetime">&#39;s</span>&gt; Fn(String, <span class="prelude-ty">Option</span>&lt;PathBuf&gt;, bool)&gt;);
+      <span class="kw">let </span>function = <span class="kw-2">&amp;mut *</span>(<span class="kw-2">*</span>function <span class="kw">as </span><span class="kw-2">*mut </span>Rc&lt;<span class="kw">dyn for</span>&lt;<span class="lifetime">'s</span>&gt; Fn(String, <span class="prelude-ty">Option</span>&lt;PathBuf&gt;, bool)&gt;);
       function(url, <span class="prelude-val">None</span>, <span class="bool-val">false</span>);
     }
   }

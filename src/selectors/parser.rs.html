@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/parser.rs`."><title>parser.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="selectors" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/parser.rs`."><title>parser.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="selectors" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -3205,7 +3206,7 @@
 <span class="doccomment">/// Returns a Cow::Borrowed if `s` is already ASCII lowercase, and a
 /// Cow::Owned if `s` had to be converted into ASCII lowercase.
 </span><span class="kw">fn </span>to_ascii_lowercase(s: <span class="kw-2">&amp;</span>str) -&gt; Cow&lt;str&gt; {
-    <span class="kw">if let </span><span class="prelude-val">Some</span>(first_uppercase) = s.bytes().position(|byte| byte &gt;= <span class="string">b&#39;A&#39; </span>&amp;&amp; byte &lt;= <span class="string">b&#39;Z&#39;</span>) {
+    <span class="kw">if let </span><span class="prelude-val">Some</span>(first_uppercase) = s.bytes().position(|byte| byte &gt;= <span class="string">b'A' </span>&amp;&amp; byte &lt;= <span class="string">b'Z'</span>) {
         <span class="kw">let </span><span class="kw-2">mut </span>string = s.to_owned();
         string[first_uppercase..].make_ascii_lowercase();
         string.into()
@@ -3217,27 +3218,27 @@
 <span class="macro">bitflags! </span>{
     <span class="doccomment">/// Flags that indicate at which point of parsing a selector are we.
     </span><span class="kw">struct </span>SelectorParsingState: u8 {
-        <span class="doccomment">/// Whether we&#39;re inside a negation. If we&#39;re inside a negation, we&#39;re
+        <span class="doccomment">/// Whether we're inside a negation. If we're inside a negation, we're
         /// not allowed to add another negation or such, for example.
         </span><span class="kw">const </span>INSIDE_NEGATION = <span class="number">1 </span>&lt;&lt; <span class="number">0</span>;
-        <span class="doccomment">/// Whether we&#39;ve parsed a ::slotted() pseudo-element already.
+        <span class="doccomment">/// Whether we've parsed a ::slotted() pseudo-element already.
         ///
         /// If so, then we can only parse a subset of pseudo-elements, and
         /// whatever comes after them if so.
         </span><span class="kw">const </span>AFTER_SLOTTED = <span class="number">1 </span>&lt;&lt; <span class="number">1</span>;
-        <span class="doccomment">/// Whether we&#39;ve parsed a ::part() pseudo-element already.
+        <span class="doccomment">/// Whether we've parsed a ::part() pseudo-element already.
         ///
         /// If so, then we can only parse a subset of pseudo-elements, and
         /// whatever comes after them if so.
         </span><span class="kw">const </span>AFTER_PART = <span class="number">1 </span>&lt;&lt; <span class="number">2</span>;
-        <span class="doccomment">/// Whether we&#39;ve parsed a pseudo-element (as in, an
+        <span class="doccomment">/// Whether we've parsed a pseudo-element (as in, an
         /// `Impl::PseudoElement` thus not accounting for `::slotted` or
         /// `::part`) already.
         ///
         /// If so, then other pseudo-elements and most other selectors are
         /// disallowed.
         </span><span class="kw">const </span>AFTER_PSEUDO_ELEMENT = <span class="number">1 </span>&lt;&lt; <span class="number">3</span>;
-        <span class="doccomment">/// Whether we&#39;ve parsed a non-stateful pseudo-element (again, as-in
+        <span class="doccomment">/// Whether we've parsed a non-stateful pseudo-element (again, as-in
         /// `Impl::PseudoElement`) already. If so, then other pseudo-classes are
         /// disallowed. If this flag is set, `AFTER_PSEUDO_ELEMENT` must be set
         /// as well.
@@ -3280,12 +3281,12 @@
     }
 }
 
-<span class="kw">pub type </span>SelectorParseError&lt;<span class="lifetime">&#39;i</span>&gt; = ParseError&lt;<span class="lifetime">&#39;i</span>, SelectorParseErrorKind&lt;<span class="lifetime">&#39;i</span>&gt;&gt;;
+<span class="kw">pub type </span>SelectorParseError&lt;<span class="lifetime">'i</span>&gt; = ParseError&lt;<span class="lifetime">'i</span>, SelectorParseErrorKind&lt;<span class="lifetime">'i</span>&gt;&gt;;
 
 <span class="attr">#[derive(Clone, Debug, PartialEq)]
-</span><span class="kw">pub enum </span>SelectorParseErrorKind&lt;<span class="lifetime">&#39;i</span>&gt; {
+</span><span class="kw">pub enum </span>SelectorParseErrorKind&lt;<span class="lifetime">'i</span>&gt; {
     PseudoElementInComplexSelector,
-    NoQualifiedNameInAttributeSelector(Token&lt;<span class="lifetime">&#39;i</span>&gt;),
+    NoQualifiedNameInAttributeSelector(Token&lt;<span class="lifetime">'i</span>&gt;),
     EmptySelector,
     DanglingCombinator,
     NonSimpleSelectorInNegation,
@@ -3293,18 +3294,18 @@
     NonPseudoElementAfterSlotted,
     InvalidPseudoElementAfterSlotted,
     InvalidState,
-    UnexpectedTokenInAttributeSelector(Token&lt;<span class="lifetime">&#39;i</span>&gt;),
-    PseudoElementExpectedColon(Token&lt;<span class="lifetime">&#39;i</span>&gt;),
-    PseudoElementExpectedIdent(Token&lt;<span class="lifetime">&#39;i</span>&gt;),
-    NoIdentForPseudo(Token&lt;<span class="lifetime">&#39;i</span>&gt;),
-    UnsupportedPseudoClassOrElement(CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;),
-    UnexpectedIdent(CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;),
-    ExpectedNamespace(CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;),
-    ExpectedBarInAttr(Token&lt;<span class="lifetime">&#39;i</span>&gt;),
-    BadValueInAttr(Token&lt;<span class="lifetime">&#39;i</span>&gt;),
-    InvalidQualNameInAttr(Token&lt;<span class="lifetime">&#39;i</span>&gt;),
-    ExplicitNamespaceUnexpectedToken(Token&lt;<span class="lifetime">&#39;i</span>&gt;),
-    ClassNeedsIdent(Token&lt;<span class="lifetime">&#39;i</span>&gt;),
+    UnexpectedTokenInAttributeSelector(Token&lt;<span class="lifetime">'i</span>&gt;),
+    PseudoElementExpectedColon(Token&lt;<span class="lifetime">'i</span>&gt;),
+    PseudoElementExpectedIdent(Token&lt;<span class="lifetime">'i</span>&gt;),
+    NoIdentForPseudo(Token&lt;<span class="lifetime">'i</span>&gt;),
+    UnsupportedPseudoClassOrElement(CowRcStr&lt;<span class="lifetime">'i</span>&gt;),
+    UnexpectedIdent(CowRcStr&lt;<span class="lifetime">'i</span>&gt;),
+    ExpectedNamespace(CowRcStr&lt;<span class="lifetime">'i</span>&gt;),
+    ExpectedBarInAttr(Token&lt;<span class="lifetime">'i</span>&gt;),
+    BadValueInAttr(Token&lt;<span class="lifetime">'i</span>&gt;),
+    InvalidQualNameInAttr(Token&lt;<span class="lifetime">'i</span>&gt;),
+    ExplicitNamespaceUnexpectedToken(Token&lt;<span class="lifetime">'i</span>&gt;),
+    ClassNeedsIdent(Token&lt;<span class="lifetime">'i</span>&gt;),
     EmptyNegation,
 }
 
@@ -3320,8 +3321,8 @@
         /// NB: We need Clone so that we can derive(Clone) on struct with that
         /// are parameterized on SelectorImpl. See
         /// &lt;https://github.com/rust-lang/rust/issues/26925&gt;
-        </span><span class="kw">pub trait </span>SelectorImpl: Clone + Debug + Sized + <span class="lifetime">&#39;static </span>{
-            <span class="kw">type </span>ExtraMatchingData: Sized + Default + <span class="lifetime">&#39;static</span>;
+        </span><span class="kw">pub trait </span>SelectorImpl: Clone + Debug + Sized + <span class="lifetime">'static </span>{
+            <span class="kw">type </span>ExtraMatchingData: Sized + Default + <span class="lifetime">'static</span>;
             <span class="kw">type </span>AttrValue: $(<span class="macro-nonterminal">$InSelector</span>)<span class="kw-2">*</span>;
             <span class="kw">type </span>Identifier: $(<span class="macro-nonterminal">$InSelector</span>)<span class="kw-2">*</span>;
             <span class="kw">type </span>ClassName: $(<span class="macro-nonterminal">$InSelector</span>)<span class="kw-2">*</span>;
@@ -3354,12 +3355,12 @@
 
 <span class="macro">with_bounds! </span>{
     [Clone + Eq]
-    [<span class="kw">for</span>&lt;<span class="lifetime">&#39;a</span>&gt; From&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str&gt;]
+    [<span class="kw">for</span>&lt;<span class="lifetime">'a</span>&gt; From&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>str&gt;]
 }
 
-<span class="kw">pub trait </span>Parser&lt;<span class="lifetime">&#39;i</span>&gt; {
+<span class="kw">pub trait </span>Parser&lt;<span class="lifetime">'i</span>&gt; {
     <span class="kw">type </span>Impl: SelectorImpl;
-    <span class="kw">type </span>Error: <span class="lifetime">&#39;i </span>+ From&lt;SelectorParseErrorKind&lt;<span class="lifetime">&#39;i</span>&gt;&gt;;
+    <span class="kw">type </span>Error: <span class="lifetime">'i </span>+ From&lt;SelectorParseErrorKind&lt;<span class="lifetime">'i</span>&gt;&gt;;
 
     <span class="doccomment">/// Whether to parse the `::slotted()` pseudo-element.
     </span><span class="kw">fn </span>parse_slotted(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
@@ -3376,13 +3377,13 @@
         <span class="bool-val">false
     </span>}
 
-    <span class="doccomment">/// This function can return an &quot;Err&quot; pseudo-element in order to support CSS2.1
+    <span class="doccomment">/// This function can return an "Err" pseudo-element in order to support CSS2.1
     /// pseudo-elements.
     </span><span class="kw">fn </span>parse_non_ts_pseudo_class(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         location: SourceLocation,
-        name: CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;&lt;<span class="self">Self</span>::Impl <span class="kw">as </span>SelectorImpl&gt;::NonTSPseudoClass, ParseError&lt;<span class="lifetime">&#39;i</span>, <span class="self">Self</span>::Error&gt;&gt; {
+        name: CowRcStr&lt;<span class="lifetime">'i</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;&lt;<span class="self">Self</span>::Impl <span class="kw">as </span>SelectorImpl&gt;::NonTSPseudoClass, ParseError&lt;<span class="lifetime">'i</span>, <span class="self">Self</span>::Error&gt;&gt; {
         <span class="prelude-val">Err</span>(
             location.new_custom_error(SelectorParseErrorKind::UnsupportedPseudoClassOrElement(
                 name,
@@ -3390,11 +3391,11 @@
         )
     }
 
-    <span class="kw">fn </span>parse_non_ts_functional_pseudo_class&lt;<span class="lifetime">&#39;t</span>&gt;(
+    <span class="kw">fn </span>parse_non_ts_functional_pseudo_class&lt;<span class="lifetime">'t</span>&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        name: CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;,
-        arguments: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;&lt;<span class="self">Self</span>::Impl <span class="kw">as </span>SelectorImpl&gt;::NonTSPseudoClass, ParseError&lt;<span class="lifetime">&#39;i</span>, <span class="self">Self</span>::Error&gt;&gt; {
+        name: CowRcStr&lt;<span class="lifetime">'i</span>&gt;,
+        arguments: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;&lt;<span class="self">Self</span>::Impl <span class="kw">as </span>SelectorImpl&gt;::NonTSPseudoClass, ParseError&lt;<span class="lifetime">'i</span>, <span class="self">Self</span>::Error&gt;&gt; {
         <span class="prelude-val">Err</span>(
             arguments.new_custom_error(SelectorParseErrorKind::UnsupportedPseudoClassOrElement(
                 name,
@@ -3405,8 +3406,8 @@
     <span class="kw">fn </span>parse_pseudo_element(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         location: SourceLocation,
-        name: CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;&lt;<span class="self">Self</span>::Impl <span class="kw">as </span>SelectorImpl&gt;::PseudoElement, ParseError&lt;<span class="lifetime">&#39;i</span>, <span class="self">Self</span>::Error&gt;&gt; {
+        name: CowRcStr&lt;<span class="lifetime">'i</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;&lt;<span class="self">Self</span>::Impl <span class="kw">as </span>SelectorImpl&gt;::PseudoElement, ParseError&lt;<span class="lifetime">'i</span>, <span class="self">Self</span>::Error&gt;&gt; {
         <span class="prelude-val">Err</span>(
             location.new_custom_error(SelectorParseErrorKind::UnsupportedPseudoClassOrElement(
                 name,
@@ -3414,11 +3415,11 @@
         )
     }
 
-    <span class="kw">fn </span>parse_functional_pseudo_element&lt;<span class="lifetime">&#39;t</span>&gt;(
+    <span class="kw">fn </span>parse_functional_pseudo_element&lt;<span class="lifetime">'t</span>&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        name: CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;,
-        arguments: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;&lt;<span class="self">Self</span>::Impl <span class="kw">as </span>SelectorImpl&gt;::PseudoElement, ParseError&lt;<span class="lifetime">&#39;i</span>, <span class="self">Self</span>::Error&gt;&gt; {
+        name: CowRcStr&lt;<span class="lifetime">'i</span>&gt;,
+        arguments: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;&lt;<span class="self">Self</span>::Impl <span class="kw">as </span>SelectorImpl&gt;::PseudoElement, ParseError&lt;<span class="lifetime">'i</span>, <span class="self">Self</span>::Error&gt;&gt; {
         <span class="prelude-val">Err</span>(
             arguments.new_custom_error(SelectorParseErrorKind::UnsupportedPseudoClassOrElement(
                 name,
@@ -3448,12 +3449,12 @@
     /// &lt;https://drafts.csswg.org/selectors/#grouping&gt;
     ///
     /// Return the Selectors or Err if there is an invalid selector.
-    </span><span class="kw">pub fn </span>parse&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, P&gt;(
+    </span><span class="kw">pub fn </span>parse&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, P&gt;(
         parser: <span class="kw-2">&amp;</span>P,
-        input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, ParseError&lt;<span class="lifetime">&#39;i</span>, P::Error&gt;&gt;
+        input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, ParseError&lt;<span class="lifetime">'i</span>, P::Error&gt;&gt;
     <span class="kw">where
-        </span>P: Parser&lt;<span class="lifetime">&#39;i</span>, Impl = Impl&gt;,
+        </span>P: Parser&lt;<span class="lifetime">'i</span>, Impl = Impl&gt;,
     {
         <span class="kw">let </span><span class="kw-2">mut </span>values = SmallVec::new();
         <span class="kw">loop </span>{
@@ -3476,18 +3477,18 @@
 }
 
 <span class="doccomment">/// Parses one compound selector suitable for nested stuff like ::-moz-any, etc.
-</span><span class="kw">fn </span>parse_inner_compound_selector&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, P, Impl&gt;(
+</span><span class="kw">fn </span>parse_inner_compound_selector&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, P, Impl&gt;(
     parser: <span class="kw-2">&amp;</span>P,
-    input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
-) -&gt; <span class="prelude-ty">Result</span>&lt;Selector&lt;Impl&gt;, ParseError&lt;<span class="lifetime">&#39;i</span>, P::Error&gt;&gt;
+    input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
+) -&gt; <span class="prelude-ty">Result</span>&lt;Selector&lt;Impl&gt;, ParseError&lt;<span class="lifetime">'i</span>, P::Error&gt;&gt;
 <span class="kw">where
-    </span>P: Parser&lt;<span class="lifetime">&#39;i</span>, Impl = Impl&gt;,
+    </span>P: Parser&lt;<span class="lifetime">'i</span>, Impl = Impl&gt;,
     Impl: SelectorImpl,
 {
     <span class="kw">let </span>location = input.current_source_location();
     <span class="kw">let </span>selector = parse_selector(parser, input)<span class="question-mark">?</span>;
 
-    <span class="comment">// Ensure they&#39;re actually all compound selectors without pseudo-elements.
+    <span class="comment">// Ensure they're actually all compound selectors without pseudo-elements.
     </span><span class="kw">if </span>selector.has_pseudo_element() {
         <span class="kw">return </span><span class="prelude-val">Err</span>(
             location.new_custom_error(SelectorParseErrorKind::PseudoElementInComplexSelector)
@@ -3502,12 +3503,12 @@
 }
 
 <span class="doccomment">/// Parse a comma separated list of compound selectors.
-</span><span class="kw">pub fn </span>parse_compound_selector_list&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, P, Impl&gt;(
+</span><span class="kw">pub fn </span>parse_compound_selector_list&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, P, Impl&gt;(
     parser: <span class="kw-2">&amp;</span>P,
-    input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
-) -&gt; <span class="prelude-ty">Result</span>&lt;Box&lt;[Selector&lt;Impl&gt;]&gt;, ParseError&lt;<span class="lifetime">&#39;i</span>, P::Error&gt;&gt;
+    input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
+) -&gt; <span class="prelude-ty">Result</span>&lt;Box&lt;[Selector&lt;Impl&gt;]&gt;, ParseError&lt;<span class="lifetime">'i</span>, P::Error&gt;&gt;
 <span class="kw">where
-    </span>P: Parser&lt;<span class="lifetime">&#39;i</span>, Impl = Impl&gt;,
+    </span>P: Parser&lt;<span class="lifetime">'i</span>, Impl = Impl&gt;,
     Impl: SelectorImpl,
 {
     input
@@ -3722,9 +3723,9 @@
 /// each one matches left-to-right. This is because matching namespace, local name,
 /// id, and class are all relatively cheap, whereas matching pseudo-classes might
 /// be expensive (depending on the pseudo-class). Since authors tend to put the
-/// pseudo-classes on the right, it&#39;s faster to start matching on the left.
+/// pseudo-classes on the right, it's faster to start matching on the left.
 ///
-/// This reordering doesn&#39;t change the semantics of selector matching, and we
+/// This reordering doesn't change the semantics of selector matching, and we
 /// handle it in to_css to make it invisible to serialization.
 </span><span class="attr">#[derive(Clone, Eq, PartialEq)]
 </span><span class="kw">pub struct </span>Selector&lt;Impl: SelectorImpl&gt;(
@@ -3773,7 +3774,7 @@
             }
         }
 
-        <span class="macro">debug_assert!</span>(<span class="bool-val">false</span>, <span class="string">&quot;is_part() lied somehow?&quot;</span>);
+        <span class="macro">debug_assert!</span>(<span class="bool-val">false</span>, <span class="string">"is_part() lied somehow?"</span>);
         <span class="prelude-val">None
     </span>}
 
@@ -3789,13 +3790,13 @@
             }
         }
 
-        <span class="macro">debug_assert!</span>(<span class="bool-val">false</span>, <span class="string">&quot;has_pseudo_element lied!&quot;</span>);
+        <span class="macro">debug_assert!</span>(<span class="bool-val">false</span>, <span class="string">"has_pseudo_element lied!"</span>);
         <span class="prelude-val">None
     </span>}
 
     <span class="doccomment">/// Whether this selector (pseudo-element part excluded) matches every element.
     ///
-    /// Used for &quot;pre-computed&quot; pseudo-elements in components/style/stylist.rs
+    /// Used for "pre-computed" pseudo-elements in components/style/stylist.rs
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>is_universal(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.iter_raw_match_order().all(|c| {
@@ -3861,7 +3862,7 @@
         <span class="kw">match </span><span class="self">self</span>.<span class="number">0</span>.slice[index] {
             Component::Combinator(c) =&gt; c,
             <span class="kw-2">ref </span>other =&gt; <span class="macro">panic!</span>(
-                <span class="string">&quot;Not a combinator: {:?}, {:?}, index: {}&quot;</span>,
+                <span class="string">"Not a combinator: {:?}, {:?}, index: {}"</span>,
                 other, <span class="self">self</span>, index
             ),
         }
@@ -3881,7 +3882,7 @@
         <span class="kw">match </span><span class="self">self</span>.<span class="number">0</span>.slice[<span class="self">self</span>.len() - index - <span class="number">1</span>] {
             Component::Combinator(c) =&gt; c,
             <span class="kw-2">ref </span>other =&gt; <span class="macro">panic!</span>(
-                <span class="string">&quot;Not a combinator: {:?}, {:?}, index: {}&quot;</span>,
+                <span class="string">"Not a combinator: {:?}, {:?}, index: {}"</span>,
                 other, <span class="self">self</span>, index
             ),
         }
@@ -3927,12 +3928,12 @@
 }
 
 <span class="attr">#[derive(Clone)]
-</span><span class="kw">pub struct </span>SelectorIter&lt;<span class="lifetime">&#39;a</span>, Impl: <span class="lifetime">&#39;a </span>+ SelectorImpl&gt; {
-    iter: slice::Iter&lt;<span class="lifetime">&#39;a</span>, Component&lt;Impl&gt;&gt;,
+</span><span class="kw">pub struct </span>SelectorIter&lt;<span class="lifetime">'a</span>, Impl: <span class="lifetime">'a </span>+ SelectorImpl&gt; {
+    iter: slice::Iter&lt;<span class="lifetime">'a</span>, Component&lt;Impl&gt;&gt;,
     next_combinator: <span class="prelude-ty">Option</span>&lt;Combinator&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Impl: <span class="lifetime">&#39;a </span>+ SelectorImpl&gt; SelectorIter&lt;<span class="lifetime">&#39;a</span>, Impl&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Impl: <span class="lifetime">'a </span>+ SelectorImpl&gt; SelectorIter&lt;<span class="lifetime">'a</span>, Impl&gt; {
     <span class="doccomment">/// Prepares this iterator to point to the next sequence to the left,
     /// returning the combinator if the sequence was found.
     </span><span class="attr">#[inline]
@@ -3956,14 +3957,14 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Impl: SelectorImpl&gt; Iterator <span class="kw">for </span>SelectorIter&lt;<span class="lifetime">&#39;a</span>, Impl&gt; {
-    <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Component&lt;Impl&gt;;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Impl: SelectorImpl&gt; Iterator <span class="kw">for </span>SelectorIter&lt;<span class="lifetime">'a</span>, Impl&gt; {
+    <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Component&lt;Impl&gt;;
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
         <span class="macro">debug_assert!</span>(
             <span class="self">self</span>.next_combinator.is_none(),
-            <span class="string">&quot;You should call next_sequence!&quot;
+            <span class="string">"You should call next_sequence!"
         </span>);
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.iter.next()<span class="question-mark">? </span>{
             Component::Combinator(c) =&gt; {
@@ -3975,7 +3976,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Impl: SelectorImpl&gt; fmt::Debug <span class="kw">for </span>SelectorIter&lt;<span class="lifetime">&#39;a</span>, Impl&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Impl: SelectorImpl&gt; fmt::Debug <span class="kw">for </span>SelectorIter&lt;<span class="lifetime">'a</span>, Impl&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
         <span class="kw">let </span>iter = <span class="self">self</span>.iter.clone().rev();
         <span class="kw">for </span>component <span class="kw">in </span>iter {
@@ -3986,11 +3987,11 @@
 }
 
 <span class="doccomment">/// An iterator over all simple selectors belonging to ancestors.
-</span><span class="kw">struct </span>AncestorIter&lt;<span class="lifetime">&#39;a</span>, Impl: <span class="lifetime">&#39;a </span>+ SelectorImpl&gt;(SelectorIter&lt;<span class="lifetime">&#39;a</span>, Impl&gt;);
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Impl: <span class="lifetime">&#39;a </span>+ SelectorImpl&gt; AncestorIter&lt;<span class="lifetime">&#39;a</span>, Impl&gt; {
+</span><span class="kw">struct </span>AncestorIter&lt;<span class="lifetime">'a</span>, Impl: <span class="lifetime">'a </span>+ SelectorImpl&gt;(SelectorIter&lt;<span class="lifetime">'a</span>, Impl&gt;);
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Impl: <span class="lifetime">'a </span>+ SelectorImpl&gt; AncestorIter&lt;<span class="lifetime">'a</span>, Impl&gt; {
     <span class="doccomment">/// Creates an AncestorIter. The passed-in iterator is assumed to point to
     /// the beginning of the child sequence, which will be skipped.
-    </span><span class="kw">fn </span>new(inner: SelectorIter&lt;<span class="lifetime">&#39;a</span>, Impl&gt;) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">fn </span>new(inner: SelectorIter&lt;<span class="lifetime">'a</span>, Impl&gt;) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>result = AncestorIter(inner);
         result.skip_until_ancestor();
         result
@@ -4001,7 +4002,7 @@
     </span><span class="kw">fn </span>skip_until_ancestor(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="kw">loop </span>{
             <span class="kw">while </span><span class="self">self</span>.<span class="number">0</span>.next().is_some() {}
-            <span class="comment">// If this is ever changed to stop at the &quot;pseudo-element&quot;
+            <span class="comment">// If this is ever changed to stop at the "pseudo-element"
             // combinator, we will need to fix the way we compute hashes for
             // revalidation selectors.
             </span><span class="kw">if </span><span class="self">self</span>.<span class="number">0</span>.next_sequence().map_or(<span class="bool-val">true</span>, |x| {
@@ -4013,8 +4014,8 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, Impl: SelectorImpl&gt; Iterator <span class="kw">for </span>AncestorIter&lt;<span class="lifetime">&#39;a</span>, Impl&gt; {
-    <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Component&lt;Impl&gt;;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Impl: SelectorImpl&gt; Iterator <span class="kw">for </span>AncestorIter&lt;<span class="lifetime">'a</span>, Impl&gt; {
+    <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Component&lt;Impl&gt;;
     <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
         <span class="comment">// Grab the next simple selector in the sequence if available.
         </span><span class="kw">let </span>next = <span class="self">self</span>.<span class="number">0</span>.next();
@@ -4184,9 +4185,9 @@
                 <span class="kw-2">ref </span>name,
                 <span class="kw-2">ref </span>lower_name,
             }) =&gt; {
-                <span class="comment">// Only insert the local-name into the filter if it&#39;s all
+                <span class="comment">// Only insert the local-name into the filter if it's all
                 // lowercase.  Otherwise we would need to test both hashes, and
-                // our data structures aren&#39;t really set up for that.
+                // our data structures aren't really set up for that.
                 </span><span class="kw">if </span>name == lower_name {
                     <span class="prelude-val">Some</span>(name.precomputed_hash())
                 } <span class="kw">else </span>{
@@ -4230,9 +4231,9 @@
 
 <span class="kw">impl</span>&lt;Impl: SelectorImpl&gt; Debug <span class="kw">for </span>Selector&lt;Impl&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
-        f.write_str(<span class="string">&quot;Selector(&quot;</span>)<span class="question-mark">?</span>;
+        f.write_str(<span class="string">"Selector("</span>)<span class="question-mark">?</span>;
         <span class="self">self</span>.to_css(f)<span class="question-mark">?</span>;
-        <span class="macro">write!</span>(f, <span class="string">&quot;, specificity = 0x{:x})&quot;</span>, <span class="self">self</span>.specificity())
+        <span class="macro">write!</span>(f, <span class="string">", specificity = 0x{:x})"</span>, <span class="self">self</span>.specificity())
     }
 }
 
@@ -4260,10 +4261,10 @@
         <span class="kw">let </span><span class="kw-2">mut </span>iter = <span class="self">self</span>.<span class="number">0</span>.iter();
         <span class="kw">let </span>first = iter
             .next()
-            .expect(<span class="string">&quot;Empty SelectorList, should contain at least one selector&quot;</span>);
+            .expect(<span class="string">"Empty SelectorList, should contain at least one selector"</span>);
         first.to_css(dest)<span class="question-mark">?</span>;
         <span class="kw">for </span>selector <span class="kw">in </span>iter {
-            dest.write_str(<span class="string">&quot;, &quot;</span>)<span class="question-mark">?</span>;
+            dest.write_str(<span class="string">", "</span>)<span class="question-mark">?</span>;
             selector.to_css(dest)<span class="question-mark">?</span>;
         }
         <span class="prelude-val">Ok</span>(())
@@ -4280,10 +4281,10 @@
         //
         // This two-iterator strategy involves walking over the selector twice.
         // We could do something more clever, but selector serialization probably
-        // isn&#39;t hot enough to justify it, and the stringification likely
+        // isn't hot enough to justify it, and the stringification likely
         // dominates anyway.
         //
-        // NB: A parse-order iterator is a Rev&lt;&gt;, which doesn&#39;t expose as_slice(),
+        // NB: A parse-order iterator is a Rev&lt;&gt;, which doesn't expose as_slice(),
         // which we need for |split|. So we split by combinators on a match-order
         // sequence and then reverse.
 
@@ -4328,11 +4329,11 @@
             <span class="kw">if </span>first_non_namespace == compound.len() - <span class="number">1 </span>{
                 <span class="kw">match </span>(next_combinator, <span class="kw-2">&amp;</span>compound[first_non_namespace]) {
                     <span class="comment">// We have to be careful here, because if there is a
-                    // pseudo element &quot;combinator&quot; there isn&#39;t really just
+                    // pseudo element "combinator" there isn't really just
                     // the one simple selector. Technically this compound
                     // selector contains the pseudo element selector as well
                     // -- Combinator::PseudoElement, just like
-                    // Combinator::SlotAssignment, don&#39;t exist in the
+                    // Combinator::SlotAssignment, don't exist in the
                     // spec.
                     </span>(<span class="prelude-val">Some</span>(Combinator::PseudoElement), <span class="kw">_</span>) |
                     (<span class="prelude-val">Some</span>(Combinator::SlotAssignment), <span class="kw">_</span>) =&gt; (),
@@ -4342,7 +4343,7 @@
                         </span><span class="kw">for </span>simple <span class="kw">in </span>compound.iter() {
                             simple.to_css(dest)<span class="question-mark">?</span>;
                         }
-                        <span class="comment">// Skip step 2, which is an &quot;otherwise&quot;.
+                        <span class="comment">// Skip step 2, which is an "otherwise".
                         </span>perform_step_2 = <span class="bool-val">false</span>;
                     },
                     <span class="kw">_ </span>=&gt; (),
@@ -4361,9 +4362,9 @@
             </span><span class="kw">if </span>perform_step_2 {
                 <span class="kw">for </span>simple <span class="kw">in </span>compound.iter() {
                     <span class="kw">if let </span>Component::ExplicitUniversalType = <span class="kw-2">*</span>simple {
-                        <span class="comment">// Can&#39;t have a namespace followed by a pseudo-element
+                        <span class="comment">// Can't have a namespace followed by a pseudo-element
                         // selector followed by a universal selector in the same
-                        // compound selector, so we don&#39;t have to worry about the
+                        // compound selector, so we don't have to worry about the
                         // real namespace being in a different `compound`.
                         </span><span class="kw">if </span>can_elide_namespace {
                             <span class="kw">continue</span>;
@@ -4375,7 +4376,7 @@
 
             <span class="comment">// 3. If this is not the last part of the chain of the selector
             //    append a single SPACE (U+0020), followed by the combinator
-            //    &quot;&gt;&quot;, &quot;+&quot;, &quot;~&quot;, &quot;&gt;&gt;&quot;, &quot;||&quot;, as appropriate, followed by another
+            //    "&gt;", "+", "~", "&gt;&gt;", "||", as appropriate, followed by another
             //    single SPACE (U+0020) if the combinator was not whitespace, to
             //    s.
             </span><span class="kw">match </span>next_combinator {
@@ -4384,7 +4385,7 @@
             };
 
             <span class="comment">// 4. If this is the last part of the chain of the selector and
-            //    there is a pseudo-element, append &quot;::&quot; followed by the name of
+            //    there is a pseudo-element, append "::" followed by the name of
             //    the pseudo-element, to s.
             //
             // (we handle this above)
@@ -4400,10 +4401,10 @@
         </span>W: fmt::Write,
     {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
-            Combinator::Child =&gt; dest.write_str(<span class="string">&quot; &gt; &quot;</span>),
-            Combinator::Descendant =&gt; dest.write_str(<span class="string">&quot; &quot;</span>),
-            Combinator::NextSibling =&gt; dest.write_str(<span class="string">&quot; + &quot;</span>),
-            Combinator::LaterSibling =&gt; dest.write_str(<span class="string">&quot; ~ &quot;</span>),
+            Combinator::Child =&gt; dest.write_str(<span class="string">" &gt; "</span>),
+            Combinator::Descendant =&gt; dest.write_str(<span class="string">" "</span>),
+            Combinator::NextSibling =&gt; dest.write_str(<span class="string">" + "</span>),
+            Combinator::LaterSibling =&gt; dest.write_str(<span class="string">" ~ "</span>),
             Combinator::PseudoElement | Combinator::Part | Combinator::SlotAssignment =&gt; <span class="prelude-val">Ok</span>(()),
         }
     }
@@ -4423,60 +4424,60 @@
             </span>W: fmt::Write,
         {
             <span class="kw">match </span>(a, b) {
-                (<span class="number">0</span>, <span class="number">0</span>) =&gt; dest.write_char(<span class="string">&#39;0&#39;</span>),
+                (<span class="number">0</span>, <span class="number">0</span>) =&gt; dest.write_char(<span class="string">'0'</span>),
 
-                (<span class="number">1</span>, <span class="number">0</span>) =&gt; dest.write_char(<span class="string">&#39;n&#39;</span>),
-                (-<span class="number">1</span>, <span class="number">0</span>) =&gt; dest.write_str(<span class="string">&quot;-n&quot;</span>),
-                (<span class="kw">_</span>, <span class="number">0</span>) =&gt; <span class="macro">write!</span>(dest, <span class="string">&quot;{}n&quot;</span>, a),
+                (<span class="number">1</span>, <span class="number">0</span>) =&gt; dest.write_char(<span class="string">'n'</span>),
+                (-<span class="number">1</span>, <span class="number">0</span>) =&gt; dest.write_str(<span class="string">"-n"</span>),
+                (<span class="kw">_</span>, <span class="number">0</span>) =&gt; <span class="macro">write!</span>(dest, <span class="string">"{}n"</span>, a),
 
-                (<span class="number">0</span>, <span class="kw">_</span>) =&gt; <span class="macro">write!</span>(dest, <span class="string">&quot;{}&quot;</span>, b),
-                (<span class="number">1</span>, <span class="kw">_</span>) =&gt; <span class="macro">write!</span>(dest, <span class="string">&quot;n{:+}&quot;</span>, b),
-                (-<span class="number">1</span>, <span class="kw">_</span>) =&gt; <span class="macro">write!</span>(dest, <span class="string">&quot;-n{:+}&quot;</span>, b),
-                (<span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="macro">write!</span>(dest, <span class="string">&quot;{}n{:+}&quot;</span>, a, b),
+                (<span class="number">0</span>, <span class="kw">_</span>) =&gt; <span class="macro">write!</span>(dest, <span class="string">"{}"</span>, b),
+                (<span class="number">1</span>, <span class="kw">_</span>) =&gt; <span class="macro">write!</span>(dest, <span class="string">"n{:+}"</span>, b),
+                (-<span class="number">1</span>, <span class="kw">_</span>) =&gt; <span class="macro">write!</span>(dest, <span class="string">"-n{:+}"</span>, b),
+                (<span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="macro">write!</span>(dest, <span class="string">"{}n{:+}"</span>, a, b),
             }
         }
 
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
             Combinator(<span class="kw-2">ref </span>c) =&gt; c.to_css(dest),
             Slotted(<span class="kw-2">ref </span>selector) =&gt; {
-                dest.write_str(<span class="string">&quot;::slotted(&quot;</span>)<span class="question-mark">?</span>;
+                dest.write_str(<span class="string">"::slotted("</span>)<span class="question-mark">?</span>;
                 selector.to_css(dest)<span class="question-mark">?</span>;
-                dest.write_char(<span class="string">&#39;)&#39;</span>)
+                dest.write_char(<span class="string">')'</span>)
             },
             Part(<span class="kw-2">ref </span>part_names) =&gt; {
-                dest.write_str(<span class="string">&quot;::part(&quot;</span>)<span class="question-mark">?</span>;
+                dest.write_str(<span class="string">"::part("</span>)<span class="question-mark">?</span>;
                 <span class="kw">for </span>(i, name) <span class="kw">in </span>part_names.iter().enumerate() {
                     <span class="kw">if </span>i != <span class="number">0 </span>{
-                        dest.write_char(<span class="string">&#39; &#39;</span>)<span class="question-mark">?</span>;
+                        dest.write_char(<span class="string">' '</span>)<span class="question-mark">?</span>;
                     }
                     display_to_css_identifier(name, dest)<span class="question-mark">?</span>;
                 }
-                dest.write_char(<span class="string">&#39;)&#39;</span>)
+                dest.write_char(<span class="string">')'</span>)
             },
             PseudoElement(<span class="kw-2">ref </span>p) =&gt; p.to_css(dest),
             ID(<span class="kw-2">ref </span>s) =&gt; {
-                dest.write_char(<span class="string">&#39;#&#39;</span>)<span class="question-mark">?</span>;
+                dest.write_char(<span class="string">'#'</span>)<span class="question-mark">?</span>;
                 display_to_css_identifier(s, dest)
             },
             Class(<span class="kw-2">ref </span>s) =&gt; {
-                dest.write_char(<span class="string">&#39;.&#39;</span>)<span class="question-mark">?</span>;
+                dest.write_char(<span class="string">'.'</span>)<span class="question-mark">?</span>;
                 display_to_css_identifier(s, dest)
             },
             LocalName(<span class="kw-2">ref </span>s) =&gt; s.to_css(dest),
-            ExplicitUniversalType =&gt; dest.write_char(<span class="string">&#39;*&#39;</span>),
+            ExplicitUniversalType =&gt; dest.write_char(<span class="string">'*'</span>),
 
             DefaultNamespace(<span class="kw">_</span>) =&gt; <span class="prelude-val">Ok</span>(()),
-            ExplicitNoNamespace =&gt; dest.write_char(<span class="string">&#39;|&#39;</span>),
-            ExplicitAnyNamespace =&gt; dest.write_str(<span class="string">&quot;*|&quot;</span>),
+            ExplicitNoNamespace =&gt; dest.write_char(<span class="string">'|'</span>),
+            ExplicitAnyNamespace =&gt; dest.write_str(<span class="string">"*|"</span>),
             Namespace(<span class="kw-2">ref </span>prefix, <span class="kw">_</span>) =&gt; {
                 display_to_css_identifier(prefix, dest)<span class="question-mark">?</span>;
-                dest.write_char(<span class="string">&#39;|&#39;</span>)
+                dest.write_char(<span class="string">'|'</span>)
             },
 
             AttributeInNoNamespaceExists { <span class="kw-2">ref </span>local_name, .. } =&gt; {
-                dest.write_char(<span class="string">&#39;[&#39;</span>)<span class="question-mark">?</span>;
+                dest.write_char(<span class="string">'['</span>)<span class="question-mark">?</span>;
                 display_to_css_identifier(local_name, dest)<span class="question-mark">?</span>;
-                dest.write_char(<span class="string">&#39;]&#39;</span>)
+                dest.write_char(<span class="string">']'</span>)
             },
             AttributeInNoNamespace {
                 <span class="kw-2">ref </span>local_name,
@@ -4485,59 +4486,59 @@
                 case_sensitivity,
                 ..
             } =&gt; {
-                dest.write_char(<span class="string">&#39;[&#39;</span>)<span class="question-mark">?</span>;
+                dest.write_char(<span class="string">'['</span>)<span class="question-mark">?</span>;
                 display_to_css_identifier(local_name, dest)<span class="question-mark">?</span>;
                 operator.to_css(dest)<span class="question-mark">?</span>;
-                dest.write_char(<span class="string">&#39;&quot;&#39;</span>)<span class="question-mark">?</span>;
-                <span class="macro">write!</span>(CssStringWriter::new(dest), <span class="string">&quot;{}&quot;</span>, value)<span class="question-mark">?</span>;
-                dest.write_char(<span class="string">&#39;&quot;&#39;</span>)<span class="question-mark">?</span>;
+                dest.write_char(<span class="string">'"'</span>)<span class="question-mark">?</span>;
+                <span class="macro">write!</span>(CssStringWriter::new(dest), <span class="string">"{}"</span>, value)<span class="question-mark">?</span>;
+                dest.write_char(<span class="string">'"'</span>)<span class="question-mark">?</span>;
                 <span class="kw">match </span>case_sensitivity {
                     ParsedCaseSensitivity::CaseSensitive |
                     ParsedCaseSensitivity::AsciiCaseInsensitiveIfInHtmlElementInHtmlDocument =&gt; {},
-                    ParsedCaseSensitivity::AsciiCaseInsensitive =&gt; dest.write_str(<span class="string">&quot; i&quot;</span>)<span class="question-mark">?</span>,
-                    ParsedCaseSensitivity::ExplicitCaseSensitive =&gt; dest.write_str(<span class="string">&quot; s&quot;</span>)<span class="question-mark">?</span>,
+                    ParsedCaseSensitivity::AsciiCaseInsensitive =&gt; dest.write_str(<span class="string">" i"</span>)<span class="question-mark">?</span>,
+                    ParsedCaseSensitivity::ExplicitCaseSensitive =&gt; dest.write_str(<span class="string">" s"</span>)<span class="question-mark">?</span>,
                 }
-                dest.write_char(<span class="string">&#39;]&#39;</span>)
+                dest.write_char(<span class="string">']'</span>)
             },
             AttributeOther(<span class="kw-2">ref </span>attr_selector) =&gt; attr_selector.to_css(dest),
 
             <span class="comment">// Pseudo-classes
             </span>Negation(<span class="kw-2">ref </span>arg) =&gt; {
-                dest.write_str(<span class="string">&quot;:not(&quot;</span>)<span class="question-mark">?</span>;
+                dest.write_str(<span class="string">":not("</span>)<span class="question-mark">?</span>;
                 <span class="kw">for </span>component <span class="kw">in </span>arg.iter() {
                     component.to_css(dest)<span class="question-mark">?</span>;
                 }
-                dest.write_str(<span class="string">&quot;)&quot;</span>)
+                dest.write_str(<span class="string">")"</span>)
             },
 
-            FirstChild =&gt; dest.write_str(<span class="string">&quot;:first-child&quot;</span>),
-            LastChild =&gt; dest.write_str(<span class="string">&quot;:last-child&quot;</span>),
-            OnlyChild =&gt; dest.write_str(<span class="string">&quot;:only-child&quot;</span>),
-            Root =&gt; dest.write_str(<span class="string">&quot;:root&quot;</span>),
-            Empty =&gt; dest.write_str(<span class="string">&quot;:empty&quot;</span>),
-            Scope =&gt; dest.write_str(<span class="string">&quot;:scope&quot;</span>),
+            FirstChild =&gt; dest.write_str(<span class="string">":first-child"</span>),
+            LastChild =&gt; dest.write_str(<span class="string">":last-child"</span>),
+            OnlyChild =&gt; dest.write_str(<span class="string">":only-child"</span>),
+            Root =&gt; dest.write_str(<span class="string">":root"</span>),
+            Empty =&gt; dest.write_str(<span class="string">":empty"</span>),
+            Scope =&gt; dest.write_str(<span class="string">":scope"</span>),
             Host(<span class="kw-2">ref </span>selector) =&gt; {
-                dest.write_str(<span class="string">&quot;:host&quot;</span>)<span class="question-mark">?</span>;
+                dest.write_str(<span class="string">":host"</span>)<span class="question-mark">?</span>;
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>selector) = <span class="kw-2">*</span>selector {
-                    dest.write_char(<span class="string">&#39;(&#39;</span>)<span class="question-mark">?</span>;
+                    dest.write_char(<span class="string">'('</span>)<span class="question-mark">?</span>;
                     selector.to_css(dest)<span class="question-mark">?</span>;
-                    dest.write_char(<span class="string">&#39;)&#39;</span>)<span class="question-mark">?</span>;
+                    dest.write_char(<span class="string">')'</span>)<span class="question-mark">?</span>;
                 }
                 <span class="prelude-val">Ok</span>(())
             },
-            FirstOfType =&gt; dest.write_str(<span class="string">&quot;:first-of-type&quot;</span>),
-            LastOfType =&gt; dest.write_str(<span class="string">&quot;:last-of-type&quot;</span>),
-            OnlyOfType =&gt; dest.write_str(<span class="string">&quot;:only-of-type&quot;</span>),
+            FirstOfType =&gt; dest.write_str(<span class="string">":first-of-type"</span>),
+            LastOfType =&gt; dest.write_str(<span class="string">":last-of-type"</span>),
+            OnlyOfType =&gt; dest.write_str(<span class="string">":only-of-type"</span>),
             NthChild(a, b) | NthLastChild(a, b) | NthOfType(a, b) | NthLastOfType(a, b) =&gt; {
                 <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
-                    NthChild(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; dest.write_str(<span class="string">&quot;:nth-child(&quot;</span>)<span class="question-mark">?</span>,
-                    NthLastChild(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; dest.write_str(<span class="string">&quot;:nth-last-child(&quot;</span>)<span class="question-mark">?</span>,
-                    NthOfType(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; dest.write_str(<span class="string">&quot;:nth-of-type(&quot;</span>)<span class="question-mark">?</span>,
-                    NthLastOfType(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; dest.write_str(<span class="string">&quot;:nth-last-of-type(&quot;</span>)<span class="question-mark">?</span>,
+                    NthChild(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; dest.write_str(<span class="string">":nth-child("</span>)<span class="question-mark">?</span>,
+                    NthLastChild(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; dest.write_str(<span class="string">":nth-last-child("</span>)<span class="question-mark">?</span>,
+                    NthOfType(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; dest.write_str(<span class="string">":nth-of-type("</span>)<span class="question-mark">?</span>,
+                    NthLastOfType(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; dest.write_str(<span class="string">":nth-last-of-type("</span>)<span class="question-mark">?</span>,
                     <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
                 }
                 write_affine(dest, a, b)<span class="question-mark">?</span>;
-                dest.write_char(<span class="string">&#39;)&#39;</span>)
+                dest.write_char(<span class="string">')'</span>)
             },
             NonTSPseudoClass(<span class="kw-2">ref </span>pseudo) =&gt; pseudo.to_css(dest),
         }
@@ -4549,13 +4550,13 @@
     <span class="kw">where
         </span>W: fmt::Write,
     {
-        dest.write_char(<span class="string">&#39;[&#39;</span>)<span class="question-mark">?</span>;
+        dest.write_char(<span class="string">'['</span>)<span class="question-mark">?</span>;
         <span class="kw">match </span><span class="self">self</span>.namespace {
             <span class="prelude-val">Some</span>(NamespaceConstraint::Specific((<span class="kw-2">ref </span>prefix, <span class="kw">_</span>))) =&gt; {
                 display_to_css_identifier(prefix, dest)<span class="question-mark">?</span>;
-                dest.write_char(<span class="string">&#39;|&#39;</span>)<span class="question-mark">?
+                dest.write_char(<span class="string">'|'</span>)<span class="question-mark">?
             </span>},
-            <span class="prelude-val">Some</span>(NamespaceConstraint::Any) =&gt; dest.write_str(<span class="string">&quot;*|&quot;</span>)<span class="question-mark">?</span>,
+            <span class="prelude-val">Some</span>(NamespaceConstraint::Any) =&gt; dest.write_str(<span class="string">"*|"</span>)<span class="question-mark">?</span>,
             <span class="prelude-val">None </span>=&gt; {},
         }
         display_to_css_identifier(<span class="kw-2">&amp;</span><span class="self">self</span>.local_name, dest)<span class="question-mark">?</span>;
@@ -4567,18 +4568,18 @@
                 <span class="kw-2">ref </span>expected_value,
             } =&gt; {
                 operator.to_css(dest)<span class="question-mark">?</span>;
-                dest.write_char(<span class="string">&#39;&quot;&#39;</span>)<span class="question-mark">?</span>;
-                <span class="macro">write!</span>(CssStringWriter::new(dest), <span class="string">&quot;{}&quot;</span>, expected_value)<span class="question-mark">?</span>;
-                dest.write_char(<span class="string">&#39;&quot;&#39;</span>)<span class="question-mark">?</span>;
+                dest.write_char(<span class="string">'"'</span>)<span class="question-mark">?</span>;
+                <span class="macro">write!</span>(CssStringWriter::new(dest), <span class="string">"{}"</span>, expected_value)<span class="question-mark">?</span>;
+                dest.write_char(<span class="string">'"'</span>)<span class="question-mark">?</span>;
                 <span class="kw">match </span>case_sensitivity {
                     ParsedCaseSensitivity::CaseSensitive |
                     ParsedCaseSensitivity::AsciiCaseInsensitiveIfInHtmlElementInHtmlDocument =&gt; {},
-                    ParsedCaseSensitivity::AsciiCaseInsensitive =&gt; dest.write_str(<span class="string">&quot; i&quot;</span>)<span class="question-mark">?</span>,
-                    ParsedCaseSensitivity::ExplicitCaseSensitive =&gt; dest.write_str(<span class="string">&quot; s&quot;</span>)<span class="question-mark">?</span>,
+                    ParsedCaseSensitivity::AsciiCaseInsensitive =&gt; dest.write_str(<span class="string">" i"</span>)<span class="question-mark">?</span>,
+                    ParsedCaseSensitivity::ExplicitCaseSensitive =&gt; dest.write_str(<span class="string">" s"</span>)<span class="question-mark">?</span>,
                 }
             },
         }
-        dest.write_char(<span class="string">&#39;]&#39;</span>)
+        dest.write_char(<span class="string">']'</span>)
     }
 }
 
@@ -4601,7 +4602,7 @@
     // to support in `fmt::Write::write_char` cases that,
     // in `serialize_identifier` (which has the full value as a `&amp;str` slice),
     // can be expressed as
-    // `string.starts_with(&quot;--&quot;)`, `string == &quot;-&quot;`, `string.starts_with(&quot;-&quot;)`, etc.
+    // `string.starts_with("--")`, `string == "-"`, `string.starts_with("-")`, etc.
     //
     // And I don’t even know if this would be a performance win: jemalloc is good at what it does
     // and the state machine might be slower than `serialize_identifier` as currently written.
@@ -4614,12 +4615,12 @@
 /// selector : simple_selector_sequence [ combinator simple_selector_sequence ]* ;
 ///
 /// `Err` means invalid selector.
-</span><span class="kw">fn </span>parse_selector&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, P, Impl&gt;(
+</span><span class="kw">fn </span>parse_selector&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, P, Impl&gt;(
     parser: <span class="kw-2">&amp;</span>P,
-    input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
-) -&gt; <span class="prelude-ty">Result</span>&lt;Selector&lt;Impl&gt;, ParseError&lt;<span class="lifetime">&#39;i</span>, P::Error&gt;&gt;
+    input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
+) -&gt; <span class="prelude-ty">Result</span>&lt;Selector&lt;Impl&gt;, ParseError&lt;<span class="lifetime">'i</span>, P::Error&gt;&gt;
 <span class="kw">where
-    </span>P: Parser&lt;<span class="lifetime">&#39;i</span>, Impl = Impl&gt;,
+    </span>P: Parser&lt;<span class="lifetime">'i</span>, Impl = Impl&gt;,
     Impl: SelectorImpl,
 {
     <span class="kw">let </span><span class="kw-2">mut </span>builder = SelectorBuilder::default();
@@ -4627,7 +4628,7 @@
     <span class="kw">let </span><span class="kw-2">mut </span>has_pseudo_element = <span class="bool-val">false</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>slotted = <span class="bool-val">false</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>part = <span class="bool-val">false</span>;
-    <span class="lifetime">&#39;outer_loop</span>: <span class="kw">loop </span>{
+    <span class="lifetime">'outer_loop</span>: <span class="kw">loop </span>{
         <span class="comment">// Parse a sequence of simple selectors.
         </span><span class="kw">let </span>state = <span class="kw">match </span>parse_compound_selector(parser, input, <span class="kw-2">&amp;mut </span>builder)<span class="question-mark">? </span>{
             <span class="prelude-val">Some</span>(state) =&gt; state,
@@ -4654,17 +4655,17 @@
         <span class="kw">loop </span>{
             <span class="kw">let </span>before_this_token = input.state();
             <span class="kw">match </span>input.next_including_whitespace() {
-                <span class="prelude-val">Err</span>(_e) =&gt; <span class="kw">break </span><span class="lifetime">&#39;outer_loop</span>,
+                <span class="prelude-val">Err</span>(_e) =&gt; <span class="kw">break </span><span class="lifetime">'outer_loop</span>,
                 <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span>Token::WhiteSpace(<span class="kw">_</span>)) =&gt; any_whitespace = <span class="bool-val">true</span>,
-                <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span>Token::Delim(<span class="string">&#39;&gt;&#39;</span>)) =&gt; {
+                <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span>Token::Delim(<span class="string">'&gt;'</span>)) =&gt; {
                     combinator = Combinator::Child;
                     <span class="kw">break</span>;
                 },
-                <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span>Token::Delim(<span class="string">&#39;+&#39;</span>)) =&gt; {
+                <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span>Token::Delim(<span class="string">'+'</span>)) =&gt; {
                     combinator = Combinator::NextSibling;
                     <span class="kw">break</span>;
                 },
-                <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span>Token::Delim(<span class="string">&#39;~&#39;</span>)) =&gt; {
+                <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span>Token::Delim(<span class="string">'~'</span>)) =&gt; {
                     combinator = Combinator::LaterSibling;
                     <span class="kw">break</span>;
                 },
@@ -4674,7 +4675,7 @@
                         combinator = Combinator::Descendant;
                         <span class="kw">break</span>;
                     } <span class="kw">else </span>{
-                        <span class="kw">break </span><span class="lifetime">&#39;outer_loop</span>;
+                        <span class="kw">break </span><span class="lifetime">'outer_loop</span>;
                     }
                 },
             }
@@ -4688,12 +4689,12 @@
 <span class="kw">impl</span>&lt;Impl: SelectorImpl&gt; Selector&lt;Impl&gt; {
     <span class="doccomment">/// Parse a selector, without any pseudo-element.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>parse&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, P&gt;(
+    </span><span class="kw">pub fn </span>parse&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, P&gt;(
         parser: <span class="kw-2">&amp;</span>P,
-        input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, ParseError&lt;<span class="lifetime">&#39;i</span>, P::Error&gt;&gt;
+        input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, ParseError&lt;<span class="lifetime">'i</span>, P::Error&gt;&gt;
     <span class="kw">where
-        </span>P: Parser&lt;<span class="lifetime">&#39;i</span>, Impl = Impl&gt;,
+        </span>P: Parser&lt;<span class="lifetime">'i</span>, Impl = Impl&gt;,
     {
         parse_selector(parser, input)
     }
@@ -4702,13 +4703,13 @@
 <span class="doccomment">/// * `Err(())`: Invalid selector, abort
 /// * `Ok(false)`: Not a type selector, could be something else. `input` was not consumed.
 /// * `Ok(true)`: Length 0 (`*|*`), 1 (`*|E` or `ns|*`) or 2 (`|E` or `ns|E`)
-</span><span class="kw">fn </span>parse_type_selector&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, P, Impl, S&gt;(
+</span><span class="kw">fn </span>parse_type_selector&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, P, Impl, S&gt;(
     parser: <span class="kw-2">&amp;</span>P,
-    input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
+    input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
     sink: <span class="kw-2">&amp;mut </span>S,
-) -&gt; <span class="prelude-ty">Result</span>&lt;bool, ParseError&lt;<span class="lifetime">&#39;i</span>, P::Error&gt;&gt;
+) -&gt; <span class="prelude-ty">Result</span>&lt;bool, ParseError&lt;<span class="lifetime">'i</span>, P::Error&gt;&gt;
 <span class="kw">where
-    </span>P: Parser&lt;<span class="lifetime">&#39;i</span>, Impl = Impl&gt;,
+    </span>P: Parser&lt;<span class="lifetime">'i</span>, Impl = Impl&gt;,
     Impl: SelectorImpl,
     S: Push&lt;Component&lt;Impl&gt;&gt;,
 {
@@ -4737,14 +4738,14 @@
                     <span class="kw">match </span>parser.default_namespace() {
                         <span class="comment">// Element type selectors that have no namespace
                         // component (no namespace separator) represent elements
-                        // without regard to the element&#39;s namespace (equivalent
-                        // to &quot;*|&quot;) unless a default namespace has been declared
+                        // without regard to the element's namespace (equivalent
+                        // to "*|") unless a default namespace has been declared
                         // for namespaced selectors (e.g. in CSS, in the style
                         // sheet). If a default namespace has been declared,
                         // such selectors will represent only elements in the
                         // default namespace.
                         // -- Selectors § 6.1.1
-                        // So we&#39;ll have this act the same as the
+                        // So we'll have this act the same as the
                         // QNamePrefix::ImplicitAnyNamespace case.
                         </span><span class="prelude-val">None </span>=&gt; {},
                         <span class="prelude-val">Some</span>(<span class="kw">_</span>) =&gt; sink.push(Component::ExplicitAnyNamespace),
@@ -4785,22 +4786,22 @@
     </span>ExplicitNamespace(Impl::NamespacePrefix, Impl::NamespaceUrl), <span class="comment">// `prefix|foo`
 </span>}
 
-<span class="kw">enum </span>OptionalQName&lt;<span class="lifetime">&#39;i</span>, Impl: SelectorImpl&gt; {
-    <span class="prelude-val">Some</span>(QNamePrefix&lt;Impl&gt;, <span class="prelude-ty">Option</span>&lt;CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;&gt;),
-    <span class="prelude-val">None</span>(Token&lt;<span class="lifetime">&#39;i</span>&gt;),
+<span class="kw">enum </span>OptionalQName&lt;<span class="lifetime">'i</span>, Impl: SelectorImpl&gt; {
+    <span class="prelude-val">Some</span>(QNamePrefix&lt;Impl&gt;, <span class="prelude-ty">Option</span>&lt;CowRcStr&lt;<span class="lifetime">'i</span>&gt;&gt;),
+    <span class="prelude-val">None</span>(Token&lt;<span class="lifetime">'i</span>&gt;),
 }
 
 <span class="doccomment">/// * `Err(())`: Invalid selector, abort
 /// * `Ok(None(token))`: Not a simple selector, could be something else. `input` was not consumed,
 ///                      but the token is still returned.
 /// * `Ok(Some(namespace, local_name))`: `None` for the local name means a `*` universal selector
-</span><span class="kw">fn </span>parse_qualified_name&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, P, Impl&gt;(
+</span><span class="kw">fn </span>parse_qualified_name&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, P, Impl&gt;(
     parser: <span class="kw-2">&amp;</span>P,
-    input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
+    input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
     in_attr_selector: bool,
-) -&gt; <span class="prelude-ty">Result</span>&lt;OptionalQName&lt;<span class="lifetime">&#39;i</span>, Impl&gt;, ParseError&lt;<span class="lifetime">&#39;i</span>, P::Error&gt;&gt;
+) -&gt; <span class="prelude-ty">Result</span>&lt;OptionalQName&lt;<span class="lifetime">'i</span>, Impl&gt;, ParseError&lt;<span class="lifetime">'i</span>, P::Error&gt;&gt;
 <span class="kw">where
-    </span>P: Parser&lt;<span class="lifetime">&#39;i</span>, Impl = Impl&gt;,
+    </span>P: Parser&lt;<span class="lifetime">'i</span>, Impl = Impl&gt;,
     Impl: SelectorImpl,
 {
     <span class="kw">let </span>default_namespace = |local_name| {
@@ -4811,10 +4812,10 @@
         <span class="prelude-val">Ok</span>(OptionalQName::Some(namespace, local_name))
     };
 
-    <span class="kw">let </span>explicit_namespace = |input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;, namespace| {
+    <span class="kw">let </span>explicit_namespace = |input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;, namespace| {
         <span class="kw">let </span>location = input.current_source_location();
         <span class="kw">match </span>input.next_including_whitespace() {
-            <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span>Token::Delim(<span class="string">&#39;*&#39;</span>)) <span class="kw">if </span>!in_attr_selector =&gt; <span class="prelude-val">Ok</span>(OptionalQName::Some(namespace, <span class="prelude-val">None</span>)),
+            <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span>Token::Delim(<span class="string">'*'</span>)) <span class="kw">if </span>!in_attr_selector =&gt; <span class="prelude-val">Ok</span>(OptionalQName::Some(namespace, <span class="prelude-val">None</span>)),
             <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span>Token::Ident(<span class="kw-2">ref </span>local_name)) =&gt; {
                 <span class="prelude-val">Ok</span>(OptionalQName::Some(namespace, <span class="prelude-val">Some</span>(local_name.clone())))
             },
@@ -4835,7 +4836,7 @@
         <span class="prelude-val">Ok</span>(Token::Ident(value)) =&gt; {
             <span class="kw">let </span>after_ident = input.state();
             <span class="kw">match </span>input.next_including_whitespace() {
-                <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span>Token::Delim(<span class="string">&#39;|&#39;</span>)) =&gt; {
+                <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span>Token::Delim(<span class="string">'|'</span>)) =&gt; {
                     <span class="kw">let </span>prefix = value.as_ref().into();
                     <span class="kw">let </span>result = parser.namespace_for_prefix(<span class="kw-2">&amp;</span>prefix);
                     <span class="kw">let </span>url = result.ok_or(
@@ -4858,11 +4859,11 @@
                 },
             }
         },
-        <span class="prelude-val">Ok</span>(Token::Delim(<span class="string">&#39;*&#39;</span>)) =&gt; {
+        <span class="prelude-val">Ok</span>(Token::Delim(<span class="string">'*'</span>)) =&gt; {
             <span class="kw">let </span>after_star = input.state();
             <span class="comment">// FIXME: remove clone() when lifetimes are non-lexical
             </span><span class="kw">match </span>input.next_including_whitespace().map(|t| t.clone()) {
-                <span class="prelude-val">Ok</span>(Token::Delim(<span class="string">&#39;|&#39;</span>)) =&gt; {
+                <span class="prelude-val">Ok</span>(Token::Delim(<span class="string">'|'</span>)) =&gt; {
                     explicit_namespace(input, QNamePrefix::ExplicitAnyNamespace)
                 },
                 result =&gt; {
@@ -4880,7 +4881,7 @@
                 },
             }
         },
-        <span class="prelude-val">Ok</span>(Token::Delim(<span class="string">&#39;|&#39;</span>)) =&gt; explicit_namespace(input, QNamePrefix::ExplicitNoNamespace),
+        <span class="prelude-val">Ok</span>(Token::Delim(<span class="string">'|'</span>)) =&gt; explicit_namespace(input, QNamePrefix::ExplicitNoNamespace),
         <span class="prelude-val">Ok</span>(t) =&gt; {
             input.reset(<span class="kw-2">&amp;</span>start);
             <span class="prelude-val">Ok</span>(OptionalQName::None(t))
@@ -4892,12 +4893,12 @@
     }
 }
 
-<span class="kw">fn </span>parse_attribute_selector&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, P, Impl&gt;(
+<span class="kw">fn </span>parse_attribute_selector&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, P, Impl&gt;(
     parser: <span class="kw-2">&amp;</span>P,
-    input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
-) -&gt; <span class="prelude-ty">Result</span>&lt;Component&lt;Impl&gt;, ParseError&lt;<span class="lifetime">&#39;i</span>, P::Error&gt;&gt;
+    input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
+) -&gt; <span class="prelude-ty">Result</span>&lt;Component&lt;Impl&gt;, ParseError&lt;<span class="lifetime">'i</span>, P::Error&gt;&gt;
 <span class="kw">where
-    </span>P: Parser&lt;<span class="lifetime">&#39;i</span>, Impl = Impl&gt;,
+    </span>P: Parser&lt;<span class="lifetime">'i</span>, Impl = Impl&gt;,
     Impl: SelectorImpl,
 {
     <span class="kw">let </span>namespace;
@@ -4952,7 +4953,7 @@
         },
 
         <span class="comment">// [foo=bar]
-        </span><span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span>Token::Delim(<span class="string">&#39;=&#39;</span>)) =&gt; AttrSelectorOperator::Equal,
+        </span><span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span>Token::Delim(<span class="string">'='</span>)) =&gt; AttrSelectorOperator::Equal,
         <span class="comment">// [foo~=bar]
         </span><span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span>Token::IncludeMatch) =&gt; AttrSelectorOperator::Includes,
         <span class="comment">// [foo|=bar]
@@ -5027,11 +5028,11 @@
     }
 }
 
-<span class="doccomment">/// An attribute selector can have &#39;s&#39; or &#39;i&#39; as flags, or no flags at all.
+<span class="doccomment">/// An attribute selector can have 's' or 'i' as flags, or no flags at all.
 </span><span class="kw">enum </span>AttributeFlags {
-    <span class="comment">// Matching should be case-sensitive (&#39;s&#39; flag).
+    <span class="comment">// Matching should be case-sensitive ('s' flag).
     </span>CaseSensitive,
-    <span class="comment">// Matching should be case-insensitive (&#39;i&#39; flag).
+    <span class="comment">// Matching should be case-insensitive ('i' flag).
     </span>AsciiCaseInsensitive,
     <span class="comment">// No flags.  Matching behavior depends on the name of the attribute.
     </span>CaseSensitivityDependsOnName,
@@ -5045,8 +5046,8 @@
             AttributeFlags::CaseSensitivityDependsOnName =&gt; {
                 <span class="kw">if </span>!have_namespace &amp;&amp;
                     <span class="macro">include!</span>(<span class="macro">concat!</span>(
-                        <span class="macro">env!</span>(<span class="string">&quot;OUT_DIR&quot;</span>),
-                        <span class="string">&quot;/ascii_case_insensitive_html_attributes.rs&quot;
+                        <span class="macro">env!</span>(<span class="string">"OUT_DIR"</span>),
+                        <span class="string">"/ascii_case_insensitive_html_attributes.rs"
                     </span>))
                     .contains(local_name)
                 {
@@ -5059,9 +5060,9 @@
     }
 }
 
-<span class="kw">fn </span>parse_attribute_flags&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;(
-    input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
-) -&gt; <span class="prelude-ty">Result</span>&lt;AttributeFlags, BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+<span class="kw">fn </span>parse_attribute_flags&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;(
+    input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
+) -&gt; <span class="prelude-ty">Result</span>&lt;AttributeFlags, BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
     <span class="kw">let </span>location = input.current_source_location();
     <span class="kw">let </span>token = <span class="kw">match </span>input.next() {
         <span class="prelude-val">Ok</span>(t) =&gt; t,
@@ -5079,20 +5080,20 @@
 
     <span class="prelude-val">Ok</span>(<span class="macro">match_ignore_ascii_case! </span>{
         ident,
-        <span class="string">&quot;i&quot; </span>=&gt; AttributeFlags::AsciiCaseInsensitive,
-        <span class="string">&quot;s&quot; </span>=&gt; AttributeFlags::CaseSensitive,
+        <span class="string">"i" </span>=&gt; AttributeFlags::AsciiCaseInsensitive,
+        <span class="string">"s" </span>=&gt; AttributeFlags::CaseSensitive,
         <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(location.new_basic_unexpected_token_error(token.clone())),
     })
 }
 
 <span class="doccomment">/// Level 3: Parse **one** simple_selector.  (Though we might insert a second
-/// implied &quot;&lt;defaultns&gt;|*&quot; type selector.)
-</span><span class="kw">fn </span>parse_negation&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, P, Impl&gt;(
+/// implied "&lt;defaultns&gt;|*" type selector.)
+</span><span class="kw">fn </span>parse_negation&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, P, Impl&gt;(
     parser: <span class="kw-2">&amp;</span>P,
-    input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
-) -&gt; <span class="prelude-ty">Result</span>&lt;Component&lt;Impl&gt;, ParseError&lt;<span class="lifetime">&#39;i</span>, P::Error&gt;&gt;
+    input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
+) -&gt; <span class="prelude-ty">Result</span>&lt;Component&lt;Impl&gt;, ParseError&lt;<span class="lifetime">'i</span>, P::Error&gt;&gt;
 <span class="kw">where
-    </span>P: Parser&lt;<span class="lifetime">&#39;i</span>, Impl = Impl&gt;,
+    </span>P: Parser&lt;<span class="lifetime">'i</span>, Impl = Impl&gt;,
     Impl: SelectorImpl,
 {
     <span class="comment">// We use a sequence because a type selector may be represented as two Components.
@@ -5101,7 +5102,7 @@
     input.skip_whitespace();
 
     <span class="comment">// Get exactly one simple selector. The parse logic in the caller will verify
-    // that there are no trailing tokens after we&#39;re done.
+    // that there are no trailing tokens after we're done.
     </span><span class="kw">let </span>is_type_sel = <span class="kw">match </span>parse_type_selector(parser, input, <span class="kw-2">&amp;mut </span>sequence) {
         <span class="prelude-val">Ok</span>(result) =&gt; result,
         <span class="prelude-val">Err</span>(ParseError {
@@ -5139,13 +5140,13 @@
 ///
 /// `Err(())` means invalid selector.
 /// `Ok(None)` is an empty selector
-</span><span class="kw">fn </span>parse_compound_selector&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, P, Impl&gt;(
+</span><span class="kw">fn </span>parse_compound_selector&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, P, Impl&gt;(
     parser: <span class="kw-2">&amp;</span>P,
-    input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
+    input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
     builder: <span class="kw-2">&amp;mut </span>SelectorBuilder&lt;Impl&gt;,
-) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;SelectorParsingState&gt;, ParseError&lt;<span class="lifetime">&#39;i</span>, P::Error&gt;&gt;
+) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;SelectorParsingState&gt;, ParseError&lt;<span class="lifetime">'i</span>, P::Error&gt;&gt;
 <span class="kw">where
-    </span>P: Parser&lt;<span class="lifetime">&#39;i</span>, Impl = Impl&gt;,
+    </span>P: Parser&lt;<span class="lifetime">'i</span>, Impl = Impl&gt;,
     Impl: SelectorImpl,
 {
     input.skip_whitespace();
@@ -5154,7 +5155,7 @@
     <span class="kw">if </span>!parse_type_selector(parser, input, builder)<span class="question-mark">? </span>{
         <span class="kw">if let </span><span class="prelude-val">Some</span>(url) = parser.default_namespace() {
             <span class="comment">// If there was no explicit type selector, but there is a
-            // default namespace, there is an implicit &quot;&lt;defaultns&gt;|*&quot; type
+            // default namespace, there is an implicit "&lt;defaultns&gt;|*" type
             // selector.
             </span>builder.push_simple_selector(Component::DefaultNamespace(url))
         }
@@ -5203,14 +5204,14 @@
     }
 }
 
-<span class="kw">fn </span>parse_functional_pseudo_class&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, P, Impl&gt;(
+<span class="kw">fn </span>parse_functional_pseudo_class&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, P, Impl&gt;(
     parser: <span class="kw-2">&amp;</span>P,
-    input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
-    name: CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;,
+    input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
+    name: CowRcStr&lt;<span class="lifetime">'i</span>&gt;,
     state: SelectorParsingState,
-) -&gt; <span class="prelude-ty">Result</span>&lt;Component&lt;Impl&gt;, ParseError&lt;<span class="lifetime">&#39;i</span>, P::Error&gt;&gt;
+) -&gt; <span class="prelude-ty">Result</span>&lt;Component&lt;Impl&gt;, ParseError&lt;<span class="lifetime">'i</span>, P::Error&gt;&gt;
 <span class="kw">where
-    </span>P: Parser&lt;<span class="lifetime">&#39;i</span>, Impl = Impl&gt;,
+    </span>P: Parser&lt;<span class="lifetime">'i</span>, Impl = Impl&gt;,
     Impl: SelectorImpl,
 {
     <span class="kw">if </span>!state.allows_functional_pseudo_classes() {
@@ -5218,15 +5219,15 @@
     }
     <span class="macro">debug_assert!</span>(state.allows_tree_structural_pseudo_classes());
     <span class="macro">match_ignore_ascii_case! </span>{ <span class="kw-2">&amp;</span>name,
-        <span class="string">&quot;nth-child&quot; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(parse_nth_pseudo_class(input, Component::NthChild)<span class="question-mark">?</span>),
-        <span class="string">&quot;nth-of-type&quot; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(parse_nth_pseudo_class(input, Component::NthOfType)<span class="question-mark">?</span>),
-        <span class="string">&quot;nth-last-child&quot; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(parse_nth_pseudo_class(input, Component::NthLastChild)<span class="question-mark">?</span>),
-        <span class="string">&quot;nth-last-of-type&quot; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(parse_nth_pseudo_class(input, Component::NthLastOfType)<span class="question-mark">?</span>),
-        <span class="string">&quot;host&quot; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(Component::Host(<span class="prelude-val">Some</span>(parse_inner_compound_selector(parser, input)<span class="question-mark">?</span>))),
-        <span class="string">&quot;not&quot; </span>=&gt; {
+        <span class="string">"nth-child" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(parse_nth_pseudo_class(input, Component::NthChild)<span class="question-mark">?</span>),
+        <span class="string">"nth-of-type" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(parse_nth_pseudo_class(input, Component::NthOfType)<span class="question-mark">?</span>),
+        <span class="string">"nth-last-child" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(parse_nth_pseudo_class(input, Component::NthLastChild)<span class="question-mark">?</span>),
+        <span class="string">"nth-last-of-type" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(parse_nth_pseudo_class(input, Component::NthLastOfType)<span class="question-mark">?</span>),
+        <span class="string">"host" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(Component::Host(<span class="prelude-val">Some</span>(parse_inner_compound_selector(parser, input)<span class="question-mark">?</span>))),
+        <span class="string">"not" </span>=&gt; {
             <span class="kw">if </span>state.intersects(SelectorParsingState::INSIDE_NEGATION) {
                 <span class="kw">return </span><span class="prelude-val">Err</span>(input.new_custom_error(
-                    SelectorParseErrorKind::UnexpectedIdent(<span class="string">&quot;not&quot;</span>.into())
+                    SelectorParseErrorKind::UnexpectedIdent(<span class="string">"not"</span>.into())
                 ));
             }
             <span class="macro">debug_assert!</span>(state.is_empty());
@@ -5237,10 +5238,10 @@
     P::parse_non_ts_functional_pseudo_class(parser, name, input).map(Component::NonTSPseudoClass)
 }
 
-<span class="kw">fn </span>parse_nth_pseudo_class&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, Impl, F&gt;(
-    input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
+<span class="kw">fn </span>parse_nth_pseudo_class&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, Impl, F&gt;(
+    input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
     selector: F,
-) -&gt; <span class="prelude-ty">Result</span>&lt;Component&lt;Impl&gt;, BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt;
+) -&gt; <span class="prelude-ty">Result</span>&lt;Component&lt;Impl&gt;, BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt;
 <span class="kw">where
     </span>Impl: SelectorImpl,
     F: FnOnce(i32, i32) -&gt; Component&lt;Impl&gt;,
@@ -5255,7 +5256,7 @@
 </span><span class="kw">fn </span>is_css2_pseudo_element(name: <span class="kw-2">&amp;</span>str) -&gt; bool {
     <span class="comment">// ** Do not add to this list! **
     </span><span class="macro">match_ignore_ascii_case! </span>{ name,
-        <span class="string">&quot;before&quot; </span>| <span class="string">&quot;after&quot; </span>| <span class="string">&quot;first-line&quot; </span>| <span class="string">&quot;first-letter&quot; </span>=&gt; <span class="bool-val">true</span>,
+        <span class="string">"before" </span>| <span class="string">"after" </span>| <span class="string">"first-line" </span>| <span class="string">"first-letter" </span>=&gt; <span class="bool-val">true</span>,
         <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
     }
 }
@@ -5265,13 +5266,13 @@
 /// * `Err(())`: Invalid selector, abort
 /// * `Ok(None)`: Not a simple selector, could be something else. `input` was not consumed.
 /// * `Ok(Some(_))`: Parsed a simple selector or pseudo-element
-</span><span class="kw">fn </span>parse_one_simple_selector&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, P, Impl&gt;(
+</span><span class="kw">fn </span>parse_one_simple_selector&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, P, Impl&gt;(
     parser: <span class="kw-2">&amp;</span>P,
-    input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
+    input: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
     state: SelectorParsingState,
-) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;SimpleSelectorParseResult&lt;Impl&gt;&gt;, ParseError&lt;<span class="lifetime">&#39;i</span>, P::Error&gt;&gt;
+) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;SimpleSelectorParseResult&lt;Impl&gt;&gt;, ParseError&lt;<span class="lifetime">'i</span>, P::Error&gt;&gt;
 <span class="kw">where
-    </span>P: Parser&lt;<span class="lifetime">&#39;i</span>, Impl = Impl&gt;,
+    </span>P: Parser&lt;<span class="lifetime">'i</span>, Impl = Impl&gt;,
     Impl: SelectorImpl,
 {
     <span class="kw">let </span>start = input.state();
@@ -5291,7 +5292,7 @@
             <span class="kw">let </span>id = Component::ID(id.as_ref().into());
             SimpleSelectorParseResult::SimpleSelector(id)
         },
-        Token::Delim(<span class="string">&#39;.&#39;</span>) =&gt; {
+        Token::Delim(<span class="string">'.'</span>) =&gt; {
             <span class="kw">if </span>state.intersects(SelectorParsingState::AFTER_PSEUDO) {
                 <span class="kw">return </span><span class="prelude-val">Err</span>(input.new_custom_error(SelectorParseErrorKind::InvalidState));
             }
@@ -5333,7 +5334,7 @@
                     <span class="kw">return </span><span class="prelude-val">Err</span>(input.new_custom_error(SelectorParseErrorKind::InvalidState));
                 }
                 <span class="kw">let </span>pseudo_element = <span class="kw">if </span>is_functional {
-                    <span class="kw">if </span>P::parse_part(parser) &amp;&amp; name.eq_ignore_ascii_case(<span class="string">&quot;part&quot;</span>) {
+                    <span class="kw">if </span>P::parse_part(parser) &amp;&amp; name.eq_ignore_ascii_case(<span class="string">"part"</span>) {
                         <span class="kw">if </span>!state.allows_part() {
                             <span class="kw">return </span><span class="prelude-val">Err</span>(
                                 input.new_custom_error(SelectorParseErrorKind::InvalidState)
@@ -5349,7 +5350,7 @@
                         })<span class="question-mark">?</span>;
                         <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(SimpleSelectorParseResult::PartPseudo(names)));
                     }
-                    <span class="kw">if </span>P::parse_slotted(parser) &amp;&amp; name.eq_ignore_ascii_case(<span class="string">&quot;slotted&quot;</span>) {
+                    <span class="kw">if </span>P::parse_slotted(parser) &amp;&amp; name.eq_ignore_ascii_case(<span class="string">"slotted"</span>) {
                         <span class="kw">if </span>!state.allows_slotted() {
                             <span class="kw">return </span><span class="prelude-val">Err</span>(
                                 input.new_custom_error(SelectorParseErrorKind::InvalidState)
@@ -5391,14 +5392,14 @@
     }))
 }
 
-<span class="kw">fn </span>parse_simple_pseudo_class&lt;<span class="lifetime">&#39;i</span>, P, Impl&gt;(
+<span class="kw">fn </span>parse_simple_pseudo_class&lt;<span class="lifetime">'i</span>, P, Impl&gt;(
     parser: <span class="kw-2">&amp;</span>P,
     location: SourceLocation,
-    name: CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;,
+    name: CowRcStr&lt;<span class="lifetime">'i</span>&gt;,
     state: SelectorParsingState,
-) -&gt; <span class="prelude-ty">Result</span>&lt;Component&lt;Impl&gt;, ParseError&lt;<span class="lifetime">&#39;i</span>, P::Error&gt;&gt;
+) -&gt; <span class="prelude-ty">Result</span>&lt;Component&lt;Impl&gt;, ParseError&lt;<span class="lifetime">'i</span>, P::Error&gt;&gt;
 <span class="kw">where
-    </span>P: Parser&lt;<span class="lifetime">&#39;i</span>, Impl = Impl&gt;,
+    </span>P: Parser&lt;<span class="lifetime">'i</span>, Impl = Impl&gt;,
     Impl: SelectorImpl,
 {
     <span class="kw">if </span>!state.allows_non_functional_pseudo_classes() {
@@ -5407,16 +5408,16 @@
 
     <span class="kw">if </span>state.allows_tree_structural_pseudo_classes() {
         <span class="macro">match_ignore_ascii_case! </span>{ <span class="kw-2">&amp;</span>name,
-            <span class="string">&quot;first-child&quot; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(Component::FirstChild),
-            <span class="string">&quot;last-child&quot; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(Component::LastChild),
-            <span class="string">&quot;only-child&quot; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(Component::OnlyChild),
-            <span class="string">&quot;root&quot; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(Component::Root),
-            <span class="string">&quot;empty&quot; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(Component::Empty),
-            <span class="string">&quot;scope&quot; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(Component::Scope),
-            <span class="string">&quot;host&quot; </span><span class="kw">if </span>P::parse_host(parser) =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(Component::Host(<span class="prelude-val">None</span>)),
-            <span class="string">&quot;first-of-type&quot; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(Component::FirstOfType),
-            <span class="string">&quot;last-of-type&quot; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(Component::LastOfType),
-            <span class="string">&quot;only-of-type&quot; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(Component::OnlyOfType),
+            <span class="string">"first-child" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(Component::FirstChild),
+            <span class="string">"last-child" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(Component::LastChild),
+            <span class="string">"only-child" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(Component::OnlyChild),
+            <span class="string">"root" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(Component::Root),
+            <span class="string">"empty" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(Component::Empty),
+            <span class="string">"scope" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(Component::Scope),
+            <span class="string">"host" </span><span class="kw">if </span>P::parse_host(parser) =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(Component::Host(<span class="prelude-val">None</span>)),
+            <span class="string">"first-of-type" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(Component::FirstOfType),
+            <span class="string">"last-of-type" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(Component::LastOfType),
+            <span class="string">"only-of-type" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(Component::OnlyOfType),
             <span class="kw">_ </span>=&gt; {},
         }
     }
@@ -5490,12 +5491,12 @@
             </span>W: fmt::Write,
         {
             <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
-                PseudoClass::Hover =&gt; dest.write_str(<span class="string">&quot;:hover&quot;</span>),
-                PseudoClass::Active =&gt; dest.write_str(<span class="string">&quot;:active&quot;</span>),
+                PseudoClass::Hover =&gt; dest.write_str(<span class="string">":hover"</span>),
+                PseudoClass::Active =&gt; dest.write_str(<span class="string">":active"</span>),
                 PseudoClass::Lang(<span class="kw-2">ref </span>lang) =&gt; {
-                    dest.write_str(<span class="string">&quot;:lang(&quot;</span>)<span class="question-mark">?</span>;
+                    dest.write_str(<span class="string">":lang("</span>)<span class="question-mark">?</span>;
                     serialize_identifier(lang, dest)<span class="question-mark">?</span>;
-                    dest.write_char(<span class="string">&#39;)&#39;</span>)
+                    dest.write_char(<span class="string">')'</span>)
                 },
             }
         }
@@ -5507,8 +5508,8 @@
             </span>W: fmt::Write,
         {
             <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
-                PseudoElement::Before =&gt; dest.write_str(<span class="string">&quot;::before&quot;</span>),
-                PseudoElement::After =&gt; dest.write_str(<span class="string">&quot;::after&quot;</span>),
+                PseudoElement::Before =&gt; dest.write_str(<span class="string">"::before"</span>),
+                PseudoElement::After =&gt; dest.write_str(<span class="string">"::after"</span>),
             }
         }
     }
@@ -5572,15 +5573,15 @@
         }
     }
 
-    <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; From&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str&gt; <span class="kw">for </span>DummyAtom {
-        <span class="kw">fn </span>from(string: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str) -&gt; <span class="self">Self </span>{
+    <span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; From&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>str&gt; <span class="kw">for </span>DummyAtom {
+        <span class="kw">fn </span>from(string: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str) -&gt; <span class="self">Self </span>{
             DummyAtom(string.into())
         }
     }
 
-    <span class="kw">impl</span>&lt;<span class="lifetime">&#39;i</span>&gt; Parser&lt;<span class="lifetime">&#39;i</span>&gt; <span class="kw">for </span>DummyParser {
+    <span class="kw">impl</span>&lt;<span class="lifetime">'i</span>&gt; Parser&lt;<span class="lifetime">'i</span>&gt; <span class="kw">for </span>DummyParser {
         <span class="kw">type </span>Impl = DummySelectorImpl;
-        <span class="kw">type </span>Error = SelectorParseErrorKind&lt;<span class="lifetime">&#39;i</span>&gt;;
+        <span class="kw">type </span>Error = SelectorParseErrorKind&lt;<span class="lifetime">'i</span>&gt;;
 
         <span class="kw">fn </span>parse_slotted(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
             <span class="bool-val">true
@@ -5593,11 +5594,11 @@
         <span class="kw">fn </span>parse_non_ts_pseudo_class(
             <span class="kw-2">&amp;</span><span class="self">self</span>,
             location: SourceLocation,
-            name: CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;,
-        ) -&gt; <span class="prelude-ty">Result</span>&lt;PseudoClass, SelectorParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+            name: CowRcStr&lt;<span class="lifetime">'i</span>&gt;,
+        ) -&gt; <span class="prelude-ty">Result</span>&lt;PseudoClass, SelectorParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
             <span class="macro">match_ignore_ascii_case! </span>{ <span class="kw-2">&amp;</span>name,
-                <span class="string">&quot;hover&quot; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(PseudoClass::Hover),
-                <span class="string">&quot;active&quot; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(PseudoClass::Active),
+                <span class="string">"hover" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(PseudoClass::Hover),
+                <span class="string">"active" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(PseudoClass::Active),
                 <span class="kw">_ </span>=&gt; {}
             }
             <span class="prelude-val">Err</span>(
@@ -5607,13 +5608,13 @@
             )
         }
 
-        <span class="kw">fn </span>parse_non_ts_functional_pseudo_class&lt;<span class="lifetime">&#39;t</span>&gt;(
+        <span class="kw">fn </span>parse_non_ts_functional_pseudo_class&lt;<span class="lifetime">'t</span>&gt;(
             <span class="kw-2">&amp;</span><span class="self">self</span>,
-            name: CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;,
-            parser: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
-        ) -&gt; <span class="prelude-ty">Result</span>&lt;PseudoClass, SelectorParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+            name: CowRcStr&lt;<span class="lifetime">'i</span>&gt;,
+            parser: <span class="kw-2">&amp;mut </span>CssParser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
+        ) -&gt; <span class="prelude-ty">Result</span>&lt;PseudoClass, SelectorParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
             <span class="macro">match_ignore_ascii_case! </span>{ <span class="kw-2">&amp;</span>name,
-                <span class="string">&quot;lang&quot; </span>=&gt; {
+                <span class="string">"lang" </span>=&gt; {
                     <span class="kw">let </span>lang = parser.expect_ident_or_string()<span class="question-mark">?</span>.as_ref().to_owned();
                     <span class="kw">return </span><span class="prelude-val">Ok</span>(PseudoClass::Lang(lang));
                 },
@@ -5629,11 +5630,11 @@
         <span class="kw">fn </span>parse_pseudo_element(
             <span class="kw-2">&amp;</span><span class="self">self</span>,
             location: SourceLocation,
-            name: CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;,
-        ) -&gt; <span class="prelude-ty">Result</span>&lt;PseudoElement, SelectorParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+            name: CowRcStr&lt;<span class="lifetime">'i</span>&gt;,
+        ) -&gt; <span class="prelude-ty">Result</span>&lt;PseudoElement, SelectorParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
             <span class="macro">match_ignore_ascii_case! </span>{ <span class="kw-2">&amp;</span>name,
-                <span class="string">&quot;before&quot; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(PseudoElement::Before),
-                <span class="string">&quot;after&quot; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(PseudoElement::After),
+                <span class="string">"before" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(PseudoElement::Before),
+                <span class="string">"after" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(PseudoElement::After),
                 <span class="kw">_ </span>=&gt; {}
             }
             <span class="prelude-val">Err</span>(
@@ -5652,38 +5653,38 @@
         }
     }
 
-    <span class="kw">fn </span>parse&lt;<span class="lifetime">&#39;i</span>&gt;(
-        input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;i </span>str,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;SelectorList&lt;DummySelectorImpl&gt;, SelectorParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    <span class="kw">fn </span>parse&lt;<span class="lifetime">'i</span>&gt;(
+        input: <span class="kw-2">&amp;</span><span class="lifetime">'i </span>str,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;SelectorList&lt;DummySelectorImpl&gt;, SelectorParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         parse_ns(input, <span class="kw-2">&amp;</span>DummyParser::default())
     }
 
-    <span class="kw">fn </span>parse_expected&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;a</span>&gt;(
-        input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;i </span>str,
-        expected: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;SelectorList&lt;DummySelectorImpl&gt;, SelectorParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    <span class="kw">fn </span>parse_expected&lt;<span class="lifetime">'i</span>, <span class="lifetime">'a</span>&gt;(
+        input: <span class="kw-2">&amp;</span><span class="lifetime">'i </span>str,
+        expected: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>str&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;SelectorList&lt;DummySelectorImpl&gt;, SelectorParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         parse_ns_expected(input, <span class="kw-2">&amp;</span>DummyParser::default(), expected)
     }
 
-    <span class="kw">fn </span>parse_ns&lt;<span class="lifetime">&#39;i</span>&gt;(
-        input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;i </span>str,
+    <span class="kw">fn </span>parse_ns&lt;<span class="lifetime">'i</span>&gt;(
+        input: <span class="kw-2">&amp;</span><span class="lifetime">'i </span>str,
         parser: <span class="kw-2">&amp;</span>DummyParser,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;SelectorList&lt;DummySelectorImpl&gt;, SelectorParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;SelectorList&lt;DummySelectorImpl&gt;, SelectorParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         parse_ns_expected(input, parser, <span class="prelude-val">None</span>)
     }
 
-    <span class="kw">fn </span>parse_ns_expected&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;a</span>&gt;(
-        input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;i </span>str,
+    <span class="kw">fn </span>parse_ns_expected&lt;<span class="lifetime">'i</span>, <span class="lifetime">'a</span>&gt;(
+        input: <span class="kw-2">&amp;</span><span class="lifetime">'i </span>str,
         parser: <span class="kw-2">&amp;</span>DummyParser,
-        expected: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;SelectorList&lt;DummySelectorImpl&gt;, SelectorParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
+        expected: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>str&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;SelectorList&lt;DummySelectorImpl&gt;, SelectorParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>parser_input = ParserInput::new(input);
         <span class="kw">let </span>result = SelectorList::parse(parser, <span class="kw-2">&amp;mut </span>CssParser::new(<span class="kw-2">&amp;mut </span>parser_input));
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">ref </span>selectors) = result {
             <span class="macro">assert_eq!</span>(selectors.<span class="number">0</span>.len(), <span class="number">1</span>);
-            <span class="comment">// We can&#39;t assume that the serialized parsed selector will equal
-            // the input; for example, if there is no default namespace, &#39;*|foo&#39;
-            // should serialize to &#39;foo&#39;.
+            <span class="comment">// We can't assume that the serialized parsed selector will equal
+            // the input; for example, if there is no default namespace, '*|foo'
+            // should serialize to 'foo'.
             </span><span class="macro">assert_eq!</span>(
                 selectors.<span class="number">0</span>[<span class="number">0</span>].to_css_string(),
                 <span class="kw">match </span>expected {
@@ -5701,38 +5702,38 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_empty() {
-        <span class="kw">let </span><span class="kw-2">mut </span>input = ParserInput::new(<span class="string">&quot;:empty&quot;</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>input = ParserInput::new(<span class="string">":empty"</span>);
         <span class="kw">let </span>list = SelectorList::parse(<span class="kw-2">&amp;</span>DummyParser::default(), <span class="kw-2">&amp;mut </span>CssParser::new(<span class="kw-2">&amp;mut </span>input));
         <span class="macro">assert!</span>(list.is_ok());
     }
 
-    <span class="kw">const </span>MATHML: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str = <span class="string">&quot;http://www.w3.org/1998/Math/MathML&quot;</span>;
-    <span class="kw">const </span>SVG: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str = <span class="string">&quot;http://www.w3.org/2000/svg&quot;</span>;
+    <span class="kw">const </span>MATHML: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str = <span class="string">"http://www.w3.org/1998/Math/MathML"</span>;
+    <span class="kw">const </span>SVG: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str = <span class="string">"http://www.w3.org/2000/svg"</span>;
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_parsing() {
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;&quot;</span>).is_err());
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;:lang(4)&quot;</span>).is_err());
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;:lang(en US)&quot;</span>).is_err());
+        <span class="macro">assert!</span>(parse(<span class="string">""</span>).is_err());
+        <span class="macro">assert!</span>(parse(<span class="string">":lang(4)"</span>).is_err());
+        <span class="macro">assert!</span>(parse(<span class="string">":lang(en US)"</span>).is_err());
         <span class="macro">assert_eq!</span>(
-            parse(<span class="string">&quot;EeÉ&quot;</span>),
+            parse(<span class="string">"EeÉ"</span>),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[Component::LocalName(LocalName {
-                    name: DummyAtom::from(<span class="string">&quot;EeÉ&quot;</span>),
-                    lower_name: DummyAtom::from(<span class="string">&quot;eeÉ&quot;</span>),
+                    name: DummyAtom::from(<span class="string">"EeÉ"</span>),
+                    lower_name: DummyAtom::from(<span class="string">"eeÉ"</span>),
                 })],
                 specificity(<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>),
                 Default::default(),
             )]))
         );
         <span class="macro">assert_eq!</span>(
-            parse(<span class="string">&quot;|e&quot;</span>),
+            parse(<span class="string">"|e"</span>),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[
                     Component::ExplicitNoNamespace,
                     Component::LocalName(LocalName {
-                        name: DummyAtom::from(<span class="string">&quot;e&quot;</span>),
-                        lower_name: DummyAtom::from(<span class="string">&quot;e&quot;</span>),
+                        name: DummyAtom::from(<span class="string">"e"</span>),
+                        lower_name: DummyAtom::from(<span class="string">"e"</span>),
                     }),
                 ],
                 specificity(<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>),
@@ -5742,11 +5743,11 @@
         <span class="comment">// When the default namespace is not set, *| should be elided.
         // https://github.com/servo/servo/pull/17537
         </span><span class="macro">assert_eq!</span>(
-            parse_expected(<span class="string">&quot;*|e&quot;</span>, <span class="prelude-val">Some</span>(<span class="string">&quot;e&quot;</span>)),
+            parse_expected(<span class="string">"*|e"</span>, <span class="prelude-val">Some</span>(<span class="string">"e"</span>)),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[Component::LocalName(LocalName {
-                    name: DummyAtom::from(<span class="string">&quot;e&quot;</span>),
-                    lower_name: DummyAtom::from(<span class="string">&quot;e&quot;</span>),
+                    name: DummyAtom::from(<span class="string">"e"</span>),
+                    lower_name: DummyAtom::from(<span class="string">"e"</span>),
                 })],
                 specificity(<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>),
                 Default::default(),
@@ -5758,15 +5759,15 @@
         // https://github.com/servo/servo/issues/16020
         </span><span class="macro">assert_eq!</span>(
             parse_ns(
-                <span class="string">&quot;*|e&quot;</span>,
-                <span class="kw-2">&amp;</span>DummyParser::default_with_namespace(DummyAtom::from(<span class="string">&quot;https://mozilla.org&quot;</span>))
+                <span class="string">"*|e"</span>,
+                <span class="kw-2">&amp;</span>DummyParser::default_with_namespace(DummyAtom::from(<span class="string">"https://mozilla.org"</span>))
             ),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[
                     Component::ExplicitAnyNamespace,
                     Component::LocalName(LocalName {
-                        name: DummyAtom::from(<span class="string">&quot;e&quot;</span>),
-                        lower_name: DummyAtom::from(<span class="string">&quot;e&quot;</span>),
+                        name: DummyAtom::from(<span class="string">"e"</span>),
+                        lower_name: DummyAtom::from(<span class="string">"e"</span>),
                     }),
                 ],
                 specificity(<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>),
@@ -5774,7 +5775,7 @@
             )]))
         );
         <span class="macro">assert_eq!</span>(
-            parse(<span class="string">&quot;*&quot;</span>),
+            parse(<span class="string">"*"</span>),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[Component::ExplicitUniversalType],
                 specificity(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>),
@@ -5782,7 +5783,7 @@
             )]))
         );
         <span class="macro">assert_eq!</span>(
-            parse(<span class="string">&quot;|*&quot;</span>),
+            parse(<span class="string">"|*"</span>),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[
                     Component::ExplicitNoNamespace,
@@ -5793,7 +5794,7 @@
             )]))
         );
         <span class="macro">assert_eq!</span>(
-            parse_expected(<span class="string">&quot;*|*&quot;</span>, <span class="prelude-val">Some</span>(<span class="string">&quot;*&quot;</span>)),
+            parse_expected(<span class="string">"*|*"</span>, <span class="prelude-val">Some</span>(<span class="string">"*"</span>)),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[Component::ExplicitUniversalType],
                 specificity(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>),
@@ -5802,8 +5803,8 @@
         );
         <span class="macro">assert_eq!</span>(
             parse_ns(
-                <span class="string">&quot;*|*&quot;</span>,
-                <span class="kw-2">&amp;</span>DummyParser::default_with_namespace(DummyAtom::from(<span class="string">&quot;https://mozilla.org&quot;</span>))
+                <span class="string">"*|*"</span>,
+                <span class="kw-2">&amp;</span>DummyParser::default_with_namespace(DummyAtom::from(<span class="string">"https://mozilla.org"</span>))
             ),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[
@@ -5815,50 +5816,50 @@
             )]))
         );
         <span class="macro">assert_eq!</span>(
-            parse(<span class="string">&quot;.foo:lang(en-US)&quot;</span>),
+            parse(<span class="string">".foo:lang(en-US)"</span>),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[
-                    Component::Class(DummyAtom::from(<span class="string">&quot;foo&quot;</span>)),
-                    Component::NonTSPseudoClass(PseudoClass::Lang(<span class="string">&quot;en-US&quot;</span>.to_owned())),
+                    Component::Class(DummyAtom::from(<span class="string">"foo"</span>)),
+                    Component::NonTSPseudoClass(PseudoClass::Lang(<span class="string">"en-US"</span>.to_owned())),
                 ],
                 specificity(<span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>),
                 Default::default(),
             )]))
         );
         <span class="macro">assert_eq!</span>(
-            parse(<span class="string">&quot;#bar&quot;</span>),
+            parse(<span class="string">"#bar"</span>),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
-                <span class="macro">vec!</span>[Component::ID(DummyAtom::from(<span class="string">&quot;bar&quot;</span>))],
+                <span class="macro">vec!</span>[Component::ID(DummyAtom::from(<span class="string">"bar"</span>))],
                 specificity(<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>),
                 Default::default(),
             )]))
         );
         <span class="macro">assert_eq!</span>(
-            parse(<span class="string">&quot;e.foo#bar&quot;</span>),
+            parse(<span class="string">"e.foo#bar"</span>),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[
                     Component::LocalName(LocalName {
-                        name: DummyAtom::from(<span class="string">&quot;e&quot;</span>),
-                        lower_name: DummyAtom::from(<span class="string">&quot;e&quot;</span>),
+                        name: DummyAtom::from(<span class="string">"e"</span>),
+                        lower_name: DummyAtom::from(<span class="string">"e"</span>),
                     }),
-                    Component::Class(DummyAtom::from(<span class="string">&quot;foo&quot;</span>)),
-                    Component::ID(DummyAtom::from(<span class="string">&quot;bar&quot;</span>)),
+                    Component::Class(DummyAtom::from(<span class="string">"foo"</span>)),
+                    Component::ID(DummyAtom::from(<span class="string">"bar"</span>)),
                 ],
                 specificity(<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>),
                 Default::default(),
             )]))
         );
         <span class="macro">assert_eq!</span>(
-            parse(<span class="string">&quot;e.foo #bar&quot;</span>),
+            parse(<span class="string">"e.foo #bar"</span>),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[
                     Component::LocalName(LocalName {
-                        name: DummyAtom::from(<span class="string">&quot;e&quot;</span>),
-                        lower_name: DummyAtom::from(<span class="string">&quot;e&quot;</span>),
+                        name: DummyAtom::from(<span class="string">"e"</span>),
+                        lower_name: DummyAtom::from(<span class="string">"e"</span>),
                     }),
-                    Component::Class(DummyAtom::from(<span class="string">&quot;foo&quot;</span>)),
+                    Component::Class(DummyAtom::from(<span class="string">"foo"</span>)),
                     Component::Combinator(Combinator::Descendant),
-                    Component::ID(DummyAtom::from(<span class="string">&quot;bar&quot;</span>)),
+                    Component::ID(DummyAtom::from(<span class="string">"bar"</span>)),
                 ],
                 specificity(<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>),
                 Default::default(),
@@ -5868,28 +5869,28 @@
         // https://github.com/mozilla/servo/pull/1652
         </span><span class="kw">let </span><span class="kw-2">mut </span>parser = DummyParser::default();
         <span class="macro">assert_eq!</span>(
-            parse_ns(<span class="string">&quot;[Foo]&quot;</span>, <span class="kw-2">&amp;</span>parser),
+            parse_ns(<span class="string">"[Foo]"</span>, <span class="kw-2">&amp;</span>parser),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[Component::AttributeInNoNamespaceExists {
-                    local_name: DummyAtom::from(<span class="string">&quot;Foo&quot;</span>),
-                    local_name_lower: DummyAtom::from(<span class="string">&quot;foo&quot;</span>),
+                    local_name: DummyAtom::from(<span class="string">"Foo"</span>),
+                    local_name_lower: DummyAtom::from(<span class="string">"foo"</span>),
                 }],
                 specificity(<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>),
                 Default::default(),
             )]))
         );
-        <span class="macro">assert!</span>(parse_ns(<span class="string">&quot;svg|circle&quot;</span>, <span class="kw-2">&amp;</span>parser).is_err());
+        <span class="macro">assert!</span>(parse_ns(<span class="string">"svg|circle"</span>, <span class="kw-2">&amp;</span>parser).is_err());
         parser
             .ns_prefixes
-            .insert(DummyAtom(<span class="string">&quot;svg&quot;</span>.into()), DummyAtom(SVG.into()));
+            .insert(DummyAtom(<span class="string">"svg"</span>.into()), DummyAtom(SVG.into()));
         <span class="macro">assert_eq!</span>(
-            parse_ns(<span class="string">&quot;svg|circle&quot;</span>, <span class="kw-2">&amp;</span>parser),
+            parse_ns(<span class="string">"svg|circle"</span>, <span class="kw-2">&amp;</span>parser),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[
-                    Component::Namespace(DummyAtom(<span class="string">&quot;svg&quot;</span>.into()), SVG.into()),
+                    Component::Namespace(DummyAtom(<span class="string">"svg"</span>.into()), SVG.into()),
                     Component::LocalName(LocalName {
-                        name: DummyAtom::from(<span class="string">&quot;circle&quot;</span>),
-                        lower_name: DummyAtom::from(<span class="string">&quot;circle&quot;</span>),
+                        name: DummyAtom::from(<span class="string">"circle"</span>),
+                        lower_name: DummyAtom::from(<span class="string">"circle"</span>),
                     }),
                 ],
                 specificity(<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>),
@@ -5897,10 +5898,10 @@
             )]))
         );
         <span class="macro">assert_eq!</span>(
-            parse_ns(<span class="string">&quot;svg|*&quot;</span>, <span class="kw-2">&amp;</span>parser),
+            parse_ns(<span class="string">"svg|*"</span>, <span class="kw-2">&amp;</span>parser),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[
-                    Component::Namespace(DummyAtom(<span class="string">&quot;svg&quot;</span>.into()), SVG.into()),
+                    Component::Namespace(DummyAtom(<span class="string">"svg"</span>.into()), SVG.into()),
                     Component::ExplicitUniversalType,
                 ],
                 specificity(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>),
@@ -5913,13 +5914,13 @@
         // https://github.com/servo/rust-selectors/pull/82
         </span>parser.default_ns = <span class="prelude-val">Some</span>(MATHML.into());
         <span class="macro">assert_eq!</span>(
-            parse_ns(<span class="string">&quot;[Foo]&quot;</span>, <span class="kw-2">&amp;</span>parser),
+            parse_ns(<span class="string">"[Foo]"</span>, <span class="kw-2">&amp;</span>parser),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[
                     Component::DefaultNamespace(MATHML.into()),
                     Component::AttributeInNoNamespaceExists {
-                        local_name: DummyAtom::from(<span class="string">&quot;Foo&quot;</span>),
-                        local_name_lower: DummyAtom::from(<span class="string">&quot;foo&quot;</span>),
+                        local_name: DummyAtom::from(<span class="string">"Foo"</span>),
+                        local_name_lower: DummyAtom::from(<span class="string">"foo"</span>),
                     },
                 ],
                 specificity(<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>),
@@ -5928,13 +5929,13 @@
         );
         <span class="comment">// Default namespace does apply to type selectors
         </span><span class="macro">assert_eq!</span>(
-            parse_ns(<span class="string">&quot;e&quot;</span>, <span class="kw-2">&amp;</span>parser),
+            parse_ns(<span class="string">"e"</span>, <span class="kw-2">&amp;</span>parser),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[
                     Component::DefaultNamespace(MATHML.into()),
                     Component::LocalName(LocalName {
-                        name: DummyAtom::from(<span class="string">&quot;e&quot;</span>),
-                        lower_name: DummyAtom::from(<span class="string">&quot;e&quot;</span>),
+                        name: DummyAtom::from(<span class="string">"e"</span>),
+                        lower_name: DummyAtom::from(<span class="string">"e"</span>),
                     }),
                 ],
                 specificity(<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>),
@@ -5942,7 +5943,7 @@
             )]))
         );
         <span class="macro">assert_eq!</span>(
-            parse_ns(<span class="string">&quot;*&quot;</span>, <span class="kw-2">&amp;</span>parser),
+            parse_ns(<span class="string">"*"</span>, <span class="kw-2">&amp;</span>parser),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[
                     Component::DefaultNamespace(MATHML.into()),
@@ -5953,7 +5954,7 @@
             )]))
         );
         <span class="macro">assert_eq!</span>(
-            parse_ns(<span class="string">&quot;*|*&quot;</span>, <span class="kw-2">&amp;</span>parser),
+            parse_ns(<span class="string">"*|*"</span>, <span class="kw-2">&amp;</span>parser),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[
                     Component::ExplicitAnyNamespace,
@@ -5966,12 +5967,12 @@
         <span class="comment">// Default namespace applies to universal and type selectors inside :not and :matches,
         // but not otherwise.
         </span><span class="macro">assert_eq!</span>(
-            parse_ns(<span class="string">&quot;:not(.cl)&quot;</span>, <span class="kw-2">&amp;</span>parser),
+            parse_ns(<span class="string">":not(.cl)"</span>, <span class="kw-2">&amp;</span>parser),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[
                     Component::DefaultNamespace(MATHML.into()),
                     Component::Negation(
-                        <span class="macro">vec!</span>[Component::Class(DummyAtom::from(<span class="string">&quot;cl&quot;</span>))]
+                        <span class="macro">vec!</span>[Component::Class(DummyAtom::from(<span class="string">"cl"</span>))]
                             .into_boxed_slice()
                             .into(),
                     ),
@@ -5981,7 +5982,7 @@
             )]))
         );
         <span class="macro">assert_eq!</span>(
-            parse_ns(<span class="string">&quot;:not(*)&quot;</span>, <span class="kw-2">&amp;</span>parser),
+            parse_ns(<span class="string">":not(*)"</span>, <span class="kw-2">&amp;</span>parser),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[
                     Component::DefaultNamespace(MATHML.into()),
@@ -5999,7 +6000,7 @@
             )]))
         );
         <span class="macro">assert_eq!</span>(
-            parse_ns(<span class="string">&quot;:not(e)&quot;</span>, <span class="kw-2">&amp;</span>parser),
+            parse_ns(<span class="string">":not(e)"</span>, <span class="kw-2">&amp;</span>parser),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[
                     Component::DefaultNamespace(MATHML.into()),
@@ -6007,8 +6008,8 @@
                         <span class="macro">vec!</span>[
                             Component::DefaultNamespace(MATHML.into()),
                             Component::LocalName(LocalName {
-                                name: DummyAtom::from(<span class="string">&quot;e&quot;</span>),
-                                lower_name: DummyAtom::from(<span class="string">&quot;e&quot;</span>),
+                                name: DummyAtom::from(<span class="string">"e"</span>),
+                                lower_name: DummyAtom::from(<span class="string">"e"</span>),
                             }),
                         ]
                         .into_boxed_slice()
@@ -6020,12 +6021,12 @@
             )]))
         );
         <span class="macro">assert_eq!</span>(
-            parse(<span class="string">&quot;[attr|=\&quot;foo\&quot;]&quot;</span>),
+            parse(<span class="string">"[attr|=\"foo\"]"</span>),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[Component::AttributeInNoNamespace {
-                    local_name: DummyAtom::from(<span class="string">&quot;attr&quot;</span>),
+                    local_name: DummyAtom::from(<span class="string">"attr"</span>),
                     operator: AttrSelectorOperator::DashMatch,
-                    value: DummyAtom::from(<span class="string">&quot;foo&quot;</span>),
+                    value: DummyAtom::from(<span class="string">"foo"</span>),
                     never_matches: <span class="bool-val">false</span>,
                     case_sensitivity: ParsedCaseSensitivity::CaseSensitive,
                 }],
@@ -6035,7 +6036,7 @@
         );
         <span class="comment">// https://github.com/mozilla/servo/issues/1723
         </span><span class="macro">assert_eq!</span>(
-            parse(<span class="string">&quot;::before&quot;</span>),
+            parse(<span class="string">"::before"</span>),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[
                     Component::Combinator(Combinator::PseudoElement),
@@ -6046,7 +6047,7 @@
             )]))
         );
         <span class="macro">assert_eq!</span>(
-            parse(<span class="string">&quot;::before:hover&quot;</span>),
+            parse(<span class="string">"::before:hover"</span>),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[
                     Component::Combinator(Combinator::PseudoElement),
@@ -6058,7 +6059,7 @@
             )]))
         );
         <span class="macro">assert_eq!</span>(
-            parse(<span class="string">&quot;::before:hover:hover&quot;</span>),
+            parse(<span class="string">"::before:hover:hover"</span>),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[
                     Component::Combinator(Combinator::PseudoElement),
@@ -6070,21 +6071,21 @@
                 SelectorFlags::HAS_PSEUDO,
             )]))
         );
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;::before:hover:lang(foo)&quot;</span>).is_err());
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;::before:hover .foo&quot;</span>).is_err());
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;::before .foo&quot;</span>).is_err());
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;::before ~ bar&quot;</span>).is_err());
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;::before:active&quot;</span>).is_ok());
+        <span class="macro">assert!</span>(parse(<span class="string">"::before:hover:lang(foo)"</span>).is_err());
+        <span class="macro">assert!</span>(parse(<span class="string">"::before:hover .foo"</span>).is_err());
+        <span class="macro">assert!</span>(parse(<span class="string">"::before .foo"</span>).is_err());
+        <span class="macro">assert!</span>(parse(<span class="string">"::before ~ bar"</span>).is_err());
+        <span class="macro">assert!</span>(parse(<span class="string">"::before:active"</span>).is_ok());
 
         <span class="comment">// https://github.com/servo/servo/issues/15335
-        </span><span class="macro">assert!</span>(parse(<span class="string">&quot;:: before&quot;</span>).is_err());
+        </span><span class="macro">assert!</span>(parse(<span class="string">":: before"</span>).is_err());
         <span class="macro">assert_eq!</span>(
-            parse(<span class="string">&quot;div ::after&quot;</span>),
+            parse(<span class="string">"div ::after"</span>),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[
                     Component::LocalName(LocalName {
-                        name: DummyAtom::from(<span class="string">&quot;div&quot;</span>),
-                        lower_name: DummyAtom::from(<span class="string">&quot;div&quot;</span>),
+                        name: DummyAtom::from(<span class="string">"div"</span>),
+                        lower_name: DummyAtom::from(<span class="string">"div"</span>),
                     }),
                     Component::Combinator(Combinator::Descendant),
                     Component::Combinator(Combinator::PseudoElement),
@@ -6095,26 +6096,26 @@
             )]))
         );
         <span class="macro">assert_eq!</span>(
-            parse(<span class="string">&quot;#d1 &gt; .ok&quot;</span>),
+            parse(<span class="string">"#d1 &gt; .ok"</span>),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[
-                    Component::ID(DummyAtom::from(<span class="string">&quot;d1&quot;</span>)),
+                    Component::ID(DummyAtom::from(<span class="string">"d1"</span>)),
                     Component::Combinator(Combinator::Child),
-                    Component::Class(DummyAtom::from(<span class="string">&quot;ok&quot;</span>)),
+                    Component::Class(DummyAtom::from(<span class="string">"ok"</span>)),
                 ],
                 (<span class="number">1 </span>&lt;&lt; <span class="number">20</span>) + (<span class="number">1 </span>&lt;&lt; <span class="number">10</span>) + (<span class="number">0 </span>&lt;&lt; <span class="number">0</span>),
                 Default::default(),
             )]))
         );
         parser.default_ns = <span class="prelude-val">None</span>;
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;:not(#provel.old)&quot;</span>).is_err());
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;:not(#provel &gt; old)&quot;</span>).is_err());
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;table[rules]:not([rules=\&quot;none\&quot;]):not([rules=\&quot;\&quot;])&quot;</span>).is_ok());
+        <span class="macro">assert!</span>(parse(<span class="string">":not(#provel.old)"</span>).is_err());
+        <span class="macro">assert!</span>(parse(<span class="string">":not(#provel &gt; old)"</span>).is_err());
+        <span class="macro">assert!</span>(parse(<span class="string">"table[rules]:not([rules=\"none\"]):not([rules=\"\"])"</span>).is_ok());
         <span class="macro">assert_eq!</span>(
-            parse(<span class="string">&quot;:not(#provel)&quot;</span>),
+            parse(<span class="string">":not(#provel)"</span>),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[Component::Negation(
-                    <span class="macro">vec!</span>[Component::ID(DummyAtom::from(<span class="string">&quot;provel&quot;</span>))]
+                    <span class="macro">vec!</span>[Component::ID(DummyAtom::from(<span class="string">"provel"</span>))]
                         .into_boxed_slice()
                         .into(),
                 )],
@@ -6123,14 +6124,14 @@
             )]))
         );
         <span class="macro">assert_eq!</span>(
-            parse_ns(<span class="string">&quot;:not(svg|circle)&quot;</span>, <span class="kw-2">&amp;</span>parser),
+            parse_ns(<span class="string">":not(svg|circle)"</span>, <span class="kw-2">&amp;</span>parser),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[Component::Negation(
                     <span class="macro">vec!</span>[
-                        Component::Namespace(DummyAtom(<span class="string">&quot;svg&quot;</span>.into()), SVG.into()),
+                        Component::Namespace(DummyAtom(<span class="string">"svg"</span>.into()), SVG.into()),
                         Component::LocalName(LocalName {
-                            name: DummyAtom::from(<span class="string">&quot;circle&quot;</span>),
-                            lower_name: DummyAtom::from(<span class="string">&quot;circle&quot;</span>),
+                            name: DummyAtom::from(<span class="string">"circle"</span>),
+                            lower_name: DummyAtom::from(<span class="string">"circle"</span>),
                         }),
                     ]
                     .into_boxed_slice()
@@ -6142,7 +6143,7 @@
         );
         <span class="comment">// https://github.com/servo/servo/issues/16017
         </span><span class="macro">assert_eq!</span>(
-            parse_ns(<span class="string">&quot;:not(*)&quot;</span>, <span class="kw-2">&amp;</span>parser),
+            parse_ns(<span class="string">":not(*)"</span>, <span class="kw-2">&amp;</span>parser),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[Component::Negation(
                     <span class="macro">vec!</span>[Component::ExplicitUniversalType]
@@ -6154,7 +6155,7 @@
             )]))
         );
         <span class="macro">assert_eq!</span>(
-            parse_ns(<span class="string">&quot;:not(|*)&quot;</span>, <span class="kw-2">&amp;</span>parser),
+            parse_ns(<span class="string">":not(|*)"</span>, <span class="kw-2">&amp;</span>parser),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[Component::Negation(
                     <span class="macro">vec!</span>[
@@ -6171,7 +6172,7 @@
         <span class="comment">// *| should be elided if there is no default namespace.
         // https://github.com/servo/servo/pull/17537
         </span><span class="macro">assert_eq!</span>(
-            parse_ns_expected(<span class="string">&quot;:not(*|*)&quot;</span>, <span class="kw-2">&amp;</span>parser, <span class="prelude-val">Some</span>(<span class="string">&quot;:not(*)&quot;</span>)),
+            parse_ns_expected(<span class="string">":not(*|*)"</span>, <span class="kw-2">&amp;</span>parser, <span class="prelude-val">Some</span>(<span class="string">":not(*)"</span>)),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[Component::Negation(
                     <span class="macro">vec!</span>[Component::ExplicitUniversalType]
@@ -6184,11 +6185,11 @@
         );
 
         <span class="macro">assert_eq!</span>(
-            parse_ns(<span class="string">&quot;:not(svg|*)&quot;</span>, <span class="kw-2">&amp;</span>parser),
+            parse_ns(<span class="string">":not(svg|*)"</span>, <span class="kw-2">&amp;</span>parser),
             <span class="prelude-val">Ok</span>(SelectorList::from_vec(<span class="macro">vec!</span>[Selector::from_vec(
                 <span class="macro">vec!</span>[Component::Negation(
                     <span class="macro">vec!</span>[
-                        Component::Namespace(DummyAtom(<span class="string">&quot;svg&quot;</span>.into()), SVG.into()),
+                        Component::Namespace(DummyAtom(<span class="string">"svg"</span>.into()), SVG.into()),
                         Component::ExplicitUniversalType,
                     ]
                     .into_boxed_slice()
@@ -6199,29 +6200,29 @@
             )]))
         );
 
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;::slotted()&quot;</span>).is_err());
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;::slotted(div)&quot;</span>).is_ok());
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;::slotted(div).foo&quot;</span>).is_err());
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;::slotted(div + bar)&quot;</span>).is_err());
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;::slotted(div) + foo&quot;</span>).is_err());
+        <span class="macro">assert!</span>(parse(<span class="string">"::slotted()"</span>).is_err());
+        <span class="macro">assert!</span>(parse(<span class="string">"::slotted(div)"</span>).is_ok());
+        <span class="macro">assert!</span>(parse(<span class="string">"::slotted(div).foo"</span>).is_err());
+        <span class="macro">assert!</span>(parse(<span class="string">"::slotted(div + bar)"</span>).is_err());
+        <span class="macro">assert!</span>(parse(<span class="string">"::slotted(div) + foo"</span>).is_err());
 
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;::part()&quot;</span>).is_err());
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;::part(42)&quot;</span>).is_err());
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;::part(foo bar)&quot;</span>).is_ok());
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;::part(foo):hover&quot;</span>).is_ok());
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;::part(foo) + bar&quot;</span>).is_err());
+        <span class="macro">assert!</span>(parse(<span class="string">"::part()"</span>).is_err());
+        <span class="macro">assert!</span>(parse(<span class="string">"::part(42)"</span>).is_err());
+        <span class="macro">assert!</span>(parse(<span class="string">"::part(foo bar)"</span>).is_ok());
+        <span class="macro">assert!</span>(parse(<span class="string">"::part(foo):hover"</span>).is_ok());
+        <span class="macro">assert!</span>(parse(<span class="string">"::part(foo) + bar"</span>).is_err());
 
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;div ::slotted(div)&quot;</span>).is_ok());
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;div + slot::slotted(div)&quot;</span>).is_ok());
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;div + slot::slotted(div.foo)&quot;</span>).is_ok());
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;slot::slotted(div,foo)::first-line&quot;</span>).is_err());
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;::slotted(div)::before&quot;</span>).is_ok());
-        <span class="macro">assert!</span>(parse(<span class="string">&quot;slot::slotted(div,foo)&quot;</span>).is_err());
+        <span class="macro">assert!</span>(parse(<span class="string">"div ::slotted(div)"</span>).is_ok());
+        <span class="macro">assert!</span>(parse(<span class="string">"div + slot::slotted(div)"</span>).is_ok());
+        <span class="macro">assert!</span>(parse(<span class="string">"div + slot::slotted(div.foo)"</span>).is_ok());
+        <span class="macro">assert!</span>(parse(<span class="string">"slot::slotted(div,foo)::first-line"</span>).is_err());
+        <span class="macro">assert!</span>(parse(<span class="string">"::slotted(div)::before"</span>).is_ok());
+        <span class="macro">assert!</span>(parse(<span class="string">"slot::slotted(div,foo)"</span>).is_err());
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_pseudo_iter() {
-        <span class="kw">let </span>selector = <span class="kw-2">&amp;</span>parse(<span class="string">&quot;q::before&quot;</span>).unwrap().<span class="number">0</span>[<span class="number">0</span>];
+        <span class="kw">let </span>selector = <span class="kw-2">&amp;</span>parse(<span class="string">"q::before"</span>).unwrap().<span class="number">0</span>[<span class="number">0</span>];
         <span class="macro">assert!</span>(!selector.is_universal());
         <span class="kw">let </span><span class="kw-2">mut </span>iter = selector.iter();
         <span class="macro">assert_eq!</span>(
@@ -6239,8 +6240,8 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_universal() {
         <span class="kw">let </span>selector = <span class="kw-2">&amp;</span>parse_ns(
-            <span class="string">&quot;*|*::before&quot;</span>,
-            <span class="kw-2">&amp;</span>DummyParser::default_with_namespace(DummyAtom::from(<span class="string">&quot;https://mozilla.org&quot;</span>)),
+            <span class="string">"*|*::before"</span>,
+            <span class="kw-2">&amp;</span>DummyParser::default_with_namespace(DummyAtom::from(<span class="string">"https://mozilla.org"</span>)),
         )
         .unwrap()
         .<span class="number">0</span>[<span class="number">0</span>];
@@ -6249,7 +6250,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_empty_pseudo_iter() {
-        <span class="kw">let </span>selector = <span class="kw-2">&amp;</span>parse(<span class="string">&quot;::before&quot;</span>).unwrap().<span class="number">0</span>[<span class="number">0</span>];
+        <span class="kw">let </span>selector = <span class="kw-2">&amp;</span>parse(<span class="string">"::before"</span>).unwrap().<span class="number">0</span>[<span class="number">0</span>];
         <span class="macro">assert!</span>(selector.is_universal());
         <span class="kw">let </span><span class="kw-2">mut </span>iter = selector.iter();
         <span class="macro">assert_eq!</span>(
@@ -6280,12 +6281,12 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>visitor() {
         <span class="kw">let </span><span class="kw-2">mut </span>test_visitor = TestVisitor { seen: <span class="macro">vec!</span>[] };
-        parse(<span class="string">&quot;:not(:hover) ~ label&quot;</span>).unwrap().<span class="number">0</span>[<span class="number">0</span>].visit(<span class="kw-2">&amp;mut </span>test_visitor);
-        <span class="macro">assert!</span>(test_visitor.seen.contains(<span class="kw-2">&amp;</span><span class="string">&quot;:hover&quot;</span>.into()));
+        parse(<span class="string">":not(:hover) ~ label"</span>).unwrap().<span class="number">0</span>[<span class="number">0</span>].visit(<span class="kw-2">&amp;mut </span>test_visitor);
+        <span class="macro">assert!</span>(test_visitor.seen.contains(<span class="kw-2">&amp;</span><span class="string">":hover"</span>.into()));
 
         <span class="kw">let </span><span class="kw-2">mut </span>test_visitor = TestVisitor { seen: <span class="macro">vec!</span>[] };
-        parse(<span class="string">&quot;::before:hover&quot;</span>).unwrap().<span class="number">0</span>[<span class="number">0</span>].visit(<span class="kw-2">&amp;mut </span>test_visitor);
-        <span class="macro">assert!</span>(test_visitor.seen.contains(<span class="kw-2">&amp;</span><span class="string">&quot;:hover&quot;</span>.into()));
+        parse(<span class="string">"::before:hover"</span>).unwrap().<span class="number">0</span>[<span class="number">0</span>].visit(<span class="kw-2">&amp;mut </span>test_visitor);
+        <span class="macro">assert!</span>(test_visitor.seen.contains(<span class="kw-2">&amp;</span><span class="string">":hover"</span>.into()));
     }
 }
 </code></pre></div></section></main></body></html>

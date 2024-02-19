@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-1.5.4/src/window.rs`."><title>window.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tauri" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-1.6.0/src/window.rs`."><title>window.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tauri" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1976,7 +1977,7 @@
 <span class="kw">pub use </span>menu::{MenuEvent, MenuHandle};
 <span class="kw">use </span>url::Url;
 
-<span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+<span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::TitleBarStyle;
 <span class="kw">use crate</span>::{
   app::AppHandle,
@@ -2035,8 +2036,8 @@
     source_window_label: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;,
     payload: S,
   ) -&gt; <span class="kw">crate</span>::Result&lt;<span class="self">Self</span>&gt; {
-    <span class="attr">#[cfg(feature = <span class="string">&quot;tracing&quot;</span>)]
-    </span><span class="kw">let </span>_span = <span class="macro">tracing::debug_span!</span>(<span class="string">&quot;window::emit::serialize&quot;</span>).entered();
+    <span class="attr">#[cfg(feature = <span class="string">"tracing"</span>)]
+    </span><span class="kw">let </span>_span = <span class="macro">tracing::debug_span!</span>(<span class="string">"window::emit::serialize"</span>).entered();
     <span class="prelude-val">Ok</span>(WindowEmitArgs {
       event: serde_json::to_string(event)<span class="question-mark">?</span>,
       source_window_label: serde_json::to_string(<span class="kw-2">&amp;</span>source_window_label)<span class="question-mark">?</span>,
@@ -2047,7 +2048,7 @@
 
 <span class="doccomment">/// Monitor descriptor.
 </span><span class="attr">#[derive(Debug, Clone, Serialize)]
-#[serde(rename_all = <span class="string">&quot;camelCase&quot;</span>)]
+#[serde(rename_all = <span class="string">"camelCase"</span>)]
 </span><span class="kw">pub struct </span>Monitor {
   <span class="kw">pub</span>(<span class="kw">crate</span>) name: <span class="prelude-ty">Option</span>&lt;String&gt;,
   <span class="kw">pub</span>(<span class="kw">crate</span>) size: PhysicalSize&lt;u32&gt;,
@@ -2068,12 +2069,12 @@
 
 <span class="kw">impl </span>Monitor {
   <span class="doccomment">/// Returns a human-readable name of the monitor.
-  /// Returns None if the monitor doesn&#39;t exist anymore.
+  /// Returns None if the monitor doesn't exist anymore.
   </span><span class="kw">pub fn </span>name(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>String&gt; {
     <span class="self">self</span>.name.as_ref()
   }
 
-  <span class="doccomment">/// Returns the monitor&#39;s resolution.
+  <span class="doccomment">/// Returns the monitor's resolution.
   </span><span class="kw">pub fn </span>size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>PhysicalSize&lt;u32&gt; {
     <span class="kw-2">&amp;</span><span class="self">self</span>.size
   }
@@ -2091,9 +2092,9 @@
 
 <span class="doccomment">/// A builder for a webview window managed by Tauri.
 </span><span class="attr">#[default_runtime(<span class="kw">crate</span>::Wry, wry)]
-</span><span class="kw">pub struct </span>WindowBuilder&lt;<span class="lifetime">&#39;a</span>, R: Runtime&gt; {
+</span><span class="kw">pub struct </span>WindowBuilder&lt;<span class="lifetime">'a</span>, R: Runtime&gt; {
   manager: WindowManager&lt;R&gt;,
-  runtime: RuntimeOrDispatch&lt;<span class="lifetime">&#39;a</span>, R&gt;,
+  runtime: RuntimeOrDispatch&lt;<span class="lifetime">'a</span>, R&gt;,
   app_handle: AppHandle&lt;R&gt;,
   label: String,
   <span class="kw">pub</span>(<span class="kw">crate</span>) window_builder: &lt;R::Dispatcher <span class="kw">as </span>Dispatch&lt;EventLoopMessage&gt;&gt;::WindowBuilder,
@@ -2102,19 +2103,19 @@
   navigation_handler: <span class="prelude-ty">Option</span>&lt;Box&lt;NavigationHandler&gt;&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, R: Runtime&gt; fmt::Debug <span class="kw">for </span>WindowBuilder&lt;<span class="lifetime">&#39;a</span>, R&gt; {
-  <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-    f.debug_struct(<span class="string">&quot;WindowBuilder&quot;</span>)
-      .field(<span class="string">&quot;manager&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.manager)
-      .field(<span class="string">&quot;app_handle&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.app_handle)
-      .field(<span class="string">&quot;label&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.label)
-      .field(<span class="string">&quot;window_builder&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.window_builder)
-      .field(<span class="string">&quot;webview_attributes&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.webview_attributes)
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, R: Runtime&gt; fmt::Debug <span class="kw">for </span>WindowBuilder&lt;<span class="lifetime">'a</span>, R&gt; {
+  <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
+    f.debug_struct(<span class="string">"WindowBuilder"</span>)
+      .field(<span class="string">"manager"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.manager)
+      .field(<span class="string">"app_handle"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.app_handle)
+      .field(<span class="string">"label"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.label)
+      .field(<span class="string">"window_builder"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.window_builder)
+      .field(<span class="string">"webview_attributes"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.webview_attributes)
       .finish()
   }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, R: Runtime&gt; WindowBuilder&lt;<span class="lifetime">&#39;a</span>, R&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, R: Runtime&gt; WindowBuilder&lt;<span class="lifetime">'a</span>, R&gt; {
   <span class="doccomment">/// Initializes a webview window builder with the given window label and URL to load on the webview.
   ///
   /// # Known issues
@@ -2129,7 +2130,7 @@
   /// ```
   /// tauri::Builder::default()
   ///   .setup(|app| {
-  ///     let window = tauri::WindowBuilder::new(app, &quot;label&quot;, tauri::WindowUrl::App(&quot;index.html&quot;.into()))
+  ///     let window = tauri::WindowBuilder::new(app, "label", tauri::WindowUrl::App("index.html".into()))
   ///       .build()?;
   ///     Ok(())
   ///   });
@@ -2142,7 +2143,7 @@
   ///   .setup(|app| {
   ///     let handle = app.handle();
   ///     std::thread::spawn(move || {
-  ///       let window = tauri::WindowBuilder::new(&amp;handle, &quot;label&quot;, tauri::WindowUrl::App(&quot;index.html&quot;.into()))
+  ///       let window = tauri::WindowBuilder::new(&amp;handle, "label", tauri::WindowUrl::App("index.html".into()))
   ///         .build()
   ///         .unwrap();
   ///     });
@@ -2155,14 +2156,14 @@
   /// ```
   /// #[tauri::command]
   /// async fn create_window(app: tauri::AppHandle) {
-  ///   let window = tauri::WindowBuilder::new(&amp;app, &quot;label&quot;, tauri::WindowUrl::External(&quot;https://tauri.app/&quot;.parse().unwrap()))
+  ///   let window = tauri::WindowBuilder::new(&amp;app, "label", tauri::WindowUrl::External("https://tauri.app/".parse().unwrap()))
   ///     .build()
   ///     .unwrap();
   /// }
   /// ```
   ///
   /// [the Webview2 issue]: https://github.com/tauri-apps/wry/issues/583
-  </span><span class="kw">pub fn </span>new&lt;M: Manager&lt;R&gt;, L: Into&lt;String&gt;&gt;(manager: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>M, label: L, url: WindowUrl) -&gt; <span class="self">Self </span>{
+  </span><span class="kw">pub fn </span>new&lt;M: Manager&lt;R&gt;, L: Into&lt;String&gt;&gt;(manager: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>M, label: L, url: WindowUrl) -&gt; <span class="self">Self </span>{
     <span class="kw">let </span>runtime = manager.runtime();
     <span class="kw">let </span>app_handle = manager.app_handle();
     <span class="self">Self </span>{
@@ -2178,7 +2179,7 @@
   }
 
   <span class="doccomment">/// Initializes a webview window builder from a window config from tauri.conf.json.
-  /// Keep in mind that you can&#39;t create 2 windows with the same `label` so make sure
+  /// Keep in mind that you can't create 2 windows with the same `label` so make sure
   /// that the initial window was closed or change the label of the new `WindowBuilder`.
   ///
   /// # Known issues
@@ -2200,7 +2201,7 @@
   /// ```
   ///
   /// [the Webview2 issue]: https://github.com/tauri-apps/wry/issues/583
-  </span><span class="kw">pub fn </span>from_config&lt;M: Manager&lt;R&gt;&gt;(manager: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>M, config: WindowConfig) -&gt; <span class="self">Self </span>{
+  </span><span class="kw">pub fn </span>from_config&lt;M: Manager&lt;R&gt;&gt;(manager: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>M, config: WindowConfig) -&gt; <span class="self">Self </span>{
     <span class="kw">let </span>builder = <span class="self">Self </span>{
       manager: manager.manager().clone(),
       runtime: manager.runtime(),
@@ -2235,15 +2236,15 @@
   /// use std::collections::HashMap;
   /// tauri::Builder::default()
   ///   .setup(|app| {
-  ///     WindowBuilder::new(app, &quot;core&quot;, WindowUrl::App(&quot;index.html&quot;.into()))
+  ///     WindowBuilder::new(app, "core", WindowUrl::App("index.html".into()))
   ///       .on_web_resource_request(|request, response| {
-  ///         if request.uri().starts_with(&quot;tauri://&quot;) {
+  ///         if request.uri().starts_with("tauri://") {
   ///           // if we have a CSP header, Tauri is loading an HTML file
-  ///           //  for this example, let&#39;s dynamically change the CSP
-  ///           if let Some(csp) = response.headers_mut().get_mut(&quot;Content-Security-Policy&quot;) {
+  ///           //  for this example, let's dynamically change the CSP
+  ///           if let Some(csp) = response.headers_mut().get_mut("Content-Security-Policy") {
   ///             // use the tauri helper to parse the CSP policy to a map
   ///             let mut csp_map: HashMap&lt;String, CspDirectiveSources&gt; = Csp::Policy(csp.to_str().unwrap().to_string()).into();
-  ///             csp_map.entry(&quot;script-src&quot;.to_string()).or_insert_with(Default::default).push(&quot;&#39;unsafe-inline&#39;&quot;);
+  ///             csp_map.entry("script-src".to_string()).or_insert_with(Default::default).push("'unsafe-inline'");
   ///             // use the tauri helper to get a CSP string from the map
   ///             let csp_string = Csp::from(csp_map).to_string();
   ///             *csp = HeaderValue::from_str(&amp;csp_string).unwrap();
@@ -2254,7 +2255,7 @@
   ///     Ok(())
   ///   });
   /// ```
-  </span><span class="kw">pub fn </span>on_web_resource_request&lt;F: Fn(<span class="kw-2">&amp;</span>HttpRequest, <span class="kw-2">&amp;mut </span>HttpResponse) + Send + Sync + <span class="lifetime">&#39;static</span>&gt;(
+  </span><span class="kw">pub fn </span>on_web_resource_request&lt;F: Fn(<span class="kw-2">&amp;</span>HttpRequest, <span class="kw-2">&amp;mut </span>HttpResponse) + Send + Sync + <span class="lifetime">'static</span>&gt;(
     <span class="kw-2">mut </span><span class="self">self</span>,
     f: F,
   ) -&gt; <span class="self">Self </span>{
@@ -2275,22 +2276,22 @@
   /// use std::collections::HashMap;
   /// tauri::Builder::default()
   ///   .setup(|app| {
-  ///     WindowBuilder::new(app, &quot;core&quot;, WindowUrl::App(&quot;index.html&quot;.into()))
+  ///     WindowBuilder::new(app, "core", WindowUrl::App("index.html".into()))
   ///       .on_navigation(|url| {
   ///         // allow the production URL or localhost on dev
-  ///         url.scheme() == &quot;tauri&quot; || (cfg!(dev) &amp;&amp; url.host_str() == Some(&quot;localhost&quot;))
+  ///         url.scheme() == "tauri" || (cfg!(dev) &amp;&amp; url.host_str() == Some("localhost"))
   ///       })
   ///       .build()?;
   ///     Ok(())
   ///   });
   /// ```
-  </span><span class="kw">pub fn </span>on_navigation&lt;F: Fn(Url) -&gt; bool + Send + <span class="lifetime">&#39;static</span>&gt;(<span class="kw-2">mut </span><span class="self">self</span>, f: F) -&gt; <span class="self">Self </span>{
+  </span><span class="kw">pub fn </span>on_navigation&lt;F: Fn(Url) -&gt; bool + Send + <span class="lifetime">'static</span>&gt;(<span class="kw-2">mut </span><span class="self">self</span>, f: F) -&gt; <span class="self">Self </span>{
     <span class="self">self</span>.navigation_handler.replace(Box::new(f));
     <span class="self">self
   </span>}
 
   <span class="doccomment">/// Creates a new webview window.
-  </span><span class="attr">#[cfg_attr(feature = <span class="string">&quot;tracing&quot;</span>, tracing::instrument(name = <span class="string">&quot;window::create&quot;</span>))]
+  </span><span class="attr">#[cfg_attr(feature = <span class="string">"tracing"</span>, tracing::instrument(name = <span class="string">"window::create"</span>))]
   </span><span class="kw">pub fn </span>build(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="kw">crate</span>::Result&lt;Window&lt;R&gt;&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>pending = PendingWindow::new(
       <span class="self">self</span>.window_builder.clone(),
@@ -2319,12 +2320,12 @@
     .map(|window| <span class="self">self</span>.manager.attach_window(<span class="self">self</span>.app_handle.clone(), window))<span class="question-mark">?</span>;
 
     <span class="self">self</span>.manager.eval_script_all(<span class="macro">format!</span>(
-      <span class="string">&quot;window.__TAURI_METADATA__.__windows = {window_labels_array}.map(function (label) {{ return {{ label: label }} }})&quot;</span>,
+      <span class="string">"window.__TAURI_METADATA__.__windows = {window_labels_array}.map(function (label) {{ return {{ label: label }} }})"</span>,
       window_labels_array = serde_json::to_string(<span class="kw-2">&amp;</span><span class="self">self</span>.manager.labels())<span class="question-mark">?</span>,
     ))<span class="question-mark">?</span>;
 
     <span class="self">self</span>.manager.emit_filter(
-      <span class="string">&quot;tauri://window-created&quot;</span>,
+      <span class="string">"tauri://window-created"</span>,
       <span class="prelude-val">None</span>,
       <span class="prelude-val">Some</span>(WindowCreatedEvent {
         label: window.label().into(),
@@ -2351,7 +2352,7 @@
     <span class="self">self
   </span>}
 
-  <span class="doccomment">/// The initial position of the window&#39;s.
+  <span class="doccomment">/// The initial position of the window's.
   </span><span class="attr">#[must_use]
   </span><span class="kw">pub fn </span>position(<span class="kw-2">mut </span><span class="self">self</span>, x: f64, y: f64) -&gt; <span class="self">Self </span>{
     <span class="self">self</span>.window_builder = <span class="self">self</span>.window_builder.position(x, y);
@@ -2380,19 +2381,19 @@
   </span>}
 
   <span class="doccomment">/// Whether the window is resizable or not.
-  /// When resizable is set to false, native window&#39;s maximize button is automatically disabled.
+  /// When resizable is set to false, native window's maximize button is automatically disabled.
   </span><span class="attr">#[must_use]
   </span><span class="kw">pub fn </span>resizable(<span class="kw-2">mut </span><span class="self">self</span>, resizable: bool) -&gt; <span class="self">Self </span>{
     <span class="self">self</span>.window_builder = <span class="self">self</span>.window_builder.resizable(resizable);
     <span class="self">self
   </span>}
 
-  <span class="doccomment">/// Whether the window&#39;s native maximize button is enabled or not.
+  <span class="doccomment">/// Whether the window's native maximize button is enabled or not.
   /// If resizable is set to false, this setting is ignored.
   ///
   /// ## Platform-specific
   ///
-  /// - **macOS:** Disables the &quot;zoom&quot; button in the window titlebar, which is also used to enter fullscreen mode.
+  /// - **macOS:** Disables the "zoom" button in the window titlebar, which is also used to enter fullscreen mode.
   /// - **Linux / iOS / Android:** Unsupported.
   </span><span class="attr">#[must_use]
   </span><span class="kw">pub fn </span>maximizable(<span class="kw-2">mut </span><span class="self">self</span>, maximizable: bool) -&gt; <span class="self">Self </span>{
@@ -2400,7 +2401,7 @@
     <span class="self">self
   </span>}
 
-  <span class="doccomment">/// Whether the window&#39;s native minimize button is enabled or not.
+  <span class="doccomment">/// Whether the window's native minimize button is enabled or not.
   ///
   /// ## Platform-specific
   ///
@@ -2411,12 +2412,12 @@
     <span class="self">self
   </span>}
 
-  <span class="doccomment">/// Whether the window&#39;s native close button is enabled or not.
+  <span class="doccomment">/// Whether the window's native close button is enabled or not.
   ///
   /// ## Platform-specific
   ///
-  /// - **Linux:** &quot;GTK+ will do its best to convince the window manager not to show a close button.
-  ///   Depending on the system, this function may not have any effect when called on a window that is already visible&quot;
+  /// - **Linux:** "GTK+ will do its best to convince the window manager not to show a close button.
+  ///   Depending on the system, this function may not have any effect when called on a window that is already visible"
   /// - **iOS / Android:** Unsupported.
   </span><span class="attr">#[must_use]
   </span><span class="kw">pub fn </span>closable(<span class="kw-2">mut </span><span class="self">self</span>, closable: bool) -&gt; <span class="self">Self </span>{
@@ -2441,8 +2442,8 @@
   <span class="doccomment">/// Sets the window to be initially focused.
   </span><span class="attr">#[must_use]
   #[deprecated(
-    since = <span class="string">&quot;1.2.0&quot;</span>,
-    note = <span class="string">&quot;The window is automatically focused by default. This function Will be removed in 2.0.0. Use `focused` instead.&quot;
+    since = <span class="string">"1.2.0"</span>,
+    note = <span class="string">"The window is automatically focused by default. This function Will be removed in 2.0.0. Use `focused` instead."
   </span>)]
   </span><span class="kw">pub fn </span>focus(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
     <span class="self">self</span>.window_builder = <span class="self">self</span>.window_builder.focused(<span class="bool-val">true</span>);
@@ -2483,10 +2484,10 @@
 
   <span class="doccomment">/// Whether the window should be transparent. If this is true, writing colors
   /// with alpha values different than `1.0` will produce a transparent window.
-  </span><span class="attr">#[cfg(any(not(target_os = <span class="string">&quot;macos&quot;</span>), feature = <span class="string">&quot;macos-private-api&quot;</span>))]
+  </span><span class="attr">#[cfg(any(not(target_os = <span class="string">"macos"</span>), feature = <span class="string">"macos-private-api"</span>))]
   #[cfg_attr(
     doc_cfg,
-    doc(cfg(any(not(target_os = <span class="string">&quot;macos&quot;</span>), feature = <span class="string">&quot;macos-private-api&quot;</span>)))
+    doc(cfg(any(not(target_os = <span class="string">"macos"</span>), feature = <span class="string">"macos-private-api"</span>)))
   )]
   #[must_use]
   </span><span class="kw">pub fn </span>transparent(<span class="kw-2">mut </span><span class="self">self</span>, transparent: bool) -&gt; <span class="self">Self </span>{
@@ -2545,7 +2546,7 @@
   </span>}
 
   <span class="doccomment">/// Sets a parent to the window to be created.
-  </span><span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+  </span><span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
   #[must_use]
   </span><span class="kw">pub fn </span>parent_window(<span class="kw-2">mut </span><span class="self">self</span>, parent: <span class="kw-2">*mut </span>std::ffi::c_void) -&gt; <span class="self">Self </span>{
     <span class="self">self</span>.window_builder = <span class="self">self</span>.window_builder.parent_window(parent);
@@ -2568,7 +2569,7 @@
   </span>}
 
   <span class="doccomment">/// Sets the [`TitleBarStyle`].
-  </span><span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+  </span><span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
   #[must_use]
   </span><span class="kw">pub fn </span>title_bar_style(<span class="kw-2">mut </span><span class="self">self</span>, style: TitleBarStyle) -&gt; <span class="self">Self </span>{
     <span class="self">self</span>.window_builder = <span class="self">self</span>.window_builder.title_bar_style(style);
@@ -2576,7 +2577,7 @@
   </span>}
 
   <span class="doccomment">/// Hide the window title.
-  </span><span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+  </span><span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
   #[must_use]
   </span><span class="kw">pub fn </span>hidden_title(<span class="kw-2">mut </span><span class="self">self</span>, hidden: bool) -&gt; <span class="self">Self </span>{
     <span class="self">self</span>.window_builder = <span class="self">self</span>.window_builder.hidden_title(hidden);
@@ -2589,7 +2590,7 @@
   /// If the tabbing identifier is not set, automatic tabbing will be disabled.
   ///
   /// [tabbing identifier]: &lt;https://developer.apple.com/documentation/appkit/nswindow/1644704-tabbingidentifier&gt;
-  </span><span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+  </span><span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
   #[must_use]
   </span><span class="kw">pub fn </span>tabbing_identifier(<span class="kw-2">mut </span><span class="self">self</span>, identifier: <span class="kw-2">&amp;</span>str) -&gt; <span class="self">Self </span>{
     <span class="self">self</span>.window_builder = <span class="self">self</span>.window_builder.tabbing_identifier(identifier);
@@ -2602,25 +2603,25 @@
   /// but before the HTML document has been parsed and before any other script included by the HTML document is run.
   ///
   /// Since it runs on all top-level document and child frame page navigations,
-  /// it&#39;s recommended to check the `window.location` to guard your script from running on unexpected origins.
+  /// it's recommended to check the `window.location` to guard your script from running on unexpected origins.
   ///
   /// # Examples
   ///
   /// ```rust
   /// use tauri::{WindowBuilder, Runtime};
   ///
-  /// const INIT_SCRIPT: &amp;str = r#&quot;
-  ///   if (window.location.origin === &#39;https://tauri.app&#39;) {
-  ///     console.log(&quot;hello world from js init script&quot;);
+  /// const INIT_SCRIPT: &amp;str = r#"
+  ///   if (window.location.origin === 'https://tauri.app') {
+  ///     console.log("hello world from js init script");
   ///
-  ///     window.__MY_CUSTOM_PROPERTY__ = { foo: &#39;bar&#39; };
+  ///     window.__MY_CUSTOM_PROPERTY__ = { foo: 'bar' };
   ///   }
-  /// &quot;#;
+  /// "#;
   ///
   /// fn main() {
   ///   tauri::Builder::default()
   ///     .setup(|app| {
-  ///       let window = tauri::WindowBuilder::new(app, &quot;label&quot;, tauri::WindowUrl::App(&quot;index.html&quot;.into()))
+  ///       let window = tauri::WindowBuilder::new(app, "label", tauri::WindowUrl::App("index.html".into()))
   ///         .initialization_script(INIT_SCRIPT)
   ///         .build()?;
   ///       Ok(())
@@ -2678,7 +2679,7 @@
 
   <span class="doccomment">/// Enables clipboard access for the page rendered on **Linux** and **Windows**.
   ///
-  /// **macOS** doesn&#39;t provide such method and is always enabled by default,
+  /// **macOS** doesn't provide such method and is always enabled by default,
   /// but you still need to add menu item accelerators to use shortcuts.
   </span><span class="attr">#[must_use]
   </span><span class="kw">pub fn </span>enable_clipboard_access(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
@@ -2731,7 +2732,7 @@
 }
 
 <span class="kw">impl</span>&lt;R: Runtime&gt; Hash <span class="kw">for </span>Window&lt;R&gt; {
-  <span class="doccomment">/// Only use the [`Window`]&#39;s label to represent its hash.
+  <span class="doccomment">/// Only use the [`Window`]'s label to represent its hash.
   </span><span class="kw">fn </span>hash&lt;H: Hasher&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H) {
     <span class="self">self</span>.window.label.hash(state)
   }
@@ -2739,7 +2740,7 @@
 
 <span class="kw">impl</span>&lt;R: Runtime&gt; Eq <span class="kw">for </span>Window&lt;R&gt; {}
 <span class="kw">impl</span>&lt;R: Runtime&gt; PartialEq <span class="kw">for </span>Window&lt;R&gt; {
-  <span class="doccomment">/// Only use the [`Window`]&#39;s label to compare equality.
+  <span class="doccomment">/// Only use the [`Window`]'s label to compare equality.
   </span><span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; bool {
     <span class="self">self</span>.window.label.eq(<span class="kw-2">&amp;</span>other.window.label)
   }
@@ -2747,8 +2748,8 @@
 
 <span class="kw">impl</span>&lt;R: Runtime&gt; Manager&lt;R&gt; <span class="kw">for </span>Window&lt;R&gt; {
   <span class="attr">#[cfg_attr(
-    feature = <span class="string">&quot;tracing&quot;</span>,
-    tracing::instrument(<span class="string">&quot;window::emit::to&quot;</span>, skip(<span class="self">self</span>, payload))
+    feature = <span class="string">"tracing"</span>,
+    tracing::instrument(<span class="string">"window::emit::to"</span>, skip(<span class="self">self</span>, payload))
   )]
   </span><span class="kw">fn </span>emit_to&lt;S: Serialize + Clone&gt;(
     <span class="kw-2">&amp;</span><span class="self">self</span>,
@@ -2762,8 +2763,8 @@
   }
 
   <span class="attr">#[cfg_attr(
-    feature = <span class="string">&quot;tracing&quot;</span>,
-    tracing::instrument(<span class="string">&quot;window::emit::all&quot;</span>, skip(<span class="self">self</span>, payload))
+    feature = <span class="string">"tracing"</span>,
+    tracing::instrument(<span class="string">"window::emit::all"</span>, skip(<span class="self">self</span>, payload))
   )]
   </span><span class="kw">fn </span>emit_all&lt;S: Serialize + Clone&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, event: <span class="kw-2">&amp;</span>str, payload: S) -&gt; <span class="kw">crate</span>::Result&lt;()&gt; {
     <span class="self">self
@@ -2777,7 +2778,7 @@
     <span class="kw-2">&amp;</span><span class="self">self</span>.manager
   }
 
-  <span class="kw">fn </span>runtime(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RuntimeOrDispatch&lt;<span class="lifetime">&#39;_</span>, R&gt; {
+  <span class="kw">fn </span>runtime(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RuntimeOrDispatch&lt;<span class="lifetime">'_</span>, R&gt; {
     RuntimeOrDispatch::Dispatch(<span class="self">self</span>.dispatcher())
   }
 
@@ -2786,36 +2787,36 @@
   }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, R: Runtime&gt; CommandArg&lt;<span class="lifetime">&#39;de</span>, R&gt; <span class="kw">for </span>Window&lt;R&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, R: Runtime&gt; CommandArg&lt;<span class="lifetime">'de</span>, R&gt; <span class="kw">for </span>Window&lt;R&gt; {
   <span class="doccomment">/// Grabs the [`Window`] from the [`CommandItem`]. This will never fail.
-  </span><span class="kw">fn </span>from_command(command: CommandItem&lt;<span class="lifetime">&#39;de</span>, R&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, InvokeError&gt; {
+  </span><span class="kw">fn </span>from_command(command: CommandItem&lt;<span class="lifetime">'de</span>, R&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, InvokeError&gt; {
     <span class="prelude-val">Ok</span>(command.message.window())
   }
 }
 
 <span class="doccomment">/// The platform webview handle. Accessed with [`Window#method.with_webview`];
-</span><span class="attr">#[cfg(all(desktop, feature = <span class="string">&quot;wry&quot;</span>))]
-#[cfg_attr(doc_cfg, doc(cfg(all(desktop, feature = <span class="string">&quot;wry&quot;</span>))))]
+</span><span class="attr">#[cfg(all(desktop, feature = <span class="string">"wry"</span>))]
+#[cfg_attr(doc_cfg, doc(cfg(all(desktop, feature = <span class="string">"wry"</span>))))]
 </span><span class="kw">pub struct </span>PlatformWebview(tauri_runtime_wry::Webview);
 
-<span class="attr">#[cfg(all(desktop, feature = <span class="string">&quot;wry&quot;</span>))]
+<span class="attr">#[cfg(all(desktop, feature = <span class="string">"wry"</span>))]
 </span><span class="kw">impl </span>PlatformWebview {
   <span class="doccomment">/// Returns [`webkit2gtk::WebView`] handle.
   </span><span class="attr">#[cfg(any(
-    target_os = <span class="string">&quot;linux&quot;</span>,
-    target_os = <span class="string">&quot;dragonfly&quot;</span>,
-    target_os = <span class="string">&quot;freebsd&quot;</span>,
-    target_os = <span class="string">&quot;netbsd&quot;</span>,
-    target_os = <span class="string">&quot;openbsd&quot;
+    target_os = <span class="string">"linux"</span>,
+    target_os = <span class="string">"dragonfly"</span>,
+    target_os = <span class="string">"freebsd"</span>,
+    target_os = <span class="string">"netbsd"</span>,
+    target_os = <span class="string">"openbsd"
   </span>))]
   #[cfg_attr(
     doc_cfg,
     doc(cfg(any(
-      target_os = <span class="string">&quot;linux&quot;</span>,
-      target_os = <span class="string">&quot;dragonfly&quot;</span>,
-      target_os = <span class="string">&quot;freebsd&quot;</span>,
-      target_os = <span class="string">&quot;netbsd&quot;</span>,
-      target_os = <span class="string">&quot;openbsd&quot;
+      target_os = <span class="string">"linux"</span>,
+      target_os = <span class="string">"dragonfly"</span>,
+      target_os = <span class="string">"freebsd"</span>,
+      target_os = <span class="string">"netbsd"</span>,
+      target_os = <span class="string">"openbsd"
     </span>)))
   )]
   </span><span class="kw">pub fn </span>inner(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; std::rc::Rc&lt;webkit2gtk::WebView&gt; {
@@ -2834,8 +2835,8 @@
   <span class="doccomment">/// Returns the [WKWebView] handle.
   ///
   /// [WKWebView]: https://developer.apple.com/documentation/webkit/wkwebview
-  </span><span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
-  #[cfg_attr(doc_cfg, doc(cfg(target_os = <span class="string">&quot;macos&quot;</span>)))]
+  </span><span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
+  #[cfg_attr(doc_cfg, doc(cfg(target_os = <span class="string">"macos"</span>)))]
   </span><span class="kw">pub fn </span>inner(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; cocoa::base::id {
     <span class="self">self</span>.<span class="number">0</span>.webview
   }
@@ -2843,8 +2844,8 @@
   <span class="doccomment">/// Returns WKWebView [controller] handle.
   ///
   /// [controller]: https://developer.apple.com/documentation/webkit/wkusercontentcontroller
-  </span><span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
-  #[cfg_attr(doc_cfg, doc(cfg(target_os = <span class="string">&quot;macos&quot;</span>)))]
+  </span><span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
+  #[cfg_attr(doc_cfg, doc(cfg(target_os = <span class="string">"macos"</span>)))]
   </span><span class="kw">pub fn </span>controller(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; cocoa::base::id {
     <span class="self">self</span>.<span class="number">0</span>.manager
   }
@@ -2852,15 +2853,15 @@
   <span class="doccomment">/// Returns [NSWindow] associated with the WKWebView webview.
   ///
   /// [NSWindow]: https://developer.apple.com/documentation/appkit/nswindow
-  </span><span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
-  #[cfg_attr(doc_cfg, doc(cfg(target_os = <span class="string">&quot;macos&quot;</span>)))]
+  </span><span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
+  #[cfg_attr(doc_cfg, doc(cfg(target_os = <span class="string">"macos"</span>)))]
   </span><span class="kw">pub fn </span>ns_window(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; cocoa::base::id {
     <span class="self">self</span>.<span class="number">0</span>.ns_window
   }
 }
 
 <span class="doccomment">/// APIs specific to the wry runtime.
-</span><span class="attr">#[cfg(feature = <span class="string">&quot;wry&quot;</span>)]
+</span><span class="attr">#[cfg(feature = <span class="string">"wry"</span>)]
 </span><span class="kw">impl </span>Window&lt;<span class="kw">crate</span>::Wry&gt; {
   <span class="doccomment">/// Executes a closure, providing it with the webview handle that is specific to the current platform.
   ///
@@ -2869,7 +2870,7 @@
   /// # Examples
   ///
   /// ```rust,no_run
-  /// #[cfg(target_os = &quot;macos&quot;)]
+  /// #[cfg(target_os = "macos")]
   /// #[macro_use]
   /// extern crate objc;
   /// use tauri::Manager;
@@ -2877,9 +2878,9 @@
   /// fn main() {
   ///   tauri::Builder::default()
   ///     .setup(|app| {
-  ///       let main_window = app.get_window(&quot;main&quot;).unwrap();
+  ///       let main_window = app.get_window("main").unwrap();
   ///       main_window.with_webview(|webview| {
-  ///         #[cfg(target_os = &quot;linux&quot;)]
+  ///         #[cfg(target_os = "linux")]
   ///         {
   ///           // see https://docs.rs/webkit2gtk/0.18.2/webkit2gtk/struct.WebView.html
   ///           // and https://docs.rs/webkit2gtk/0.18.2/webkit2gtk/trait.WebViewExt.html
@@ -2893,7 +2894,7 @@
   ///           webview.controller().SetZoomFactor(4.).unwrap();
   ///         }
   ///
-  ///         #[cfg(target_os = &quot;macos&quot;)]
+  ///         #[cfg(target_os = "macos")]
   ///         unsafe {
   ///           let () = msg_send![webview.inner(), setPageZoom: 4.];
   ///           let () = msg_send![webview.controller(), removeAllUserScripts];
@@ -2906,8 +2907,8 @@
   /// }
   /// ```
   </span><span class="attr">#[cfg(desktop)]
-  #[cfg_attr(doc_cfg, doc(cfg(all(feature = <span class="string">&quot;wry&quot;</span>, desktop))))]
-  </span><span class="kw">pub fn </span>with_webview&lt;F: FnOnce(PlatformWebview) + Send + <span class="lifetime">&#39;static</span>&gt;(
+  #[cfg_attr(doc_cfg, doc(cfg(all(feature = <span class="string">"wry"</span>, desktop))))]
+  </span><span class="kw">pub fn </span>with_webview&lt;F: FnOnce(PlatformWebview) + Send + <span class="lifetime">'static</span>&gt;(
     <span class="kw-2">&amp;</span><span class="self">self</span>,
     f: F,
   ) -&gt; <span class="kw">crate</span>::Result&lt;()&gt; {
@@ -2932,32 +2933,32 @@
       manager,
       app_handle,
       <span class="attr">#[cfg(test)]
-      </span>current_url: <span class="string">&quot;http://tauri.app&quot;</span>.parse().unwrap(),
+      </span>current_url: <span class="string">"http://tauri.app"</span>.parse().unwrap(),
     }
   }
 
   <span class="doccomment">/// Initializes a webview window builder with the given window label and URL to load on the webview.
   ///
   /// Data URLs are only supported with the `window-data-url` feature flag.
-  </span><span class="kw">pub fn </span>builder&lt;<span class="lifetime">&#39;a</span>, M: Manager&lt;R&gt;, L: Into&lt;String&gt;&gt;(
-    manager: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>M,
+  </span><span class="kw">pub fn </span>builder&lt;<span class="lifetime">'a</span>, M: Manager&lt;R&gt;, L: Into&lt;String&gt;&gt;(
+    manager: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>M,
     label: L,
     url: WindowUrl,
-  ) -&gt; WindowBuilder&lt;<span class="lifetime">&#39;a</span>, R&gt; {
-    WindowBuilder::&lt;<span class="lifetime">&#39;a</span>, R&gt;::new(manager, label.into(), url)
+  ) -&gt; WindowBuilder&lt;<span class="lifetime">'a</span>, R&gt; {
+    WindowBuilder::&lt;<span class="lifetime">'a</span>, R&gt;::new(manager, label.into(), url)
   }
 
   <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>invoke_responder(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Arc&lt;InvokeResponder&lt;R&gt;&gt; {
     <span class="self">self</span>.manager.invoke_responder()
   }
 
-  <span class="doccomment">/// The current window&#39;s dispatcher.
+  <span class="doccomment">/// The current window's dispatcher.
   </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>dispatcher(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; R::Dispatcher {
     <span class="self">self</span>.window.dispatcher.clone()
   }
 
   <span class="doccomment">/// Runs the given closure on the main thread.
-  </span><span class="kw">pub fn </span>run_on_main_thread&lt;F: FnOnce() + Send + <span class="lifetime">&#39;static</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, f: F) -&gt; <span class="kw">crate</span>::Result&lt;()&gt; {
+  </span><span class="kw">pub fn </span>run_on_main_thread&lt;F: FnOnce() + Send + <span class="lifetime">'static</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, f: F) -&gt; <span class="kw">crate</span>::Result&lt;()&gt; {
     <span class="self">self
       </span>.window
       .dispatcher
@@ -2971,7 +2972,7 @@
   }
 
   <span class="doccomment">/// Registers a window event listener.
-  </span><span class="kw">pub fn </span>on_window_event&lt;F: Fn(<span class="kw-2">&amp;</span>WindowEvent) + Send + <span class="lifetime">&#39;static</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, f: F) {
+  </span><span class="kw">pub fn </span>on_window_event&lt;F: Fn(<span class="kw-2">&amp;</span>WindowEvent) + Send + <span class="lifetime">'static</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, f: F) {
     <span class="self">self
       </span>.window
       .dispatcher
@@ -2979,7 +2980,7 @@
   }
 
   <span class="doccomment">/// Registers a menu event listener.
-  </span><span class="kw">pub fn </span>on_menu_event&lt;F: Fn(MenuEvent) + Send + <span class="lifetime">&#39;static</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, f: F) -&gt; uuid::Uuid {
+  </span><span class="kw">pub fn </span>on_menu_event&lt;F: Fn(MenuEvent) + Send + <span class="lifetime">'static</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, f: F) -&gt; uuid::Uuid {
     <span class="kw">let </span>menu_ids = <span class="self">self</span>.window.menu_ids.clone();
     <span class="self">self</span>.window.dispatcher.on_menu_event(<span class="kw">move </span>|event| {
       <span class="kw">let </span>id = menu_ids
@@ -3008,7 +3009,7 @@
     <span class="self">self</span>.window.dispatcher.scale_factor().map_err(Into::into)
   }
 
-  <span class="doccomment">/// Returns the position of the top-left hand corner of the window&#39;s client area relative to the top-left hand corner of the desktop.
+  <span class="doccomment">/// Returns the position of the top-left hand corner of the window's client area relative to the top-left hand corner of the desktop.
   </span><span class="kw">pub fn </span>inner_position(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">crate</span>::Result&lt;PhysicalPosition&lt;i32&gt;&gt; {
     <span class="self">self</span>.window.dispatcher.inner_position().map_err(Into::into)
   }
@@ -3018,7 +3019,7 @@
     <span class="self">self</span>.window.dispatcher.outer_position().map_err(Into::into)
   }
 
-  <span class="doccomment">/// Returns the physical size of the window&#39;s client area.
+  <span class="doccomment">/// Returns the physical size of the window's client area.
   ///
   /// The client area is the content of the window, excluding the title bar and borders.
   </span><span class="kw">pub fn </span>inner_size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">crate</span>::Result&lt;PhysicalSize&lt;u32&gt;&gt; {
@@ -3027,27 +3028,27 @@
 
   <span class="doccomment">/// Returns the physical size of the entire window.
   ///
-  /// These dimensions include the title bar and borders. If you don&#39;t want that (and you usually don&#39;t), use inner_size instead.
+  /// These dimensions include the title bar and borders. If you don't want that (and you usually don't), use inner_size instead.
   </span><span class="kw">pub fn </span>outer_size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">crate</span>::Result&lt;PhysicalSize&lt;u32&gt;&gt; {
     <span class="self">self</span>.window.dispatcher.outer_size().map_err(Into::into)
   }
 
-  <span class="doccomment">/// Gets the window&#39;s current fullscreen state.
+  <span class="doccomment">/// Gets the window's current fullscreen state.
   </span><span class="kw">pub fn </span>is_fullscreen(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">crate</span>::Result&lt;bool&gt; {
     <span class="self">self</span>.window.dispatcher.is_fullscreen().map_err(Into::into)
   }
 
-  <span class="doccomment">/// Gets the window&#39;s current minimized state.
+  <span class="doccomment">/// Gets the window's current minimized state.
   </span><span class="kw">pub fn </span>is_minimized(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">crate</span>::Result&lt;bool&gt; {
     <span class="self">self</span>.window.dispatcher.is_minimized().map_err(Into::into)
   }
 
-  <span class="doccomment">/// Gets the window&#39;s current maximized state.
+  <span class="doccomment">/// Gets the window's current maximized state.
   </span><span class="kw">pub fn </span>is_maximized(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">crate</span>::Result&lt;bool&gt; {
     <span class="self">self</span>.window.dispatcher.is_maximized().map_err(Into::into)
   }
 
-  <span class="doccomment">/// Gets the window&#39;s current focus state.
+  <span class="doccomment">/// Gets the window's current focus state.
   </span><span class="kw">pub fn </span>is_focused(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">crate</span>::Result&lt;bool&gt; {
     <span class="self">self</span>.window.dispatcher.is_focused().map_err(Into::into)
   }
@@ -3089,19 +3090,19 @@
     <span class="self">self</span>.window.dispatcher.is_closable().map_err(Into::into)
   }
 
-  <span class="doccomment">/// Gets the window&#39;s current visibility state.
+  <span class="doccomment">/// Gets the window's current visibility state.
   </span><span class="kw">pub fn </span>is_visible(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">crate</span>::Result&lt;bool&gt; {
     <span class="self">self</span>.window.dispatcher.is_visible().map_err(Into::into)
   }
 
-  <span class="doccomment">/// Gets the window&#39;s current title.
+  <span class="doccomment">/// Gets the window's current title.
   </span><span class="kw">pub fn </span>title(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">crate</span>::Result&lt;String&gt; {
     <span class="self">self</span>.window.dispatcher.title().map_err(Into::into)
   }
 
   <span class="doccomment">/// Returns the monitor on which the window currently resides.
   ///
-  /// Returns None if current monitor can&#39;t be detected.
+  /// Returns None if current monitor can't be detected.
   </span><span class="kw">pub fn </span>current_monitor(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">crate</span>::Result&lt;<span class="prelude-ty">Option</span>&lt;Monitor&gt;&gt; {
     <span class="self">self
       </span>.window
@@ -3113,7 +3114,7 @@
 
   <span class="doccomment">/// Returns the primary monitor of the system.
   ///
-  /// Returns None if it can&#39;t identify any monitor as a primary one.
+  /// Returns None if it can't identify any monitor as a primary one.
   </span><span class="kw">pub fn </span>primary_monitor(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">crate</span>::Result&lt;<span class="prelude-ty">Option</span>&lt;Monitor&gt;&gt; {
     <span class="self">self
       </span>.window
@@ -3134,7 +3135,7 @@
   }
 
   <span class="doccomment">/// Returns the native handle that is used by this window.
-  </span><span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+  </span><span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
   </span><span class="kw">pub fn </span>ns_window(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">crate</span>::Result&lt;<span class="kw-2">*mut </span>std::ffi::c_void&gt; {
     <span class="self">self
       </span>.window
@@ -3171,11 +3172,11 @@
   ///
   /// Note that this can only be used on the main thread.
   </span><span class="attr">#[cfg(any(
-    target_os = <span class="string">&quot;linux&quot;</span>,
-    target_os = <span class="string">&quot;dragonfly&quot;</span>,
-    target_os = <span class="string">&quot;freebsd&quot;</span>,
-    target_os = <span class="string">&quot;netbsd&quot;</span>,
-    target_os = <span class="string">&quot;openbsd&quot;
+    target_os = <span class="string">"linux"</span>,
+    target_os = <span class="string">"dragonfly"</span>,
+    target_os = <span class="string">"freebsd"</span>,
+    target_os = <span class="string">"netbsd"</span>,
+    target_os = <span class="string">"openbsd"
   </span>))]
   </span><span class="kw">pub fn </span>gtk_window(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">crate</span>::Result&lt;gtk::ApplicationWindow&gt; {
     <span class="self">self</span>.window.dispatcher.gtk_window().map_err(Into::into)
@@ -3228,7 +3229,7 @@
   }
 
   <span class="doccomment">/// Determines if this window should be resizable.
-  /// When resizable is set to false, native window&#39;s maximize button is automatically disabled.
+  /// When resizable is set to false, native window's maximize button is automatically disabled.
   </span><span class="kw">pub fn </span>set_resizable(<span class="kw-2">&amp;</span><span class="self">self</span>, resizable: bool) -&gt; <span class="kw">crate</span>::Result&lt;()&gt; {
     <span class="self">self
       </span>.window
@@ -3237,12 +3238,12 @@
       .map_err(Into::into)
   }
 
-  <span class="doccomment">/// Determines if this window&#39;s native maximize button should be enabled.
+  <span class="doccomment">/// Determines if this window's native maximize button should be enabled.
   /// If resizable is set to false, this setting is ignored.
   ///
   /// ## Platform-specific
   ///
-  /// - **macOS:** Disables the &quot;zoom&quot; button in the window titlebar, which is also used to enter fullscreen mode.
+  /// - **macOS:** Disables the "zoom" button in the window titlebar, which is also used to enter fullscreen mode.
   /// - **Linux / iOS / Android:** Unsupported.
   </span><span class="kw">pub fn </span>set_maximizable(<span class="kw-2">&amp;</span><span class="self">self</span>, maximizable: bool) -&gt; <span class="kw">crate</span>::Result&lt;()&gt; {
     <span class="self">self
@@ -3252,7 +3253,7 @@
       .map_err(Into::into)
   }
 
-  <span class="doccomment">/// Determines if this window&#39;s native minize button should be enabled.
+  <span class="doccomment">/// Determines if this window's native minize button should be enabled.
   ///
   /// ## Platform-specific
   ///
@@ -3265,12 +3266,12 @@
       .map_err(Into::into)
   }
 
-  <span class="doccomment">/// Determines if this window&#39;s native close button should be enabled.
+  <span class="doccomment">/// Determines if this window's native close button should be enabled.
   ///
   /// ## Platform-specific
   ///
-  /// - **Linux:** &quot;GTK+ will do its best to convince the window manager not to show a close button.
-  ///   Depending on the system, this function may not have any effect when called on a window that is already visible&quot;
+  /// - **Linux:** "GTK+ will do its best to convince the window manager not to show a close button.
+  ///   Depending on the system, this function may not have any effect when called on a window that is already visible"
   /// - **iOS / Android:** Unsupported.
   </span><span class="kw">pub fn </span>set_closable(<span class="kw-2">&amp;</span><span class="self">self</span>, closable: bool) -&gt; <span class="kw">crate</span>::Result&lt;()&gt; {
     <span class="self">self
@@ -3280,7 +3281,7 @@
       .map_err(Into::into)
   }
 
-  <span class="doccomment">/// Set this window&#39;s title.
+  <span class="doccomment">/// Set this window's title.
   </span><span class="kw">pub fn </span>set_title(<span class="kw-2">&amp;</span><span class="self">self</span>, title: <span class="kw-2">&amp;</span>str) -&gt; <span class="kw">crate</span>::Result&lt;()&gt; {
     <span class="self">self
       </span>.window
@@ -3368,7 +3369,7 @@
       .map_err(Into::into)
   }
 
-  <span class="doccomment">/// Sets this window&#39;s minimum size.
+  <span class="doccomment">/// Sets this window's minimum size.
   </span><span class="kw">pub fn </span>set_min_size&lt;S: Into&lt;Size&gt;&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, size: <span class="prelude-ty">Option</span>&lt;S&gt;) -&gt; <span class="kw">crate</span>::Result&lt;()&gt; {
     <span class="self">self
       </span>.window
@@ -3377,7 +3378,7 @@
       .map_err(Into::into)
   }
 
-  <span class="doccomment">/// Sets this window&#39;s maximum size.
+  <span class="doccomment">/// Sets this window's maximum size.
   </span><span class="kw">pub fn </span>set_max_size&lt;S: Into&lt;Size&gt;&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, size: <span class="prelude-ty">Option</span>&lt;S&gt;) -&gt; <span class="kw">crate</span>::Result&lt;()&gt; {
     <span class="self">self
       </span>.window
@@ -3386,7 +3387,7 @@
       .map_err(Into::into)
   }
 
-  <span class="doccomment">/// Sets this window&#39;s position.
+  <span class="doccomment">/// Sets this window's position.
   </span><span class="kw">pub fn </span>set_position&lt;Pos: Into&lt;Position&gt;&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, position: Pos) -&gt; <span class="kw">crate</span>::Result&lt;()&gt; {
     <span class="self">self
       </span>.window
@@ -3409,7 +3410,7 @@
     <span class="self">self</span>.window.dispatcher.set_focus().map_err(Into::into)
   }
 
-  <span class="doccomment">/// Sets this window&#39; icon.
+  <span class="doccomment">/// Sets this window' icon.
   </span><span class="kw">pub fn </span>set_icon(<span class="kw-2">&amp;</span><span class="self">self</span>, icon: Icon) -&gt; <span class="kw">crate</span>::Result&lt;()&gt; {
     <span class="self">self
       </span>.window
@@ -3433,7 +3434,7 @@
 
   <span class="doccomment">/// Grabs the cursor, preventing it from leaving the window.
   ///
-  /// There&#39;s no guarantee that the cursor will be hidden. You should
+  /// There's no guarantee that the cursor will be hidden. You should
   /// hide it by yourself if you want so.
   ///
   /// ## Platform-specific
@@ -3448,7 +3449,7 @@
       .map_err(Into::into)
   }
 
-  <span class="doccomment">/// Modifies the cursor&#39;s visibility.
+  <span class="doccomment">/// Modifies the cursor's visibility.
   ///
   /// If `false`, this will hide the cursor. If `true`, this will show the cursor.
   ///
@@ -3542,7 +3543,7 @@
       }
     };
     <span class="kw">match </span>payload.cmd.as_str() {
-      <span class="string">&quot;__initialized&quot; </span>=&gt; {
+      <span class="string">"__initialized" </span>=&gt; {
         <span class="kw">let </span>payload: PageLoadPayload = serde_json::from_value(payload.inner)<span class="question-mark">?</span>;
         manager.run_on_page_load(<span class="self">self</span>, payload);
       }
@@ -3572,10 +3573,10 @@
             manager.config(),
             manager.package_info(),
           );
-        } <span class="kw">else if </span>payload.cmd.starts_with(<span class="string">&quot;plugin:&quot;</span>) {
+        } <span class="kw">else if </span>payload.cmd.starts_with(<span class="string">"plugin:"</span>) {
           <span class="kw">if </span>!is_local {
-            <span class="kw">let </span>command = invoke.message.command.replace(<span class="string">&quot;plugin:&quot;</span>, <span class="string">&quot;&quot;</span>);
-            <span class="kw">let </span>plugin_name = command.split(<span class="string">&#39;|&#39;</span>).next().unwrap().to_string();
+            <span class="kw">let </span>command = invoke.message.command.replace(<span class="string">"plugin:"</span>, <span class="string">""</span>);
+            <span class="kw">let </span>plugin_name = command.split(<span class="string">'|'</span>).next().unwrap().to_string();
             <span class="kw">if </span>!scope
               .map(|s| s.plugins().contains(<span class="kw-2">&amp;</span>plugin_name))
               .unwrap_or(<span class="bool-val">true</span>)
@@ -3660,12 +3661,12 @@
   /// tauri::Builder::default()
   ///   .setup(|app| {
   ///     #[cfg(debug_assertions)]
-  ///     app.get_window(&quot;main&quot;).unwrap().open_devtools();
+  ///     app.get_window("main").unwrap().open_devtools();
   ///     Ok(())
   ///   });
   /// ```
-  </span><span class="attr">#[cfg(any(debug_assertions, feature = <span class="string">&quot;devtools&quot;</span>))]
-  #[cfg_attr(doc_cfg, doc(cfg(any(debug_assertions, feature = <span class="string">&quot;devtools&quot;</span>))))]
+  </span><span class="attr">#[cfg(any(debug_assertions, feature = <span class="string">"devtools"</span>))]
+  #[cfg_attr(doc_cfg, doc(cfg(any(debug_assertions, feature = <span class="string">"devtools"</span>))))]
   </span><span class="kw">pub fn </span>open_devtools(<span class="kw-2">&amp;</span><span class="self">self</span>) {
     <span class="self">self</span>.window.dispatcher.open_devtools();
   }
@@ -3687,7 +3688,7 @@
   ///   .setup(|app| {
   ///     #[cfg(debug_assertions)]
   ///     {
-  ///       let window = app.get_window(&quot;main&quot;).unwrap();
+  ///       let window = app.get_window("main").unwrap();
   ///       window.open_devtools();
   ///       std::thread::spawn(move || {
   ///         std::thread::sleep(std::time::Duration::from_secs(10));
@@ -3697,8 +3698,8 @@
   ///     Ok(())
   ///   });
   /// ```
-  </span><span class="attr">#[cfg(any(debug_assertions, feature = <span class="string">&quot;devtools&quot;</span>))]
-  #[cfg_attr(doc_cfg, doc(cfg(any(debug_assertions, feature = <span class="string">&quot;devtools&quot;</span>))))]
+  </span><span class="attr">#[cfg(any(debug_assertions, feature = <span class="string">"devtools"</span>))]
+  #[cfg_attr(doc_cfg, doc(cfg(any(debug_assertions, feature = <span class="string">"devtools"</span>))))]
   </span><span class="kw">pub fn </span>close_devtools(<span class="kw-2">&amp;</span><span class="self">self</span>) {
     <span class="self">self</span>.window.dispatcher.close_devtools();
   }
@@ -3720,7 +3721,7 @@
   ///   .setup(|app| {
   ///     #[cfg(debug_assertions)]
   ///     {
-  ///       let window = app.get_window(&quot;main&quot;).unwrap();
+  ///       let window = app.get_window("main").unwrap();
   ///       if !window.is_devtools_open() {
   ///         window.open_devtools();
   ///       }
@@ -3728,8 +3729,8 @@
   ///     Ok(())
   ///   });
   /// ```
-  </span><span class="attr">#[cfg(any(debug_assertions, feature = <span class="string">&quot;devtools&quot;</span>))]
-  #[cfg_attr(doc_cfg, doc(cfg(any(debug_assertions, feature = <span class="string">&quot;devtools&quot;</span>))))]
+  </span><span class="attr">#[cfg(any(debug_assertions, feature = <span class="string">"devtools"</span>))]
+  #[cfg_attr(doc_cfg, doc(cfg(any(debug_assertions, feature = <span class="string">"devtools"</span>))))]
   </span><span class="kw">pub fn </span>is_devtools_open(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
     <span class="self">self
       </span>.window
@@ -3751,12 +3752,12 @@
   ///
   /// #[tauri::command]
   /// fn download(window: tauri::Window) {
-  ///   window.emit_and_trigger(&quot;download-started&quot;, ());
+  ///   window.emit_and_trigger("download-started", ());
   ///
   ///   for i in 1..100 {
   ///     std::thread::sleep(std::time::Duration::from_millis(150));
   ///     // emit a download progress event to all listeners
-  ///     window.emit_and_trigger(&quot;download-progress&quot;, i);
+  ///     window.emit_and_trigger("download-progress", i);
   ///   }
   /// }
   /// ```
@@ -3769,8 +3770,8 @@
     <span class="self">self</span>.emit(event, payload)
   }
 
-  <span class="attr">#[cfg_attr(feature = <span class="string">&quot;tracing&quot;</span>, tracing::instrument(
-    <span class="string">&quot;window::emit::eval&quot;</span>,
+  <span class="attr">#[cfg_attr(feature = <span class="string">"tracing"</span>, tracing::instrument(
+    <span class="string">"window::emit::eval"</span>,
     skip(<span class="self">self</span>, emit_args),
     fields(
       event = emit_args.event,
@@ -3780,7 +3781,7 @@
   )]
   </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>emit_internal(<span class="kw-2">&amp;</span><span class="self">self</span>, emit_args: <span class="kw-2">&amp;</span>WindowEmitArgs) -&gt; <span class="kw">crate</span>::Result&lt;()&gt; {
     <span class="self">self</span>.eval(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
-      <span class="string">&quot;(function () {{ const fn = window[&#39;{}&#39;]; fn &amp;&amp; fn({{event: {}, windowLabel: {}, payload: {}}}) }})()&quot;</span>,
+      <span class="string">"(function () {{ const fn = window['{}']; fn &amp;&amp; fn({{event: {}, windowLabel: {}, payload: {}}}) }})()"</span>,
       <span class="self">self</span>.manager.event_emit_function_name(),
       emit_args.event,
       emit_args.source_window_label,
@@ -3800,13 +3801,13 @@
   ///   for i in 1..100 {
   ///     std::thread::sleep(std::time::Duration::from_millis(150));
   ///     // emit a download progress event to all listeners registed in the webview
-  ///     window.emit(&quot;download-progress&quot;, i);
+  ///     window.emit("download-progress", i);
   ///   }
   /// }
   /// ```
   </span><span class="attr">#[cfg_attr(
-    feature = <span class="string">&quot;tracing&quot;</span>,
-    tracing::instrument(<span class="string">&quot;window::emit&quot;</span>, skip(<span class="self">self</span>, payload))
+    feature = <span class="string">"tracing"</span>,
+    tracing::instrument(<span class="string">"window::emit"</span>, skip(<span class="self">self</span>, payload))
   )]
   </span><span class="kw">pub fn </span>emit&lt;S: Serialize + Clone&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, event: <span class="kw-2">&amp;</span>str, payload: S) -&gt; <span class="kw">crate</span>::Result&lt;()&gt; {
     <span class="self">self
@@ -3829,9 +3830,9 @@
   ///
   /// tauri::Builder::default()
   ///   .setup(|app| {
-  ///     let window = app.get_window(&quot;main&quot;).unwrap();
-  ///     window.listen(&quot;component-loaded&quot;, move |event| {
-  ///       println!(&quot;window just loaded a component&quot;);
+  ///     let window = app.get_window("main").unwrap();
+  ///     window.listen("component-loaded", move |event| {
+  ///       println!("window just loaded a component");
   ///     });
   ///
   ///     Ok(())
@@ -3839,7 +3840,7 @@
   /// ```
   </span><span class="kw">pub fn </span>listen&lt;F&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, event: <span class="kw">impl </span>Into&lt;String&gt;, handler: F) -&gt; EventHandler
   <span class="kw">where
-    </span>F: Fn(Event) + Send + <span class="lifetime">&#39;static</span>,
+    </span>F: Fn(Event) + Send + <span class="lifetime">'static</span>,
   {
     <span class="kw">let </span>label = <span class="self">self</span>.window.label.clone();
     <span class="self">self</span>.manager.listen(event.into(), <span class="prelude-val">Some</span>(label), handler)
@@ -3853,10 +3854,10 @@
   ///
   /// tauri::Builder::default()
   ///   .setup(|app| {
-  ///     let window = app.get_window(&quot;main&quot;).unwrap();
+  ///     let window = app.get_window("main").unwrap();
   ///     let window_ = window.clone();
-  ///     let handler = window.listen(&quot;component-loaded&quot;, move |event| {
-  ///       println!(&quot;window just loaded a component&quot;);
+  ///     let handler = window.listen("component-loaded", move |event| {
+  ///       println!("window just loaded a component");
   ///
   ///       // we no longer need to listen to the event
   ///       // we also could have used `window.once` instead
@@ -3879,7 +3880,7 @@
   /// See [`Self::listen`] for more information.
   </span><span class="kw">pub fn </span>once&lt;F&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, event: <span class="kw">impl </span>Into&lt;String&gt;, handler: F) -&gt; EventHandler
   <span class="kw">where
-    </span>F: FnOnce(Event) + Send + <span class="lifetime">&#39;static</span>,
+    </span>F: FnOnce(Event) + Send + <span class="lifetime">'static</span>,
   {
     <span class="kw">let </span>label = <span class="self">self</span>.window.label.clone();
     <span class="self">self</span>.manager.once(event.into(), <span class="prelude-val">Some</span>(label), handler)
@@ -3896,13 +3897,13 @@
   ///   for i in 1..100 {
   ///     std::thread::sleep(std::time::Duration::from_millis(150));
   ///     // emit a download progress event to all listeners registed on `window` in Rust
-  ///     window.trigger(&quot;download-progress&quot;, Some(i.to_string()));
+  ///     window.trigger("download-progress", Some(i.to_string()));
   ///   }
   /// }
   /// ```
   </span><span class="attr">#[cfg_attr(
-    feature = <span class="string">&quot;tracing&quot;</span>,
-    tracing::instrument(<span class="string">&quot;window::trigger&quot;</span>, skip(<span class="self">self</span>))
+    feature = <span class="string">"tracing"</span>,
+    tracing::instrument(<span class="string">"window::trigger"</span>, skip(<span class="self">self</span>))
   )]
   </span><span class="kw">pub fn </span>trigger(<span class="kw-2">&amp;</span><span class="self">self</span>, event: <span class="kw-2">&amp;</span>str, data: <span class="prelude-ty">Option</span>&lt;String&gt;) {
     <span class="kw">let </span>label = <span class="self">self</span>.window.label.clone();
@@ -3910,18 +3911,18 @@
   }
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>IPC_SCOPE_DOES_NOT_ALLOW: <span class="kw-2">&amp;</span>str = <span class="string">&quot;Not allowed by the scope&quot;</span>;
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>IPC_SCOPE_DOES_NOT_ALLOW: <span class="kw-2">&amp;</span>str = <span class="string">"Not allowed by the scope"</span>;
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>ipc_scope_not_found_error_message(label: <span class="kw-2">&amp;</span>str, url: <span class="kw-2">&amp;</span>str) -&gt; String {
-  <span class="macro">format!</span>(<span class="string">&quot;Scope not defined for window `{label}` and URL `{url}`. See https://tauri.app/v1/api/config/#securityconfig.dangerousremotedomainipcaccess and https://docs.rs/tauri/1/tauri/scope/struct.IpcScope.html#method.configure_remote_access&quot;</span>)
+  <span class="macro">format!</span>(<span class="string">"Scope not defined for window `{label}` and URL `{url}`. See https://tauri.app/v1/api/config/#securityconfig.dangerousremotedomainipcaccess and https://docs.rs/tauri/1/tauri/scope/struct.IpcScope.html#method.configure_remote_access"</span>)
 }
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>ipc_scope_window_error_message(label: <span class="kw-2">&amp;</span>str) -&gt; String {
-  <span class="macro">format!</span>(<span class="string">&quot;Scope not defined for window `{}`. See https://tauri.app/v1/api/config/#securityconfig.dangerousremotedomainipcaccess and https://docs.rs/tauri/1/tauri/scope/struct.IpcScope.html#method.configure_remote_access&quot;</span>, label)
+  <span class="macro">format!</span>(<span class="string">"Scope not defined for window `{}`. See https://tauri.app/v1/api/config/#securityconfig.dangerousremotedomainipcaccess and https://docs.rs/tauri/1/tauri/scope/struct.IpcScope.html#method.configure_remote_access"</span>, label)
 }
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>ipc_scope_domain_error_message(url: <span class="kw-2">&amp;</span>str) -&gt; String {
-  <span class="macro">format!</span>(<span class="string">&quot;Scope not defined for URL `{url}`. See https://tauri.app/v1/api/config/#securityconfig.dangerousremotedomainipcaccess and https://docs.rs/tauri/1/tauri/scope/struct.IpcScope.html#method.configure_remote_access&quot;</span>)
+  <span class="macro">format!</span>(<span class="string">"Scope not defined for URL `{url}`. See https://tauri.app/v1/api/config/#securityconfig.dangerousremotedomainipcaccess and https://docs.rs/tauri/1/tauri/scope/struct.IpcScope.html#method.configure_remote_access"</span>)
 }
 
 <span class="attr">#[cfg(test)]

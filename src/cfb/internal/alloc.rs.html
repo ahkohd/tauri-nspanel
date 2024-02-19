@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cfb-0.7.3/src/internal/alloc.rs`."><title>alloc.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="cfb" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cfb-0.7.3/src/internal/alloc.rs`."><title>alloc.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="cfb" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -478,9 +479,9 @@
 <span class="comment">//===========================================================================//
 
 </span><span class="macro">macro_rules! </span>malformed {
-    (<span class="macro-nonterminal">$e</span>:expr) =&gt; { <span class="macro">invalid_data!</span>(<span class="string">&quot;Malformed FAT ({})&quot;</span>, <span class="macro-nonterminal">$e</span>) };
+    (<span class="macro-nonterminal">$e</span>:expr) =&gt; { <span class="macro">invalid_data!</span>(<span class="string">"Malformed FAT ({})"</span>, <span class="macro-nonterminal">$e</span>) };
     (<span class="macro-nonterminal">$fmt</span>:expr, $(<span class="macro-nonterminal">$arg</span>:tt)+) =&gt; {
-        <span class="macro">invalid_data!</span>(<span class="string">&quot;Malformed FAT ({})&quot;</span>, <span class="macro">format!</span>(<span class="macro-nonterminal">$fmt</span>, $(<span class="macro-nonterminal">$arg</span>)+))
+        <span class="macro">invalid_data!</span>(<span class="string">"Malformed FAT ({})"</span>, <span class="macro">format!</span>(<span class="macro-nonterminal">$fmt</span>, $(<span class="macro-nonterminal">$arg</span>)+))
     };
 }
 
@@ -519,7 +520,7 @@
         <span class="kw">let </span>index = sector_id <span class="kw">as </span>usize;
         <span class="kw">if </span>index &gt;= <span class="self">self</span>.fat.len() {
             <span class="macro">invalid_data!</span>(
-                <span class="string">&quot;Found reference to sector {}, but FAT has only {} entries&quot;</span>,
+                <span class="string">"Found reference to sector {}, but FAT has only {} entries"</span>,
                 index,
                 <span class="self">self</span>.fat.len()
             );
@@ -529,7 +530,7 @@
             &amp;&amp; (next_id &gt; consts::MAX_REGULAR_SECTOR
                 || next_id <span class="kw">as </span>usize &gt;= <span class="self">self</span>.fat.len())
         {
-            <span class="macro">invalid_data!</span>(<span class="string">&quot;next_id ({}) is invalid&quot;</span>, next_id);
+            <span class="macro">invalid_data!</span>(<span class="string">"next_id ({}) is invalid"</span>, next_id);
         }
         <span class="prelude-val">Ok</span>(next_id)
     }
@@ -549,7 +550,7 @@
     <span class="kw">fn </span>validate(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; io::Result&lt;()&gt; {
         <span class="kw">if </span><span class="self">self</span>.fat.len() &gt; <span class="self">self</span>.sectors.num_sectors() <span class="kw">as </span>usize {
             <span class="macro">malformed!</span>(
-                <span class="string">&quot;FAT has {} entries, but file has only {} sectors&quot;</span>,
+                <span class="string">"FAT has {} entries, but file has only {} sectors"</span>,
                 <span class="self">self</span>.fat.len(),
                 <span class="self">self</span>.sectors.num_sectors()
             );
@@ -557,14 +558,14 @@
         <span class="kw">for </span><span class="kw-2">&amp;</span>difat_sector <span class="kw">in </span><span class="self">self</span>.difat_sector_ids.iter() {
             <span class="kw">if </span>difat_sector <span class="kw">as </span>usize &gt;= <span class="self">self</span>.fat.len() {
                 <span class="macro">malformed!</span>(
-                    <span class="string">&quot;FAT has {} entries, but DIFAT lists {} as a DIFAT sector&quot;</span>,
+                    <span class="string">"FAT has {} entries, but DIFAT lists {} as a DIFAT sector"</span>,
                     <span class="self">self</span>.fat.len(),
                     difat_sector
                 );
             }
             <span class="kw">if </span><span class="self">self</span>.fat[difat_sector <span class="kw">as </span>usize] != consts::DIFAT_SECTOR {
                 <span class="macro">malformed!</span>(
-                    <span class="string">&quot;DIFAT sector {} is not marked as such in the FAT&quot;</span>,
+                    <span class="string">"DIFAT sector {} is not marked as such in the FAT"</span>,
                     difat_sector
                 );
             }
@@ -572,14 +573,14 @@
         <span class="kw">for </span><span class="kw-2">&amp;</span>fat_sector <span class="kw">in </span><span class="self">self</span>.difat.iter() {
             <span class="kw">if </span>fat_sector <span class="kw">as </span>usize &gt;= <span class="self">self</span>.fat.len() {
                 <span class="macro">malformed!</span>(
-                    <span class="string">&quot;FAT has {} entries, but DIFAT lists {} as a FAT sector&quot;</span>,
+                    <span class="string">"FAT has {} entries, but DIFAT lists {} as a FAT sector"</span>,
                     <span class="self">self</span>.fat.len(),
                     fat_sector
                 );
             }
             <span class="kw">if </span><span class="self">self</span>.fat[fat_sector <span class="kw">as </span>usize] != consts::FAT_SECTOR {
                 <span class="macro">malformed!</span>(
-                    <span class="string">&quot;FAT sector {} is not marked as such in the FAT&quot;</span>,
+                    <span class="string">"FAT sector {} is not marked as such in the FAT"</span>,
                     fat_sector
                 );
             }
@@ -589,18 +590,18 @@
             <span class="kw">if </span>to_sector &lt;= consts::MAX_REGULAR_SECTOR {
                 <span class="kw">if </span>to_sector <span class="kw">as </span>usize &gt;= <span class="self">self</span>.fat.len() {
                     <span class="macro">malformed!</span>(
-                        <span class="string">&quot;FAT has {} entries, but sector {} points to {}&quot;</span>,
+                        <span class="string">"FAT has {} entries, but sector {} points to {}"</span>,
                         <span class="self">self</span>.fat.len(),
                         from_sector,
                         to_sector
                     );
                 }
                 <span class="kw">if </span>pointees.contains(<span class="kw-2">&amp;</span>to_sector) {
-                    <span class="macro">malformed!</span>(<span class="string">&quot;sector {} pointed to twice&quot;</span>, to_sector);
+                    <span class="macro">malformed!</span>(<span class="string">"sector {} pointed to twice"</span>, to_sector);
                 }
                 pointees.insert(to_sector);
             } <span class="kw">else if </span>to_sector == consts::INVALID_SECTOR {
-                <span class="macro">malformed!</span>(<span class="string">&quot;0x{:08X} is not a valid FAT entry&quot;</span>, to_sector);
+                <span class="macro">malformed!</span>(<span class="string">"0x{:08X} is not a valid FAT entry"</span>, to_sector);
             }
         }
         <span class="prelude-val">Ok</span>(())
@@ -677,7 +678,7 @@
     <span class="doccomment">/// Allocates a new entry in the FAT, sets its value to `END_OF_CHAIN`, and
     /// returns the new sector number.
     </span><span class="kw">fn </span>allocate_sector(<span class="kw-2">&amp;mut </span><span class="self">self</span>, init: SectorInit) -&gt; io::Result&lt;u32&gt; {
-        <span class="comment">// If there&#39;s an existing free sector, use that.
+        <span class="comment">// If there's an existing free sector, use that.
         </span><span class="kw">for </span>sector_id <span class="kw">in </span><span class="number">0</span>..<span class="self">self</span>.fat.len() {
             <span class="kw">if </span><span class="self">self</span>.fat[sector_id] == consts::FREE_SECTOR {
                 <span class="kw">let </span>sector_id = sector_id <span class="kw">as </span>u32;
@@ -686,7 +687,7 @@
                 <span class="kw">return </span><span class="prelude-val">Ok</span>(sector_id);
             }
         }
-        <span class="comment">// Otherwise, we need a new sector; if there&#39;s not room in the FAT to
+        <span class="comment">// Otherwise, we need a new sector; if there's not room in the FAT to
         // add it, then first we need to allocate a new FAT sector.
         </span><span class="kw">let </span>fat_entries_per_sector =
             <span class="self">self</span>.sectors.sector_len() / size_of::&lt;u32&gt;();
@@ -851,8 +852,8 @@
 
     <span class="attr">#[test]
     #[should_panic(
-        expected = <span class="string">&quot;Malformed FAT (FAT has 3 entries, but file has only 2 \
-                    sectors)&quot;
+        expected = <span class="string">"Malformed FAT (FAT has 3 entries, but file has only 2 \
+                    sectors)"
     </span>)]
     </span><span class="kw">fn </span>fat_longer_than_file() {
         <span class="kw">let </span>difat = <span class="macro">vec!</span>[<span class="number">0</span>];
@@ -863,8 +864,8 @@
 
     <span class="attr">#[test]
     #[should_panic(
-        expected = <span class="string">&quot;Malformed FAT (FAT has 2 entries, but DIFAT lists 3 as \
-                    a DIFAT sector)&quot;
+        expected = <span class="string">"Malformed FAT (FAT has 2 entries, but DIFAT lists 3 as \
+                    a DIFAT sector)"
     </span>)]
     </span><span class="kw">fn </span>difat_sector_out_of_range() {
         <span class="kw">let </span>difat_sectors = <span class="macro">vec!</span>[<span class="number">3</span>];
@@ -876,8 +877,8 @@
 
     <span class="attr">#[test]
     #[should_panic(
-        expected = <span class="string">&quot;Malformed FAT (DIFAT sector 1 is not marked as such in \
-                    the FAT)&quot;
+        expected = <span class="string">"Malformed FAT (DIFAT sector 1 is not marked as such in \
+                    the FAT)"
     </span>)]
     </span><span class="kw">fn </span>difat_sector_not_marked_in_fat() {
         <span class="kw">let </span>difat_sectors = <span class="macro">vec!</span>[<span class="number">1</span>];
@@ -889,8 +890,8 @@
 
     <span class="attr">#[test]
     #[should_panic(
-        expected = <span class="string">&quot;Malformed FAT (FAT has 2 entries, but DIFAT lists 3 as a \
-                    FAT sector)&quot;
+        expected = <span class="string">"Malformed FAT (FAT has 2 entries, but DIFAT lists 3 as a \
+                    FAT sector)"
     </span>)]
     </span><span class="kw">fn </span>fat_sector_out_of_range() {
         <span class="kw">let </span>difat = <span class="macro">vec!</span>[<span class="number">0</span>, <span class="number">3</span>];
@@ -900,8 +901,8 @@
 
     <span class="attr">#[test]
     #[should_panic(
-        expected = <span class="string">&quot;Malformed FAT (FAT sector 1 is not marked as such in the \
-                    FAT)&quot;
+        expected = <span class="string">"Malformed FAT (FAT sector 1 is not marked as such in the \
+                    FAT)"
     </span>)]
     </span><span class="kw">fn </span>fat_sector_not_marked_in_fat() {
         <span class="kw">let </span>difat = <span class="macro">vec!</span>[<span class="number">0</span>, <span class="number">1</span>];
@@ -911,8 +912,8 @@
 
     <span class="attr">#[test]
     #[should_panic(
-        expected = <span class="string">&quot;Malformed FAT (FAT has 2 entries, but sector 1 points to \
-                    2)&quot;
+        expected = <span class="string">"Malformed FAT (FAT has 2 entries, but sector 1 points to \
+                    2)"
     </span>)]
     </span><span class="kw">fn </span>pointee_out_of_range() {
         <span class="kw">let </span>difat = <span class="macro">vec!</span>[<span class="number">0</span>];
@@ -921,7 +922,7 @@
     }
 
     <span class="attr">#[test]
-    #[should_panic(expected = <span class="string">&quot;Malformed FAT (sector 3 pointed to twice)&quot;</span>)]
+    #[should_panic(expected = <span class="string">"Malformed FAT (sector 3 pointed to twice)"</span>)]
     </span><span class="kw">fn </span>double_pointee() {
         <span class="kw">let </span>difat = <span class="macro">vec!</span>[<span class="number">0</span>];
         <span class="kw">let </span>fat = <span class="macro">vec!</span>[consts::FAT_SECTOR, <span class="number">3</span>, <span class="number">3</span>, consts::END_OF_CHAIN];
@@ -930,7 +931,7 @@
 
     <span class="attr">#[test]
     #[should_panic(
-        expected = <span class="string">&quot;Malformed FAT (0xFFFFFFFB is not a valid FAT entry)&quot;
+        expected = <span class="string">"Malformed FAT (0xFFFFFFFB is not a valid FAT entry)"
     </span>)]
     </span><span class="kw">fn </span>invalid_pointee() {
         <span class="kw">let </span>difat = <span class="macro">vec!</span>[<span class="number">0</span>];

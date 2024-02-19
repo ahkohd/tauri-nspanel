@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/crossbeam-utils-0.8.19/src/sync/sharded_lock.rs`."><title>sharded_lock.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="crossbeam_utils" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/crossbeam-utils-0.8.19/src/sync/sharded_lock.rs`."><title>sharded_lock.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="crossbeam_utils" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -660,7 +661,7 @@
     ///
     /// Write operations will lock each shard and store the guard here. These guards get dropped at
     /// the same time the big guard is dropped.
-    </span>write_guard: UnsafeCell&lt;<span class="prelude-ty">Option</span>&lt;RwLockWriteGuard&lt;<span class="lifetime">&#39;static</span>, ()&gt;&gt;&gt;,
+    </span>write_guard: UnsafeCell&lt;<span class="prelude-ty">Option</span>&lt;RwLockWriteGuard&lt;<span class="lifetime">'static</span>, ()&gt;&gt;&gt;,
 }
 
 <span class="doccomment">/// A sharded reader-writer lock.
@@ -676,7 +677,7 @@
 /// different shards and thus update different cache lines, which is good for scalability. However,
 /// write operations need to do more work and are therefore slower than usual.
 ///
-/// The priority policy of the lock is dependent on the underlying operating system&#39;s
+/// The priority policy of the lock is dependent on the underlying operating system's
 /// implementation, and this type does not guarantee that any particular policy will be used.
 ///
 /// # Poisoning
@@ -762,9 +763,9 @@
     /// let lock = ShardedLock::new(String::new());
     /// {
     ///     let mut s = lock.write().unwrap();
-    ///     *s = &quot;modified&quot;.to_owned();
+    ///     *s = "modified".to_owned();
     /// }
-    /// assert_eq!(lock.into_inner().unwrap(), &quot;modified&quot;);
+    /// assert_eq!(lock.into_inner().unwrap(), "modified");
     /// ```
     </span><span class="kw">pub fn </span>into_inner(<span class="self">self</span>) -&gt; LockResult&lt;T&gt; {
         <span class="kw">let </span>is_poisoned = <span class="self">self</span>.is_poisoned();
@@ -857,7 +858,7 @@
     ///     Err(_) =&gt; unreachable!(),
     /// };
     /// ```
-    </span><span class="kw">pub fn </span>try_read(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; TryLockResult&lt;ShardedLockReadGuard&lt;<span class="lifetime">&#39;_</span>, T&gt;&gt; {
+    </span><span class="kw">pub fn </span>try_read(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; TryLockResult&lt;ShardedLockReadGuard&lt;<span class="lifetime">'_</span>, T&gt;&gt; {
         <span class="comment">// Take the current thread index and map it to a shard index. Thread indices will tend to
         // distribute shards among threads equally, thus reducing contention due to read-locking.
         </span><span class="kw">let </span>current_index = current_index().unwrap_or(<span class="number">0</span>);
@@ -917,7 +918,7 @@
     ///     assert!(r.is_ok());
     /// }).join().unwrap();
     /// ```
-    </span><span class="kw">pub fn </span>read(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; LockResult&lt;ShardedLockReadGuard&lt;<span class="lifetime">&#39;_</span>, T&gt;&gt; {
+    </span><span class="kw">pub fn </span>read(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; LockResult&lt;ShardedLockReadGuard&lt;<span class="lifetime">'_</span>, T&gt;&gt; {
         <span class="comment">// Take the current thread index and map it to a shard index. Thread indices will tend to
         // distribute shards among threads equally, thus reducing contention due to read-locking.
         </span><span class="kw">let </span>current_index = current_index().unwrap_or(<span class="number">0</span>);
@@ -961,7 +962,7 @@
     ///
     /// assert!(lock.try_write().is_err());
     /// ```
-    </span><span class="kw">pub fn </span>try_write(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; TryLockResult&lt;ShardedLockWriteGuard&lt;<span class="lifetime">&#39;_</span>, T&gt;&gt; {
+    </span><span class="kw">pub fn </span>try_write(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; TryLockResult&lt;ShardedLockWriteGuard&lt;<span class="lifetime">'_</span>, T&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>poisoned = <span class="bool-val">false</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>blocked = <span class="prelude-val">None</span>;
 
@@ -981,7 +982,7 @@
 
             <span class="comment">// Store the guard into the shard.
             </span><span class="kw">unsafe </span>{
-                <span class="kw">let </span>guard: RwLockWriteGuard&lt;<span class="lifetime">&#39;static</span>, ()&gt; = mem::transmute(guard);
+                <span class="kw">let </span>guard: RwLockWriteGuard&lt;<span class="lifetime">'static</span>, ()&gt; = mem::transmute(guard);
                 <span class="kw">let </span>dest: <span class="kw-2">*mut </span><span class="kw">_ </span>= shard.write_guard.get();
                 <span class="kw-2">*</span>dest = <span class="prelude-val">Some</span>(guard);
             }
@@ -1041,7 +1042,7 @@
     ///
     /// assert!(lock.try_read().is_err());
     /// ```
-    </span><span class="kw">pub fn </span>write(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; LockResult&lt;ShardedLockWriteGuard&lt;<span class="lifetime">&#39;_</span>, T&gt;&gt; {
+    </span><span class="kw">pub fn </span>write(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; LockResult&lt;ShardedLockWriteGuard&lt;<span class="lifetime">'_</span>, T&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>poisoned = <span class="bool-val">false</span>;
 
         <span class="comment">// Write-lock each shard in succession.
@@ -1056,8 +1057,8 @@
 
             <span class="comment">// Store the guard into the shard.
             </span><span class="kw">unsafe </span>{
-                <span class="kw">let </span>guard: RwLockWriteGuard&lt;<span class="lifetime">&#39;_</span>, ()&gt; = guard;
-                <span class="kw">let </span>guard: RwLockWriteGuard&lt;<span class="lifetime">&#39;static</span>, ()&gt; = mem::transmute(guard);
+                <span class="kw">let </span>guard: RwLockWriteGuard&lt;<span class="lifetime">'_</span>, ()&gt; = guard;
+                <span class="kw">let </span>guard: RwLockWriteGuard&lt;<span class="lifetime">'static</span>, ()&gt; = mem::transmute(guard);
                 <span class="kw">let </span>dest: <span class="kw-2">*mut </span><span class="kw">_ </span>= shard.write_guard.get();
                 <span class="kw-2">*</span>dest = <span class="prelude-val">Some</span>(guard);
             }
@@ -1078,25 +1079,25 @@
 }
 
 <span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + fmt::Debug&gt; fmt::Debug <span class="kw">for </span>ShardedLock&lt;T&gt; {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
         <span class="kw">match </span><span class="self">self</span>.try_read() {
             <span class="prelude-val">Ok</span>(guard) =&gt; f
-                .debug_struct(<span class="string">&quot;ShardedLock&quot;</span>)
-                .field(<span class="string">&quot;data&quot;</span>, &amp;&amp;<span class="kw-2">*</span>guard)
+                .debug_struct(<span class="string">"ShardedLock"</span>)
+                .field(<span class="string">"data"</span>, &amp;&amp;<span class="kw-2">*</span>guard)
                 .finish(),
             <span class="prelude-val">Err</span>(TryLockError::Poisoned(err)) =&gt; f
-                .debug_struct(<span class="string">&quot;ShardedLock&quot;</span>)
-                .field(<span class="string">&quot;data&quot;</span>, &amp;&amp;<span class="kw-2">**</span>err.get_ref())
+                .debug_struct(<span class="string">"ShardedLock"</span>)
+                .field(<span class="string">"data"</span>, &amp;&amp;<span class="kw-2">**</span>err.get_ref())
                 .finish(),
             <span class="prelude-val">Err</span>(TryLockError::WouldBlock) =&gt; {
                 <span class="kw">struct </span>LockedPlaceholder;
                 <span class="kw">impl </span>fmt::Debug <span class="kw">for </span>LockedPlaceholder {
-                    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-                        f.write_str(<span class="string">&quot;&lt;locked&gt;&quot;</span>)
+                    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
+                        f.write_str(<span class="string">"&lt;locked&gt;"</span>)
                     }
                 }
-                f.debug_struct(<span class="string">&quot;ShardedLock&quot;</span>)
-                    .field(<span class="string">&quot;data&quot;</span>, <span class="kw-2">&amp;</span>LockedPlaceholder)
+                f.debug_struct(<span class="string">"ShardedLock"</span>)
+                    .field(<span class="string">"data"</span>, <span class="kw-2">&amp;</span>LockedPlaceholder)
                     .finish()
             }
         }
@@ -1117,15 +1118,15 @@
 
 <span class="doccomment">/// A guard used to release the shared read access of a [`ShardedLock`] when dropped.
 </span><span class="attr">#[clippy::has_significant_drop]
-</span><span class="kw">pub struct </span>ShardedLockReadGuard&lt;<span class="lifetime">&#39;a</span>, T: <span class="question-mark">?</span>Sized&gt; {
-    lock: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>ShardedLock&lt;T&gt;,
-    _guard: RwLockReadGuard&lt;<span class="lifetime">&#39;a</span>, ()&gt;,
-    _marker: PhantomData&lt;RwLockReadGuard&lt;<span class="lifetime">&#39;a</span>, T&gt;&gt;,
+</span><span class="kw">pub struct </span>ShardedLockReadGuard&lt;<span class="lifetime">'a</span>, T: <span class="question-mark">?</span>Sized&gt; {
+    lock: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>ShardedLock&lt;T&gt;,
+    _guard: RwLockReadGuard&lt;<span class="lifetime">'a</span>, ()&gt;,
+    _marker: PhantomData&lt;RwLockReadGuard&lt;<span class="lifetime">'a</span>, T&gt;&gt;,
 }
 
-<span class="kw">unsafe impl</span>&lt;T: <span class="question-mark">?</span>Sized + Sync&gt; Sync <span class="kw">for </span>ShardedLockReadGuard&lt;<span class="lifetime">&#39;_</span>, T&gt; {}
+<span class="kw">unsafe impl</span>&lt;T: <span class="question-mark">?</span>Sized + Sync&gt; Sync <span class="kw">for </span>ShardedLockReadGuard&lt;<span class="lifetime">'_</span>, T&gt; {}
 
-<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; Deref <span class="kw">for </span>ShardedLockReadGuard&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; Deref <span class="kw">for </span>ShardedLockReadGuard&lt;<span class="lifetime">'_</span>, T&gt; {
     <span class="kw">type </span>Target = T;
 
     <span class="kw">fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>T {
@@ -1133,30 +1134,30 @@
     }
 }
 
-<span class="kw">impl</span>&lt;T: fmt::Debug&gt; fmt::Debug <span class="kw">for </span>ShardedLockReadGuard&lt;<span class="lifetime">&#39;_</span>, T&gt; {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        f.debug_struct(<span class="string">&quot;ShardedLockReadGuard&quot;</span>)
-            .field(<span class="string">&quot;lock&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.lock)
+<span class="kw">impl</span>&lt;T: fmt::Debug&gt; fmt::Debug <span class="kw">for </span>ShardedLockReadGuard&lt;<span class="lifetime">'_</span>, T&gt; {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
+        f.debug_struct(<span class="string">"ShardedLockReadGuard"</span>)
+            .field(<span class="string">"lock"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.lock)
             .finish()
     }
 }
 
-<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + fmt::Display&gt; fmt::Display <span class="kw">for </span>ShardedLockReadGuard&lt;<span class="lifetime">&#39;_</span>, T&gt; {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + fmt::Display&gt; fmt::Display <span class="kw">for </span>ShardedLockReadGuard&lt;<span class="lifetime">'_</span>, T&gt; {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
         (<span class="kw-2">**</span><span class="self">self</span>).fmt(f)
     }
 }
 
 <span class="doccomment">/// A guard used to release the exclusive write access of a [`ShardedLock`] when dropped.
 </span><span class="attr">#[clippy::has_significant_drop]
-</span><span class="kw">pub struct </span>ShardedLockWriteGuard&lt;<span class="lifetime">&#39;a</span>, T: <span class="question-mark">?</span>Sized&gt; {
-    lock: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>ShardedLock&lt;T&gt;,
-    _marker: PhantomData&lt;RwLockWriteGuard&lt;<span class="lifetime">&#39;a</span>, T&gt;&gt;,
+</span><span class="kw">pub struct </span>ShardedLockWriteGuard&lt;<span class="lifetime">'a</span>, T: <span class="question-mark">?</span>Sized&gt; {
+    lock: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>ShardedLock&lt;T&gt;,
+    _marker: PhantomData&lt;RwLockWriteGuard&lt;<span class="lifetime">'a</span>, T&gt;&gt;,
 }
 
-<span class="kw">unsafe impl</span>&lt;T: <span class="question-mark">?</span>Sized + Sync&gt; Sync <span class="kw">for </span>ShardedLockWriteGuard&lt;<span class="lifetime">&#39;_</span>, T&gt; {}
+<span class="kw">unsafe impl</span>&lt;T: <span class="question-mark">?</span>Sized + Sync&gt; Sync <span class="kw">for </span>ShardedLockWriteGuard&lt;<span class="lifetime">'_</span>, T&gt; {}
 
-<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; Drop <span class="kw">for </span>ShardedLockWriteGuard&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; Drop <span class="kw">for </span>ShardedLockWriteGuard&lt;<span class="lifetime">'_</span>, T&gt; {
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="comment">// Unlock the shards in reverse order of locking.
         </span><span class="kw">for </span>shard <span class="kw">in </span><span class="self">self</span>.lock.shards.iter().rev() {
@@ -1169,21 +1170,21 @@
     }
 }
 
-<span class="kw">impl</span>&lt;T: fmt::Debug&gt; fmt::Debug <span class="kw">for </span>ShardedLockWriteGuard&lt;<span class="lifetime">&#39;_</span>, T&gt; {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        f.debug_struct(<span class="string">&quot;ShardedLockWriteGuard&quot;</span>)
-            .field(<span class="string">&quot;lock&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.lock)
+<span class="kw">impl</span>&lt;T: fmt::Debug&gt; fmt::Debug <span class="kw">for </span>ShardedLockWriteGuard&lt;<span class="lifetime">'_</span>, T&gt; {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
+        f.debug_struct(<span class="string">"ShardedLockWriteGuard"</span>)
+            .field(<span class="string">"lock"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.lock)
             .finish()
     }
 }
 
-<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + fmt::Display&gt; fmt::Display <span class="kw">for </span>ShardedLockWriteGuard&lt;<span class="lifetime">&#39;_</span>, T&gt; {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + fmt::Display&gt; fmt::Display <span class="kw">for </span>ShardedLockWriteGuard&lt;<span class="lifetime">'_</span>, T&gt; {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
         (<span class="kw-2">**</span><span class="self">self</span>).fmt(f)
     }
 }
 
-<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; Deref <span class="kw">for </span>ShardedLockWriteGuard&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; Deref <span class="kw">for </span>ShardedLockWriteGuard&lt;<span class="lifetime">'_</span>, T&gt; {
     <span class="kw">type </span>Target = T;
 
     <span class="kw">fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>T {
@@ -1191,7 +1192,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; DerefMut <span class="kw">for </span>ShardedLockWriteGuard&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; DerefMut <span class="kw">for </span>ShardedLockWriteGuard&lt;<span class="lifetime">'_</span>, T&gt; {
     <span class="kw">fn </span>deref_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>T {
         <span class="kw">unsafe </span>{ <span class="kw-2">&amp;mut *</span><span class="self">self</span>.lock.value.get() }
     }
@@ -1199,10 +1200,10 @@
 
 <span class="doccomment">/// Returns a `usize` that identifies the current thread.
 ///
-/// Each thread is associated with an &#39;index&#39;. While there are no particular guarantees, indices
+/// Each thread is associated with an 'index'. While there are no particular guarantees, indices
 /// usually tend to be consecutive numbers between 0 and the number of running threads.
 ///
-/// Since this function accesses TLS, `None` might be returned if the current thread&#39;s TLS is
+/// Since this function accesses TLS, `None` might be returned if the current thread's TLS is
 /// tearing down.
 </span><span class="attr">#[inline]
 </span><span class="kw">fn </span>current_index() -&gt; <span class="prelude-ty">Option</span>&lt;usize&gt; {
@@ -1221,7 +1222,7 @@
     </span>next_index: usize,
 }
 
-<span class="kw">fn </span>thread_indices() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>Mutex&lt;ThreadIndices&gt; {
+<span class="kw">fn </span>thread_indices() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>Mutex&lt;ThreadIndices&gt; {
     <span class="kw">static </span>THREAD_INDICES: OnceLock&lt;Mutex&lt;ThreadIndices&gt;&gt; = OnceLock::new();
     <span class="kw">fn </span>init() -&gt; Mutex&lt;ThreadIndices&gt; {
         Mutex::new(ThreadIndices {

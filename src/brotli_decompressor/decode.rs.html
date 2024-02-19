@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-decompressor-2.5.1/src/decode.rs`."><title>decode.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="brotli_decompressor" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-decompressor-2.5.1/src/decode.rs`."><title>decode.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="brotli_decompressor" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -3303,18 +3304,18 @@
 
 <span class="macro">macro_rules! </span>BROTLI_LOG_UINT (
     (<span class="macro-nonterminal">$num </span>: expr) =&gt; {
-       <span class="macro">xprintln!</span>(<span class="string">&quot;{:?} = {:?}&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$num</span>),  <span class="macro-nonterminal">$num</span>)
+       <span class="macro">xprintln!</span>(<span class="string">"{:?} = {:?}"</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$num</span>),  <span class="macro-nonterminal">$num</span>)
     };
 );
 
 <span class="macro">macro_rules! </span>BROTLI_LOG (
-    (<span class="macro-nonterminal">$str </span>: expr, <span class="macro-nonterminal">$num </span>: expr) =&gt; {<span class="macro">xprintln!</span>(<span class="string">&quot;{:?} {:?}&quot;</span>, <span class="macro-nonterminal">$str</span>, <span class="macro-nonterminal">$num</span>);};
-    (<span class="macro-nonterminal">$str </span>: expr, <span class="macro-nonterminal">$num0 </span>: expr, <span class="macro-nonterminal">$num1 </span>: expr) =&gt; {<span class="macro">xprintln!</span>(<span class="string">&quot;{:?} {:?} {:?}&quot;</span>, <span class="macro-nonterminal">$str</span>, <span class="macro-nonterminal">$num0</span>, <span class="macro-nonterminal">$num1</span>);};
+    (<span class="macro-nonterminal">$str </span>: expr, <span class="macro-nonterminal">$num </span>: expr) =&gt; {<span class="macro">xprintln!</span>(<span class="string">"{:?} {:?}"</span>, <span class="macro-nonterminal">$str</span>, <span class="macro-nonterminal">$num</span>);};
+    (<span class="macro-nonterminal">$str </span>: expr, <span class="macro-nonterminal">$num0 </span>: expr, <span class="macro-nonterminal">$num1 </span>: expr) =&gt; {<span class="macro">xprintln!</span>(<span class="string">"{:?} {:?} {:?}"</span>, <span class="macro-nonterminal">$str</span>, <span class="macro-nonterminal">$num0</span>, <span class="macro-nonterminal">$num1</span>);};
     (<span class="macro-nonterminal">$str </span>: expr, <span class="macro-nonterminal">$num0 </span>: expr, <span class="macro-nonterminal">$num1 </span>: expr, <span class="macro-nonterminal">$num2 </span>: expr) =&gt; {
-        <span class="macro">xprintln!</span>(<span class="string">&quot;{:?} {:?} {:?} {:?}&quot;</span>, <span class="macro-nonterminal">$str</span>, <span class="macro-nonterminal">$num0</span>, <span class="macro-nonterminal">$num1</span>, <span class="macro-nonterminal">$num2</span>);
+        <span class="macro">xprintln!</span>(<span class="string">"{:?} {:?} {:?} {:?}"</span>, <span class="macro-nonterminal">$str</span>, <span class="macro-nonterminal">$num0</span>, <span class="macro-nonterminal">$num1</span>, <span class="macro-nonterminal">$num2</span>);
     };
     (<span class="macro-nonterminal">$str </span>: expr, <span class="macro-nonterminal">$num0 </span>: expr, <span class="macro-nonterminal">$num1 </span>: expr, <span class="macro-nonterminal">$num2 </span>: expr, <span class="macro-nonterminal">$num3 </span>: expr) =&gt; {
-        <span class="macro">xprintln!</span>(<span class="string">&quot;{:?} {:?} {:?} {:?} {:?}&quot;</span>, <span class="macro-nonterminal">$str</span>, <span class="macro-nonterminal">$num0</span>, <span class="macro-nonterminal">$num1</span>, <span class="macro-nonterminal">$num2</span>, <span class="macro-nonterminal">$num3</span>);
+        <span class="macro">xprintln!</span>(<span class="string">"{:?} {:?} {:?} {:?} {:?}"</span>, <span class="macro-nonterminal">$str</span>, <span class="macro-nonterminal">$num0</span>, <span class="macro-nonterminal">$num1</span>, <span class="macro-nonterminal">$num2</span>, <span class="macro-nonterminal">$num3</span>);
     };
 );
 <span class="kw">fn </span>is_fatal(e: BrotliDecoderErrorCode) -&gt; bool {
@@ -3361,7 +3362,7 @@
 }
 <span class="macro">macro_rules! </span>BROTLI_LOG_ARRAY_INDEX (
     (<span class="macro-nonterminal">$array </span>: expr, <span class="macro-nonterminal">$index </span>: expr) =&gt; {
-       <span class="macro">xprintln!</span>(<span class="string">&quot;{:?}[{:?}] = {:?}&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$array</span>), <span class="macro-nonterminal">$index</span>,  <span class="macro-nonterminal">$array</span>[<span class="macro-nonterminal">$index </span><span class="kw">as </span>usize])
+       <span class="macro">xprintln!</span>(<span class="string">"{:?}[{:?}] = {:?}"</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$array</span>), <span class="macro-nonterminal">$index</span>,  <span class="macro-nonterminal">$array</span>[<span class="macro-nonterminal">$index </span><span class="kw">as </span>usize])
     };
 );
 
@@ -3387,7 +3388,7 @@
 // }
 // }
 
-/* Decodes WBITS by reading 1 - 7 bits, or 0x11 for &quot;Large Window Brotli&quot;.
+/* Decodes WBITS by reading 1 - 7 bits, or 0x11 for "Large Window Brotli".
    Precondition: bit-reader accumulator has at least 8 bits. */
 </span><span class="kw">fn </span>DecodeWindowBits(s_large_window: <span class="kw-2">&amp;mut </span>bool,
                     s_window_bits:<span class="kw-2">&amp;mut </span>u32,
@@ -3611,7 +3612,7 @@
   }
 }
 <span class="comment">// Decodes the Huffman code.
-// This method doesn&#39;t read data from the bit reader, BUT drops the amount of
+// This method doesn't read data from the bit reader, BUT drops the amount of
 // bits that correspond to the decoded symbol.
 // bits MUST contain at least 15 (BROTLI_HUFFMAN_MAX_CODE_LENGTH) valid bits.
 </span><span class="attr">#[inline(always)]
@@ -3820,7 +3821,7 @@
     <span class="kw-2">*</span>prev_code_len = code_len;
     <span class="kw-2">*</span>space = space.wrapping_sub(<span class="number">32768 </span>&gt;&gt; code_len);
     <span class="macro">fast_mut!</span>((code_length_histo)[code_len <span class="kw">as </span>usize]) += <span class="number">1</span>;
-    <span class="macro">BROTLI_LOG!</span>(<span class="string">&quot;[ReadHuffmanCode] code_length[{:}]={:} histo[]={:}\n&quot;</span>,
+    <span class="macro">BROTLI_LOG!</span>(<span class="string">"[ReadHuffmanCode] code_length[{:}]={:} histo[]={:}\n"</span>,
                 <span class="kw-2">*</span>symbol, code_len, code_length_histo[code_len <span class="kw">as </span>usize]);
   }
   (<span class="kw-2">*</span>symbol) += <span class="number">1</span>;
@@ -3873,7 +3874,7 @@
     <span class="kw-2">*</span>space = <span class="number">0xFFFFF</span>;
     <span class="kw">return</span>;
   }
-  <span class="macro">BROTLI_LOG!</span>(<span class="string">&quot;[ReadHuffmanCode] code_length[{:}..{:}] = {:}\n&quot;</span>,
+  <span class="macro">BROTLI_LOG!</span>(<span class="string">"[ReadHuffmanCode] code_length[{:}..{:}] = {:}\n"</span>,
               <span class="kw-2">*</span>symbol, <span class="kw-2">*</span>symbol + repeat_delta - <span class="number">1</span>, <span class="kw-2">*</span>repeat_code_len);
   <span class="kw">if </span>(<span class="kw-2">*</span>repeat_code_len != <span class="number">0</span>) {
     <span class="kw">let </span>last: u32 = <span class="kw-2">*</span>symbol + repeat_delta;
@@ -4232,7 +4233,7 @@
         }
 
         <span class="kw">if </span>(s.space != <span class="number">0</span>) {
-          <span class="macro">BROTLI_LOG!</span>(<span class="string">&quot;[ReadHuffmanCode] space = %d\n&quot;</span>, s.space);
+          <span class="macro">BROTLI_LOG!</span>(<span class="string">"[ReadHuffmanCode] space = %d\n"</span>, s.space);
           <span class="kw">return </span>BrotliDecoderErrorCode::BROTLI_DECODER_ERROR_FORMAT_HUFFMAN_SPACE;
         }
         table_size = huffman::BrotliBuildHuffmanTable(<span class="macro">fast_mut!</span>((table)[offset;]),
@@ -4265,7 +4266,7 @@
 
 
 <span class="comment">// WARNING: if state is not BROTLI_STATE_READ_BLOCK_LENGTH_NONE, then
-// reading can&#39;t be continued with ReadBlockLength.
+// reading can't be continued with ReadBlockLength.
 </span><span class="kw">fn </span>SafeReadBlockLengthIndex(substate_read_block_length: <span class="kw-2">&amp;</span>state::BrotliRunningReadBlockLengthState,
                             block_length_index: u32,
                             table: <span class="kw-2">&amp;</span>[HuffmanCode],
@@ -4504,7 +4505,7 @@
 // In case of trivial context map, decoding is finished at this phase.
 // 2) Decode Huffman table using ReadHuffmanCode function.
 // This table will be used for reading context map items.
-// 3) Read context map items; &quot;0&quot; values could be run-length encoded.
+// 3) Read context map items; "0" values could be run-length encoded.
 // 4) Optionally, apply InverseMoveToFront transform to the resulting map.
 //
 </span><span class="kw">fn </span>DecodeContextMapInner&lt;AllocU8: alloc::Allocator&lt;u8&gt;,
@@ -4653,7 +4654,7 @@
                                         mtf,
                                         <span class="kw-2">&amp;mut </span>s.mtf_upper_bound);
           } <span class="kw">else </span>{
-            <span class="comment">// the error state is stored here--we can&#39;t make it this deep with an active error
+            <span class="comment">// the error state is stored here--we can't make it this deep with an active error
             </span><span class="kw">return </span>BrotliDecoderErrorCode::BROTLI_DECODER_ERROR_UNREACHABLE;
           }
         }
@@ -4662,7 +4663,7 @@
       }
     }
   }
-  <span class="comment">// unreachable!(); (compiler will error if it&#39;s reachable due to the unit return type)
+  <span class="comment">// unreachable!(); (compiler will error if it's reachable due to the unit return type)
 </span>}
 
 <span class="kw">fn </span>DecodeContextMap&lt;AllocU8: alloc::Allocator&lt;u8&gt;,
@@ -4825,7 +4826,7 @@
   <span class="bool-val">true
 </span>}
 <span class="comment">// fn DecodeLiteralBlockSwitch&lt;
-// &#39;a,
+// 'a,
 // AllocU8 : alloc::Allocator&lt;u8&gt;,
 // AllocU32 : alloc::Allocator&lt;u32&gt;,
 // AllocHC : alloc::Allocator&lt;HuffmanCode&gt;&gt; (safe : bool,
@@ -4834,7 +4835,7 @@
 // }
 //
 // fn SafeDecodeLiteralBlockSwitch&lt;
-// &#39;a,
+// 'a,
 // AllocU8 : alloc::Allocator&lt;u8&gt;,
 // AllocU32 : alloc::Allocator&lt;u32&gt;,
 // AllocHC : alloc::Allocator&lt;HuffmanCode&gt;&gt; (safe : bool,
@@ -4928,7 +4929,7 @@
   <span class="kw">let </span>partial_pos_rb = (s.rb_roundtrips <span class="kw">as </span>usize * s.ringbuffer_size <span class="kw">as </span>usize) + pos <span class="kw">as </span>usize;
   (partial_pos_rb - s.partial_pos_out) <span class="kw">as </span>usize
 }
-<span class="kw">fn </span>WriteRingBuffer&lt;<span class="lifetime">&#39;a</span>,
+<span class="kw">fn </span>WriteRingBuffer&lt;<span class="lifetime">'a</span>,
                    AllocU8: alloc::Allocator&lt;u8&gt;,
                    AllocU32: alloc::Allocator&lt;u32&gt;,
                    AllocHC: alloc::Allocator&lt;HuffmanCode&gt;&gt;(
@@ -4937,8 +4938,8 @@
   output_offset: <span class="kw-2">&amp;mut </span>usize,
   total_out: <span class="kw-2">&amp;mut </span>usize,
   force: bool,
-  s: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>BrotliState&lt;AllocU8, AllocU32, AllocHC&gt;,
-) -&gt; (BrotliDecoderErrorCode, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8]) {
+  s: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>BrotliState&lt;AllocU8, AllocU32, AllocHC&gt;,
+) -&gt; (BrotliDecoderErrorCode, <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8]) {
   <span class="kw">let </span>to_write = UnwrittenBytes(s, <span class="bool-val">true</span>);
   <span class="kw">let </span><span class="kw-2">mut </span>num_written = <span class="kw-2">*</span>available_out <span class="kw">as </span>usize;
   <span class="kw">if </span>(num_written &gt; to_write) {
@@ -5352,7 +5353,7 @@
 }
 
 
-<span class="attr">#[cfg(not(feature=<span class="string">&quot;unsafe&quot;</span>))]
+<span class="attr">#[cfg(not(feature=<span class="string">"unsafe"</span>))]
 </span><span class="kw">fn </span>memcpy_within_slice(data: <span class="kw-2">&amp;mut </span>[u8], off_dst: usize, off_src: usize, size: usize) {
   <span class="kw">if </span>off_dst &gt; off_src {
     <span class="kw">let </span>(src, dst) = data.split_at_mut(off_dst);
@@ -5365,7 +5366,7 @@
   }
 }
 
-<span class="attr">#[cfg(feature=<span class="string">&quot;unsafe&quot;</span>)]
+<span class="attr">#[cfg(feature=<span class="string">"unsafe"</span>)]
 </span><span class="kw">fn </span>memcpy_within_slice(data: <span class="kw-2">&amp;mut </span>[u8], off_dst: usize, off_src: usize, size: usize) {
   <span class="kw">let </span>ptr = data.as_mut_ptr();
   <span class="kw">unsafe </span>{
@@ -5385,13 +5386,13 @@
   }
   s.ringbuffer.len() != <span class="number">0 </span>&amp;&amp; UnwrittenBytes(s, <span class="bool-val">false</span>) != <span class="number">0
 </span>}
-<span class="kw">pub fn </span>BrotliDecoderTakeOutput&lt;<span class="lifetime">&#39;a</span>,
+<span class="kw">pub fn </span>BrotliDecoderTakeOutput&lt;<span class="lifetime">'a</span>,
                                AllocU8: alloc::Allocator&lt;u8&gt;,
                                AllocU32: alloc::Allocator&lt;u32&gt;,
                                AllocHC: alloc::Allocator&lt;HuffmanCode&gt;&gt;(
-  s: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>BrotliState&lt;AllocU8, AllocU32, AllocHC&gt;,
+  s: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>BrotliState&lt;AllocU8, AllocU32, AllocHC&gt;,
   size: <span class="kw-2">&amp;mut </span>usize,
-) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8] {
+) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8] {
   <span class="kw">let </span>one:usize = <span class="number">1</span>;
   <span class="kw">let </span><span class="kw-2">mut </span>available_out = <span class="kw">if </span><span class="kw-2">*</span>size != <span class="number">0 </span>{ <span class="kw-2">*</span>size } <span class="kw">else </span>{ one &lt;&lt; <span class="number">24 </span>};
   <span class="kw">let </span>requested_out = available_out;
@@ -5403,7 +5404,7 @@
   <span class="kw">let </span><span class="kw-2">mut </span>ign = <span class="number">0usize</span>;
   <span class="kw">let </span><span class="kw-2">mut </span>ign2 = <span class="number">0usize</span>;
   <span class="kw">let </span>(status, result) = WriteRingBuffer(<span class="kw-2">&amp;mut </span>available_out, <span class="prelude-val">None</span>, <span class="kw-2">&amp;mut </span>ign,<span class="kw-2">&amp;mut </span>ign2, <span class="bool-val">true</span>, s);
-  <span class="comment">// Either WriteRingBuffer returns those &quot;success&quot; codes...
+  <span class="comment">// Either WriteRingBuffer returns those "success" codes...
   </span><span class="kw">match </span>status {
     BrotliDecoderErrorCode::BROTLI_DECODER_SUCCESS |  BrotliDecoderErrorCode::BROTLI_DECODER_NEEDS_MORE_OUTPUT =&gt; {
       <span class="kw-2">*</span>size = requested_out - available_out;
@@ -5412,8 +5413,8 @@
       <span class="comment">// ... or stream is broken. Normally this should be caught by
       //   BrotliDecoderDecompressStream, this is just a safeguard.
       </span><span class="kw">if </span>is_fatal(status) {
-        <span class="comment">// SaveErrorCode!(s, status); //borrow checker doesn&#39;t like this
-        // but since it&#39;s a safeguard--ignore
+        <span class="comment">// SaveErrorCode!(s, status); //borrow checker doesn't like this
+        // but since it's a safeguard--ignore
       </span>}
       <span class="kw-2">*</span>size = <span class="number">0</span>;
       <span class="kw">return </span><span class="kw-2">&amp;</span>[];
@@ -5503,7 +5504,7 @@
             result = BrotliDecoderErrorCode::BROTLI_DECODER_NEEDS_MORE_INPUT;
             <span class="kw">break</span>; <span class="comment">// return
           </span>}
-          <span class="macro">BROTLI_LOG!</span>(<span class="string">&quot;[ProcessCommandsInternal] pos = %d insert = %d copy = %d distance = %d\n&quot;</span>,
+          <span class="macro">BROTLI_LOG!</span>(<span class="string">"[ProcessCommandsInternal] pos = %d insert = %d copy = %d distance = %d\n"</span>,
               pos, i, s.copy_length, s.distance_code);
           <span class="kw">if </span>(i == <span class="number">0</span>) {
             s.state = BrotliRunningState::BROTLI_STATE_COMMAND_POST_DECODE_LITERALS;
@@ -5679,7 +5680,7 @@
             </span>}
           }
           <span class="comment">// postReadDistance:
-          </span><span class="macro">BROTLI_LOG!</span>(<span class="string">&quot;[ProcessCommandsInternal] pos = %d distance = %d\n&quot;</span>,
+          </span><span class="macro">BROTLI_LOG!</span>(<span class="string">"[ProcessCommandsInternal] pos = %d distance = %d\n"</span>,
                       pos, s.distance_code);
 
           <span class="kw">if </span>(s.max_distance != s.max_backward_distance) {
@@ -5727,7 +5728,7 @@
                 </span>}
               } <span class="kw">else </span>{
                 <span class="macro">BROTLI_LOG!</span>(
-                  <span class="string">&quot;Invalid backward reference. pos: %d distance: %d len: %d bytes left: %d\n&quot;</span>,
+                  <span class="string">"Invalid backward reference. pos: %d distance: %d len: %d bytes left: %d\n"</span>,
                   pos, s.distance_code, i,
                   s.meta_block_remaining_len);
                 result = BrotliDecoderErrorCode::BROTLI_DECODER_ERROR_FORMAT_TRANSFORM;
@@ -5735,7 +5736,7 @@
               </span>}
             } <span class="kw">else </span>{
               <span class="macro">BROTLI_LOG!</span>(
-                <span class="string">&quot;Invalid backward reference. pos:%d distance:%d len:%d bytes left:%d\n&quot;</span>,
+                <span class="string">"Invalid backward reference. pos:%d distance:%d len:%d bytes left:%d\n"</span>,
                 pos, s.distance_code, i, s.meta_block_remaining_len);
               result = BrotliDecoderErrorCode::BROTLI_DECODER_ERROR_FORMAT_DICTIONARY;
               <span class="kw">break</span>; <span class="comment">// return
@@ -5747,7 +5748,7 @@
             s.meta_block_remaining_len -= i;
             <span class="comment">// There is 128+ bytes of slack in the ringbuffer allocation.
             // Also, we have 16 short codes, that make these 16 bytes irrelevant
-            // in the ringbuffer. Let&#39;s copy over them as a first guess.
+            // in the ringbuffer. Let's copy over them as a first guess.
             //
             </span><span class="kw">let </span>src_start = ((pos - s.distance_code) &amp; s.ringbuffer_mask) <span class="kw">as </span>u32;
             <span class="kw">let </span>dst_start = pos <span class="kw">as </span>u32;
@@ -5963,7 +5964,7 @@
                 </span>result = BrotliDecoderErrorCode::BROTLI_DECODER_SUCCESS;
                 <span class="kw">let </span>new_byte = <span class="macro">fast!</span>((xinput)[<span class="kw-2">*</span>input_offset]);
                 <span class="macro">fast_mut!</span>((s.buffer)[s.buffer_length <span class="kw">as </span>usize]) = new_byte;
-                <span class="comment">// we did the following copy upfront, so we wouldn&#39;t have to do it here
+                <span class="comment">// we did the following copy upfront, so we wouldn't have to do it here
                 // since saved_buffer[s.buffer_length as usize] = new_byte violates borrow rules
                 </span><span class="macro">assert_eq!</span>(<span class="macro">fast!</span>((saved_buffer)[s.buffer_length <span class="kw">as </span>usize]), new_byte);
                 s.buffer_length += <span class="number">1</span>;
@@ -5971,10 +5972,10 @@
                 (<span class="kw-2">*</span>input_offset) += <span class="number">1</span>;
                 (<span class="kw-2">*</span>available_in) -= <span class="number">1</span>;
                 <span class="comment">// Retry with more data in buffer.
-                // we can&#39;t re-borrow the saved buffer...so we have to do this recursively
+                // we can't re-borrow the saved buffer...so we have to do this recursively
                 </span><span class="kw">continue</span>;
               }
-              <span class="comment">// Can&#39;t finish reading and no more input.
+              <span class="comment">// Can't finish reading and no more input.
 
               // FIXME :: NOT SURE WHAT THIS MEANT
               // saved_buffer = core::mem::replace(
@@ -5982,7 +5983,7 @@
               //  &amp;mut[]); // clear input
               </span><span class="kw">break</span>;
             } <span class="kw">else </span>{
-              <span class="comment">// Input stream doesn&#39;t contain enough input.
+              <span class="comment">// Input stream doesn't contain enough input.
               // Copy tail to internal buffer and return.
               </span><span class="kw-2">*</span>input_offset = s.br.next_in <span class="kw">as </span>usize;
               <span class="kw-2">*</span>available_in = s.br.avail_in <span class="kw">as </span>usize;
@@ -6000,7 +6001,7 @@
             <span class="comment">// Fail or needs more output.
             </span><span class="kw">if </span>s.buffer_length != <span class="number">0 </span>{
               <span class="comment">// Just consumed the buffered input and produced some output. Otherwise
-              // it would result in &quot;needs more input&quot;. Reset internal buffer.
+              // it would result in "needs more input". Reset internal buffer.
               </span>s.buffer_length = <span class="number">0</span>;
             } <span class="kw">else </span>{
               <span class="comment">// Using input stream in last iteration. When decoder switches to input

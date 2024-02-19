@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cssparser-0.27.2/src/rules_and_declarations.rs`."><title>rules_and_declarations.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="cssparser" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cssparser-0.27.2/src/rules_and_declarations.rs`."><title>rules_and_declarations.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="cssparser" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -545,9 +546,9 @@
 ///
 /// Typical usage is `input.try_parse(parse_important).is_ok()`
 /// at the end of a `DeclarationParser::parse_value` implementation.
-</span><span class="kw">pub fn </span>parse_important&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;(input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;(), BasicParseError&lt;<span class="lifetime">&#39;i</span>&gt;&gt; {
-    input.expect_delim(<span class="string">&#39;!&#39;</span>)<span class="question-mark">?</span>;
-    input.expect_ident_matching(<span class="string">&quot;important&quot;</span>)
+</span><span class="kw">pub fn </span>parse_important&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;(input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;(), BasicParseError&lt;<span class="lifetime">'i</span>&gt;&gt; {
+    input.expect_delim(<span class="string">'!'</span>)<span class="question-mark">?</span>;
+    input.expect_ident_matching(<span class="string">"important"</span>)
 }
 
 <span class="doccomment">/// The return value for `AtRuleParser::parse_prelude`.
@@ -562,7 +563,7 @@
 
     <span class="doccomment">/// The at-rule is expected to have a a `{ /* ... */ }` block. Example: `@media`
     ///
-    /// The value is the representation of the &quot;prelude&quot; part of the rule.
+    /// The value is the representation of the "prelude" part of the rule.
     </span>WithBlock(PB),
 }
 
@@ -570,12 +571,12 @@
 ///
 /// For example, there could be different implementations for property declarations in style rules
 /// and for descriptors in `@font-face` rules.
-</span><span class="kw">pub trait </span>DeclarationParser&lt;<span class="lifetime">&#39;i</span>&gt; {
+</span><span class="kw">pub trait </span>DeclarationParser&lt;<span class="lifetime">'i</span>&gt; {
     <span class="doccomment">/// The finished representation of a declaration.
     </span><span class="kw">type </span>Declaration;
 
     <span class="doccomment">/// The error type that is included in the ParseError value that can be returned.
-    </span><span class="kw">type </span>Error: <span class="lifetime">&#39;i</span>;
+    </span><span class="kw">type </span>Error: <span class="lifetime">'i</span>;
 
     <span class="doccomment">/// Parse the value of a declaration with the given `name`.
     ///
@@ -587,18 +588,18 @@
     /// This can be done with `std::ascii::Ascii::eq_ignore_ascii_case`,
     /// or with the `match_ignore_ascii_case!` macro.
     ///
-    /// The given `input` is a &quot;delimited&quot; parser
+    /// The given `input` is a "delimited" parser
     /// that ends wherever the declaration value should end.
     /// (In declaration lists, before the next semicolon or end of the current block.)
     ///
     /// If `!important` can be used in a given context,
     /// `input.try_parse(parse_important).is_ok()` should be used at the end
     /// of the implementation of this method and the result should be part of the return value.
-    </span><span class="kw">fn </span>parse_value&lt;<span class="lifetime">&#39;t</span>&gt;(
+    </span><span class="kw">fn </span>parse_value&lt;<span class="lifetime">'t</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        name: CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;,
-        input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Declaration, ParseError&lt;<span class="lifetime">&#39;i</span>, <span class="self">Self</span>::Error&gt;&gt;;
+        name: CowRcStr&lt;<span class="lifetime">'i</span>&gt;,
+        input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Declaration, ParseError&lt;<span class="lifetime">'i</span>, <span class="self">Self</span>::Error&gt;&gt;;
 }
 
 <span class="doccomment">/// A trait to provide various parsing of at-rules.
@@ -610,7 +611,7 @@
 /// Default implementations that reject all at-rules are provided,
 /// so that `impl AtRuleParser&lt;(), ()&gt; for ... {}` can be used
 /// for using `DeclarationListParser` to parse a declarations list with only qualified rules.
-</span><span class="kw">pub trait </span>AtRuleParser&lt;<span class="lifetime">&#39;i</span>&gt; {
+</span><span class="kw">pub trait </span>AtRuleParser&lt;<span class="lifetime">'i</span>&gt; {
     <span class="doccomment">/// The intermediate representation of prelude of an at-rule without block;
     </span><span class="kw">type </span>PreludeNoBlock;
 
@@ -621,7 +622,7 @@
     </span><span class="kw">type </span>AtRule;
 
     <span class="doccomment">/// The error type that is included in the ParseError value that can be returned.
-    </span><span class="kw">type </span>Error: <span class="lifetime">&#39;i</span>;
+    </span><span class="kw">type </span>Error: <span class="lifetime">'i</span>;
 
     <span class="doccomment">/// Parse the prelude of an at-rule with the given `name`.
     ///
@@ -637,21 +638,21 @@
     /// This can be done with `std::ascii::Ascii::eq_ignore_ascii_case`,
     /// or with the `match_ignore_ascii_case!` macro.
     ///
-    /// The given `input` is a &quot;delimited&quot; parser
+    /// The given `input` is a "delimited" parser
     /// that ends wherever the prelude should end.
     /// (Before the next semicolon, the next `{`, or the end of the current block.)
-    </span><span class="kw">fn </span>parse_prelude&lt;<span class="lifetime">&#39;t</span>&gt;(
+    </span><span class="kw">fn </span>parse_prelude&lt;<span class="lifetime">'t</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        name: CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;,
-        input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;AtRuleType&lt;<span class="self">Self</span>::PreludeNoBlock, <span class="self">Self</span>::PreludeBlock&gt;, ParseError&lt;<span class="lifetime">&#39;i</span>, <span class="self">Self</span>::Error&gt;&gt;
+        name: CowRcStr&lt;<span class="lifetime">'i</span>&gt;,
+        input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;AtRuleType&lt;<span class="self">Self</span>::PreludeNoBlock, <span class="self">Self</span>::PreludeBlock&gt;, ParseError&lt;<span class="lifetime">'i</span>, <span class="self">Self</span>::Error&gt;&gt;
     {
         <span class="kw">let _ </span>= name;
         <span class="kw">let _ </span>= input;
         <span class="prelude-val">Err</span>(input.new_error(BasicParseErrorKind::AtRuleInvalid(name)))
     }
 
-    <span class="doccomment">/// End an at-rule which doesn&#39;t have block. Return the finished
+    <span class="doccomment">/// End an at-rule which doesn't have block. Return the finished
     /// representation of the at-rule.
     ///
     /// The location passed in is source location of the start of the prelude.
@@ -667,8 +668,8 @@
         <span class="kw">let _ </span>= prelude;
         <span class="kw">let _ </span>= location;
         <span class="macro">panic!</span>(
-            <span class="string">&quot;The `AtRuleParser::rule_without_block` method must be overriden \
-             if `AtRuleParser::parse_prelude` ever returns `AtRuleType::WithoutBlock`.&quot;
+            <span class="string">"The `AtRuleParser::rule_without_block` method must be overriden \
+             if `AtRuleParser::parse_prelude` ever returns `AtRuleType::WithoutBlock`."
         </span>)
     }
 
@@ -682,12 +683,12 @@
     ///
     /// This is only called when `parse_prelude` returned `WithBlock`, and a block
     /// was indeed found following the prelude.
-    </span><span class="kw">fn </span>parse_block&lt;<span class="lifetime">&#39;t</span>&gt;(
+    </span><span class="kw">fn </span>parse_block&lt;<span class="lifetime">'t</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         prelude: <span class="self">Self</span>::PreludeBlock,
         location: SourceLocation,
-        input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::AtRule, ParseError&lt;<span class="lifetime">&#39;i</span>, <span class="self">Self</span>::Error&gt;&gt; {
+        input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::AtRule, ParseError&lt;<span class="lifetime">'i</span>, <span class="self">Self</span>::Error&gt;&gt; {
         <span class="kw">let _ </span>= prelude;
         <span class="kw">let _ </span>= location;
         <span class="kw">let _ </span>= input;
@@ -705,7 +706,7 @@
 /// so that `impl QualifiedRuleParser&lt;(), ()&gt; for ... {}` can be used
 /// for example for using `RuleListParser` to parse a rule list with only at-rules
 /// (such as inside `@font-feature-values`).
-</span><span class="kw">pub trait </span>QualifiedRuleParser&lt;<span class="lifetime">&#39;i</span>&gt; {
+</span><span class="kw">pub trait </span>QualifiedRuleParser&lt;<span class="lifetime">'i</span>&gt; {
     <span class="doccomment">/// The intermediate representation of a qualified rule prelude.
     </span><span class="kw">type </span>Prelude;
 
@@ -713,7 +714,7 @@
     </span><span class="kw">type </span>QualifiedRule;
 
     <span class="doccomment">/// The error type that is included in the ParseError value that can be returned.
-    </span><span class="kw">type </span>Error: <span class="lifetime">&#39;i</span>;
+    </span><span class="kw">type </span>Error: <span class="lifetime">'i</span>;
 
     <span class="doccomment">/// Parse the prelude of a qualified rule. For style rules, this is as Selector list.
     ///
@@ -722,12 +723,12 @@
     ///
     /// The prelude is the part before the `{ /* ... */ }` block.
     ///
-    /// The given `input` is a &quot;delimited&quot; parser
+    /// The given `input` is a "delimited" parser
     /// that ends where the prelude should end (before the next `{`).
-    </span><span class="kw">fn </span>parse_prelude&lt;<span class="lifetime">&#39;t</span>&gt;(
+    </span><span class="kw">fn </span>parse_prelude&lt;<span class="lifetime">'t</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Prelude, ParseError&lt;<span class="lifetime">&#39;i</span>, <span class="self">Self</span>::Error&gt;&gt; {
+        input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Prelude, ParseError&lt;<span class="lifetime">'i</span>, <span class="self">Self</span>::Error&gt;&gt; {
         <span class="kw">let _ </span>= input;
         <span class="prelude-val">Err</span>(input.new_error(BasicParseErrorKind::QualifiedRuleInvalid))
     }
@@ -739,12 +740,12 @@
     /// Return the finished representation of the qualified rule
     /// as returned by `RuleListParser::next`,
     /// or `Err(())` to ignore the entire at-rule as invalid.
-    </span><span class="kw">fn </span>parse_block&lt;<span class="lifetime">&#39;t</span>&gt;(
+    </span><span class="kw">fn </span>parse_block&lt;<span class="lifetime">'t</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         prelude: <span class="self">Self</span>::Prelude,
         location: SourceLocation,
-        input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::QualifiedRule, ParseError&lt;<span class="lifetime">&#39;i</span>, <span class="self">Self</span>::Error&gt;&gt; {
+        input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::QualifiedRule, ParseError&lt;<span class="lifetime">'i</span>, <span class="self">Self</span>::Error&gt;&gt; {
         <span class="kw">let _ </span>= prelude;
         <span class="kw">let _ </span>= location;
         <span class="kw">let _ </span>= input;
@@ -753,17 +754,17 @@
 }
 
 <span class="doccomment">/// Provides an iterator for declaration list parsing.
-</span><span class="kw">pub struct </span>DeclarationListParser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, <span class="lifetime">&#39;a</span>, P&gt; {
+</span><span class="kw">pub struct </span>DeclarationListParser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, <span class="lifetime">'a</span>, P&gt; {
     <span class="doccomment">/// The input given to `DeclarationListParser::new`
-    </span><span class="kw">pub </span>input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
+    </span><span class="kw">pub </span>input: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
 
     <span class="doccomment">/// The parser given to `DeclarationListParser::new`
     </span><span class="kw">pub </span>parser: P,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, <span class="lifetime">&#39;a</span>, I, P, E: <span class="lifetime">&#39;i</span>&gt; DeclarationListParser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, <span class="lifetime">&#39;a</span>, P&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, <span class="lifetime">'a</span>, I, P, E: <span class="lifetime">'i</span>&gt; DeclarationListParser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, <span class="lifetime">'a</span>, P&gt;
 <span class="kw">where
-    </span>P: DeclarationParser&lt;<span class="lifetime">&#39;i</span>, Declaration = I, Error = E&gt; + AtRuleParser&lt;<span class="lifetime">&#39;i</span>, AtRule = I, Error = E&gt;,
+    </span>P: DeclarationParser&lt;<span class="lifetime">'i</span>, Declaration = I, Error = E&gt; + AtRuleParser&lt;<span class="lifetime">'i</span>, AtRule = I, Error = E&gt;,
 {
     <span class="doccomment">/// Create a new `DeclarationListParser` for the given `input` and `parser`.
     ///
@@ -779,7 +780,7 @@
     /// The return type for finished declarations and at-rules also needs to be the same,
     /// since `&lt;DeclarationListParser as Iterator&gt;::next` can return either.
     /// It could be a custom enum.
-    </span><span class="kw">pub fn </span>new(input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;, parser: P) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>new(input: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;, parser: P) -&gt; <span class="self">Self </span>{
         DeclarationListParser {
             input: input,
             parser: parser,
@@ -789,11 +790,11 @@
 
 <span class="doccomment">/// `DeclarationListParser` is an iterator that yields `Ok(_)` for a valid declaration or at-rule
 /// or `Err(())` for an invalid one.
-</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, <span class="lifetime">&#39;a</span>, I, P, E: <span class="lifetime">&#39;i</span>&gt; Iterator <span class="kw">for </span>DeclarationListParser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, <span class="lifetime">&#39;a</span>, P&gt;
+</span><span class="kw">impl</span>&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, <span class="lifetime">'a</span>, I, P, E: <span class="lifetime">'i</span>&gt; Iterator <span class="kw">for </span>DeclarationListParser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, <span class="lifetime">'a</span>, P&gt;
 <span class="kw">where
-    </span>P: DeclarationParser&lt;<span class="lifetime">&#39;i</span>, Declaration = I, Error = E&gt; + AtRuleParser&lt;<span class="lifetime">&#39;i</span>, AtRule = I, Error = E&gt;,
+    </span>P: DeclarationParser&lt;<span class="lifetime">'i</span>, Declaration = I, Error = E&gt; + AtRuleParser&lt;<span class="lifetime">'i</span>, AtRule = I, Error = E&gt;,
 {
-    <span class="kw">type </span>Item = <span class="prelude-ty">Result</span>&lt;I, (ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt;, <span class="kw-2">&amp;</span><span class="lifetime">&#39;i </span>str)&gt;;
+    <span class="kw">type </span>Item = <span class="prelude-ty">Result</span>&lt;I, (ParseError&lt;<span class="lifetime">'i</span>, E&gt;, <span class="kw-2">&amp;</span><span class="lifetime">'i </span>str)&gt;;
 
     <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
         <span class="kw">loop </span>{
@@ -805,7 +806,7 @@
                     <span class="kw">let </span>result = {
                         <span class="kw">let </span>parser = <span class="kw-2">&amp;mut </span><span class="self">self</span>.parser;
                         <span class="comment">// FIXME: https://github.com/servo/rust-cssparser/issues/254
-                        </span><span class="kw">let </span>callback = |input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;_</span>&gt;| {
+                        </span><span class="kw">let </span>callback = |input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'_</span>&gt;| {
                             input.expect_colon()<span class="question-mark">?</span>;
                             parser.parse_value(name, input)
                         };
@@ -833,9 +834,9 @@
 }
 
 <span class="doccomment">/// Provides an iterator for rule list parsing.
-</span><span class="kw">pub struct </span>RuleListParser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, <span class="lifetime">&#39;a</span>, P&gt; {
+</span><span class="kw">pub struct </span>RuleListParser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, <span class="lifetime">'a</span>, P&gt; {
     <span class="doccomment">/// The input given to `RuleListParser::new`
-    </span><span class="kw">pub </span>input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
+    </span><span class="kw">pub </span>input: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
 
     <span class="doccomment">/// The parser given to `RuleListParser::new`
     </span><span class="kw">pub </span>parser: P,
@@ -844,10 +845,10 @@
     any_rule_so_far: bool,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, <span class="lifetime">&#39;a</span>, R, P, E: <span class="lifetime">&#39;i</span>&gt; RuleListParser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, <span class="lifetime">&#39;a</span>, P&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, <span class="lifetime">'a</span>, R, P, E: <span class="lifetime">'i</span>&gt; RuleListParser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, <span class="lifetime">'a</span>, P&gt;
 <span class="kw">where
-    </span>P: QualifiedRuleParser&lt;<span class="lifetime">&#39;i</span>, QualifiedRule = R, Error = E&gt;
-        + AtRuleParser&lt;<span class="lifetime">&#39;i</span>, AtRule = R, Error = E&gt;,
+    </span>P: QualifiedRuleParser&lt;<span class="lifetime">'i</span>, QualifiedRule = R, Error = E&gt;
+        + AtRuleParser&lt;<span class="lifetime">'i</span>, AtRule = R, Error = E&gt;,
 {
     <span class="doccomment">/// Create a new `RuleListParser` for the given `input` at the top-level of a stylesheet
     /// and the given `parser`.
@@ -859,7 +860,7 @@
     /// The return type for finished qualified rules and at-rules also needs to be the same,
     /// since `&lt;RuleListParser as Iterator&gt;::next` can return either.
     /// It could be a custom enum.
-    </span><span class="kw">pub fn </span>new_for_stylesheet(input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;, parser: P) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>new_for_stylesheet(input: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;, parser: P) -&gt; <span class="self">Self </span>{
         RuleListParser {
             input: input,
             parser: parser,
@@ -874,7 +875,7 @@
     /// This differs in that `&lt;!--` and `--&gt;` tokens
     /// should only be ignored at the stylesheet top-level.
     /// (This is to deal with legacy work arounds for `&lt;style&gt;` HTML element parsing.)
-    </span><span class="kw">pub fn </span>new_for_nested_rule(input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;, parser: P) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>new_for_nested_rule(input: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;, parser: P) -&gt; <span class="self">Self </span>{
         RuleListParser {
             input: input,
             parser: parser,
@@ -885,12 +886,12 @@
 }
 
 <span class="doccomment">/// `RuleListParser` is an iterator that yields `Ok(_)` for a rule or `Err(())` for an invalid one.
-</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, <span class="lifetime">&#39;a</span>, R, P, E: <span class="lifetime">&#39;i</span>&gt; Iterator <span class="kw">for </span>RuleListParser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, <span class="lifetime">&#39;a</span>, P&gt;
+</span><span class="kw">impl</span>&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, <span class="lifetime">'a</span>, R, P, E: <span class="lifetime">'i</span>&gt; Iterator <span class="kw">for </span>RuleListParser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, <span class="lifetime">'a</span>, P&gt;
 <span class="kw">where
-    </span>P: QualifiedRuleParser&lt;<span class="lifetime">&#39;i</span>, QualifiedRule = R, Error = E&gt;
-        + AtRuleParser&lt;<span class="lifetime">&#39;i</span>, AtRule = R, Error = E&gt;,
+    </span>P: QualifiedRuleParser&lt;<span class="lifetime">'i</span>, QualifiedRule = R, Error = E&gt;
+        + AtRuleParser&lt;<span class="lifetime">'i</span>, AtRule = R, Error = E&gt;,
 {
-    <span class="kw">type </span>Item = <span class="prelude-ty">Result</span>&lt;R, (ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt;, <span class="kw-2">&amp;</span><span class="lifetime">&#39;i </span>str)&gt;;
+    <span class="kw">type </span>Item = <span class="prelude-ty">Result</span>&lt;R, (ParseError&lt;<span class="lifetime">'i</span>, E&gt;, <span class="kw-2">&amp;</span><span class="lifetime">'i </span>str)&gt;;
 
     <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
         <span class="kw">loop </span>{
@@ -902,7 +903,7 @@
             <span class="kw">let </span>start = <span class="self">self</span>.input.state();
 
             <span class="kw">let </span>at_keyword = <span class="kw">match </span><span class="self">self</span>.input.next_byte()<span class="question-mark">? </span>{
-                <span class="string">b&#39;@&#39; </span>=&gt; {
+                <span class="string">b'@' </span>=&gt; {
                     <span class="kw">match </span><span class="self">self</span>.input.next_including_whitespace_and_comments() {
                         <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span>Token::AtKeyword(<span class="kw-2">ref </span>name)) =&gt; <span class="prelude-val">Some</span>(name.clone()),
                         <span class="kw">_ </span>=&gt; {
@@ -917,7 +918,7 @@
             <span class="kw">if let </span><span class="prelude-val">Some</span>(name) = at_keyword {
                 <span class="kw">let </span>first_stylesheet_rule = <span class="self">self</span>.is_stylesheet &amp;&amp; !<span class="self">self</span>.any_rule_so_far;
                 <span class="self">self</span>.any_rule_so_far = <span class="bool-val">true</span>;
-                <span class="kw">if </span>first_stylesheet_rule &amp;&amp; name.eq_ignore_ascii_case(<span class="string">&quot;charset&quot;</span>) {
+                <span class="kw">if </span>first_stylesheet_rule &amp;&amp; name.eq_ignore_ascii_case(<span class="string">"charset"</span>) {
                     <span class="kw">let </span>delimiters = Delimiter::Semicolon | Delimiter::CurlyBracketBlock;
                     <span class="kw">let _</span>: <span class="prelude-ty">Result</span>&lt;(), ParseError&lt;()&gt;&gt; =
                         <span class="self">self</span>.input.parse_until_after(delimiters, |<span class="kw">_</span>| <span class="prelude-val">Ok</span>(()));
@@ -939,12 +940,12 @@
 }
 
 <span class="doccomment">/// Parse a single declaration, such as an `( /* ... */ )` parenthesis in an `@supports` prelude.
-</span><span class="kw">pub fn </span>parse_one_declaration&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, P, E&gt;(
-    input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
+</span><span class="kw">pub fn </span>parse_one_declaration&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, P, E&gt;(
+    input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
     parser: <span class="kw-2">&amp;mut </span>P,
-) -&gt; <span class="prelude-ty">Result</span>&lt;&lt;P <span class="kw">as </span>DeclarationParser&lt;<span class="lifetime">&#39;i</span>&gt;&gt;::Declaration, (ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt;, <span class="kw-2">&amp;</span><span class="lifetime">&#39;i </span>str)&gt;
+) -&gt; <span class="prelude-ty">Result</span>&lt;&lt;P <span class="kw">as </span>DeclarationParser&lt;<span class="lifetime">'i</span>&gt;&gt;::Declaration, (ParseError&lt;<span class="lifetime">'i</span>, E&gt;, <span class="kw-2">&amp;</span><span class="lifetime">'i </span>str)&gt;
 <span class="kw">where
-    </span>P: DeclarationParser&lt;<span class="lifetime">&#39;i</span>, Error = E&gt;,
+    </span>P: DeclarationParser&lt;<span class="lifetime">'i</span>, Error = E&gt;,
 {
     <span class="kw">let </span>start_position = input.position();
     input
@@ -957,18 +958,18 @@
 }
 
 <span class="doccomment">/// Parse a single rule, such as for CSSOM’s `CSSStyleSheet.insertRule`.
-</span><span class="kw">pub fn </span>parse_one_rule&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, R, P, E&gt;(
-    input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
+</span><span class="kw">pub fn </span>parse_one_rule&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, R, P, E&gt;(
+    input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
     parser: <span class="kw-2">&amp;mut </span>P,
-) -&gt; <span class="prelude-ty">Result</span>&lt;R, ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt;&gt;
+) -&gt; <span class="prelude-ty">Result</span>&lt;R, ParseError&lt;<span class="lifetime">'i</span>, E&gt;&gt;
 <span class="kw">where
-    </span>P: QualifiedRuleParser&lt;<span class="lifetime">&#39;i</span>, QualifiedRule = R, Error = E&gt;
-        + AtRuleParser&lt;<span class="lifetime">&#39;i</span>, AtRule = R, Error = E&gt;,
+    </span>P: QualifiedRuleParser&lt;<span class="lifetime">'i</span>, QualifiedRule = R, Error = E&gt;
+        + AtRuleParser&lt;<span class="lifetime">'i</span>, AtRule = R, Error = E&gt;,
 {
     input.parse_entirely(|input| {
         input.skip_whitespace();
         <span class="kw">let </span>start = input.state();
-        <span class="kw">let </span>at_keyword = <span class="kw">if </span>input.next_byte() == <span class="prelude-val">Some</span>(<span class="string">b&#39;@&#39;</span>) {
+        <span class="kw">let </span>at_keyword = <span class="kw">if </span>input.next_byte() == <span class="prelude-val">Some</span>(<span class="string">b'@'</span>) {
             <span class="kw">match </span><span class="kw-2">*</span>input.next_including_whitespace_and_comments()<span class="question-mark">? </span>{
                 Token::AtKeyword(<span class="kw-2">ref </span>name) =&gt; <span class="prelude-val">Some</span>(name.clone()),
                 <span class="kw">_ </span>=&gt; {
@@ -988,19 +989,19 @@
     })
 }
 
-<span class="kw">fn </span>parse_at_rule&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, P, E&gt;(
+<span class="kw">fn </span>parse_at_rule&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, P, E&gt;(
     start: <span class="kw-2">&amp;</span>ParserState,
-    name: CowRcStr&lt;<span class="lifetime">&#39;i</span>&gt;,
-    input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
+    name: CowRcStr&lt;<span class="lifetime">'i</span>&gt;,
+    input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
     parser: <span class="kw-2">&amp;mut </span>P,
-) -&gt; <span class="prelude-ty">Result</span>&lt;&lt;P <span class="kw">as </span>AtRuleParser&lt;<span class="lifetime">&#39;i</span>&gt;&gt;::AtRule, (ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt;, <span class="kw-2">&amp;</span><span class="lifetime">&#39;i </span>str)&gt;
+) -&gt; <span class="prelude-ty">Result</span>&lt;&lt;P <span class="kw">as </span>AtRuleParser&lt;<span class="lifetime">'i</span>&gt;&gt;::AtRule, (ParseError&lt;<span class="lifetime">'i</span>, E&gt;, <span class="kw-2">&amp;</span><span class="lifetime">'i </span>str)&gt;
 <span class="kw">where
-    </span>P: AtRuleParser&lt;<span class="lifetime">&#39;i</span>, Error = E&gt;,
+    </span>P: AtRuleParser&lt;<span class="lifetime">'i</span>, Error = E&gt;,
 {
     <span class="kw">let </span>location = input.current_source_location();
     <span class="kw">let </span>delimiters = Delimiter::Semicolon | Delimiter::CurlyBracketBlock;
     <span class="comment">// FIXME: https://github.com/servo/rust-cssparser/issues/254
-    </span><span class="kw">let </span>callback = |input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;_</span>&gt;| parser.parse_prelude(name, input);
+    </span><span class="kw">let </span>callback = |input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'_</span>&gt;| parser.parse_prelude(name, input);
     <span class="kw">let </span>result = parse_until_before(input, delimiters, callback);
     <span class="kw">match </span>result {
         <span class="prelude-val">Ok</span>(AtRuleType::WithoutBlock(prelude)) =&gt; <span class="kw">match </span>input.next() {
@@ -1016,7 +1017,7 @@
                 <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span>Token::CurlyBracketBlock) =&gt; {
                     <span class="comment">// FIXME: https://github.com/servo/rust-cssparser/issues/254
                     </span><span class="kw">let </span>callback =
-                        |input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;_</span>&gt;| parser.parse_block(prelude, location, input);
+                        |input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'_</span>&gt;| parser.parse_block(prelude, location, input);
                     parse_nested_block(input, callback)
                         .map_err(|e| (e, input.slice_from(start.position())))
                 }
@@ -1039,16 +1040,16 @@
     }
 }
 
-<span class="kw">fn </span>parse_qualified_rule&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>, P, E&gt;(
-    input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;t</span>&gt;,
+<span class="kw">fn </span>parse_qualified_rule&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>, P, E&gt;(
+    input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'t</span>&gt;,
     parser: <span class="kw-2">&amp;mut </span>P,
-) -&gt; <span class="prelude-ty">Result</span>&lt;&lt;P <span class="kw">as </span>QualifiedRuleParser&lt;<span class="lifetime">&#39;i</span>&gt;&gt;::QualifiedRule, ParseError&lt;<span class="lifetime">&#39;i</span>, E&gt;&gt;
+) -&gt; <span class="prelude-ty">Result</span>&lt;&lt;P <span class="kw">as </span>QualifiedRuleParser&lt;<span class="lifetime">'i</span>&gt;&gt;::QualifiedRule, ParseError&lt;<span class="lifetime">'i</span>, E&gt;&gt;
 <span class="kw">where
-    </span>P: QualifiedRuleParser&lt;<span class="lifetime">&#39;i</span>, Error = E&gt;,
+    </span>P: QualifiedRuleParser&lt;<span class="lifetime">'i</span>, Error = E&gt;,
 {
     <span class="kw">let </span>location = input.current_source_location();
     <span class="comment">// FIXME: https://github.com/servo/rust-cssparser/issues/254
-    </span><span class="kw">let </span>callback = |input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;_</span>&gt;| parser.parse_prelude(input);
+    </span><span class="kw">let </span>callback = |input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'_</span>&gt;| parser.parse_prelude(input);
     <span class="kw">let </span>prelude = parse_until_before(input, Delimiter::CurlyBracketBlock, callback);
     <span class="kw">match </span><span class="kw-2">*</span>input.next()<span class="question-mark">? </span>{
         Token::CurlyBracketBlock =&gt; {
@@ -1056,7 +1057,7 @@
             </span><span class="kw">let </span>prelude = prelude<span class="question-mark">?</span>;
             <span class="comment">// FIXME: https://github.com/servo/rust-cssparser/issues/254
             </span><span class="kw">let </span>callback =
-                |input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;_</span>&gt;| parser.parse_block(prelude, location, input);
+                |input: <span class="kw-2">&amp;mut </span>Parser&lt;<span class="lifetime">'i</span>, <span class="lifetime">'_</span>&gt;| parser.parse_block(prelude, location, input);
             parse_nested_block(input, callback)
         }
         <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),

@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/globset-0.4.14/src/glob.rs`."><title>glob.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="globset" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/globset-0.4.14/src/glob.rs`."><title>glob.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="globset" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1562,18 +1563,18 @@
 ///
 /// This provides a way to more quickly determine whether a pattern matches
 /// a particular file path in a way that scales with a large number of
-/// patterns. For example, if many patterns are of the form `*.ext`, then it&#39;s
+/// patterns. For example, if many patterns are of the form `*.ext`, then it's
 /// possible to test whether any of those patterns matches by looking up a
-/// file path&#39;s extension in a hash table.
+/// file path's extension in a hash table.
 </span><span class="attr">#[derive(Clone, Debug, Eq, PartialEq)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">enum </span>MatchStrategy {
     <span class="doccomment">/// A pattern matches if and only if the entire file path matches this
     /// literal string.
     </span>Literal(String),
-    <span class="doccomment">/// A pattern matches if and only if the file path&#39;s basename matches this
+    <span class="doccomment">/// A pattern matches if and only if the file path's basename matches this
     /// literal string.
     </span>BasenameLiteral(String),
-    <span class="doccomment">/// A pattern matches if and only if the file path&#39;s extension matches this
+    <span class="doccomment">/// A pattern matches if and only if the file path's extension matches this
     /// literal string.
     </span>Extension(String),
     <span class="doccomment">/// A pattern matches if and only if this prefix literal is a prefix of the
@@ -1590,7 +1591,7 @@
         <span class="doccomment">/// Whether this must start at the beginning of a path component.
         </span>component: bool,
     },
-    <span class="doccomment">/// A pattern matches only if the given extension matches the file path&#39;s
+    <span class="doccomment">/// A pattern matches only if the given extension matches the file path's
     /// extension. Note that this is a necessary but NOT sufficient criterion.
     /// Namely, if the extension matches, then a full regex search is still
     /// required.
@@ -1646,7 +1647,7 @@
 }
 
 <span class="kw">impl </span>std::fmt::Display <span class="kw">for </span>Glob {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; std::fmt::Result {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; std::fmt::Result {
         <span class="self">self</span>.glob.fmt(f)
     }
 }
@@ -1675,7 +1676,7 @@
     }
 
     <span class="doccomment">/// Tests whether the given path matches this pattern or not.
-    </span><span class="kw">pub fn </span>is_match_candidate(<span class="kw-2">&amp;</span><span class="self">self</span>, path: <span class="kw-2">&amp;</span>Candidate&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; bool {
+    </span><span class="kw">pub fn </span>is_match_candidate(<span class="kw-2">&amp;</span><span class="self">self</span>, path: <span class="kw-2">&amp;</span>Candidate&lt;<span class="lifetime">'_</span>&gt;) -&gt; bool {
         <span class="self">self</span>.re.is_match(<span class="kw-2">&amp;</span>path.path)
     }
 
@@ -1703,7 +1704,7 @@
     }
 
     <span class="doccomment">/// Tests whether the given path matches this pattern or not.
-    </span><span class="kw">fn </span>is_match_candidate(<span class="kw-2">&amp;</span><span class="self">self</span>, candidate: <span class="kw-2">&amp;</span>Candidate&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; bool {
+    </span><span class="kw">fn </span>is_match_candidate(<span class="kw-2">&amp;</span><span class="self">self</span>, candidate: <span class="kw-2">&amp;</span>Candidate&lt;<span class="lifetime">'_</span>&gt;) -&gt; bool {
         <span class="kw">let </span>byte_path = <span class="kw-2">&amp;*</span>candidate.path;
 
         <span class="kw">match </span><span class="self">self</span>.strategy {
@@ -1737,11 +1738,11 @@
 /// This builder enables configuring the match semantics of a pattern. For
 /// example, one can make matching case insensitive.
 ///
-/// The lifetime `&#39;a` refers to the lifetime of the pattern string.
+/// The lifetime `'a` refers to the lifetime of the pattern string.
 </span><span class="attr">#[derive(Clone, Debug)]
-</span><span class="kw">pub struct </span>GlobBuilder&lt;<span class="lifetime">&#39;a</span>&gt; {
+</span><span class="kw">pub struct </span>GlobBuilder&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// The glob pattern to compile.
-    </span>glob: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str,
+    </span>glob: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str,
     <span class="doccomment">/// Options for the pattern.
     </span>opts: GlobOptions,
 }
@@ -1751,13 +1752,13 @@
     <span class="doccomment">/// Whether to match case insensitively.
     </span>case_insensitive: bool,
     <span class="doccomment">/// Whether to require a literal separator to match a separator in a file
-    /// path. e.g., when enabled, `*` won&#39;t match `/`.
+    /// path. e.g., when enabled, `*` won't match `/`.
     </span>literal_separator: bool,
     <span class="doccomment">/// Whether or not to use `\` to escape special characters.
     /// e.g., when enabled, `\*` will match a literal `*`.
     </span>backslash_escape: bool,
     <span class="doccomment">/// Whether or not an empty case in an alternate will be removed.
-    /// e.g., when enabled, `{,a}` will match &quot;&quot; and &quot;a&quot;.
+    /// e.g., when enabled, `{,a}` will match "" and "a".
     </span>empty_alternates: bool,
 }
 
@@ -1766,7 +1767,7 @@
         GlobOptions {
             case_insensitive: <span class="bool-val">false</span>,
             literal_separator: <span class="bool-val">false</span>,
-            backslash_escape: !is_separator(<span class="string">&#39;\\&#39;</span>),
+            backslash_escape: !is_separator(<span class="string">'\\'</span>),
             empty_alternates: <span class="bool-val">false</span>,
         }
     }
@@ -1809,20 +1810,20 @@
     <span class="doccomment">/// Returns a matcher for this pattern.
     </span><span class="kw">pub fn </span>compile_matcher(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; GlobMatcher {
         <span class="kw">let </span>re =
-            new_regex(<span class="kw-2">&amp;</span><span class="self">self</span>.re).expect(<span class="string">&quot;regex compilation shouldn&#39;t fail&quot;</span>);
+            new_regex(<span class="kw-2">&amp;</span><span class="self">self</span>.re).expect(<span class="string">"regex compilation shouldn't fail"</span>);
         GlobMatcher { pat: <span class="self">self</span>.clone(), re }
     }
 
     <span class="doccomment">/// Returns a strategic matcher.
     ///
-    /// This isn&#39;t exposed because it&#39;s not clear whether it&#39;s actually
+    /// This isn't exposed because it's not clear whether it's actually
     /// faster than just running a regex for a *single* pattern. If it
     /// is faster, then GlobMatcher should do it automatically.
     </span><span class="attr">#[cfg(test)]
     </span><span class="kw">fn </span>compile_strategic_matcher(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; GlobStrategic {
         <span class="kw">let </span>strategy = MatchStrategy::new(<span class="self">self</span>);
         <span class="kw">let </span>re =
-            new_regex(<span class="kw-2">&amp;</span><span class="self">self</span>.re).expect(<span class="string">&quot;regex compilation shouldn&#39;t fail&quot;</span>);
+            new_regex(<span class="kw-2">&amp;</span><span class="self">self</span>.re).expect(<span class="string">"regex compilation shouldn't fail"</span>);
         GlobStrategic { strategy, re }
     }
 
@@ -1840,7 +1841,7 @@
     /// result, callers will need to ensure that they are using a regex API
     /// that can match on arbitrary bytes. For example, the
     /// [`regex`](https://crates.io/regex)
-    /// crate&#39;s
+    /// crate's
     /// [`Regex`](https://docs.rs/regex/*/regex/struct.Regex.html)
     /// API is not suitable for this since it matches on `&amp;str`, but its
     /// [`bytes::Regex`](https://docs.rs/regex/*/regex/bytes/struct.Regex.html)
@@ -1874,7 +1875,7 @@
     ///
     /// Note that this extension returned differs from the extension that
     /// std::path::Path::extension returns. Namely, this extension includes
-    /// the &#39;.&#39;. Also, paths like `.rs` are considered to have an extension
+    /// the '.'. Also, paths like `.rs` are considered to have an extension
     /// of `.rs`.
     </span><span class="kw">fn </span>ext(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;String&gt; {
         <span class="kw">if </span><span class="self">self</span>.opts.case_insensitive {
@@ -1887,8 +1888,8 @@
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.tokens.get(start)<span class="question-mark">? </span>{
             Token::ZeroOrMore =&gt; {
                 <span class="comment">// If there was no recursive prefix, then we only permit
-                // `*` if `*` can match a `/`. For example, if `*` can&#39;t
-                // match `/`, then `*.c` doesn&#39;t match `foo/bar.c`.
+                // `*` if `*` can match a `/`. For example, if `*` can't
+                // match `/`, then `*.c` doesn't match `foo/bar.c`.
                 </span><span class="kw">if </span>start == <span class="number">0 </span>&amp;&amp; <span class="self">self</span>.opts.literal_separator {
                     <span class="kw">return </span><span class="prelude-val">None</span>;
                 }
@@ -1896,13 +1897,13 @@
             <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
         }
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.tokens.get(start + <span class="number">1</span>)<span class="question-mark">? </span>{
-            Token::Literal(<span class="string">&#39;.&#39;</span>) =&gt; {}
+            Token::Literal(<span class="string">'.'</span>) =&gt; {}
             <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
         }
-        <span class="kw">let </span><span class="kw-2">mut </span>lit = <span class="string">&quot;.&quot;</span>.to_string();
+        <span class="kw">let </span><span class="kw-2">mut </span>lit = <span class="string">"."</span>.to_string();
         <span class="kw">for </span>t <span class="kw">in </span><span class="self">self</span>.tokens[start + <span class="number">2</span>..].iter() {
             <span class="kw">match </span><span class="kw-2">*</span>t {
-                Token::Literal(<span class="string">&#39;.&#39;</span>) | Token::Literal(<span class="string">&#39;/&#39;</span>) =&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
+                Token::Literal(<span class="string">'.'</span>) | Token::Literal(<span class="string">'/'</span>) =&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
                 Token::Literal(c) =&gt; lit.push(c),
                 <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
             }
@@ -1914,29 +1915,29 @@
         }
     }
 
-    <span class="doccomment">/// This is like `ext`, but returns an extension even if it isn&#39;t sufficient
+    <span class="doccomment">/// This is like `ext`, but returns an extension even if it isn't sufficient
     /// to imply a match. Namely, if an extension is returned, then it is
     /// necessary but not sufficient for a match.
     </span><span class="kw">fn </span>required_ext(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;String&gt; {
         <span class="kw">if </span><span class="self">self</span>.opts.case_insensitive {
             <span class="kw">return </span><span class="prelude-val">None</span>;
         }
-        <span class="comment">// We don&#39;t care at all about the beginning of this pattern. All we
+        <span class="comment">// We don't care at all about the beginning of this pattern. All we
         // need to check for is if it ends with a literal of the form `.ext`.
         </span><span class="kw">let </span><span class="kw-2">mut </span>ext: Vec&lt;char&gt; = <span class="macro">vec!</span>[]; <span class="comment">// built in reverse
         </span><span class="kw">for </span>t <span class="kw">in </span><span class="self">self</span>.tokens.iter().rev() {
             <span class="kw">match </span><span class="kw-2">*</span>t {
-                Token::Literal(<span class="string">&#39;/&#39;</span>) =&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
+                Token::Literal(<span class="string">'/'</span>) =&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
                 Token::Literal(c) =&gt; {
                     ext.push(c);
-                    <span class="kw">if </span>c == <span class="string">&#39;.&#39; </span>{
+                    <span class="kw">if </span>c == <span class="string">'.' </span>{
                         <span class="kw">break</span>;
                     }
                 }
                 <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
             }
         }
-        <span class="kw">if </span>ext.last() != <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">&#39;.&#39;</span>) {
+        <span class="kw">if </span>ext.last() != <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">'.'</span>) {
             <span class="prelude-val">None
         </span>} <span class="kw">else </span>{
             ext.reverse();
@@ -1953,7 +1954,7 @@
         <span class="kw">let </span>(end, need_sep) = <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.tokens.last()<span class="question-mark">? </span>{
             Token::ZeroOrMore =&gt; {
                 <span class="kw">if </span><span class="self">self</span>.opts.literal_separator {
-                    <span class="comment">// If a trailing `*` can&#39;t match a `/`, then we can&#39;t
+                    <span class="comment">// If a trailing `*` can't match a `/`, then we can't
                     // assume a match of the prefix corresponds to a match
                     // of the overall pattern. e.g., `foo/*` with
                     // `literal_separator` enabled matches `foo/bar` but not
@@ -1972,7 +1973,7 @@
             lit.push(c);
         }
         <span class="kw">if </span>need_sep {
-            lit.push(<span class="string">&#39;/&#39;</span>);
+            lit.push(<span class="string">'/'</span>);
         }
         <span class="kw">if </span>lit.is_empty() {
             <span class="prelude-val">None
@@ -2003,7 +2004,7 @@
                 <span class="comment">// We only care if this follows a path component if the next
                 // token is a literal.
                 </span><span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>Token::Literal(<span class="kw">_</span>)) = <span class="self">self</span>.tokens.get(<span class="number">1</span>) {
-                    lit.push(<span class="string">&#39;/&#39;</span>);
+                    lit.push(<span class="string">'/'</span>);
                     (<span class="number">1</span>, <span class="bool-val">true</span>)
                 } <span class="kw">else </span>{
                     (<span class="number">1</span>, <span class="bool-val">false</span>)
@@ -2013,7 +2014,7 @@
         };
         <span class="kw">let </span>start = <span class="kw">match </span><span class="kw-2">*</span><span class="self">self</span>.tokens.get(start)<span class="question-mark">? </span>{
             Token::ZeroOrMore =&gt; {
-                <span class="comment">// If literal_separator is enabled, then a `*` can&#39;t
+                <span class="comment">// If literal_separator is enabled, then a `*` can't
                 // necessarily match everything, so reporting a suffix match
                 // as a match of the pattern would be a false positive.
                 </span><span class="kw">if </span><span class="self">self</span>.opts.literal_separator {
@@ -2027,7 +2028,7 @@
             <span class="kw">let </span>Token::Literal(c) = <span class="kw-2">*</span>t <span class="kw">else </span>{ <span class="kw">return </span><span class="prelude-val">None </span>};
             lit.push(c);
         }
-        <span class="kw">if </span>lit.is_empty() || lit == <span class="string">&quot;/&quot; </span>{
+        <span class="kw">if </span>lit.is_empty() || lit == <span class="string">"/" </span>{
             <span class="prelude-val">None
         </span>} <span class="kw">else </span>{
             <span class="prelude-val">Some</span>((lit, entire))
@@ -2041,10 +2042,10 @@
     /// corresponding to `*.foo` are returned.
     ///
     /// Note that this will return None if any match of the basename tokens
-    /// doesn&#39;t correspond to a match of the entire pattern. For example, the
+    /// doesn't correspond to a match of the entire pattern. For example, the
     /// glob `foo` only matches when a file path has a basename of `foo`, but
-    /// doesn&#39;t *always* match when a file path has a basename of `foo`. e.g.,
-    /// `foo` doesn&#39;t match `abc/foo`.
+    /// doesn't *always* match when a file path has a basename of `foo`. e.g.,
+    /// `foo` doesn't match `abc/foo`.
     </span><span class="kw">fn </span>basename_tokens(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>[Token]&gt; {
         <span class="kw">if </span><span class="self">self</span>.opts.case_insensitive {
             <span class="kw">return </span><span class="prelude-val">None</span>;
@@ -2053,7 +2054,7 @@
             Token::RecursivePrefix =&gt; <span class="number">1</span>,
             <span class="kw">_ </span>=&gt; {
                 <span class="comment">// With nothing to gobble up the parent portion of a path,
-                // we can&#39;t assume that matching on only the basename is
+                // we can't assume that matching on only the basename is
                 // correct.
                 </span><span class="kw">return </span><span class="prelude-val">None</span>;
             }
@@ -2063,7 +2064,7 @@
         }
         <span class="kw">for </span>t <span class="kw">in </span><span class="self">self</span>.tokens[start..].iter() {
             <span class="kw">match </span><span class="kw-2">*</span>t {
-                Token::Literal(<span class="string">&#39;/&#39;</span>) =&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
+                Token::Literal(<span class="string">'/'</span>) =&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
                 Token::Literal(<span class="kw">_</span>) =&gt; {} <span class="comment">// OK
                 </span>Token::Any | Token::ZeroOrMore =&gt; {
                     <span class="kw">if </span>!<span class="self">self</span>.opts.literal_separator {
@@ -2105,11 +2106,11 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; GlobBuilder&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; GlobBuilder&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// Create a new builder for the pattern given.
     ///
     /// The pattern is not compiled until `build` is called.
-    </span><span class="kw">pub fn </span>new(glob: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str) -&gt; GlobBuilder&lt;<span class="lifetime">&#39;a</span>&gt; {
+    </span><span class="kw">pub fn </span>new(glob: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str) -&gt; GlobBuilder&lt;<span class="lifetime">'a</span>&gt; {
         GlobBuilder { glob, opts: GlobOptions::default() }
     }
 
@@ -2148,7 +2149,7 @@
     <span class="doccomment">/// Toggle whether the pattern matches case insensitively or not.
     ///
     /// This is disabled by default.
-    </span><span class="kw">pub fn </span>case_insensitive(<span class="kw-2">&amp;mut </span><span class="self">self</span>, yes: bool) -&gt; <span class="kw-2">&amp;mut </span>GlobBuilder&lt;<span class="lifetime">&#39;a</span>&gt; {
+    </span><span class="kw">pub fn </span>case_insensitive(<span class="kw-2">&amp;mut </span><span class="self">self</span>, yes: bool) -&gt; <span class="kw-2">&amp;mut </span>GlobBuilder&lt;<span class="lifetime">'a</span>&gt; {
         <span class="self">self</span>.opts.case_insensitive = yes;
         <span class="self">self
     </span>}
@@ -2156,7 +2157,7 @@
     <span class="doccomment">/// Toggle whether a literal `/` is required to match a path separator.
     ///
     /// By default this is false: `*` and `?` will match `/`.
-    </span><span class="kw">pub fn </span>literal_separator(<span class="kw-2">&amp;mut </span><span class="self">self</span>, yes: bool) -&gt; <span class="kw-2">&amp;mut </span>GlobBuilder&lt;<span class="lifetime">&#39;a</span>&gt; {
+    </span><span class="kw">pub fn </span>literal_separator(<span class="kw-2">&amp;mut </span><span class="self">self</span>, yes: bool) -&gt; <span class="kw-2">&amp;mut </span>GlobBuilder&lt;<span class="lifetime">'a</span>&gt; {
         <span class="self">self</span>.opts.literal_separator = yes;
         <span class="self">self
     </span>}
@@ -2169,7 +2170,7 @@
     /// This is enabled by default on platforms where `\` is not a
     /// path separator and disabled by default on platforms where `\`
     /// is a path separator.
-    </span><span class="kw">pub fn </span>backslash_escape(<span class="kw-2">&amp;mut </span><span class="self">self</span>, yes: bool) -&gt; <span class="kw-2">&amp;mut </span>GlobBuilder&lt;<span class="lifetime">&#39;a</span>&gt; {
+    </span><span class="kw">pub fn </span>backslash_escape(<span class="kw-2">&amp;mut </span><span class="self">self</span>, yes: bool) -&gt; <span class="kw-2">&amp;mut </span>GlobBuilder&lt;<span class="lifetime">'a</span>&gt; {
         <span class="self">self</span>.opts.backslash_escape = yes;
         <span class="self">self
     </span>}
@@ -2180,7 +2181,7 @@
     /// `foo` and `foo.txt`.
     ///
     /// By default this is false.
-    </span><span class="kw">pub fn </span>empty_alternates(<span class="kw-2">&amp;mut </span><span class="self">self</span>, yes: bool) -&gt; <span class="kw-2">&amp;mut </span>GlobBuilder&lt;<span class="lifetime">&#39;a</span>&gt; {
+    </span><span class="kw">pub fn </span>empty_alternates(<span class="kw-2">&amp;mut </span><span class="self">self</span>, yes: bool) -&gt; <span class="kw-2">&amp;mut </span>GlobBuilder&lt;<span class="lifetime">'a</span>&gt; {
         <span class="self">self</span>.opts.empty_alternates = yes;
         <span class="self">self
     </span>}
@@ -2192,20 +2193,20 @@
     /// glob pattern and the options given.
     </span><span class="kw">fn </span>to_regex_with(<span class="kw-2">&amp;</span><span class="self">self</span>, options: <span class="kw-2">&amp;</span>GlobOptions) -&gt; String {
         <span class="kw">let </span><span class="kw-2">mut </span>re = String::new();
-        re.push_str(<span class="string">&quot;(?-u)&quot;</span>);
+        re.push_str(<span class="string">"(?-u)"</span>);
         <span class="kw">if </span>options.case_insensitive {
-            re.push_str(<span class="string">&quot;(?i)&quot;</span>);
+            re.push_str(<span class="string">"(?i)"</span>);
         }
-        re.push(<span class="string">&#39;^&#39;</span>);
+        re.push(<span class="string">'^'</span>);
         <span class="comment">// Special case. If the entire glob is just `**`, then it should match
         // everything.
         </span><span class="kw">if </span><span class="self">self</span>.len() == <span class="number">1 </span>&amp;&amp; <span class="self">self</span>[<span class="number">0</span>] == Token::RecursivePrefix {
-            re.push_str(<span class="string">&quot;.*&quot;</span>);
-            re.push(<span class="string">&#39;$&#39;</span>);
+            re.push_str(<span class="string">".*"</span>);
+            re.push(<span class="string">'$'</span>);
             <span class="kw">return </span>re;
         }
         <span class="self">self</span>.tokens_to_regex(options, <span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">&amp;mut </span>re);
-        re.push(<span class="string">&#39;$&#39;</span>);
+        re.push(<span class="string">'$'</span>);
         re
     }
 
@@ -2222,31 +2223,31 @@
                 }
                 Token::Any =&gt; {
                     <span class="kw">if </span>options.literal_separator {
-                        re.push_str(<span class="string">&quot;[^/]&quot;</span>);
+                        re.push_str(<span class="string">"[^/]"</span>);
                     } <span class="kw">else </span>{
-                        re.push_str(<span class="string">&quot;.&quot;</span>);
+                        re.push_str(<span class="string">"."</span>);
                     }
                 }
                 Token::ZeroOrMore =&gt; {
                     <span class="kw">if </span>options.literal_separator {
-                        re.push_str(<span class="string">&quot;[^/]*&quot;</span>);
+                        re.push_str(<span class="string">"[^/]*"</span>);
                     } <span class="kw">else </span>{
-                        re.push_str(<span class="string">&quot;.*&quot;</span>);
+                        re.push_str(<span class="string">".*"</span>);
                     }
                 }
                 Token::RecursivePrefix =&gt; {
-                    re.push_str(<span class="string">&quot;(?:/?|.*/)&quot;</span>);
+                    re.push_str(<span class="string">"(?:/?|.*/)"</span>);
                 }
                 Token::RecursiveSuffix =&gt; {
-                    re.push_str(<span class="string">&quot;/.*&quot;</span>);
+                    re.push_str(<span class="string">"/.*"</span>);
                 }
                 Token::RecursiveZeroOrMore =&gt; {
-                    re.push_str(<span class="string">&quot;(?:/|/.*/)&quot;</span>);
+                    re.push_str(<span class="string">"(?:/|/.*/)"</span>);
                 }
                 Token::Class { negated, <span class="kw-2">ref </span>ranges } =&gt; {
-                    re.push(<span class="string">&#39;[&#39;</span>);
+                    re.push(<span class="string">'['</span>);
                     <span class="kw">if </span>negated {
-                        re.push(<span class="string">&#39;^&#39;</span>);
+                        re.push(<span class="string">'^'</span>);
                     }
                     <span class="kw">for </span>r <span class="kw">in </span>ranges {
                         <span class="kw">if </span>r.<span class="number">0 </span>== r.<span class="number">1 </span>{
@@ -2254,11 +2255,11 @@
                             </span>re.push_str(<span class="kw-2">&amp;</span>char_to_escaped_literal(r.<span class="number">0</span>));
                         } <span class="kw">else </span>{
                             re.push_str(<span class="kw-2">&amp;</span>char_to_escaped_literal(r.<span class="number">0</span>));
-                            re.push(<span class="string">&#39;-&#39;</span>);
+                            re.push(<span class="string">'-'</span>);
                             re.push_str(<span class="kw-2">&amp;</span>char_to_escaped_literal(r.<span class="number">1</span>));
                         }
                     }
-                    re.push(<span class="string">&#39;]&#39;</span>);
+                    re.push(<span class="string">']'</span>);
                 }
                 Token::Alternates(<span class="kw-2">ref </span>patterns) =&gt; {
                     <span class="kw">let </span><span class="kw-2">mut </span>parts = <span class="macro">vec!</span>[];
@@ -2271,11 +2272,11 @@
                     }
 
                     <span class="comment">// It is possible to have an empty set in which case the
-                    // resulting alternation &#39;()&#39; would be an error.
+                    // resulting alternation '()' would be an error.
                     </span><span class="kw">if </span>!parts.is_empty() {
-                        re.push_str(<span class="string">&quot;(?:&quot;</span>);
-                        re.push_str(<span class="kw-2">&amp;</span>parts.join(<span class="string">&quot;|&quot;</span>));
-                        re.push(<span class="string">&#39;)&#39;</span>);
+                        re.push_str(<span class="string">"(?:"</span>);
+                        re.push_str(<span class="kw-2">&amp;</span>parts.join(<span class="string">"|"</span>));
+                        re.push(<span class="string">')'</span>);
                     }
                 }
             }
@@ -2299,22 +2300,22 @@
                 char::from(b).encode_utf8(<span class="kw-2">&amp;mut </span>[<span class="number">0</span>; <span class="number">4</span>]),
             ));
         } <span class="kw">else </span>{
-            s.push_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;\\x{:02x}&quot;</span>, b));
+            s.push_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"\\x{:02x}"</span>, b));
         }
     }
     s
 }
 
-<span class="kw">struct </span>Parser&lt;<span class="lifetime">&#39;a</span>&gt; {
-    glob: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str,
+<span class="kw">struct </span>Parser&lt;<span class="lifetime">'a</span>&gt; {
+    glob: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str,
     stack: Vec&lt;Tokens&gt;,
-    chars: std::iter::Peekable&lt;std::str::Chars&lt;<span class="lifetime">&#39;a</span>&gt;&gt;,
+    chars: std::iter::Peekable&lt;std::str::Chars&lt;<span class="lifetime">'a</span>&gt;&gt;,
     prev: <span class="prelude-ty">Option</span>&lt;char&gt;,
     cur: <span class="prelude-ty">Option</span>&lt;char&gt;,
-    opts: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>GlobOptions,
+    opts: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>GlobOptions,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Parser&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Parser&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">fn </span>error(<span class="kw-2">&amp;</span><span class="self">self</span>, kind: ErrorKind) -&gt; Error {
         Error { glob: <span class="prelude-val">Some</span>(<span class="self">self</span>.glob.to_string()), kind }
     }
@@ -2322,13 +2323,13 @@
     <span class="kw">fn </span>parse(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
         <span class="kw">while let </span><span class="prelude-val">Some</span>(c) = <span class="self">self</span>.bump() {
             <span class="kw">match </span>c {
-                <span class="string">&#39;?&#39; </span>=&gt; <span class="self">self</span>.push_token(Token::Any)<span class="question-mark">?</span>,
-                <span class="string">&#39;*&#39; </span>=&gt; <span class="self">self</span>.parse_star()<span class="question-mark">?</span>,
-                <span class="string">&#39;[&#39; </span>=&gt; <span class="self">self</span>.parse_class()<span class="question-mark">?</span>,
-                <span class="string">&#39;{&#39; </span>=&gt; <span class="self">self</span>.push_alternate()<span class="question-mark">?</span>,
-                <span class="string">&#39;}&#39; </span>=&gt; <span class="self">self</span>.pop_alternate()<span class="question-mark">?</span>,
-                <span class="string">&#39;,&#39; </span>=&gt; <span class="self">self</span>.parse_comma()<span class="question-mark">?</span>,
-                <span class="string">&#39;\\&#39; </span>=&gt; <span class="self">self</span>.parse_backslash()<span class="question-mark">?</span>,
+                <span class="string">'?' </span>=&gt; <span class="self">self</span>.push_token(Token::Any)<span class="question-mark">?</span>,
+                <span class="string">'*' </span>=&gt; <span class="self">self</span>.parse_star()<span class="question-mark">?</span>,
+                <span class="string">'[' </span>=&gt; <span class="self">self</span>.parse_class()<span class="question-mark">?</span>,
+                <span class="string">'{' </span>=&gt; <span class="self">self</span>.push_alternate()<span class="question-mark">?</span>,
+                <span class="string">'}' </span>=&gt; <span class="self">self</span>.pop_alternate()<span class="question-mark">?</span>,
+                <span class="string">',' </span>=&gt; <span class="self">self</span>.parse_comma()<span class="question-mark">?</span>,
+                <span class="string">'\\' </span>=&gt; <span class="self">self</span>.parse_backslash()<span class="question-mark">?</span>,
                 c =&gt; <span class="self">self</span>.push_token(Token::Literal(c))<span class="question-mark">?</span>,
             }
         }
@@ -2372,11 +2373,11 @@
     }
 
     <span class="kw">fn </span>parse_comma(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
-        <span class="comment">// If we aren&#39;t inside a group alternation, then don&#39;t
+        <span class="comment">// If we aren't inside a group alternation, then don't
         // treat commas specially. Otherwise, we need to start
         // a new alternate.
         </span><span class="kw">if </span><span class="self">self</span>.stack.len() &lt;= <span class="number">1 </span>{
-            <span class="self">self</span>.push_token(Token::Literal(<span class="string">&#39;,&#39;</span>))
+            <span class="self">self</span>.push_token(Token::Literal(<span class="string">','</span>))
         } <span class="kw">else </span>{
             <span class="prelude-val">Ok</span>(<span class="self">self</span>.stack.push(Tokens::default()))
         }
@@ -2388,21 +2389,21 @@
                 <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(<span class="self">self</span>.error(ErrorKind::DanglingEscape)),
                 <span class="prelude-val">Some</span>(c) =&gt; <span class="self">self</span>.push_token(Token::Literal(c)),
             }
-        } <span class="kw">else if </span>is_separator(<span class="string">&#39;\\&#39;</span>) {
+        } <span class="kw">else if </span>is_separator(<span class="string">'\\'</span>) {
             <span class="comment">// Normalize all patterns to use / as a separator.
-            </span><span class="self">self</span>.push_token(Token::Literal(<span class="string">&#39;/&#39;</span>))
+            </span><span class="self">self</span>.push_token(Token::Literal(<span class="string">'/'</span>))
         } <span class="kw">else </span>{
-            <span class="self">self</span>.push_token(Token::Literal(<span class="string">&#39;\\&#39;</span>))
+            <span class="self">self</span>.push_token(Token::Literal(<span class="string">'\\'</span>))
         }
     }
 
     <span class="kw">fn </span>parse_star(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
         <span class="kw">let </span>prev = <span class="self">self</span>.prev;
-        <span class="kw">if </span><span class="self">self</span>.peek() != <span class="prelude-val">Some</span>(<span class="string">&#39;*&#39;</span>) {
+        <span class="kw">if </span><span class="self">self</span>.peek() != <span class="prelude-val">Some</span>(<span class="string">'*'</span>) {
             <span class="self">self</span>.push_token(Token::ZeroOrMore)<span class="question-mark">?</span>;
             <span class="kw">return </span><span class="prelude-val">Ok</span>(());
         }
-        <span class="macro">assert!</span>(<span class="self">self</span>.bump() == <span class="prelude-val">Some</span>(<span class="string">&#39;*&#39;</span>));
+        <span class="macro">assert!</span>(<span class="self">self</span>.bump() == <span class="prelude-val">Some</span>(<span class="string">'*'</span>));
         <span class="kw">if </span>!<span class="self">self</span>.have_tokens()<span class="question-mark">? </span>{
             <span class="kw">if </span>!<span class="self">self</span>.peek().map_or(<span class="bool-val">true</span>, is_separator) {
                 <span class="self">self</span>.push_token(Token::ZeroOrMore)<span class="question-mark">?</span>;
@@ -2416,7 +2417,7 @@
 
         <span class="kw">if </span>!prev.map(is_separator).unwrap_or(<span class="bool-val">false</span>) {
             <span class="kw">if </span><span class="self">self</span>.stack.len() &lt;= <span class="number">1
-                </span>|| (prev != <span class="prelude-val">Some</span>(<span class="string">&#39;,&#39;</span>) &amp;&amp; prev != <span class="prelude-val">Some</span>(<span class="string">&#39;{&#39;</span>))
+                </span>|| (prev != <span class="prelude-val">Some</span>(<span class="string">','</span>) &amp;&amp; prev != <span class="prelude-val">Some</span>(<span class="string">'{'</span>))
             {
                 <span class="self">self</span>.push_token(Token::ZeroOrMore)<span class="question-mark">?</span>;
                 <span class="self">self</span>.push_token(Token::ZeroOrMore)<span class="question-mark">?</span>;
@@ -2428,7 +2429,7 @@
                 <span class="macro">assert!</span>(<span class="self">self</span>.bump().is_none());
                 <span class="bool-val">true
             </span>}
-            <span class="prelude-val">Some</span>(<span class="string">&#39;,&#39;</span>) | <span class="prelude-val">Some</span>(<span class="string">&#39;}&#39;</span>) <span class="kw">if </span><span class="self">self</span>.stack.len() &gt;= <span class="number">2 </span>=&gt; <span class="bool-val">true</span>,
+            <span class="prelude-val">Some</span>(<span class="string">','</span>) | <span class="prelude-val">Some</span>(<span class="string">'}'</span>) <span class="kw">if </span><span class="self">self</span>.stack.len() &gt;= <span class="number">2 </span>=&gt; <span class="bool-val">true</span>,
             <span class="prelude-val">Some</span>(c) <span class="kw">if </span>is_separator(c) =&gt; {
                 <span class="macro">assert!</span>(<span class="self">self</span>.bump().map(is_separator).unwrap_or(<span class="bool-val">false</span>));
                 <span class="bool-val">false
@@ -2475,9 +2476,9 @@
         }
         <span class="kw">let </span><span class="kw-2">mut </span>ranges = <span class="macro">vec!</span>[];
         <span class="kw">let </span>negated = <span class="kw">match </span><span class="self">self</span>.chars.peek() {
-            <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">&#39;!&#39;</span>) | <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">&#39;^&#39;</span>) =&gt; {
+            <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">'!'</span>) | <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">'^'</span>) =&gt; {
                 <span class="kw">let </span>bump = <span class="self">self</span>.bump();
-                <span class="macro">assert!</span>(bump == <span class="prelude-val">Some</span>(<span class="string">&#39;!&#39;</span>) || bump == <span class="prelude-val">Some</span>(<span class="string">&#39;^&#39;</span>));
+                <span class="macro">assert!</span>(bump == <span class="prelude-val">Some</span>(<span class="string">'!'</span>) || bump == <span class="prelude-val">Some</span>(<span class="string">'^'</span>));
                 <span class="bool-val">true
             </span>}
             <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
@@ -2488,25 +2489,25 @@
             <span class="kw">let </span>c = <span class="kw">match </span><span class="self">self</span>.bump() {
                 <span class="prelude-val">Some</span>(c) =&gt; c,
                 <span class="comment">// The only way to successfully break this loop is to observe
-                // a &#39;]&#39;.
+                // a ']'.
                 </span><span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="self">self</span>.error(ErrorKind::UnclosedClass)),
             };
             <span class="kw">match </span>c {
-                <span class="string">&#39;]&#39; </span>=&gt; {
+                <span class="string">']' </span>=&gt; {
                     <span class="kw">if </span>first {
-                        ranges.push((<span class="string">&#39;]&#39;</span>, <span class="string">&#39;]&#39;</span>));
+                        ranges.push((<span class="string">']'</span>, <span class="string">']'</span>));
                     } <span class="kw">else </span>{
                         <span class="kw">break</span>;
                     }
                 }
-                <span class="string">&#39;-&#39; </span>=&gt; {
+                <span class="string">'-' </span>=&gt; {
                     <span class="kw">if </span>first {
-                        ranges.push((<span class="string">&#39;-&#39;</span>, <span class="string">&#39;-&#39;</span>));
+                        ranges.push((<span class="string">'-'</span>, <span class="string">'-'</span>));
                     } <span class="kw">else if </span>in_range {
                         <span class="comment">// invariant: in_range is only set when there is
                         // already at least one character seen.
                         </span><span class="kw">let </span>r = ranges.last_mut().unwrap();
-                        add_to_last_range(<span class="kw-2">&amp;</span><span class="self">self</span>.glob, r, <span class="string">&#39;-&#39;</span>)<span class="question-mark">?</span>;
+                        add_to_last_range(<span class="kw-2">&amp;</span><span class="self">self</span>.glob, r, <span class="string">'-'</span>)<span class="question-mark">?</span>;
                         in_range = <span class="bool-val">false</span>;
                     } <span class="kw">else </span>{
                         <span class="macro">assert!</span>(!ranges.is_empty());
@@ -2531,9 +2532,9 @@
             first = <span class="bool-val">false</span>;
         }
         <span class="kw">if </span>in_range {
-            <span class="comment">// Means that the last character in the class was a &#39;-&#39;, so add
+            <span class="comment">// Means that the last character in the class was a '-', so add
             // it as a literal.
-            </span>ranges.push((<span class="string">&#39;-&#39;</span>, <span class="string">&#39;-&#39;</span>));
+            </span>ranges.push((<span class="string">'-'</span>, <span class="string">'-'</span>));
         }
         <span class="self">self</span>.push_token(Token::Class { negated, ranges })
     }
@@ -2617,7 +2618,7 @@
                     builder.empty_alternates(ealtre);
                 }
                 <span class="kw">let </span>pat = builder.build().unwrap();
-                <span class="macro">assert_eq!</span>(<span class="macro">format!</span>(<span class="string">&quot;(?-u){}&quot;</span>, <span class="macro-nonterminal">$re</span>), pat.regex());
+                <span class="macro">assert_eq!</span>(<span class="macro">format!</span>(<span class="string">"(?-u){}"</span>, <span class="macro-nonterminal">$re</span>), pat.regex());
             }
         };
     }
@@ -2704,58 +2705,58 @@
         Class { negated: <span class="bool-val">true</span>, ranges: ranges.to_vec() }
     }
 
-    <span class="macro">syntax!</span>(literal1, <span class="string">&quot;a&quot;</span>, <span class="macro">vec!</span>[Literal(<span class="string">&#39;a&#39;</span>)]);
-    <span class="macro">syntax!</span>(literal2, <span class="string">&quot;ab&quot;</span>, <span class="macro">vec!</span>[Literal(<span class="string">&#39;a&#39;</span>), Literal(<span class="string">&#39;b&#39;</span>)]);
-    <span class="macro">syntax!</span>(any1, <span class="string">&quot;?&quot;</span>, <span class="macro">vec!</span>[Any]);
-    <span class="macro">syntax!</span>(any2, <span class="string">&quot;a?b&quot;</span>, <span class="macro">vec!</span>[Literal(<span class="string">&#39;a&#39;</span>), Any, Literal(<span class="string">&#39;b&#39;</span>)]);
-    <span class="macro">syntax!</span>(seq1, <span class="string">&quot;*&quot;</span>, <span class="macro">vec!</span>[ZeroOrMore]);
-    <span class="macro">syntax!</span>(seq2, <span class="string">&quot;a*b&quot;</span>, <span class="macro">vec!</span>[Literal(<span class="string">&#39;a&#39;</span>), ZeroOrMore, Literal(<span class="string">&#39;b&#39;</span>)]);
+    <span class="macro">syntax!</span>(literal1, <span class="string">"a"</span>, <span class="macro">vec!</span>[Literal(<span class="string">'a'</span>)]);
+    <span class="macro">syntax!</span>(literal2, <span class="string">"ab"</span>, <span class="macro">vec!</span>[Literal(<span class="string">'a'</span>), Literal(<span class="string">'b'</span>)]);
+    <span class="macro">syntax!</span>(any1, <span class="string">"?"</span>, <span class="macro">vec!</span>[Any]);
+    <span class="macro">syntax!</span>(any2, <span class="string">"a?b"</span>, <span class="macro">vec!</span>[Literal(<span class="string">'a'</span>), Any, Literal(<span class="string">'b'</span>)]);
+    <span class="macro">syntax!</span>(seq1, <span class="string">"*"</span>, <span class="macro">vec!</span>[ZeroOrMore]);
+    <span class="macro">syntax!</span>(seq2, <span class="string">"a*b"</span>, <span class="macro">vec!</span>[Literal(<span class="string">'a'</span>), ZeroOrMore, Literal(<span class="string">'b'</span>)]);
     <span class="macro">syntax!</span>(
         seq3,
-        <span class="string">&quot;*a*b*&quot;</span>,
-        <span class="macro">vec!</span>[ZeroOrMore, Literal(<span class="string">&#39;a&#39;</span>), ZeroOrMore, Literal(<span class="string">&#39;b&#39;</span>), ZeroOrMore,]
+        <span class="string">"*a*b*"</span>,
+        <span class="macro">vec!</span>[ZeroOrMore, Literal(<span class="string">'a'</span>), ZeroOrMore, Literal(<span class="string">'b'</span>), ZeroOrMore,]
     );
-    <span class="macro">syntax!</span>(rseq1, <span class="string">&quot;**&quot;</span>, <span class="macro">vec!</span>[RecursivePrefix]);
-    <span class="macro">syntax!</span>(rseq2, <span class="string">&quot;**/&quot;</span>, <span class="macro">vec!</span>[RecursivePrefix]);
-    <span class="macro">syntax!</span>(rseq3, <span class="string">&quot;/**&quot;</span>, <span class="macro">vec!</span>[RecursiveSuffix]);
-    <span class="macro">syntax!</span>(rseq4, <span class="string">&quot;/**/&quot;</span>, <span class="macro">vec!</span>[RecursiveZeroOrMore]);
+    <span class="macro">syntax!</span>(rseq1, <span class="string">"**"</span>, <span class="macro">vec!</span>[RecursivePrefix]);
+    <span class="macro">syntax!</span>(rseq2, <span class="string">"**/"</span>, <span class="macro">vec!</span>[RecursivePrefix]);
+    <span class="macro">syntax!</span>(rseq3, <span class="string">"/**"</span>, <span class="macro">vec!</span>[RecursiveSuffix]);
+    <span class="macro">syntax!</span>(rseq4, <span class="string">"/**/"</span>, <span class="macro">vec!</span>[RecursiveZeroOrMore]);
     <span class="macro">syntax!</span>(
         rseq5,
-        <span class="string">&quot;a/**/b&quot;</span>,
-        <span class="macro">vec!</span>[Literal(<span class="string">&#39;a&#39;</span>), RecursiveZeroOrMore, Literal(<span class="string">&#39;b&#39;</span>),]
+        <span class="string">"a/**/b"</span>,
+        <span class="macro">vec!</span>[Literal(<span class="string">'a'</span>), RecursiveZeroOrMore, Literal(<span class="string">'b'</span>),]
     );
-    <span class="macro">syntax!</span>(cls1, <span class="string">&quot;[a]&quot;</span>, <span class="macro">vec!</span>[class(<span class="string">&#39;a&#39;</span>, <span class="string">&#39;a&#39;</span>)]);
-    <span class="macro">syntax!</span>(cls2, <span class="string">&quot;[!a]&quot;</span>, <span class="macro">vec!</span>[classn(<span class="string">&#39;a&#39;</span>, <span class="string">&#39;a&#39;</span>)]);
-    <span class="macro">syntax!</span>(cls3, <span class="string">&quot;[a-z]&quot;</span>, <span class="macro">vec!</span>[class(<span class="string">&#39;a&#39;</span>, <span class="string">&#39;z&#39;</span>)]);
-    <span class="macro">syntax!</span>(cls4, <span class="string">&quot;[!a-z]&quot;</span>, <span class="macro">vec!</span>[classn(<span class="string">&#39;a&#39;</span>, <span class="string">&#39;z&#39;</span>)]);
-    <span class="macro">syntax!</span>(cls5, <span class="string">&quot;[-]&quot;</span>, <span class="macro">vec!</span>[class(<span class="string">&#39;-&#39;</span>, <span class="string">&#39;-&#39;</span>)]);
-    <span class="macro">syntax!</span>(cls6, <span class="string">&quot;[]]&quot;</span>, <span class="macro">vec!</span>[class(<span class="string">&#39;]&#39;</span>, <span class="string">&#39;]&#39;</span>)]);
-    <span class="macro">syntax!</span>(cls7, <span class="string">&quot;[*]&quot;</span>, <span class="macro">vec!</span>[class(<span class="string">&#39;*&#39;</span>, <span class="string">&#39;*&#39;</span>)]);
-    <span class="macro">syntax!</span>(cls8, <span class="string">&quot;[!!]&quot;</span>, <span class="macro">vec!</span>[classn(<span class="string">&#39;!&#39;</span>, <span class="string">&#39;!&#39;</span>)]);
-    <span class="macro">syntax!</span>(cls9, <span class="string">&quot;[a-]&quot;</span>, <span class="macro">vec!</span>[rclass(<span class="kw-2">&amp;</span>[(<span class="string">&#39;a&#39;</span>, <span class="string">&#39;a&#39;</span>), (<span class="string">&#39;-&#39;</span>, <span class="string">&#39;-&#39;</span>)])]);
-    <span class="macro">syntax!</span>(cls10, <span class="string">&quot;[-a-z]&quot;</span>, <span class="macro">vec!</span>[rclass(<span class="kw-2">&amp;</span>[(<span class="string">&#39;-&#39;</span>, <span class="string">&#39;-&#39;</span>), (<span class="string">&#39;a&#39;</span>, <span class="string">&#39;z&#39;</span>)])]);
-    <span class="macro">syntax!</span>(cls11, <span class="string">&quot;[a-z-]&quot;</span>, <span class="macro">vec!</span>[rclass(<span class="kw-2">&amp;</span>[(<span class="string">&#39;a&#39;</span>, <span class="string">&#39;z&#39;</span>), (<span class="string">&#39;-&#39;</span>, <span class="string">&#39;-&#39;</span>)])]);
+    <span class="macro">syntax!</span>(cls1, <span class="string">"[a]"</span>, <span class="macro">vec!</span>[class(<span class="string">'a'</span>, <span class="string">'a'</span>)]);
+    <span class="macro">syntax!</span>(cls2, <span class="string">"[!a]"</span>, <span class="macro">vec!</span>[classn(<span class="string">'a'</span>, <span class="string">'a'</span>)]);
+    <span class="macro">syntax!</span>(cls3, <span class="string">"[a-z]"</span>, <span class="macro">vec!</span>[class(<span class="string">'a'</span>, <span class="string">'z'</span>)]);
+    <span class="macro">syntax!</span>(cls4, <span class="string">"[!a-z]"</span>, <span class="macro">vec!</span>[classn(<span class="string">'a'</span>, <span class="string">'z'</span>)]);
+    <span class="macro">syntax!</span>(cls5, <span class="string">"[-]"</span>, <span class="macro">vec!</span>[class(<span class="string">'-'</span>, <span class="string">'-'</span>)]);
+    <span class="macro">syntax!</span>(cls6, <span class="string">"[]]"</span>, <span class="macro">vec!</span>[class(<span class="string">']'</span>, <span class="string">']'</span>)]);
+    <span class="macro">syntax!</span>(cls7, <span class="string">"[*]"</span>, <span class="macro">vec!</span>[class(<span class="string">'*'</span>, <span class="string">'*'</span>)]);
+    <span class="macro">syntax!</span>(cls8, <span class="string">"[!!]"</span>, <span class="macro">vec!</span>[classn(<span class="string">'!'</span>, <span class="string">'!'</span>)]);
+    <span class="macro">syntax!</span>(cls9, <span class="string">"[a-]"</span>, <span class="macro">vec!</span>[rclass(<span class="kw-2">&amp;</span>[(<span class="string">'a'</span>, <span class="string">'a'</span>), (<span class="string">'-'</span>, <span class="string">'-'</span>)])]);
+    <span class="macro">syntax!</span>(cls10, <span class="string">"[-a-z]"</span>, <span class="macro">vec!</span>[rclass(<span class="kw-2">&amp;</span>[(<span class="string">'-'</span>, <span class="string">'-'</span>), (<span class="string">'a'</span>, <span class="string">'z'</span>)])]);
+    <span class="macro">syntax!</span>(cls11, <span class="string">"[a-z-]"</span>, <span class="macro">vec!</span>[rclass(<span class="kw-2">&amp;</span>[(<span class="string">'a'</span>, <span class="string">'z'</span>), (<span class="string">'-'</span>, <span class="string">'-'</span>)])]);
     <span class="macro">syntax!</span>(
         cls12,
-        <span class="string">&quot;[-a-z-]&quot;</span>,
-        <span class="macro">vec!</span>[rclass(<span class="kw-2">&amp;</span>[(<span class="string">&#39;-&#39;</span>, <span class="string">&#39;-&#39;</span>), (<span class="string">&#39;a&#39;</span>, <span class="string">&#39;z&#39;</span>), (<span class="string">&#39;-&#39;</span>, <span class="string">&#39;-&#39;</span>)]),]
+        <span class="string">"[-a-z-]"</span>,
+        <span class="macro">vec!</span>[rclass(<span class="kw-2">&amp;</span>[(<span class="string">'-'</span>, <span class="string">'-'</span>), (<span class="string">'a'</span>, <span class="string">'z'</span>), (<span class="string">'-'</span>, <span class="string">'-'</span>)]),]
     );
-    <span class="macro">syntax!</span>(cls13, <span class="string">&quot;[]-z]&quot;</span>, <span class="macro">vec!</span>[class(<span class="string">&#39;]&#39;</span>, <span class="string">&#39;z&#39;</span>)]);
-    <span class="macro">syntax!</span>(cls14, <span class="string">&quot;[--z]&quot;</span>, <span class="macro">vec!</span>[class(<span class="string">&#39;-&#39;</span>, <span class="string">&#39;z&#39;</span>)]);
-    <span class="macro">syntax!</span>(cls15, <span class="string">&quot;[ --]&quot;</span>, <span class="macro">vec!</span>[class(<span class="string">&#39; &#39;</span>, <span class="string">&#39;-&#39;</span>)]);
-    <span class="macro">syntax!</span>(cls16, <span class="string">&quot;[0-9a-z]&quot;</span>, <span class="macro">vec!</span>[rclass(<span class="kw-2">&amp;</span>[(<span class="string">&#39;0&#39;</span>, <span class="string">&#39;9&#39;</span>), (<span class="string">&#39;a&#39;</span>, <span class="string">&#39;z&#39;</span>)])]);
-    <span class="macro">syntax!</span>(cls17, <span class="string">&quot;[a-z0-9]&quot;</span>, <span class="macro">vec!</span>[rclass(<span class="kw-2">&amp;</span>[(<span class="string">&#39;a&#39;</span>, <span class="string">&#39;z&#39;</span>), (<span class="string">&#39;0&#39;</span>, <span class="string">&#39;9&#39;</span>)])]);
-    <span class="macro">syntax!</span>(cls18, <span class="string">&quot;[!0-9a-z]&quot;</span>, <span class="macro">vec!</span>[rclassn(<span class="kw-2">&amp;</span>[(<span class="string">&#39;0&#39;</span>, <span class="string">&#39;9&#39;</span>), (<span class="string">&#39;a&#39;</span>, <span class="string">&#39;z&#39;</span>)])]);
-    <span class="macro">syntax!</span>(cls19, <span class="string">&quot;[!a-z0-9]&quot;</span>, <span class="macro">vec!</span>[rclassn(<span class="kw-2">&amp;</span>[(<span class="string">&#39;a&#39;</span>, <span class="string">&#39;z&#39;</span>), (<span class="string">&#39;0&#39;</span>, <span class="string">&#39;9&#39;</span>)])]);
-    <span class="macro">syntax!</span>(cls20, <span class="string">&quot;[^a]&quot;</span>, <span class="macro">vec!</span>[classn(<span class="string">&#39;a&#39;</span>, <span class="string">&#39;a&#39;</span>)]);
-    <span class="macro">syntax!</span>(cls21, <span class="string">&quot;[^a-z]&quot;</span>, <span class="macro">vec!</span>[classn(<span class="string">&#39;a&#39;</span>, <span class="string">&#39;z&#39;</span>)]);
+    <span class="macro">syntax!</span>(cls13, <span class="string">"[]-z]"</span>, <span class="macro">vec!</span>[class(<span class="string">']'</span>, <span class="string">'z'</span>)]);
+    <span class="macro">syntax!</span>(cls14, <span class="string">"[--z]"</span>, <span class="macro">vec!</span>[class(<span class="string">'-'</span>, <span class="string">'z'</span>)]);
+    <span class="macro">syntax!</span>(cls15, <span class="string">"[ --]"</span>, <span class="macro">vec!</span>[class(<span class="string">' '</span>, <span class="string">'-'</span>)]);
+    <span class="macro">syntax!</span>(cls16, <span class="string">"[0-9a-z]"</span>, <span class="macro">vec!</span>[rclass(<span class="kw-2">&amp;</span>[(<span class="string">'0'</span>, <span class="string">'9'</span>), (<span class="string">'a'</span>, <span class="string">'z'</span>)])]);
+    <span class="macro">syntax!</span>(cls17, <span class="string">"[a-z0-9]"</span>, <span class="macro">vec!</span>[rclass(<span class="kw-2">&amp;</span>[(<span class="string">'a'</span>, <span class="string">'z'</span>), (<span class="string">'0'</span>, <span class="string">'9'</span>)])]);
+    <span class="macro">syntax!</span>(cls18, <span class="string">"[!0-9a-z]"</span>, <span class="macro">vec!</span>[rclassn(<span class="kw-2">&amp;</span>[(<span class="string">'0'</span>, <span class="string">'9'</span>), (<span class="string">'a'</span>, <span class="string">'z'</span>)])]);
+    <span class="macro">syntax!</span>(cls19, <span class="string">"[!a-z0-9]"</span>, <span class="macro">vec!</span>[rclassn(<span class="kw-2">&amp;</span>[(<span class="string">'a'</span>, <span class="string">'z'</span>), (<span class="string">'0'</span>, <span class="string">'9'</span>)])]);
+    <span class="macro">syntax!</span>(cls20, <span class="string">"[^a]"</span>, <span class="macro">vec!</span>[classn(<span class="string">'a'</span>, <span class="string">'a'</span>)]);
+    <span class="macro">syntax!</span>(cls21, <span class="string">"[^a-z]"</span>, <span class="macro">vec!</span>[classn(<span class="string">'a'</span>, <span class="string">'z'</span>)]);
 
-    <span class="macro">syntaxerr!</span>(err_unclosed1, <span class="string">&quot;[&quot;</span>, ErrorKind::UnclosedClass);
-    <span class="macro">syntaxerr!</span>(err_unclosed2, <span class="string">&quot;[]&quot;</span>, ErrorKind::UnclosedClass);
-    <span class="macro">syntaxerr!</span>(err_unclosed3, <span class="string">&quot;[!&quot;</span>, ErrorKind::UnclosedClass);
-    <span class="macro">syntaxerr!</span>(err_unclosed4, <span class="string">&quot;[!]&quot;</span>, ErrorKind::UnclosedClass);
-    <span class="macro">syntaxerr!</span>(err_range1, <span class="string">&quot;[z-a]&quot;</span>, ErrorKind::InvalidRange(<span class="string">&#39;z&#39;</span>, <span class="string">&#39;a&#39;</span>));
-    <span class="macro">syntaxerr!</span>(err_range2, <span class="string">&quot;[z--]&quot;</span>, ErrorKind::InvalidRange(<span class="string">&#39;z&#39;</span>, <span class="string">&#39;-&#39;</span>));
+    <span class="macro">syntaxerr!</span>(err_unclosed1, <span class="string">"["</span>, ErrorKind::UnclosedClass);
+    <span class="macro">syntaxerr!</span>(err_unclosed2, <span class="string">"[]"</span>, ErrorKind::UnclosedClass);
+    <span class="macro">syntaxerr!</span>(err_unclosed3, <span class="string">"[!"</span>, ErrorKind::UnclosedClass);
+    <span class="macro">syntaxerr!</span>(err_unclosed4, <span class="string">"[!]"</span>, ErrorKind::UnclosedClass);
+    <span class="macro">syntaxerr!</span>(err_range1, <span class="string">"[z-a]"</span>, ErrorKind::InvalidRange(<span class="string">'z'</span>, <span class="string">'a'</span>));
+    <span class="macro">syntaxerr!</span>(err_range2, <span class="string">"[z--]"</span>, ErrorKind::InvalidRange(<span class="string">'z'</span>, <span class="string">'-'</span>));
 
     <span class="kw">const </span>CASEI: Options =
         Options { casei: <span class="prelude-val">Some</span>(<span class="bool-val">true</span>), litsep: <span class="prelude-val">None</span>, bsesc: <span class="prelude-val">None</span>, ealtre: <span class="prelude-val">None </span>};
@@ -2776,214 +2777,214 @@
         ealtre: <span class="prelude-val">Some</span>(<span class="bool-val">true</span>),
     };
 
-    <span class="macro">toregex!</span>(re_casei, <span class="string">&quot;a&quot;</span>, <span class="string">&quot;(?i)^a$&quot;</span>, <span class="kw-2">&amp;</span>CASEI);
+    <span class="macro">toregex!</span>(re_casei, <span class="string">"a"</span>, <span class="string">"(?i)^a$"</span>, <span class="kw-2">&amp;</span>CASEI);
 
-    <span class="macro">toregex!</span>(re_slash1, <span class="string">&quot;?&quot;</span>, <span class="string">r&quot;^[^/]$&quot;</span>, SLASHLIT);
-    <span class="macro">toregex!</span>(re_slash2, <span class="string">&quot;*&quot;</span>, <span class="string">r&quot;^[^/]*$&quot;</span>, SLASHLIT);
+    <span class="macro">toregex!</span>(re_slash1, <span class="string">"?"</span>, <span class="string">r"^[^/]$"</span>, SLASHLIT);
+    <span class="macro">toregex!</span>(re_slash2, <span class="string">"*"</span>, <span class="string">r"^[^/]*$"</span>, SLASHLIT);
 
-    <span class="macro">toregex!</span>(re1, <span class="string">&quot;a&quot;</span>, <span class="string">&quot;^a$&quot;</span>);
-    <span class="macro">toregex!</span>(re2, <span class="string">&quot;?&quot;</span>, <span class="string">&quot;^.$&quot;</span>);
-    <span class="macro">toregex!</span>(re3, <span class="string">&quot;*&quot;</span>, <span class="string">&quot;^.*$&quot;</span>);
-    <span class="macro">toregex!</span>(re4, <span class="string">&quot;a?&quot;</span>, <span class="string">&quot;^a.$&quot;</span>);
-    <span class="macro">toregex!</span>(re5, <span class="string">&quot;?a&quot;</span>, <span class="string">&quot;^.a$&quot;</span>);
-    <span class="macro">toregex!</span>(re6, <span class="string">&quot;a*&quot;</span>, <span class="string">&quot;^a.*$&quot;</span>);
-    <span class="macro">toregex!</span>(re7, <span class="string">&quot;*a&quot;</span>, <span class="string">&quot;^.*a$&quot;</span>);
-    <span class="macro">toregex!</span>(re8, <span class="string">&quot;[*]&quot;</span>, <span class="string">r&quot;^[\*]$&quot;</span>);
-    <span class="macro">toregex!</span>(re9, <span class="string">&quot;[+]&quot;</span>, <span class="string">r&quot;^[\+]$&quot;</span>);
-    <span class="macro">toregex!</span>(re10, <span class="string">&quot;+&quot;</span>, <span class="string">r&quot;^\+$&quot;</span>);
-    <span class="macro">toregex!</span>(re11, <span class="string">&quot;☃&quot;</span>, <span class="string">r&quot;^\xe2\x98\x83$&quot;</span>);
-    <span class="macro">toregex!</span>(re12, <span class="string">&quot;**&quot;</span>, <span class="string">r&quot;^.*$&quot;</span>);
-    <span class="macro">toregex!</span>(re13, <span class="string">&quot;**/&quot;</span>, <span class="string">r&quot;^.*$&quot;</span>);
-    <span class="macro">toregex!</span>(re14, <span class="string">&quot;**/*&quot;</span>, <span class="string">r&quot;^(?:/?|.*/).*$&quot;</span>);
-    <span class="macro">toregex!</span>(re15, <span class="string">&quot;**/**&quot;</span>, <span class="string">r&quot;^.*$&quot;</span>);
-    <span class="macro">toregex!</span>(re16, <span class="string">&quot;**/**/*&quot;</span>, <span class="string">r&quot;^(?:/?|.*/).*$&quot;</span>);
-    <span class="macro">toregex!</span>(re17, <span class="string">&quot;**/**/**&quot;</span>, <span class="string">r&quot;^.*$&quot;</span>);
-    <span class="macro">toregex!</span>(re18, <span class="string">&quot;**/**/**/*&quot;</span>, <span class="string">r&quot;^(?:/?|.*/).*$&quot;</span>);
-    <span class="macro">toregex!</span>(re19, <span class="string">&quot;a/**&quot;</span>, <span class="string">r&quot;^a/.*$&quot;</span>);
-    <span class="macro">toregex!</span>(re20, <span class="string">&quot;a/**/**&quot;</span>, <span class="string">r&quot;^a/.*$&quot;</span>);
-    <span class="macro">toregex!</span>(re21, <span class="string">&quot;a/**/**/**&quot;</span>, <span class="string">r&quot;^a/.*$&quot;</span>);
-    <span class="macro">toregex!</span>(re22, <span class="string">&quot;a/**/b&quot;</span>, <span class="string">r&quot;^a(?:/|/.*/)b$&quot;</span>);
-    <span class="macro">toregex!</span>(re23, <span class="string">&quot;a/**/**/b&quot;</span>, <span class="string">r&quot;^a(?:/|/.*/)b$&quot;</span>);
-    <span class="macro">toregex!</span>(re24, <span class="string">&quot;a/**/**/**/b&quot;</span>, <span class="string">r&quot;^a(?:/|/.*/)b$&quot;</span>);
-    <span class="macro">toregex!</span>(re25, <span class="string">&quot;**/b&quot;</span>, <span class="string">r&quot;^(?:/?|.*/)b$&quot;</span>);
-    <span class="macro">toregex!</span>(re26, <span class="string">&quot;**/**/b&quot;</span>, <span class="string">r&quot;^(?:/?|.*/)b$&quot;</span>);
-    <span class="macro">toregex!</span>(re27, <span class="string">&quot;**/**/**/b&quot;</span>, <span class="string">r&quot;^(?:/?|.*/)b$&quot;</span>);
-    <span class="macro">toregex!</span>(re28, <span class="string">&quot;a**&quot;</span>, <span class="string">r&quot;^a.*.*$&quot;</span>);
-    <span class="macro">toregex!</span>(re29, <span class="string">&quot;**a&quot;</span>, <span class="string">r&quot;^.*.*a$&quot;</span>);
-    <span class="macro">toregex!</span>(re30, <span class="string">&quot;a**b&quot;</span>, <span class="string">r&quot;^a.*.*b$&quot;</span>);
-    <span class="macro">toregex!</span>(re31, <span class="string">&quot;***&quot;</span>, <span class="string">r&quot;^.*.*.*$&quot;</span>);
-    <span class="macro">toregex!</span>(re32, <span class="string">&quot;/a**&quot;</span>, <span class="string">r&quot;^/a.*.*$&quot;</span>);
-    <span class="macro">toregex!</span>(re33, <span class="string">&quot;/**a&quot;</span>, <span class="string">r&quot;^/.*.*a$&quot;</span>);
-    <span class="macro">toregex!</span>(re34, <span class="string">&quot;/a**b&quot;</span>, <span class="string">r&quot;^/a.*.*b$&quot;</span>);
-    <span class="macro">toregex!</span>(re35, <span class="string">&quot;{a,b}&quot;</span>, <span class="string">r&quot;^(?:b|a)$&quot;</span>);
+    <span class="macro">toregex!</span>(re1, <span class="string">"a"</span>, <span class="string">"^a$"</span>);
+    <span class="macro">toregex!</span>(re2, <span class="string">"?"</span>, <span class="string">"^.$"</span>);
+    <span class="macro">toregex!</span>(re3, <span class="string">"*"</span>, <span class="string">"^.*$"</span>);
+    <span class="macro">toregex!</span>(re4, <span class="string">"a?"</span>, <span class="string">"^a.$"</span>);
+    <span class="macro">toregex!</span>(re5, <span class="string">"?a"</span>, <span class="string">"^.a$"</span>);
+    <span class="macro">toregex!</span>(re6, <span class="string">"a*"</span>, <span class="string">"^a.*$"</span>);
+    <span class="macro">toregex!</span>(re7, <span class="string">"*a"</span>, <span class="string">"^.*a$"</span>);
+    <span class="macro">toregex!</span>(re8, <span class="string">"[*]"</span>, <span class="string">r"^[\*]$"</span>);
+    <span class="macro">toregex!</span>(re9, <span class="string">"[+]"</span>, <span class="string">r"^[\+]$"</span>);
+    <span class="macro">toregex!</span>(re10, <span class="string">"+"</span>, <span class="string">r"^\+$"</span>);
+    <span class="macro">toregex!</span>(re11, <span class="string">"☃"</span>, <span class="string">r"^\xe2\x98\x83$"</span>);
+    <span class="macro">toregex!</span>(re12, <span class="string">"**"</span>, <span class="string">r"^.*$"</span>);
+    <span class="macro">toregex!</span>(re13, <span class="string">"**/"</span>, <span class="string">r"^.*$"</span>);
+    <span class="macro">toregex!</span>(re14, <span class="string">"**/*"</span>, <span class="string">r"^(?:/?|.*/).*$"</span>);
+    <span class="macro">toregex!</span>(re15, <span class="string">"**/**"</span>, <span class="string">r"^.*$"</span>);
+    <span class="macro">toregex!</span>(re16, <span class="string">"**/**/*"</span>, <span class="string">r"^(?:/?|.*/).*$"</span>);
+    <span class="macro">toregex!</span>(re17, <span class="string">"**/**/**"</span>, <span class="string">r"^.*$"</span>);
+    <span class="macro">toregex!</span>(re18, <span class="string">"**/**/**/*"</span>, <span class="string">r"^(?:/?|.*/).*$"</span>);
+    <span class="macro">toregex!</span>(re19, <span class="string">"a/**"</span>, <span class="string">r"^a/.*$"</span>);
+    <span class="macro">toregex!</span>(re20, <span class="string">"a/**/**"</span>, <span class="string">r"^a/.*$"</span>);
+    <span class="macro">toregex!</span>(re21, <span class="string">"a/**/**/**"</span>, <span class="string">r"^a/.*$"</span>);
+    <span class="macro">toregex!</span>(re22, <span class="string">"a/**/b"</span>, <span class="string">r"^a(?:/|/.*/)b$"</span>);
+    <span class="macro">toregex!</span>(re23, <span class="string">"a/**/**/b"</span>, <span class="string">r"^a(?:/|/.*/)b$"</span>);
+    <span class="macro">toregex!</span>(re24, <span class="string">"a/**/**/**/b"</span>, <span class="string">r"^a(?:/|/.*/)b$"</span>);
+    <span class="macro">toregex!</span>(re25, <span class="string">"**/b"</span>, <span class="string">r"^(?:/?|.*/)b$"</span>);
+    <span class="macro">toregex!</span>(re26, <span class="string">"**/**/b"</span>, <span class="string">r"^(?:/?|.*/)b$"</span>);
+    <span class="macro">toregex!</span>(re27, <span class="string">"**/**/**/b"</span>, <span class="string">r"^(?:/?|.*/)b$"</span>);
+    <span class="macro">toregex!</span>(re28, <span class="string">"a**"</span>, <span class="string">r"^a.*.*$"</span>);
+    <span class="macro">toregex!</span>(re29, <span class="string">"**a"</span>, <span class="string">r"^.*.*a$"</span>);
+    <span class="macro">toregex!</span>(re30, <span class="string">"a**b"</span>, <span class="string">r"^a.*.*b$"</span>);
+    <span class="macro">toregex!</span>(re31, <span class="string">"***"</span>, <span class="string">r"^.*.*.*$"</span>);
+    <span class="macro">toregex!</span>(re32, <span class="string">"/a**"</span>, <span class="string">r"^/a.*.*$"</span>);
+    <span class="macro">toregex!</span>(re33, <span class="string">"/**a"</span>, <span class="string">r"^/.*.*a$"</span>);
+    <span class="macro">toregex!</span>(re34, <span class="string">"/a**b"</span>, <span class="string">r"^/a.*.*b$"</span>);
+    <span class="macro">toregex!</span>(re35, <span class="string">"{a,b}"</span>, <span class="string">r"^(?:b|a)$"</span>);
 
-    <span class="macro">matches!</span>(match1, <span class="string">&quot;a&quot;</span>, <span class="string">&quot;a&quot;</span>);
-    <span class="macro">matches!</span>(match2, <span class="string">&quot;a*b&quot;</span>, <span class="string">&quot;a_b&quot;</span>);
-    <span class="macro">matches!</span>(match3, <span class="string">&quot;a*b*c&quot;</span>, <span class="string">&quot;abc&quot;</span>);
-    <span class="macro">matches!</span>(match4, <span class="string">&quot;a*b*c&quot;</span>, <span class="string">&quot;a_b_c&quot;</span>);
-    <span class="macro">matches!</span>(match5, <span class="string">&quot;a*b*c&quot;</span>, <span class="string">&quot;a___b___c&quot;</span>);
-    <span class="macro">matches!</span>(match6, <span class="string">&quot;abc*abc*abc&quot;</span>, <span class="string">&quot;abcabcabcabcabcabcabc&quot;</span>);
-    <span class="macro">matches!</span>(match7, <span class="string">&quot;a*a*a*a*a*a*a*a*a&quot;</span>, <span class="string">&quot;aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&quot;</span>);
-    <span class="macro">matches!</span>(match8, <span class="string">&quot;a*b[xyz]c*d&quot;</span>, <span class="string">&quot;abxcdbxcddd&quot;</span>);
-    <span class="macro">matches!</span>(match9, <span class="string">&quot;*.rs&quot;</span>, <span class="string">&quot;.rs&quot;</span>);
-    <span class="macro">matches!</span>(match10, <span class="string">&quot;☃&quot;</span>, <span class="string">&quot;☃&quot;</span>);
+    <span class="macro">matches!</span>(match1, <span class="string">"a"</span>, <span class="string">"a"</span>);
+    <span class="macro">matches!</span>(match2, <span class="string">"a*b"</span>, <span class="string">"a_b"</span>);
+    <span class="macro">matches!</span>(match3, <span class="string">"a*b*c"</span>, <span class="string">"abc"</span>);
+    <span class="macro">matches!</span>(match4, <span class="string">"a*b*c"</span>, <span class="string">"a_b_c"</span>);
+    <span class="macro">matches!</span>(match5, <span class="string">"a*b*c"</span>, <span class="string">"a___b___c"</span>);
+    <span class="macro">matches!</span>(match6, <span class="string">"abc*abc*abc"</span>, <span class="string">"abcabcabcabcabcabcabc"</span>);
+    <span class="macro">matches!</span>(match7, <span class="string">"a*a*a*a*a*a*a*a*a"</span>, <span class="string">"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"</span>);
+    <span class="macro">matches!</span>(match8, <span class="string">"a*b[xyz]c*d"</span>, <span class="string">"abxcdbxcddd"</span>);
+    <span class="macro">matches!</span>(match9, <span class="string">"*.rs"</span>, <span class="string">".rs"</span>);
+    <span class="macro">matches!</span>(match10, <span class="string">"☃"</span>, <span class="string">"☃"</span>);
 
-    <span class="macro">matches!</span>(matchrec1, <span class="string">&quot;some/**/needle.txt&quot;</span>, <span class="string">&quot;some/needle.txt&quot;</span>);
-    <span class="macro">matches!</span>(matchrec2, <span class="string">&quot;some/**/needle.txt&quot;</span>, <span class="string">&quot;some/one/needle.txt&quot;</span>);
-    <span class="macro">matches!</span>(matchrec3, <span class="string">&quot;some/**/needle.txt&quot;</span>, <span class="string">&quot;some/one/two/needle.txt&quot;</span>);
-    <span class="macro">matches!</span>(matchrec4, <span class="string">&quot;some/**/needle.txt&quot;</span>, <span class="string">&quot;some/other/needle.txt&quot;</span>);
-    <span class="macro">matches!</span>(matchrec5, <span class="string">&quot;**&quot;</span>, <span class="string">&quot;abcde&quot;</span>);
-    <span class="macro">matches!</span>(matchrec6, <span class="string">&quot;**&quot;</span>, <span class="string">&quot;&quot;</span>);
-    <span class="macro">matches!</span>(matchrec7, <span class="string">&quot;**&quot;</span>, <span class="string">&quot;.asdf&quot;</span>);
-    <span class="macro">matches!</span>(matchrec8, <span class="string">&quot;**&quot;</span>, <span class="string">&quot;/x/.asdf&quot;</span>);
-    <span class="macro">matches!</span>(matchrec9, <span class="string">&quot;some/**/**/needle.txt&quot;</span>, <span class="string">&quot;some/needle.txt&quot;</span>);
-    <span class="macro">matches!</span>(matchrec10, <span class="string">&quot;some/**/**/needle.txt&quot;</span>, <span class="string">&quot;some/one/needle.txt&quot;</span>);
-    <span class="macro">matches!</span>(matchrec11, <span class="string">&quot;some/**/**/needle.txt&quot;</span>, <span class="string">&quot;some/one/two/needle.txt&quot;</span>);
-    <span class="macro">matches!</span>(matchrec12, <span class="string">&quot;some/**/**/needle.txt&quot;</span>, <span class="string">&quot;some/other/needle.txt&quot;</span>);
-    <span class="macro">matches!</span>(matchrec13, <span class="string">&quot;**/test&quot;</span>, <span class="string">&quot;one/two/test&quot;</span>);
-    <span class="macro">matches!</span>(matchrec14, <span class="string">&quot;**/test&quot;</span>, <span class="string">&quot;one/test&quot;</span>);
-    <span class="macro">matches!</span>(matchrec15, <span class="string">&quot;**/test&quot;</span>, <span class="string">&quot;test&quot;</span>);
-    <span class="macro">matches!</span>(matchrec16, <span class="string">&quot;/**/test&quot;</span>, <span class="string">&quot;/one/two/test&quot;</span>);
-    <span class="macro">matches!</span>(matchrec17, <span class="string">&quot;/**/test&quot;</span>, <span class="string">&quot;/one/test&quot;</span>);
-    <span class="macro">matches!</span>(matchrec18, <span class="string">&quot;/**/test&quot;</span>, <span class="string">&quot;/test&quot;</span>);
-    <span class="macro">matches!</span>(matchrec19, <span class="string">&quot;**/.*&quot;</span>, <span class="string">&quot;.abc&quot;</span>);
-    <span class="macro">matches!</span>(matchrec20, <span class="string">&quot;**/.*&quot;</span>, <span class="string">&quot;abc/.abc&quot;</span>);
-    <span class="macro">matches!</span>(matchrec21, <span class="string">&quot;**/foo/bar&quot;</span>, <span class="string">&quot;foo/bar&quot;</span>);
-    <span class="macro">matches!</span>(matchrec22, <span class="string">&quot;.*/**&quot;</span>, <span class="string">&quot;.abc/abc&quot;</span>);
-    <span class="macro">matches!</span>(matchrec23, <span class="string">&quot;test/**&quot;</span>, <span class="string">&quot;test/&quot;</span>);
-    <span class="macro">matches!</span>(matchrec24, <span class="string">&quot;test/**&quot;</span>, <span class="string">&quot;test/one&quot;</span>);
-    <span class="macro">matches!</span>(matchrec25, <span class="string">&quot;test/**&quot;</span>, <span class="string">&quot;test/one/two&quot;</span>);
-    <span class="macro">matches!</span>(matchrec26, <span class="string">&quot;some/*/needle.txt&quot;</span>, <span class="string">&quot;some/one/needle.txt&quot;</span>);
+    <span class="macro">matches!</span>(matchrec1, <span class="string">"some/**/needle.txt"</span>, <span class="string">"some/needle.txt"</span>);
+    <span class="macro">matches!</span>(matchrec2, <span class="string">"some/**/needle.txt"</span>, <span class="string">"some/one/needle.txt"</span>);
+    <span class="macro">matches!</span>(matchrec3, <span class="string">"some/**/needle.txt"</span>, <span class="string">"some/one/two/needle.txt"</span>);
+    <span class="macro">matches!</span>(matchrec4, <span class="string">"some/**/needle.txt"</span>, <span class="string">"some/other/needle.txt"</span>);
+    <span class="macro">matches!</span>(matchrec5, <span class="string">"**"</span>, <span class="string">"abcde"</span>);
+    <span class="macro">matches!</span>(matchrec6, <span class="string">"**"</span>, <span class="string">""</span>);
+    <span class="macro">matches!</span>(matchrec7, <span class="string">"**"</span>, <span class="string">".asdf"</span>);
+    <span class="macro">matches!</span>(matchrec8, <span class="string">"**"</span>, <span class="string">"/x/.asdf"</span>);
+    <span class="macro">matches!</span>(matchrec9, <span class="string">"some/**/**/needle.txt"</span>, <span class="string">"some/needle.txt"</span>);
+    <span class="macro">matches!</span>(matchrec10, <span class="string">"some/**/**/needle.txt"</span>, <span class="string">"some/one/needle.txt"</span>);
+    <span class="macro">matches!</span>(matchrec11, <span class="string">"some/**/**/needle.txt"</span>, <span class="string">"some/one/two/needle.txt"</span>);
+    <span class="macro">matches!</span>(matchrec12, <span class="string">"some/**/**/needle.txt"</span>, <span class="string">"some/other/needle.txt"</span>);
+    <span class="macro">matches!</span>(matchrec13, <span class="string">"**/test"</span>, <span class="string">"one/two/test"</span>);
+    <span class="macro">matches!</span>(matchrec14, <span class="string">"**/test"</span>, <span class="string">"one/test"</span>);
+    <span class="macro">matches!</span>(matchrec15, <span class="string">"**/test"</span>, <span class="string">"test"</span>);
+    <span class="macro">matches!</span>(matchrec16, <span class="string">"/**/test"</span>, <span class="string">"/one/two/test"</span>);
+    <span class="macro">matches!</span>(matchrec17, <span class="string">"/**/test"</span>, <span class="string">"/one/test"</span>);
+    <span class="macro">matches!</span>(matchrec18, <span class="string">"/**/test"</span>, <span class="string">"/test"</span>);
+    <span class="macro">matches!</span>(matchrec19, <span class="string">"**/.*"</span>, <span class="string">".abc"</span>);
+    <span class="macro">matches!</span>(matchrec20, <span class="string">"**/.*"</span>, <span class="string">"abc/.abc"</span>);
+    <span class="macro">matches!</span>(matchrec21, <span class="string">"**/foo/bar"</span>, <span class="string">"foo/bar"</span>);
+    <span class="macro">matches!</span>(matchrec22, <span class="string">".*/**"</span>, <span class="string">".abc/abc"</span>);
+    <span class="macro">matches!</span>(matchrec23, <span class="string">"test/**"</span>, <span class="string">"test/"</span>);
+    <span class="macro">matches!</span>(matchrec24, <span class="string">"test/**"</span>, <span class="string">"test/one"</span>);
+    <span class="macro">matches!</span>(matchrec25, <span class="string">"test/**"</span>, <span class="string">"test/one/two"</span>);
+    <span class="macro">matches!</span>(matchrec26, <span class="string">"some/*/needle.txt"</span>, <span class="string">"some/one/needle.txt"</span>);
 
-    <span class="macro">matches!</span>(matchrange1, <span class="string">&quot;a[0-9]b&quot;</span>, <span class="string">&quot;a0b&quot;</span>);
-    <span class="macro">matches!</span>(matchrange2, <span class="string">&quot;a[0-9]b&quot;</span>, <span class="string">&quot;a9b&quot;</span>);
-    <span class="macro">matches!</span>(matchrange3, <span class="string">&quot;a[!0-9]b&quot;</span>, <span class="string">&quot;a_b&quot;</span>);
-    <span class="macro">matches!</span>(matchrange4, <span class="string">&quot;[a-z123]&quot;</span>, <span class="string">&quot;1&quot;</span>);
-    <span class="macro">matches!</span>(matchrange5, <span class="string">&quot;[1a-z23]&quot;</span>, <span class="string">&quot;1&quot;</span>);
-    <span class="macro">matches!</span>(matchrange6, <span class="string">&quot;[123a-z]&quot;</span>, <span class="string">&quot;1&quot;</span>);
-    <span class="macro">matches!</span>(matchrange7, <span class="string">&quot;[abc-]&quot;</span>, <span class="string">&quot;-&quot;</span>);
-    <span class="macro">matches!</span>(matchrange8, <span class="string">&quot;[-abc]&quot;</span>, <span class="string">&quot;-&quot;</span>);
-    <span class="macro">matches!</span>(matchrange9, <span class="string">&quot;[-a-c]&quot;</span>, <span class="string">&quot;b&quot;</span>);
-    <span class="macro">matches!</span>(matchrange10, <span class="string">&quot;[a-c-]&quot;</span>, <span class="string">&quot;b&quot;</span>);
-    <span class="macro">matches!</span>(matchrange11, <span class="string">&quot;[-]&quot;</span>, <span class="string">&quot;-&quot;</span>);
-    <span class="macro">matches!</span>(matchrange12, <span class="string">&quot;a[^0-9]b&quot;</span>, <span class="string">&quot;a_b&quot;</span>);
+    <span class="macro">matches!</span>(matchrange1, <span class="string">"a[0-9]b"</span>, <span class="string">"a0b"</span>);
+    <span class="macro">matches!</span>(matchrange2, <span class="string">"a[0-9]b"</span>, <span class="string">"a9b"</span>);
+    <span class="macro">matches!</span>(matchrange3, <span class="string">"a[!0-9]b"</span>, <span class="string">"a_b"</span>);
+    <span class="macro">matches!</span>(matchrange4, <span class="string">"[a-z123]"</span>, <span class="string">"1"</span>);
+    <span class="macro">matches!</span>(matchrange5, <span class="string">"[1a-z23]"</span>, <span class="string">"1"</span>);
+    <span class="macro">matches!</span>(matchrange6, <span class="string">"[123a-z]"</span>, <span class="string">"1"</span>);
+    <span class="macro">matches!</span>(matchrange7, <span class="string">"[abc-]"</span>, <span class="string">"-"</span>);
+    <span class="macro">matches!</span>(matchrange8, <span class="string">"[-abc]"</span>, <span class="string">"-"</span>);
+    <span class="macro">matches!</span>(matchrange9, <span class="string">"[-a-c]"</span>, <span class="string">"b"</span>);
+    <span class="macro">matches!</span>(matchrange10, <span class="string">"[a-c-]"</span>, <span class="string">"b"</span>);
+    <span class="macro">matches!</span>(matchrange11, <span class="string">"[-]"</span>, <span class="string">"-"</span>);
+    <span class="macro">matches!</span>(matchrange12, <span class="string">"a[^0-9]b"</span>, <span class="string">"a_b"</span>);
 
-    <span class="macro">matches!</span>(matchpat1, <span class="string">&quot;*hello.txt&quot;</span>, <span class="string">&quot;hello.txt&quot;</span>);
-    <span class="macro">matches!</span>(matchpat2, <span class="string">&quot;*hello.txt&quot;</span>, <span class="string">&quot;gareth_says_hello.txt&quot;</span>);
-    <span class="macro">matches!</span>(matchpat3, <span class="string">&quot;*hello.txt&quot;</span>, <span class="string">&quot;some/path/to/hello.txt&quot;</span>);
-    <span class="macro">matches!</span>(matchpat4, <span class="string">&quot;*hello.txt&quot;</span>, <span class="string">&quot;some\\path\\to\\hello.txt&quot;</span>);
-    <span class="macro">matches!</span>(matchpat5, <span class="string">&quot;*hello.txt&quot;</span>, <span class="string">&quot;/an/absolute/path/to/hello.txt&quot;</span>);
-    <span class="macro">matches!</span>(matchpat6, <span class="string">&quot;*some/path/to/hello.txt&quot;</span>, <span class="string">&quot;some/path/to/hello.txt&quot;</span>);
+    <span class="macro">matches!</span>(matchpat1, <span class="string">"*hello.txt"</span>, <span class="string">"hello.txt"</span>);
+    <span class="macro">matches!</span>(matchpat2, <span class="string">"*hello.txt"</span>, <span class="string">"gareth_says_hello.txt"</span>);
+    <span class="macro">matches!</span>(matchpat3, <span class="string">"*hello.txt"</span>, <span class="string">"some/path/to/hello.txt"</span>);
+    <span class="macro">matches!</span>(matchpat4, <span class="string">"*hello.txt"</span>, <span class="string">"some\\path\\to\\hello.txt"</span>);
+    <span class="macro">matches!</span>(matchpat5, <span class="string">"*hello.txt"</span>, <span class="string">"/an/absolute/path/to/hello.txt"</span>);
+    <span class="macro">matches!</span>(matchpat6, <span class="string">"*some/path/to/hello.txt"</span>, <span class="string">"some/path/to/hello.txt"</span>);
     <span class="macro">matches!</span>(
         matchpat7,
-        <span class="string">&quot;*some/path/to/hello.txt&quot;</span>,
-        <span class="string">&quot;a/bigger/some/path/to/hello.txt&quot;
+        <span class="string">"*some/path/to/hello.txt"</span>,
+        <span class="string">"a/bigger/some/path/to/hello.txt"
     </span>);
 
-    <span class="macro">matches!</span>(matchescape, <span class="string">&quot;_[[]_[]]_[?]_[*]_!_&quot;</span>, <span class="string">&quot;_[_]_?_*_!_&quot;</span>);
+    <span class="macro">matches!</span>(matchescape, <span class="string">"_[[]_[]]_[?]_[*]_!_"</span>, <span class="string">"_[_]_?_*_!_"</span>);
 
-    <span class="macro">matches!</span>(matchcasei1, <span class="string">&quot;aBcDeFg&quot;</span>, <span class="string">&quot;aBcDeFg&quot;</span>, CASEI);
-    <span class="macro">matches!</span>(matchcasei2, <span class="string">&quot;aBcDeFg&quot;</span>, <span class="string">&quot;abcdefg&quot;</span>, CASEI);
-    <span class="macro">matches!</span>(matchcasei3, <span class="string">&quot;aBcDeFg&quot;</span>, <span class="string">&quot;ABCDEFG&quot;</span>, CASEI);
-    <span class="macro">matches!</span>(matchcasei4, <span class="string">&quot;aBcDeFg&quot;</span>, <span class="string">&quot;AbCdEfG&quot;</span>, CASEI);
+    <span class="macro">matches!</span>(matchcasei1, <span class="string">"aBcDeFg"</span>, <span class="string">"aBcDeFg"</span>, CASEI);
+    <span class="macro">matches!</span>(matchcasei2, <span class="string">"aBcDeFg"</span>, <span class="string">"abcdefg"</span>, CASEI);
+    <span class="macro">matches!</span>(matchcasei3, <span class="string">"aBcDeFg"</span>, <span class="string">"ABCDEFG"</span>, CASEI);
+    <span class="macro">matches!</span>(matchcasei4, <span class="string">"aBcDeFg"</span>, <span class="string">"AbCdEfG"</span>, CASEI);
 
-    <span class="macro">matches!</span>(matchalt1, <span class="string">&quot;a,b&quot;</span>, <span class="string">&quot;a,b&quot;</span>);
-    <span class="macro">matches!</span>(matchalt2, <span class="string">&quot;,&quot;</span>, <span class="string">&quot;,&quot;</span>);
-    <span class="macro">matches!</span>(matchalt3, <span class="string">&quot;{a,b}&quot;</span>, <span class="string">&quot;a&quot;</span>);
-    <span class="macro">matches!</span>(matchalt4, <span class="string">&quot;{a,b}&quot;</span>, <span class="string">&quot;b&quot;</span>);
-    <span class="macro">matches!</span>(matchalt5, <span class="string">&quot;{**/src/**,foo}&quot;</span>, <span class="string">&quot;abc/src/bar&quot;</span>);
-    <span class="macro">matches!</span>(matchalt6, <span class="string">&quot;{**/src/**,foo}&quot;</span>, <span class="string">&quot;foo&quot;</span>);
-    <span class="macro">matches!</span>(matchalt7, <span class="string">&quot;{[}],foo}&quot;</span>, <span class="string">&quot;}&quot;</span>);
-    <span class="macro">matches!</span>(matchalt8, <span class="string">&quot;{foo}&quot;</span>, <span class="string">&quot;foo&quot;</span>);
-    <span class="macro">matches!</span>(matchalt9, <span class="string">&quot;{}&quot;</span>, <span class="string">&quot;&quot;</span>);
-    <span class="macro">matches!</span>(matchalt10, <span class="string">&quot;{,}&quot;</span>, <span class="string">&quot;&quot;</span>);
-    <span class="macro">matches!</span>(matchalt11, <span class="string">&quot;{*.foo,*.bar,*.wat}&quot;</span>, <span class="string">&quot;test.foo&quot;</span>);
-    <span class="macro">matches!</span>(matchalt12, <span class="string">&quot;{*.foo,*.bar,*.wat}&quot;</span>, <span class="string">&quot;test.bar&quot;</span>);
-    <span class="macro">matches!</span>(matchalt13, <span class="string">&quot;{*.foo,*.bar,*.wat}&quot;</span>, <span class="string">&quot;test.wat&quot;</span>);
-    <span class="macro">matches!</span>(matchalt14, <span class="string">&quot;foo{,.txt}&quot;</span>, <span class="string">&quot;foo.txt&quot;</span>);
-    <span class="macro">nmatches!</span>(matchalt15, <span class="string">&quot;foo{,.txt}&quot;</span>, <span class="string">&quot;foo&quot;</span>);
-    <span class="macro">matches!</span>(matchalt16, <span class="string">&quot;foo{,.txt}&quot;</span>, <span class="string">&quot;foo&quot;</span>, EALTRE);
+    <span class="macro">matches!</span>(matchalt1, <span class="string">"a,b"</span>, <span class="string">"a,b"</span>);
+    <span class="macro">matches!</span>(matchalt2, <span class="string">","</span>, <span class="string">","</span>);
+    <span class="macro">matches!</span>(matchalt3, <span class="string">"{a,b}"</span>, <span class="string">"a"</span>);
+    <span class="macro">matches!</span>(matchalt4, <span class="string">"{a,b}"</span>, <span class="string">"b"</span>);
+    <span class="macro">matches!</span>(matchalt5, <span class="string">"{**/src/**,foo}"</span>, <span class="string">"abc/src/bar"</span>);
+    <span class="macro">matches!</span>(matchalt6, <span class="string">"{**/src/**,foo}"</span>, <span class="string">"foo"</span>);
+    <span class="macro">matches!</span>(matchalt7, <span class="string">"{[}],foo}"</span>, <span class="string">"}"</span>);
+    <span class="macro">matches!</span>(matchalt8, <span class="string">"{foo}"</span>, <span class="string">"foo"</span>);
+    <span class="macro">matches!</span>(matchalt9, <span class="string">"{}"</span>, <span class="string">""</span>);
+    <span class="macro">matches!</span>(matchalt10, <span class="string">"{,}"</span>, <span class="string">""</span>);
+    <span class="macro">matches!</span>(matchalt11, <span class="string">"{*.foo,*.bar,*.wat}"</span>, <span class="string">"test.foo"</span>);
+    <span class="macro">matches!</span>(matchalt12, <span class="string">"{*.foo,*.bar,*.wat}"</span>, <span class="string">"test.bar"</span>);
+    <span class="macro">matches!</span>(matchalt13, <span class="string">"{*.foo,*.bar,*.wat}"</span>, <span class="string">"test.wat"</span>);
+    <span class="macro">matches!</span>(matchalt14, <span class="string">"foo{,.txt}"</span>, <span class="string">"foo.txt"</span>);
+    <span class="macro">nmatches!</span>(matchalt15, <span class="string">"foo{,.txt}"</span>, <span class="string">"foo"</span>);
+    <span class="macro">matches!</span>(matchalt16, <span class="string">"foo{,.txt}"</span>, <span class="string">"foo"</span>, EALTRE);
 
-    <span class="macro">matches!</span>(matchslash1, <span class="string">&quot;abc/def&quot;</span>, <span class="string">&quot;abc/def&quot;</span>, SLASHLIT);
+    <span class="macro">matches!</span>(matchslash1, <span class="string">"abc/def"</span>, <span class="string">"abc/def"</span>, SLASHLIT);
     <span class="attr">#[cfg(unix)]
-    </span><span class="macro">nmatches!</span>(matchslash2, <span class="string">&quot;abc?def&quot;</span>, <span class="string">&quot;abc/def&quot;</span>, SLASHLIT);
+    </span><span class="macro">nmatches!</span>(matchslash2, <span class="string">"abc?def"</span>, <span class="string">"abc/def"</span>, SLASHLIT);
     <span class="attr">#[cfg(not(unix))]
-    </span><span class="macro">nmatches!</span>(matchslash2, <span class="string">&quot;abc?def&quot;</span>, <span class="string">&quot;abc\\def&quot;</span>, SLASHLIT);
-    <span class="macro">nmatches!</span>(matchslash3, <span class="string">&quot;abc*def&quot;</span>, <span class="string">&quot;abc/def&quot;</span>, SLASHLIT);
-    <span class="macro">matches!</span>(matchslash4, <span class="string">&quot;abc[/]def&quot;</span>, <span class="string">&quot;abc/def&quot;</span>, SLASHLIT); <span class="comment">// differs
+    </span><span class="macro">nmatches!</span>(matchslash2, <span class="string">"abc?def"</span>, <span class="string">"abc\\def"</span>, SLASHLIT);
+    <span class="macro">nmatches!</span>(matchslash3, <span class="string">"abc*def"</span>, <span class="string">"abc/def"</span>, SLASHLIT);
+    <span class="macro">matches!</span>(matchslash4, <span class="string">"abc[/]def"</span>, <span class="string">"abc/def"</span>, SLASHLIT); <span class="comment">// differs
     </span><span class="attr">#[cfg(unix)]
-    </span><span class="macro">nmatches!</span>(matchslash5, <span class="string">&quot;abc\\def&quot;</span>, <span class="string">&quot;abc/def&quot;</span>, SLASHLIT);
+    </span><span class="macro">nmatches!</span>(matchslash5, <span class="string">"abc\\def"</span>, <span class="string">"abc/def"</span>, SLASHLIT);
     <span class="attr">#[cfg(not(unix))]
-    </span><span class="macro">matches!</span>(matchslash5, <span class="string">&quot;abc\\def&quot;</span>, <span class="string">&quot;abc/def&quot;</span>, SLASHLIT);
+    </span><span class="macro">matches!</span>(matchslash5, <span class="string">"abc\\def"</span>, <span class="string">"abc/def"</span>, SLASHLIT);
 
-    <span class="macro">matches!</span>(matchbackslash1, <span class="string">&quot;\\[&quot;</span>, <span class="string">&quot;[&quot;</span>, BSESC);
-    <span class="macro">matches!</span>(matchbackslash2, <span class="string">&quot;\\?&quot;</span>, <span class="string">&quot;?&quot;</span>, BSESC);
-    <span class="macro">matches!</span>(matchbackslash3, <span class="string">&quot;\\*&quot;</span>, <span class="string">&quot;*&quot;</span>, BSESC);
-    <span class="macro">matches!</span>(matchbackslash4, <span class="string">&quot;\\[a-z]&quot;</span>, <span class="string">&quot;\\a&quot;</span>, NOBSESC);
-    <span class="macro">matches!</span>(matchbackslash5, <span class="string">&quot;\\?&quot;</span>, <span class="string">&quot;\\a&quot;</span>, NOBSESC);
-    <span class="macro">matches!</span>(matchbackslash6, <span class="string">&quot;\\*&quot;</span>, <span class="string">&quot;\\\\&quot;</span>, NOBSESC);
+    <span class="macro">matches!</span>(matchbackslash1, <span class="string">"\\["</span>, <span class="string">"["</span>, BSESC);
+    <span class="macro">matches!</span>(matchbackslash2, <span class="string">"\\?"</span>, <span class="string">"?"</span>, BSESC);
+    <span class="macro">matches!</span>(matchbackslash3, <span class="string">"\\*"</span>, <span class="string">"*"</span>, BSESC);
+    <span class="macro">matches!</span>(matchbackslash4, <span class="string">"\\[a-z]"</span>, <span class="string">"\\a"</span>, NOBSESC);
+    <span class="macro">matches!</span>(matchbackslash5, <span class="string">"\\?"</span>, <span class="string">"\\a"</span>, NOBSESC);
+    <span class="macro">matches!</span>(matchbackslash6, <span class="string">"\\*"</span>, <span class="string">"\\\\"</span>, NOBSESC);
     <span class="attr">#[cfg(unix)]
-    </span><span class="macro">matches!</span>(matchbackslash7, <span class="string">&quot;\\a&quot;</span>, <span class="string">&quot;a&quot;</span>);
+    </span><span class="macro">matches!</span>(matchbackslash7, <span class="string">"\\a"</span>, <span class="string">"a"</span>);
     <span class="attr">#[cfg(not(unix))]
-    </span><span class="macro">matches!</span>(matchbackslash8, <span class="string">&quot;\\a&quot;</span>, <span class="string">&quot;/a&quot;</span>);
+    </span><span class="macro">matches!</span>(matchbackslash8, <span class="string">"\\a"</span>, <span class="string">"/a"</span>);
 
-    <span class="macro">nmatches!</span>(matchnot1, <span class="string">&quot;a*b*c&quot;</span>, <span class="string">&quot;abcd&quot;</span>);
-    <span class="macro">nmatches!</span>(matchnot2, <span class="string">&quot;abc*abc*abc&quot;</span>, <span class="string">&quot;abcabcabcabcabcabcabca&quot;</span>);
-    <span class="macro">nmatches!</span>(matchnot3, <span class="string">&quot;some/**/needle.txt&quot;</span>, <span class="string">&quot;some/other/notthis.txt&quot;</span>);
-    <span class="macro">nmatches!</span>(matchnot4, <span class="string">&quot;some/**/**/needle.txt&quot;</span>, <span class="string">&quot;some/other/notthis.txt&quot;</span>);
-    <span class="macro">nmatches!</span>(matchnot5, <span class="string">&quot;/**/test&quot;</span>, <span class="string">&quot;test&quot;</span>);
-    <span class="macro">nmatches!</span>(matchnot6, <span class="string">&quot;/**/test&quot;</span>, <span class="string">&quot;/one/notthis&quot;</span>);
-    <span class="macro">nmatches!</span>(matchnot7, <span class="string">&quot;/**/test&quot;</span>, <span class="string">&quot;/notthis&quot;</span>);
-    <span class="macro">nmatches!</span>(matchnot8, <span class="string">&quot;**/.*&quot;</span>, <span class="string">&quot;ab.c&quot;</span>);
-    <span class="macro">nmatches!</span>(matchnot9, <span class="string">&quot;**/.*&quot;</span>, <span class="string">&quot;abc/ab.c&quot;</span>);
-    <span class="macro">nmatches!</span>(matchnot10, <span class="string">&quot;.*/**&quot;</span>, <span class="string">&quot;a.bc&quot;</span>);
-    <span class="macro">nmatches!</span>(matchnot11, <span class="string">&quot;.*/**&quot;</span>, <span class="string">&quot;abc/a.bc&quot;</span>);
-    <span class="macro">nmatches!</span>(matchnot12, <span class="string">&quot;a[0-9]b&quot;</span>, <span class="string">&quot;a_b&quot;</span>);
-    <span class="macro">nmatches!</span>(matchnot13, <span class="string">&quot;a[!0-9]b&quot;</span>, <span class="string">&quot;a0b&quot;</span>);
-    <span class="macro">nmatches!</span>(matchnot14, <span class="string">&quot;a[!0-9]b&quot;</span>, <span class="string">&quot;a9b&quot;</span>);
-    <span class="macro">nmatches!</span>(matchnot15, <span class="string">&quot;[!-]&quot;</span>, <span class="string">&quot;-&quot;</span>);
-    <span class="macro">nmatches!</span>(matchnot16, <span class="string">&quot;*hello.txt&quot;</span>, <span class="string">&quot;hello.txt-and-then-some&quot;</span>);
-    <span class="macro">nmatches!</span>(matchnot17, <span class="string">&quot;*hello.txt&quot;</span>, <span class="string">&quot;goodbye.txt&quot;</span>);
+    <span class="macro">nmatches!</span>(matchnot1, <span class="string">"a*b*c"</span>, <span class="string">"abcd"</span>);
+    <span class="macro">nmatches!</span>(matchnot2, <span class="string">"abc*abc*abc"</span>, <span class="string">"abcabcabcabcabcabcabca"</span>);
+    <span class="macro">nmatches!</span>(matchnot3, <span class="string">"some/**/needle.txt"</span>, <span class="string">"some/other/notthis.txt"</span>);
+    <span class="macro">nmatches!</span>(matchnot4, <span class="string">"some/**/**/needle.txt"</span>, <span class="string">"some/other/notthis.txt"</span>);
+    <span class="macro">nmatches!</span>(matchnot5, <span class="string">"/**/test"</span>, <span class="string">"test"</span>);
+    <span class="macro">nmatches!</span>(matchnot6, <span class="string">"/**/test"</span>, <span class="string">"/one/notthis"</span>);
+    <span class="macro">nmatches!</span>(matchnot7, <span class="string">"/**/test"</span>, <span class="string">"/notthis"</span>);
+    <span class="macro">nmatches!</span>(matchnot8, <span class="string">"**/.*"</span>, <span class="string">"ab.c"</span>);
+    <span class="macro">nmatches!</span>(matchnot9, <span class="string">"**/.*"</span>, <span class="string">"abc/ab.c"</span>);
+    <span class="macro">nmatches!</span>(matchnot10, <span class="string">".*/**"</span>, <span class="string">"a.bc"</span>);
+    <span class="macro">nmatches!</span>(matchnot11, <span class="string">".*/**"</span>, <span class="string">"abc/a.bc"</span>);
+    <span class="macro">nmatches!</span>(matchnot12, <span class="string">"a[0-9]b"</span>, <span class="string">"a_b"</span>);
+    <span class="macro">nmatches!</span>(matchnot13, <span class="string">"a[!0-9]b"</span>, <span class="string">"a0b"</span>);
+    <span class="macro">nmatches!</span>(matchnot14, <span class="string">"a[!0-9]b"</span>, <span class="string">"a9b"</span>);
+    <span class="macro">nmatches!</span>(matchnot15, <span class="string">"[!-]"</span>, <span class="string">"-"</span>);
+    <span class="macro">nmatches!</span>(matchnot16, <span class="string">"*hello.txt"</span>, <span class="string">"hello.txt-and-then-some"</span>);
+    <span class="macro">nmatches!</span>(matchnot17, <span class="string">"*hello.txt"</span>, <span class="string">"goodbye.txt"</span>);
     <span class="macro">nmatches!</span>(
         matchnot18,
-        <span class="string">&quot;*some/path/to/hello.txt&quot;</span>,
-        <span class="string">&quot;some/path/to/hello.txt-and-then-some&quot;
+        <span class="string">"*some/path/to/hello.txt"</span>,
+        <span class="string">"some/path/to/hello.txt-and-then-some"
     </span>);
     <span class="macro">nmatches!</span>(
         matchnot19,
-        <span class="string">&quot;*some/path/to/hello.txt&quot;</span>,
-        <span class="string">&quot;some/other/path/to/hello.txt&quot;
+        <span class="string">"*some/path/to/hello.txt"</span>,
+        <span class="string">"some/other/path/to/hello.txt"
     </span>);
-    <span class="macro">nmatches!</span>(matchnot20, <span class="string">&quot;a&quot;</span>, <span class="string">&quot;foo/a&quot;</span>);
-    <span class="macro">nmatches!</span>(matchnot21, <span class="string">&quot;./foo&quot;</span>, <span class="string">&quot;foo&quot;</span>);
-    <span class="macro">nmatches!</span>(matchnot22, <span class="string">&quot;**/foo&quot;</span>, <span class="string">&quot;foofoo&quot;</span>);
-    <span class="macro">nmatches!</span>(matchnot23, <span class="string">&quot;**/foo/bar&quot;</span>, <span class="string">&quot;foofoo/bar&quot;</span>);
-    <span class="macro">nmatches!</span>(matchnot24, <span class="string">&quot;/*.c&quot;</span>, <span class="string">&quot;mozilla-sha1/sha1.c&quot;</span>);
-    <span class="macro">nmatches!</span>(matchnot25, <span class="string">&quot;*.c&quot;</span>, <span class="string">&quot;mozilla-sha1/sha1.c&quot;</span>, SLASHLIT);
+    <span class="macro">nmatches!</span>(matchnot20, <span class="string">"a"</span>, <span class="string">"foo/a"</span>);
+    <span class="macro">nmatches!</span>(matchnot21, <span class="string">"./foo"</span>, <span class="string">"foo"</span>);
+    <span class="macro">nmatches!</span>(matchnot22, <span class="string">"**/foo"</span>, <span class="string">"foofoo"</span>);
+    <span class="macro">nmatches!</span>(matchnot23, <span class="string">"**/foo/bar"</span>, <span class="string">"foofoo/bar"</span>);
+    <span class="macro">nmatches!</span>(matchnot24, <span class="string">"/*.c"</span>, <span class="string">"mozilla-sha1/sha1.c"</span>);
+    <span class="macro">nmatches!</span>(matchnot25, <span class="string">"*.c"</span>, <span class="string">"mozilla-sha1/sha1.c"</span>, SLASHLIT);
     <span class="macro">nmatches!</span>(
         matchnot26,
-        <span class="string">&quot;**/m4/ltoptions.m4&quot;</span>,
-        <span class="string">&quot;csharp/src/packages/repositories.config&quot;</span>,
+        <span class="string">"**/m4/ltoptions.m4"</span>,
+        <span class="string">"csharp/src/packages/repositories.config"</span>,
         SLASHLIT
     );
-    <span class="macro">nmatches!</span>(matchnot27, <span class="string">&quot;a[^0-9]b&quot;</span>, <span class="string">&quot;a0b&quot;</span>);
-    <span class="macro">nmatches!</span>(matchnot28, <span class="string">&quot;a[^0-9]b&quot;</span>, <span class="string">&quot;a9b&quot;</span>);
-    <span class="macro">nmatches!</span>(matchnot29, <span class="string">&quot;[^-]&quot;</span>, <span class="string">&quot;-&quot;</span>);
-    <span class="macro">nmatches!</span>(matchnot30, <span class="string">&quot;some/*/needle.txt&quot;</span>, <span class="string">&quot;some/needle.txt&quot;</span>);
+    <span class="macro">nmatches!</span>(matchnot27, <span class="string">"a[^0-9]b"</span>, <span class="string">"a0b"</span>);
+    <span class="macro">nmatches!</span>(matchnot28, <span class="string">"a[^0-9]b"</span>, <span class="string">"a9b"</span>);
+    <span class="macro">nmatches!</span>(matchnot29, <span class="string">"[^-]"</span>, <span class="string">"-"</span>);
+    <span class="macro">nmatches!</span>(matchnot30, <span class="string">"some/*/needle.txt"</span>, <span class="string">"some/needle.txt"</span>);
     <span class="macro">nmatches!</span>(
         matchrec31,
-        <span class="string">&quot;some/*/needle.txt&quot;</span>,
-        <span class="string">&quot;some/one/two/needle.txt&quot;</span>,
+        <span class="string">"some/*/needle.txt"</span>,
+        <span class="string">"some/one/two/needle.txt"</span>,
         SLASHLIT
     );
     <span class="macro">nmatches!</span>(
         matchrec32,
-        <span class="string">&quot;some/*/needle.txt&quot;</span>,
-        <span class="string">&quot;some/one/two/three/needle.txt&quot;</span>,
+        <span class="string">"some/*/needle.txt"</span>,
+        <span class="string">"some/one/two/three/needle.txt"</span>,
         SLASHLIT
     );
-    <span class="macro">nmatches!</span>(matchrec33, <span class="string">&quot;.*/**&quot;</span>, <span class="string">&quot;.abc&quot;</span>);
-    <span class="macro">nmatches!</span>(matchrec34, <span class="string">&quot;foo/**&quot;</span>, <span class="string">&quot;foo&quot;</span>);
+    <span class="macro">nmatches!</span>(matchrec33, <span class="string">".*/**"</span>, <span class="string">".abc"</span>);
+    <span class="macro">nmatches!</span>(matchrec34, <span class="string">"foo/**"</span>, <span class="string">"foo"</span>);
 
     <span class="macro">macro_rules! </span>extract {
         (<span class="macro-nonterminal">$which</span>:ident, <span class="macro-nonterminal">$name</span>:ident, <span class="macro-nonterminal">$pat</span>:expr, <span class="macro-nonterminal">$expect</span>:expr) =&gt; {
@@ -3039,71 +3040,71 @@
         ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; { <span class="macro">extract!</span>(basename_literal, $(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>); }
     }
 
-    <span class="macro">literal!</span>(extract_lit1, <span class="string">&quot;foo&quot;</span>, <span class="prelude-val">Some</span>(s(<span class="string">&quot;foo&quot;</span>)));
-    <span class="macro">literal!</span>(extract_lit2, <span class="string">&quot;foo&quot;</span>, <span class="prelude-val">None</span>, CASEI);
-    <span class="macro">literal!</span>(extract_lit3, <span class="string">&quot;/foo&quot;</span>, <span class="prelude-val">Some</span>(s(<span class="string">&quot;/foo&quot;</span>)));
-    <span class="macro">literal!</span>(extract_lit4, <span class="string">&quot;/foo/&quot;</span>, <span class="prelude-val">Some</span>(s(<span class="string">&quot;/foo/&quot;</span>)));
-    <span class="macro">literal!</span>(extract_lit5, <span class="string">&quot;/foo/bar&quot;</span>, <span class="prelude-val">Some</span>(s(<span class="string">&quot;/foo/bar&quot;</span>)));
-    <span class="macro">literal!</span>(extract_lit6, <span class="string">&quot;*.foo&quot;</span>, <span class="prelude-val">None</span>);
-    <span class="macro">literal!</span>(extract_lit7, <span class="string">&quot;foo/bar&quot;</span>, <span class="prelude-val">Some</span>(s(<span class="string">&quot;foo/bar&quot;</span>)));
-    <span class="macro">literal!</span>(extract_lit8, <span class="string">&quot;**/foo/bar&quot;</span>, <span class="prelude-val">None</span>);
+    <span class="macro">literal!</span>(extract_lit1, <span class="string">"foo"</span>, <span class="prelude-val">Some</span>(s(<span class="string">"foo"</span>)));
+    <span class="macro">literal!</span>(extract_lit2, <span class="string">"foo"</span>, <span class="prelude-val">None</span>, CASEI);
+    <span class="macro">literal!</span>(extract_lit3, <span class="string">"/foo"</span>, <span class="prelude-val">Some</span>(s(<span class="string">"/foo"</span>)));
+    <span class="macro">literal!</span>(extract_lit4, <span class="string">"/foo/"</span>, <span class="prelude-val">Some</span>(s(<span class="string">"/foo/"</span>)));
+    <span class="macro">literal!</span>(extract_lit5, <span class="string">"/foo/bar"</span>, <span class="prelude-val">Some</span>(s(<span class="string">"/foo/bar"</span>)));
+    <span class="macro">literal!</span>(extract_lit6, <span class="string">"*.foo"</span>, <span class="prelude-val">None</span>);
+    <span class="macro">literal!</span>(extract_lit7, <span class="string">"foo/bar"</span>, <span class="prelude-val">Some</span>(s(<span class="string">"foo/bar"</span>)));
+    <span class="macro">literal!</span>(extract_lit8, <span class="string">"**/foo/bar"</span>, <span class="prelude-val">None</span>);
 
     <span class="macro">basetokens!</span>(
         extract_basetoks1,
-        <span class="string">&quot;**/foo&quot;</span>,
-        <span class="prelude-val">Some</span>(<span class="kw-2">&amp;*</span><span class="macro">vec!</span>[Literal(<span class="string">&#39;f&#39;</span>), Literal(<span class="string">&#39;o&#39;</span>), Literal(<span class="string">&#39;o&#39;</span>),])
+        <span class="string">"**/foo"</span>,
+        <span class="prelude-val">Some</span>(<span class="kw-2">&amp;*</span><span class="macro">vec!</span>[Literal(<span class="string">'f'</span>), Literal(<span class="string">'o'</span>), Literal(<span class="string">'o'</span>),])
     );
-    <span class="macro">basetokens!</span>(extract_basetoks2, <span class="string">&quot;**/foo&quot;</span>, <span class="prelude-val">None</span>, CASEI);
+    <span class="macro">basetokens!</span>(extract_basetoks2, <span class="string">"**/foo"</span>, <span class="prelude-val">None</span>, CASEI);
     <span class="macro">basetokens!</span>(
         extract_basetoks3,
-        <span class="string">&quot;**/foo&quot;</span>,
-        <span class="prelude-val">Some</span>(<span class="kw-2">&amp;*</span><span class="macro">vec!</span>[Literal(<span class="string">&#39;f&#39;</span>), Literal(<span class="string">&#39;o&#39;</span>), Literal(<span class="string">&#39;o&#39;</span>),]),
+        <span class="string">"**/foo"</span>,
+        <span class="prelude-val">Some</span>(<span class="kw-2">&amp;*</span><span class="macro">vec!</span>[Literal(<span class="string">'f'</span>), Literal(<span class="string">'o'</span>), Literal(<span class="string">'o'</span>),]),
         SLASHLIT
     );
-    <span class="macro">basetokens!</span>(extract_basetoks4, <span class="string">&quot;*foo&quot;</span>, <span class="prelude-val">None</span>, SLASHLIT);
-    <span class="macro">basetokens!</span>(extract_basetoks5, <span class="string">&quot;*foo&quot;</span>, <span class="prelude-val">None</span>);
-    <span class="macro">basetokens!</span>(extract_basetoks6, <span class="string">&quot;**/fo*o&quot;</span>, <span class="prelude-val">None</span>);
+    <span class="macro">basetokens!</span>(extract_basetoks4, <span class="string">"*foo"</span>, <span class="prelude-val">None</span>, SLASHLIT);
+    <span class="macro">basetokens!</span>(extract_basetoks5, <span class="string">"*foo"</span>, <span class="prelude-val">None</span>);
+    <span class="macro">basetokens!</span>(extract_basetoks6, <span class="string">"**/fo*o"</span>, <span class="prelude-val">None</span>);
     <span class="macro">basetokens!</span>(
         extract_basetoks7,
-        <span class="string">&quot;**/fo*o&quot;</span>,
-        <span class="prelude-val">Some</span>(<span class="kw-2">&amp;*</span><span class="macro">vec!</span>[Literal(<span class="string">&#39;f&#39;</span>), Literal(<span class="string">&#39;o&#39;</span>), ZeroOrMore, Literal(<span class="string">&#39;o&#39;</span>),]),
+        <span class="string">"**/fo*o"</span>,
+        <span class="prelude-val">Some</span>(<span class="kw-2">&amp;*</span><span class="macro">vec!</span>[Literal(<span class="string">'f'</span>), Literal(<span class="string">'o'</span>), ZeroOrMore, Literal(<span class="string">'o'</span>),]),
         SLASHLIT
     );
 
-    <span class="macro">ext!</span>(extract_ext1, <span class="string">&quot;**/*.rs&quot;</span>, <span class="prelude-val">Some</span>(s(<span class="string">&quot;.rs&quot;</span>)));
-    <span class="macro">ext!</span>(extract_ext2, <span class="string">&quot;**/*.rs.bak&quot;</span>, <span class="prelude-val">None</span>);
-    <span class="macro">ext!</span>(extract_ext3, <span class="string">&quot;*.rs&quot;</span>, <span class="prelude-val">Some</span>(s(<span class="string">&quot;.rs&quot;</span>)));
-    <span class="macro">ext!</span>(extract_ext4, <span class="string">&quot;a*.rs&quot;</span>, <span class="prelude-val">None</span>);
-    <span class="macro">ext!</span>(extract_ext5, <span class="string">&quot;/*.c&quot;</span>, <span class="prelude-val">None</span>);
-    <span class="macro">ext!</span>(extract_ext6, <span class="string">&quot;*.c&quot;</span>, <span class="prelude-val">None</span>, SLASHLIT);
-    <span class="macro">ext!</span>(extract_ext7, <span class="string">&quot;*.c&quot;</span>, <span class="prelude-val">Some</span>(s(<span class="string">&quot;.c&quot;</span>)));
+    <span class="macro">ext!</span>(extract_ext1, <span class="string">"**/*.rs"</span>, <span class="prelude-val">Some</span>(s(<span class="string">".rs"</span>)));
+    <span class="macro">ext!</span>(extract_ext2, <span class="string">"**/*.rs.bak"</span>, <span class="prelude-val">None</span>);
+    <span class="macro">ext!</span>(extract_ext3, <span class="string">"*.rs"</span>, <span class="prelude-val">Some</span>(s(<span class="string">".rs"</span>)));
+    <span class="macro">ext!</span>(extract_ext4, <span class="string">"a*.rs"</span>, <span class="prelude-val">None</span>);
+    <span class="macro">ext!</span>(extract_ext5, <span class="string">"/*.c"</span>, <span class="prelude-val">None</span>);
+    <span class="macro">ext!</span>(extract_ext6, <span class="string">"*.c"</span>, <span class="prelude-val">None</span>, SLASHLIT);
+    <span class="macro">ext!</span>(extract_ext7, <span class="string">"*.c"</span>, <span class="prelude-val">Some</span>(s(<span class="string">".c"</span>)));
 
-    <span class="macro">required_ext!</span>(extract_req_ext1, <span class="string">&quot;*.rs&quot;</span>, <span class="prelude-val">Some</span>(s(<span class="string">&quot;.rs&quot;</span>)));
-    <span class="macro">required_ext!</span>(extract_req_ext2, <span class="string">&quot;/foo/bar/*.rs&quot;</span>, <span class="prelude-val">Some</span>(s(<span class="string">&quot;.rs&quot;</span>)));
-    <span class="macro">required_ext!</span>(extract_req_ext3, <span class="string">&quot;/foo/bar/*.rs&quot;</span>, <span class="prelude-val">Some</span>(s(<span class="string">&quot;.rs&quot;</span>)));
-    <span class="macro">required_ext!</span>(extract_req_ext4, <span class="string">&quot;/foo/bar/.rs&quot;</span>, <span class="prelude-val">Some</span>(s(<span class="string">&quot;.rs&quot;</span>)));
-    <span class="macro">required_ext!</span>(extract_req_ext5, <span class="string">&quot;.rs&quot;</span>, <span class="prelude-val">Some</span>(s(<span class="string">&quot;.rs&quot;</span>)));
-    <span class="macro">required_ext!</span>(extract_req_ext6, <span class="string">&quot;./rs&quot;</span>, <span class="prelude-val">None</span>);
-    <span class="macro">required_ext!</span>(extract_req_ext7, <span class="string">&quot;foo&quot;</span>, <span class="prelude-val">None</span>);
-    <span class="macro">required_ext!</span>(extract_req_ext8, <span class="string">&quot;.foo/&quot;</span>, <span class="prelude-val">None</span>);
-    <span class="macro">required_ext!</span>(extract_req_ext9, <span class="string">&quot;foo/&quot;</span>, <span class="prelude-val">None</span>);
+    <span class="macro">required_ext!</span>(extract_req_ext1, <span class="string">"*.rs"</span>, <span class="prelude-val">Some</span>(s(<span class="string">".rs"</span>)));
+    <span class="macro">required_ext!</span>(extract_req_ext2, <span class="string">"/foo/bar/*.rs"</span>, <span class="prelude-val">Some</span>(s(<span class="string">".rs"</span>)));
+    <span class="macro">required_ext!</span>(extract_req_ext3, <span class="string">"/foo/bar/*.rs"</span>, <span class="prelude-val">Some</span>(s(<span class="string">".rs"</span>)));
+    <span class="macro">required_ext!</span>(extract_req_ext4, <span class="string">"/foo/bar/.rs"</span>, <span class="prelude-val">Some</span>(s(<span class="string">".rs"</span>)));
+    <span class="macro">required_ext!</span>(extract_req_ext5, <span class="string">".rs"</span>, <span class="prelude-val">Some</span>(s(<span class="string">".rs"</span>)));
+    <span class="macro">required_ext!</span>(extract_req_ext6, <span class="string">"./rs"</span>, <span class="prelude-val">None</span>);
+    <span class="macro">required_ext!</span>(extract_req_ext7, <span class="string">"foo"</span>, <span class="prelude-val">None</span>);
+    <span class="macro">required_ext!</span>(extract_req_ext8, <span class="string">".foo/"</span>, <span class="prelude-val">None</span>);
+    <span class="macro">required_ext!</span>(extract_req_ext9, <span class="string">"foo/"</span>, <span class="prelude-val">None</span>);
 
-    <span class="macro">prefix!</span>(extract_prefix1, <span class="string">&quot;/foo&quot;</span>, <span class="prelude-val">Some</span>(s(<span class="string">&quot;/foo&quot;</span>)));
-    <span class="macro">prefix!</span>(extract_prefix2, <span class="string">&quot;/foo/*&quot;</span>, <span class="prelude-val">Some</span>(s(<span class="string">&quot;/foo/&quot;</span>)));
-    <span class="macro">prefix!</span>(extract_prefix3, <span class="string">&quot;**/foo&quot;</span>, <span class="prelude-val">None</span>);
-    <span class="macro">prefix!</span>(extract_prefix4, <span class="string">&quot;foo/**&quot;</span>, <span class="prelude-val">Some</span>(s(<span class="string">&quot;foo/&quot;</span>)));
+    <span class="macro">prefix!</span>(extract_prefix1, <span class="string">"/foo"</span>, <span class="prelude-val">Some</span>(s(<span class="string">"/foo"</span>)));
+    <span class="macro">prefix!</span>(extract_prefix2, <span class="string">"/foo/*"</span>, <span class="prelude-val">Some</span>(s(<span class="string">"/foo/"</span>)));
+    <span class="macro">prefix!</span>(extract_prefix3, <span class="string">"**/foo"</span>, <span class="prelude-val">None</span>);
+    <span class="macro">prefix!</span>(extract_prefix4, <span class="string">"foo/**"</span>, <span class="prelude-val">Some</span>(s(<span class="string">"foo/"</span>)));
 
-    <span class="macro">suffix!</span>(extract_suffix1, <span class="string">&quot;**/foo/bar&quot;</span>, <span class="prelude-val">Some</span>((s(<span class="string">&quot;/foo/bar&quot;</span>), <span class="bool-val">true</span>)));
-    <span class="macro">suffix!</span>(extract_suffix2, <span class="string">&quot;*/foo/bar&quot;</span>, <span class="prelude-val">Some</span>((s(<span class="string">&quot;/foo/bar&quot;</span>), <span class="bool-val">false</span>)));
-    <span class="macro">suffix!</span>(extract_suffix3, <span class="string">&quot;*/foo/bar&quot;</span>, <span class="prelude-val">None</span>, SLASHLIT);
-    <span class="macro">suffix!</span>(extract_suffix4, <span class="string">&quot;foo/bar&quot;</span>, <span class="prelude-val">Some</span>((s(<span class="string">&quot;foo/bar&quot;</span>), <span class="bool-val">false</span>)));
-    <span class="macro">suffix!</span>(extract_suffix5, <span class="string">&quot;*.foo&quot;</span>, <span class="prelude-val">Some</span>((s(<span class="string">&quot;.foo&quot;</span>), <span class="bool-val">false</span>)));
-    <span class="macro">suffix!</span>(extract_suffix6, <span class="string">&quot;*.foo&quot;</span>, <span class="prelude-val">None</span>, SLASHLIT);
-    <span class="macro">suffix!</span>(extract_suffix7, <span class="string">&quot;**/*_test&quot;</span>, <span class="prelude-val">Some</span>((s(<span class="string">&quot;_test&quot;</span>), <span class="bool-val">false</span>)));
+    <span class="macro">suffix!</span>(extract_suffix1, <span class="string">"**/foo/bar"</span>, <span class="prelude-val">Some</span>((s(<span class="string">"/foo/bar"</span>), <span class="bool-val">true</span>)));
+    <span class="macro">suffix!</span>(extract_suffix2, <span class="string">"*/foo/bar"</span>, <span class="prelude-val">Some</span>((s(<span class="string">"/foo/bar"</span>), <span class="bool-val">false</span>)));
+    <span class="macro">suffix!</span>(extract_suffix3, <span class="string">"*/foo/bar"</span>, <span class="prelude-val">None</span>, SLASHLIT);
+    <span class="macro">suffix!</span>(extract_suffix4, <span class="string">"foo/bar"</span>, <span class="prelude-val">Some</span>((s(<span class="string">"foo/bar"</span>), <span class="bool-val">false</span>)));
+    <span class="macro">suffix!</span>(extract_suffix5, <span class="string">"*.foo"</span>, <span class="prelude-val">Some</span>((s(<span class="string">".foo"</span>), <span class="bool-val">false</span>)));
+    <span class="macro">suffix!</span>(extract_suffix6, <span class="string">"*.foo"</span>, <span class="prelude-val">None</span>, SLASHLIT);
+    <span class="macro">suffix!</span>(extract_suffix7, <span class="string">"**/*_test"</span>, <span class="prelude-val">Some</span>((s(<span class="string">"_test"</span>), <span class="bool-val">false</span>)));
 
-    <span class="macro">baseliteral!</span>(extract_baselit1, <span class="string">&quot;**/foo&quot;</span>, <span class="prelude-val">Some</span>(s(<span class="string">&quot;foo&quot;</span>)));
-    <span class="macro">baseliteral!</span>(extract_baselit2, <span class="string">&quot;foo&quot;</span>, <span class="prelude-val">None</span>);
-    <span class="macro">baseliteral!</span>(extract_baselit3, <span class="string">&quot;*foo&quot;</span>, <span class="prelude-val">None</span>);
-    <span class="macro">baseliteral!</span>(extract_baselit4, <span class="string">&quot;*/foo&quot;</span>, <span class="prelude-val">None</span>);
+    <span class="macro">baseliteral!</span>(extract_baselit1, <span class="string">"**/foo"</span>, <span class="prelude-val">Some</span>(s(<span class="string">"foo"</span>)));
+    <span class="macro">baseliteral!</span>(extract_baselit2, <span class="string">"foo"</span>, <span class="prelude-val">None</span>);
+    <span class="macro">baseliteral!</span>(extract_baselit3, <span class="string">"*foo"</span>, <span class="prelude-val">None</span>);
+    <span class="macro">baseliteral!</span>(extract_baselit4, <span class="string">"*/foo"</span>, <span class="prelude-val">None</span>);
 }
 </code></pre></div></section></main></body></html>

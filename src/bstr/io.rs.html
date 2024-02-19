@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bstr-1.9.0/src/io.rs`."><title>io.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bstr" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bstr-1.9.0/src/io.rs`."><title>io.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bstr" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -552,7 +553,7 @@ More APIs may be added in the future.
     /// use bstr::io::BufReadExt;
     ///
     /// # fn example() -&gt; Result&lt;(), io::Error&gt; {
-    /// let mut cursor = io::Cursor::new(b&quot;lorem\nipsum\r\ndolor&quot;);
+    /// let mut cursor = io::Cursor::new(b"lorem\nipsum\r\ndolor");
     ///
     /// let mut lines = vec![];
     /// for result in cursor.byte_lines() {
@@ -560,9 +561,9 @@ More APIs may be added in the future.
     ///     lines.push(line);
     /// }
     /// assert_eq!(lines.len(), 3);
-    /// assert_eq!(lines[0], &quot;lorem&quot;.as_bytes());
-    /// assert_eq!(lines[1], &quot;ipsum&quot;.as_bytes());
-    /// assert_eq!(lines[2], &quot;dolor&quot;.as_bytes());
+    /// assert_eq!(lines[0], "lorem".as_bytes());
+    /// assert_eq!(lines[1], "ipsum".as_bytes());
+    /// assert_eq!(lines[2], "dolor".as_bytes());
     /// # Ok(()) }; example().unwrap()
     /// ```
     </span><span class="kw">fn </span>byte_lines(<span class="self">self</span>) -&gt; ByteLines&lt;<span class="self">Self</span>&gt;
@@ -582,7 +583,7 @@ More APIs may be added in the future.
     /// On success, the next record in the iterator is returned. The record
     /// does *not* contain its trailing terminator.
     ///
-    /// Note that calling `byte_records(b&#39;\n&#39;)` differs from `byte_lines()` in
+    /// Note that calling `byte_records(b'\n')` differs from `byte_lines()` in
     /// that it has no special handling for `\r`.
     ///
     /// # Examples
@@ -595,17 +596,17 @@ More APIs may be added in the future.
     /// use bstr::io::BufReadExt;
     ///
     /// # fn example() -&gt; Result&lt;(), io::Error&gt; {
-    /// let mut cursor = io::Cursor::new(b&quot;lorem\x00ipsum\x00dolor&quot;);
+    /// let mut cursor = io::Cursor::new(b"lorem\x00ipsum\x00dolor");
     ///
     /// let mut records = vec![];
-    /// for result in cursor.byte_records(b&#39;\x00&#39;) {
+    /// for result in cursor.byte_records(b'\x00') {
     ///     let record = result?;
     ///     records.push(record);
     /// }
     /// assert_eq!(records.len(), 3);
-    /// assert_eq!(records[0], &quot;lorem&quot;.as_bytes());
-    /// assert_eq!(records[1], &quot;ipsum&quot;.as_bytes());
-    /// assert_eq!(records[2], &quot;dolor&quot;.as_bytes());
+    /// assert_eq!(records[0], "lorem".as_bytes());
+    /// assert_eq!(records[1], "ipsum".as_bytes());
+    /// assert_eq!(records[2], "dolor".as_bytes());
     /// # Ok(()) }; example().unwrap()
     /// ```
     </span><span class="kw">fn </span>byte_records(<span class="self">self</span>, terminator: u8) -&gt; ByteRecords&lt;<span class="self">Self</span>&gt;
@@ -638,7 +639,7 @@ More APIs may be added in the future.
     /// use bstr::io::BufReadExt;
     ///
     /// # fn example() -&gt; Result&lt;(), io::Error&gt; {
-    /// let mut cursor = io::Cursor::new(b&quot;lorem\nipsum\r\ndolor&quot;);
+    /// let mut cursor = io::Cursor::new(b"lorem\nipsum\r\ndolor");
     ///
     /// let mut lines = vec![];
     /// cursor.for_byte_line(|line| {
@@ -646,9 +647,9 @@ More APIs may be added in the future.
     ///     Ok(true)
     /// })?;
     /// assert_eq!(lines.len(), 3);
-    /// assert_eq!(lines[0], &quot;lorem&quot;.as_bytes());
-    /// assert_eq!(lines[1], &quot;ipsum&quot;.as_bytes());
-    /// assert_eq!(lines[2], &quot;dolor&quot;.as_bytes());
+    /// assert_eq!(lines[0], "lorem".as_bytes());
+    /// assert_eq!(lines[1], "ipsum".as_bytes());
+    /// assert_eq!(lines[2], "dolor".as_bytes());
     /// # Ok(()) }; example().unwrap()
     /// ```
     </span><span class="kw">fn </span>for_byte_line&lt;F&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, <span class="kw-2">mut </span>for_each_line: F) -&gt; io::Result&lt;()&gt;
@@ -685,17 +686,17 @@ More APIs may be added in the future.
     /// use bstr::io::BufReadExt;
     ///
     /// # fn example() -&gt; Result&lt;(), io::Error&gt; {
-    /// let mut cursor = io::Cursor::new(b&quot;lorem\x00ipsum\x00dolor&quot;);
+    /// let mut cursor = io::Cursor::new(b"lorem\x00ipsum\x00dolor");
     ///
     /// let mut records = vec![];
-    /// cursor.for_byte_record(b&#39;\x00&#39;, |record| {
+    /// cursor.for_byte_record(b'\x00', |record| {
     ///     records.push(record.to_vec());
     ///     Ok(true)
     /// })?;
     /// assert_eq!(records.len(), 3);
-    /// assert_eq!(records[0], &quot;lorem&quot;.as_bytes());
-    /// assert_eq!(records[1], &quot;ipsum&quot;.as_bytes());
-    /// assert_eq!(records[2], &quot;dolor&quot;.as_bytes());
+    /// assert_eq!(records[0], "lorem".as_bytes());
+    /// assert_eq!(records[1], "ipsum".as_bytes());
+    /// assert_eq!(records[2], "dolor".as_bytes());
     /// # Ok(()) }; example().unwrap()
     /// ```
     </span><span class="kw">fn </span>for_byte_record&lt;F&gt;(
@@ -739,7 +740,7 @@ More APIs may be added in the future.
     /// use bstr::io::BufReadExt;
     ///
     /// # fn example() -&gt; Result&lt;(), io::Error&gt; {
-    /// let mut cursor = io::Cursor::new(b&quot;lorem\nipsum\r\ndolor&quot;);
+    /// let mut cursor = io::Cursor::new(b"lorem\nipsum\r\ndolor");
     ///
     /// let mut lines = vec![];
     /// cursor.for_byte_line_with_terminator(|line| {
@@ -747,9 +748,9 @@ More APIs may be added in the future.
     ///     Ok(true)
     /// })?;
     /// assert_eq!(lines.len(), 3);
-    /// assert_eq!(lines[0], &quot;lorem\n&quot;.as_bytes());
-    /// assert_eq!(lines[1], &quot;ipsum\r\n&quot;.as_bytes());
-    /// assert_eq!(lines[2], &quot;dolor&quot;.as_bytes());
+    /// assert_eq!(lines[0], "lorem\n".as_bytes());
+    /// assert_eq!(lines[1], "ipsum\r\n".as_bytes());
+    /// assert_eq!(lines[2], "dolor".as_bytes());
     /// # Ok(()) }; example().unwrap()
     /// ```
     </span><span class="kw">fn </span>for_byte_line_with_terminator&lt;F&gt;(
@@ -760,7 +761,7 @@ More APIs may be added in the future.
         </span><span class="self">Self</span>: Sized,
         F: FnMut(<span class="kw-2">&amp;</span>[u8]) -&gt; io::Result&lt;bool&gt;,
     {
-        <span class="self">self</span>.for_byte_record_with_terminator(<span class="string">b&#39;\n&#39;</span>, for_each_line)
+        <span class="self">self</span>.for_byte_record_with_terminator(<span class="string">b'\n'</span>, for_each_line)
     }
 
     <span class="doccomment">/// Executes the given closure on each byte-terminated record in the
@@ -788,17 +789,17 @@ More APIs may be added in the future.
     /// use bstr::{io::BufReadExt, B};
     ///
     /// # fn example() -&gt; Result&lt;(), io::Error&gt; {
-    /// let mut cursor = io::Cursor::new(b&quot;lorem\x00ipsum\x00dolor&quot;);
+    /// let mut cursor = io::Cursor::new(b"lorem\x00ipsum\x00dolor");
     ///
     /// let mut records = vec![];
-    /// cursor.for_byte_record_with_terminator(b&#39;\x00&#39;, |record| {
+    /// cursor.for_byte_record_with_terminator(b'\x00', |record| {
     ///     records.push(record.to_vec());
     ///     Ok(true)
     /// })?;
     /// assert_eq!(records.len(), 3);
-    /// assert_eq!(records[0], B(b&quot;lorem\x00&quot;));
-    /// assert_eq!(records[1], B(&quot;ipsum\x00&quot;));
-    /// assert_eq!(records[2], B(&quot;dolor&quot;));
+    /// assert_eq!(records[0], B(b"lorem\x00"));
+    /// assert_eq!(records[1], B("ipsum\x00"));
+    /// assert_eq!(records[2], B("dolor"));
     /// # Ok(()) }; example().unwrap()
     /// ```
     </span><span class="kw">fn </span>for_byte_record_with_terminator&lt;F&gt;(
@@ -813,7 +814,7 @@ More APIs may be added in the future.
         <span class="kw">let </span><span class="kw-2">mut </span>bytes = <span class="macro">vec!</span>[];
         <span class="kw">let </span><span class="kw-2">mut </span>res = <span class="prelude-val">Ok</span>(());
         <span class="kw">let </span><span class="kw-2">mut </span>consumed = <span class="number">0</span>;
-        <span class="lifetime">&#39;outer</span>: <span class="kw">loop </span>{
+        <span class="lifetime">'outer</span>: <span class="kw">loop </span>{
             <span class="comment">// Lend out complete record slices from our buffer
             </span>{
                 <span class="kw">let </span><span class="kw-2">mut </span>buf = <span class="self">self</span>.fill_buf()<span class="question-mark">?</span>;
@@ -822,10 +823,10 @@ More APIs may be added in the future.
                     buf = rest;
                     consumed += record.len();
                     <span class="kw">match </span>for_each_record(<span class="kw-2">&amp;</span>record) {
-                        <span class="prelude-val">Ok</span>(<span class="bool-val">false</span>) =&gt; <span class="kw">break </span><span class="lifetime">&#39;outer</span>,
+                        <span class="prelude-val">Ok</span>(<span class="bool-val">false</span>) =&gt; <span class="kw">break </span><span class="lifetime">'outer</span>,
                         <span class="prelude-val">Err</span>(err) =&gt; {
                             res = <span class="prelude-val">Err</span>(err);
-                            <span class="kw">break </span><span class="lifetime">&#39;outer</span>;
+                            <span class="kw">break </span><span class="lifetime">'outer</span>;
                         }
                         <span class="kw">_ </span>=&gt; (),
                     }
@@ -894,7 +895,7 @@ More APIs may be added in the future.
 
     <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;io::Result&lt;Vec&lt;u8&gt;&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>bytes = <span class="macro">vec!</span>[];
-        <span class="kw">match </span><span class="self">self</span>.buf.read_until(<span class="string">b&#39;\n&#39;</span>, <span class="kw-2">&amp;mut </span>bytes) {
+        <span class="kw">match </span><span class="self">self</span>.buf.read_until(<span class="string">b'\n'</span>, <span class="kw-2">&amp;mut </span>bytes) {
             <span class="prelude-val">Err</span>(e) =&gt; <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(e)),
             <span class="prelude-val">Ok</span>(<span class="number">0</span>) =&gt; <span class="prelude-val">None</span>,
             <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {
@@ -922,18 +923,18 @@ More APIs may be added in the future.
 }
 
 <span class="kw">fn </span>trim_line(line: <span class="kw-2">&amp;mut </span>Vec&lt;u8&gt;) {
-    <span class="kw">if </span>line.last_byte() == <span class="prelude-val">Some</span>(<span class="string">b&#39;\n&#39;</span>) {
+    <span class="kw">if </span>line.last_byte() == <span class="prelude-val">Some</span>(<span class="string">b'\n'</span>) {
         line.pop_byte();
-        <span class="kw">if </span>line.last_byte() == <span class="prelude-val">Some</span>(<span class="string">b&#39;\r&#39;</span>) {
+        <span class="kw">if </span>line.last_byte() == <span class="prelude-val">Some</span>(<span class="string">b'\r'</span>) {
             line.pop_byte();
         }
     }
 }
 
 <span class="kw">fn </span>trim_line_slice(<span class="kw-2">mut </span>line: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="kw-2">&amp;</span>[u8] {
-    <span class="kw">if </span>line.last_byte() == <span class="prelude-val">Some</span>(<span class="string">b&#39;\n&#39;</span>) {
+    <span class="kw">if </span>line.last_byte() == <span class="prelude-val">Some</span>(<span class="string">b'\n'</span>) {
         line = <span class="kw-2">&amp;</span>line[..line.len() - <span class="number">1</span>];
-        <span class="kw">if </span>line.last_byte() == <span class="prelude-val">Some</span>(<span class="string">b&#39;\r&#39;</span>) {
+        <span class="kw">if </span>line.last_byte() == <span class="prelude-val">Some</span>(<span class="string">b'\r'</span>) {
             line = <span class="kw-2">&amp;</span>line[..line.len() - <span class="number">1</span>];
         }
     }
@@ -953,7 +954,7 @@ More APIs may be added in the future.
     record
 }
 
-<span class="attr">#[cfg(all(test, feature = <span class="string">&quot;std&quot;</span>))]
+<span class="attr">#[cfg(all(test, feature = <span class="string">"std"</span>))]
 </span><span class="kw">mod </span>tests {
     <span class="kw">use </span><span class="kw">crate</span>::bstring::BString;
 
@@ -985,47 +986,47 @@ More APIs may be added in the future.
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>lines_without_terminator() {
-        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">&quot;&quot;</span>), Vec::&lt;BString&gt;::new());
+        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">""</span>), Vec::&lt;BString&gt;::new());
 
-        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">&quot;\n&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;&quot;</span>]);
-        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">&quot;\n\n&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>]);
-        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">&quot;a\nb\n&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>]);
-        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">&quot;a\nb&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>]);
-        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">&quot;abc\nxyz\n&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;abc&quot;</span>, <span class="string">&quot;xyz&quot;</span>]);
-        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">&quot;abc\nxyz&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;abc&quot;</span>, <span class="string">&quot;xyz&quot;</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">"\n"</span>), <span class="macro">vec!</span>[<span class="string">""</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">"\n\n"</span>), <span class="macro">vec!</span>[<span class="string">""</span>, <span class="string">""</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">"a\nb\n"</span>), <span class="macro">vec!</span>[<span class="string">"a"</span>, <span class="string">"b"</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">"a\nb"</span>), <span class="macro">vec!</span>[<span class="string">"a"</span>, <span class="string">"b"</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">"abc\nxyz\n"</span>), <span class="macro">vec!</span>[<span class="string">"abc"</span>, <span class="string">"xyz"</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">"abc\nxyz"</span>), <span class="macro">vec!</span>[<span class="string">"abc"</span>, <span class="string">"xyz"</span>]);
 
-        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">&quot;\r\n&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;&quot;</span>]);
-        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">&quot;\r\n\r\n&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>]);
-        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">&quot;a\r\nb\r\n&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>]);
-        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">&quot;a\r\nb&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>]);
-        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">&quot;abc\r\nxyz\r\n&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;abc&quot;</span>, <span class="string">&quot;xyz&quot;</span>]);
-        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">&quot;abc\r\nxyz&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;abc&quot;</span>, <span class="string">&quot;xyz&quot;</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">"\r\n"</span>), <span class="macro">vec!</span>[<span class="string">""</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">"\r\n\r\n"</span>), <span class="macro">vec!</span>[<span class="string">""</span>, <span class="string">""</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">"a\r\nb\r\n"</span>), <span class="macro">vec!</span>[<span class="string">"a"</span>, <span class="string">"b"</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">"a\r\nb"</span>), <span class="macro">vec!</span>[<span class="string">"a"</span>, <span class="string">"b"</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">"abc\r\nxyz\r\n"</span>), <span class="macro">vec!</span>[<span class="string">"abc"</span>, <span class="string">"xyz"</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">"abc\r\nxyz"</span>), <span class="macro">vec!</span>[<span class="string">"abc"</span>, <span class="string">"xyz"</span>]);
 
-        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">&quot;abc\rxyz&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;abc\rxyz&quot;</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines(<span class="string">"abc\rxyz"</span>), <span class="macro">vec!</span>[<span class="string">"abc\rxyz"</span>]);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>lines_with_terminator() {
-        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">&quot;&quot;</span>), Vec::&lt;BString&gt;::new());
+        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">""</span>), Vec::&lt;BString&gt;::new());
 
-        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">&quot;\n&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;\n&quot;</span>]);
-        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">&quot;\n\n&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;\n&quot;</span>, <span class="string">&quot;\n&quot;</span>]);
-        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">&quot;a\nb\n&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;a\n&quot;</span>, <span class="string">&quot;b\n&quot;</span>]);
-        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">&quot;a\nb&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;a\n&quot;</span>, <span class="string">&quot;b&quot;</span>]);
-        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">&quot;abc\nxyz\n&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;abc\n&quot;</span>, <span class="string">&quot;xyz\n&quot;</span>]);
-        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">&quot;abc\nxyz&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;abc\n&quot;</span>, <span class="string">&quot;xyz&quot;</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">"\n"</span>), <span class="macro">vec!</span>[<span class="string">"\n"</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">"\n\n"</span>), <span class="macro">vec!</span>[<span class="string">"\n"</span>, <span class="string">"\n"</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">"a\nb\n"</span>), <span class="macro">vec!</span>[<span class="string">"a\n"</span>, <span class="string">"b\n"</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">"a\nb"</span>), <span class="macro">vec!</span>[<span class="string">"a\n"</span>, <span class="string">"b"</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">"abc\nxyz\n"</span>), <span class="macro">vec!</span>[<span class="string">"abc\n"</span>, <span class="string">"xyz\n"</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">"abc\nxyz"</span>), <span class="macro">vec!</span>[<span class="string">"abc\n"</span>, <span class="string">"xyz"</span>]);
 
-        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">&quot;\r\n&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;\r\n&quot;</span>]);
-        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">&quot;\r\n\r\n&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;\r\n&quot;</span>, <span class="string">&quot;\r\n&quot;</span>]);
-        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">&quot;a\r\nb\r\n&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;a\r\n&quot;</span>, <span class="string">&quot;b\r\n&quot;</span>]);
-        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">&quot;a\r\nb&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;a\r\n&quot;</span>, <span class="string">&quot;b&quot;</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">"\r\n"</span>), <span class="macro">vec!</span>[<span class="string">"\r\n"</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">"\r\n\r\n"</span>), <span class="macro">vec!</span>[<span class="string">"\r\n"</span>, <span class="string">"\r\n"</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">"a\r\nb\r\n"</span>), <span class="macro">vec!</span>[<span class="string">"a\r\n"</span>, <span class="string">"b\r\n"</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">"a\r\nb"</span>), <span class="macro">vec!</span>[<span class="string">"a\r\n"</span>, <span class="string">"b"</span>]);
         <span class="macro">assert_eq!</span>(
-            collect_lines_term(<span class="string">&quot;abc\r\nxyz\r\n&quot;</span>),
-            <span class="macro">vec!</span>[<span class="string">&quot;abc\r\n&quot;</span>, <span class="string">&quot;xyz\r\n&quot;</span>]
+            collect_lines_term(<span class="string">"abc\r\nxyz\r\n"</span>),
+            <span class="macro">vec!</span>[<span class="string">"abc\r\n"</span>, <span class="string">"xyz\r\n"</span>]
         );
-        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">&quot;abc\r\nxyz&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;abc\r\n&quot;</span>, <span class="string">&quot;xyz&quot;</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">"abc\r\nxyz"</span>), <span class="macro">vec!</span>[<span class="string">"abc\r\n"</span>, <span class="string">"xyz"</span>]);
 
-        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">&quot;abc\rxyz&quot;</span>), <span class="macro">vec!</span>[<span class="string">&quot;abc\rxyz&quot;</span>]);
+        <span class="macro">assert_eq!</span>(collect_lines_term(<span class="string">"abc\rxyz"</span>), <span class="macro">vec!</span>[<span class="string">"abc\rxyz"</span>]);
     }
 }
 </code></pre></div></section></main></body></html>

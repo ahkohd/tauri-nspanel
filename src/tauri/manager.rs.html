@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-1.5.4/src/manager.rs`."><title>manager.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tauri" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-1.6.0/src/manager.rs`."><title>manager.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tauri" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1413,7 +1414,7 @@
 
 <span class="kw">use </span>tauri_macros::default_runtime;
 <span class="kw">use </span>tauri_utils::debug_eprintln;
-<span class="attr">#[cfg(feature = <span class="string">&quot;isolation&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"isolation"</span>)]
 </span><span class="kw">use </span>tauri_utils::pattern::isolation::RawIsolationPayload;
 <span class="kw">use </span>tauri_utils::{
   assets::{AssetKey, CspHash},
@@ -1422,7 +1423,7 @@
 };
 
 <span class="kw">use </span><span class="kw">crate</span>::hooks::IpcJavascript;
-<span class="attr">#[cfg(feature = <span class="string">&quot;isolation&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"isolation"</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::hooks::IsolationJavascript;
 <span class="kw">use </span><span class="kw">crate</span>::pattern::PatternJavascript;
 <span class="kw">use crate</span>::{
@@ -1451,26 +1452,26 @@
   window::WindowEmitArgs,
 };
 
-<span class="attr">#[cfg(any(target_os = <span class="string">&quot;linux&quot;</span>, target_os = <span class="string">&quot;windows&quot;</span>))]
+<span class="attr">#[cfg(any(target_os = <span class="string">"linux"</span>, target_os = <span class="string">"windows"</span>))]
 </span><span class="kw">use </span><span class="kw">crate</span>::api::path::{resolve_path, BaseDirectory};
 
 <span class="kw">use crate</span>::{runtime::menu::Menu, MenuEvent};
 
-<span class="kw">const </span>WINDOW_RESIZED_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">&quot;tauri://resize&quot;</span>;
-<span class="kw">const </span>WINDOW_MOVED_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">&quot;tauri://move&quot;</span>;
-<span class="kw">const </span>WINDOW_CLOSE_REQUESTED_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">&quot;tauri://close-requested&quot;</span>;
-<span class="kw">const </span>WINDOW_DESTROYED_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">&quot;tauri://destroyed&quot;</span>;
-<span class="kw">const </span>WINDOW_FOCUS_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">&quot;tauri://focus&quot;</span>;
-<span class="kw">const </span>WINDOW_BLUR_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">&quot;tauri://blur&quot;</span>;
-<span class="kw">const </span>WINDOW_SCALE_FACTOR_CHANGED_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">&quot;tauri://scale-change&quot;</span>;
-<span class="kw">const </span>WINDOW_THEME_CHANGED: <span class="kw-2">&amp;</span>str = <span class="string">&quot;tauri://theme-changed&quot;</span>;
-<span class="kw">const </span>WINDOW_FILE_DROP_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">&quot;tauri://file-drop&quot;</span>;
-<span class="kw">const </span>WINDOW_FILE_DROP_HOVER_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">&quot;tauri://file-drop-hover&quot;</span>;
-<span class="kw">const </span>WINDOW_FILE_DROP_CANCELLED_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">&quot;tauri://file-drop-cancelled&quot;</span>;
-<span class="kw">const </span>MENU_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">&quot;tauri://menu&quot;</span>;
+<span class="kw">const </span>WINDOW_RESIZED_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">"tauri://resize"</span>;
+<span class="kw">const </span>WINDOW_MOVED_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">"tauri://move"</span>;
+<span class="kw">const </span>WINDOW_CLOSE_REQUESTED_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">"tauri://close-requested"</span>;
+<span class="kw">const </span>WINDOW_DESTROYED_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">"tauri://destroyed"</span>;
+<span class="kw">const </span>WINDOW_FOCUS_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">"tauri://focus"</span>;
+<span class="kw">const </span>WINDOW_BLUR_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">"tauri://blur"</span>;
+<span class="kw">const </span>WINDOW_SCALE_FACTOR_CHANGED_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">"tauri://scale-change"</span>;
+<span class="kw">const </span>WINDOW_THEME_CHANGED: <span class="kw-2">&amp;</span>str = <span class="string">"tauri://theme-changed"</span>;
+<span class="kw">const </span>WINDOW_FILE_DROP_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">"tauri://file-drop"</span>;
+<span class="kw">const </span>WINDOW_FILE_DROP_HOVER_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">"tauri://file-drop-hover"</span>;
+<span class="kw">const </span>WINDOW_FILE_DROP_CANCELLED_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">"tauri://file-drop-cancelled"</span>;
+<span class="kw">const </span>MENU_EVENT: <span class="kw-2">&amp;</span>str = <span class="string">"tauri://menu"</span>;
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>STRINGIFY_IPC_MESSAGE_FN: <span class="kw-2">&amp;</span>str =
-  <span class="macro">include_str!</span>(<span class="string">&quot;../scripts/stringify-ipc-message-fn.js&quot;</span>);
+  <span class="macro">include_str!</span>(<span class="string">"../scripts/stringify-ipc-message-fn.js"</span>);
 
 <span class="attr">#[derive(Default)]
 </span><span class="doccomment">/// Spaced and quoted Content-Security-Policy hash values.
@@ -1501,7 +1502,7 @@
             acc.style.push(hash.into());
           }
           _csp_hash =&gt; {
-            <span class="macro">debug_eprintln!</span>(<span class="string">&quot;Unknown CspHash variant encountered: {:?}&quot;</span>, _csp_hash);
+            <span class="macro">debug_eprintln!</span>(<span class="string">"Unknown CspHash variant encountered: {:?}"</span>, _csp_hash);
           }
         }
 
@@ -1513,30 +1514,30 @@
     .tauri
     .security
     .dangerous_disable_asset_csp_modification;
-  <span class="kw">if </span>dangerous_disable_asset_csp_modification.can_modify(<span class="string">&quot;script-src&quot;</span>) {
+  <span class="kw">if </span>dangerous_disable_asset_csp_modification.can_modify(<span class="string">"script-src"</span>) {
     replace_csp_nonce(
       asset,
       SCRIPT_NONCE_TOKEN,
       <span class="kw-2">&amp;mut </span>csp,
-      <span class="string">&quot;script-src&quot;</span>,
+      <span class="string">"script-src"</span>,
       hash_strings.script,
     );
   }
 
-  <span class="kw">if </span>dangerous_disable_asset_csp_modification.can_modify(<span class="string">&quot;style-src&quot;</span>) {
+  <span class="kw">if </span>dangerous_disable_asset_csp_modification.can_modify(<span class="string">"style-src"</span>) {
     replace_csp_nonce(
       asset,
       STYLE_NONCE_TOKEN,
       <span class="kw-2">&amp;mut </span>csp,
-      <span class="string">&quot;style-src&quot;</span>,
+      <span class="string">"style-src"</span>,
       hash_strings.style,
     );
   }
 
-  <span class="attr">#[cfg(feature = <span class="string">&quot;isolation&quot;</span>)]
+  <span class="attr">#[cfg(feature = <span class="string">"isolation"</span>)]
   </span><span class="kw">if let </span>Pattern::Isolation { schema, .. } = <span class="kw-2">&amp;</span>manager.inner.pattern {
     <span class="kw">let </span>default_src = csp
-      .entry(<span class="string">&quot;default-src&quot;</span>.into())
+      .entry(<span class="string">"default-src"</span>.into())
       .or_insert_with(Default::default);
     default_src.push(<span class="kw">crate</span>::pattern::format_real_schema(
       schema,
@@ -1547,7 +1548,7 @@
   Csp::DirectiveMap(csp).to_string()
 }
 
-<span class="attr">#[cfg(target_os = <span class="string">&quot;linux&quot;</span>)]
+<span class="attr">#[cfg(target_os = <span class="string">"linux"</span>)]
 </span><span class="kw">fn </span>set_html_csp(html: <span class="kw-2">&amp;</span>str, csp: <span class="kw-2">&amp;</span>str) -&gt; String {
   html.replacen(tauri_utils::html::CSP_TOKEN, csp, <span class="number">1</span>)
 }
@@ -1586,10 +1587,10 @@
   <span class="kw">if </span>!(nonces.is_empty() &amp;&amp; hashes.is_empty()) {
     <span class="kw">let </span>nonce_sources = nonces
       .into_iter()
-      .map(|n| <span class="macro">format!</span>(<span class="string">&quot;&#39;nonce-{n}&#39;&quot;</span>))
+      .map(|n| <span class="macro">format!</span>(<span class="string">"'nonce-{n}'"</span>))
       .collect::&lt;Vec&lt;String&gt;&gt;();
     <span class="kw">let </span>sources = csp.entry(directive.into()).or_default();
-    <span class="kw">let </span>self_source = <span class="string">&quot;&#39;self&#39;&quot;</span>.to_string();
+    <span class="kw">let </span>self_source = <span class="string">"'self'"</span>.to_string();
     <span class="kw">if </span>!sources.contains(<span class="kw-2">&amp;</span>self_source) {
       sources.push(self_source);
     }
@@ -1601,7 +1602,7 @@
 <span class="attr">#[default_runtime(<span class="kw">crate</span>::Wry, wry)]
 </span><span class="kw">pub struct </span>InnerWindowManager&lt;R: Runtime&gt; {
   windows: Mutex&lt;HashMap&lt;String, Window&lt;R&gt;&gt;&gt;,
-  <span class="attr">#[cfg(all(desktop, feature = <span class="string">&quot;system-tray&quot;</span>))]
+  <span class="attr">#[cfg(all(desktop, feature = <span class="string">"system-tray"</span>))]
   </span><span class="kw">pub</span>(<span class="kw">crate</span>) trays: Mutex&lt;HashMap&lt;String, <span class="kw">crate</span>::SystemTrayHandle&lt;R&gt;&gt;&gt;,
   <span class="kw">pub</span>(<span class="kw">crate</span>) plugins: Mutex&lt;PluginStore&lt;R&gt;&gt;,
   listeners: Listeners,
@@ -1637,17 +1638,17 @@
 }
 
 <span class="kw">impl</span>&lt;R: Runtime&gt; fmt::Debug <span class="kw">for </span>InnerWindowManager&lt;R&gt; {
-  <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-    f.debug_struct(<span class="string">&quot;InnerWindowManager&quot;</span>)
-      .field(<span class="string">&quot;plugins&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.plugins)
-      .field(<span class="string">&quot;state&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.state)
-      .field(<span class="string">&quot;config&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.config)
-      .field(<span class="string">&quot;default_window_icon&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.default_window_icon)
-      .field(<span class="string">&quot;app_icon&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.app_icon)
-      .field(<span class="string">&quot;tray_icon&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.tray_icon)
-      .field(<span class="string">&quot;package_info&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.package_info)
-      .field(<span class="string">&quot;menu&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.menu)
-      .field(<span class="string">&quot;pattern&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.pattern)
+  <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
+    f.debug_struct(<span class="string">"InnerWindowManager"</span>)
+      .field(<span class="string">"plugins"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.plugins)
+      .field(<span class="string">"state"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.state)
+      .field(<span class="string">"config"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.config)
+      .field(<span class="string">"default_window_icon"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.default_window_icon)
+      .field(<span class="string">"app_icon"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.app_icon)
+      .field(<span class="string">"tray_icon"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.tray_icon)
+      .field(<span class="string">"package_info"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.package_info)
+      .field(<span class="string">"menu"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.menu)
+      .field(<span class="string">"pattern"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.pattern)
       .finish()
   }
 }
@@ -1656,7 +1657,7 @@
 </span><span class="kw">pub struct </span>Asset {
   <span class="doccomment">/// The asset bytes.
   </span><span class="kw">pub </span>bytes: Vec&lt;u8&gt;,
-  <span class="doccomment">/// The asset&#39;s mime type.
+  <span class="doccomment">/// The asset's mime type.
   </span><span class="kw">pub </span>mime_type: String,
   <span class="doccomment">/// The `Content-Security-Policy` header value.
   </span><span class="kw">pub </span>csp_header: <span class="prelude-ty">Option</span>&lt;String&gt;,
@@ -1701,7 +1702,7 @@
     (invoke_responder, invoke_initialization_script): (Arc&lt;InvokeResponder&lt;R&gt;&gt;, String),
   ) -&gt; <span class="self">Self </span>{
     <span class="comment">// generate a random isolation key at runtime
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;isolation&quot;</span>)]
+    </span><span class="attr">#[cfg(feature = <span class="string">"isolation"</span>)]
     </span><span class="kw">if let </span>Pattern::Isolation { <span class="kw-2">ref mut </span>key, .. } = <span class="kw-2">&amp;mut </span>context.pattern {
       <span class="kw-2">*</span>key = uuid::Uuid::new_v4().to_string();
     }
@@ -1709,7 +1710,7 @@
     <span class="self">Self </span>{
       inner: Arc::new(InnerWindowManager {
         windows: Mutex::default(),
-        <span class="attr">#[cfg(all(desktop, feature = <span class="string">&quot;system-tray&quot;</span>))]
+        <span class="attr">#[cfg(all(desktop, feature = <span class="string">"system-tray"</span>))]
         </span>trays: Default::default(),
         plugins: Mutex::new(plugins),
         listeners: Listeners::default(),
@@ -1738,8 +1739,8 @@
   }
 
   <span class="doccomment">/// Get a locked handle to the windows.
-  </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>windows_lock(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; MutexGuard&lt;<span class="lifetime">&#39;_</span>, HashMap&lt;String, Window&lt;R&gt;&gt;&gt; {
-    <span class="self">self</span>.inner.windows.lock().expect(<span class="string">&quot;poisoned window manager&quot;</span>)
+  </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>windows_lock(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; MutexGuard&lt;<span class="lifetime">'_</span>, HashMap&lt;String, Window&lt;R&gt;&gt;&gt; {
+    <span class="self">self</span>.inner.windows.lock().expect(<span class="string">"poisoned window manager"</span>)
   }
 
   <span class="doccomment">/// State managed by the application.
@@ -1783,25 +1784,25 @@
   <span class="doccomment">/// Get the base URL to use for webview requests.
   ///
   /// In dev mode, this will be based on the `devPath` configuration value.
-  </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_url(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Cow&lt;<span class="lifetime">&#39;_</span>, Url&gt; {
+  </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_url(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Cow&lt;<span class="lifetime">'_</span>, Url&gt; {
     <span class="kw">match </span><span class="self">self</span>.base_path() {
       AppUrl::Url(WindowUrl::External(url)) =&gt; Cow::Borrowed(url),
       <span class="attr">#[cfg(windows)]
       </span><span class="kw">_ </span>=&gt; {
         <span class="kw">let </span>scheme = <span class="kw">if </span><span class="self">self</span>.inner.config.tauri.security.dangerous_use_http_scheme {
-          <span class="string">&quot;http&quot;
+          <span class="string">"http"
         </span>} <span class="kw">else </span>{
-          <span class="string">&quot;https&quot;
+          <span class="string">"https"
         </span>};
-        Cow::Owned(Url::parse(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{scheme}://tauri.localhost&quot;</span>)).unwrap())
+        Cow::Owned(Url::parse(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{scheme}://tauri.localhost"</span>)).unwrap())
       }
       <span class="attr">#[cfg(not(windows))]
-      </span><span class="kw">_ </span>=&gt; Cow::Owned(Url::parse(<span class="string">&quot;tauri://localhost&quot;</span>).unwrap()),
+      </span><span class="kw">_ </span>=&gt; Cow::Owned(Url::parse(<span class="string">"tauri://localhost"</span>).unwrap()),
     }
   }
 
   <span class="kw">fn </span>csp(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Csp&gt; {
-    <span class="kw">if </span><span class="macro">cfg!</span>(feature = <span class="string">&quot;custom-protocol&quot;</span>) {
+    <span class="kw">if </span><span class="macro">cfg!</span>(feature = <span class="string">"custom-protocol"</span>) {
       <span class="self">self</span>.inner.config.tauri.security.csp.clone()
     } <span class="kw">else </span>{
       <span class="self">self
@@ -1827,7 +1828,7 @@
       </span>.inner
       .plugins
       .lock()
-      .expect(<span class="string">&quot;poisoned plugin store&quot;</span>)
+      .expect(<span class="string">"poisoned plugin store"</span>)
       .initialization_script();
 
     <span class="kw">let </span>pattern_init = PatternJavascript {
@@ -1839,11 +1840,11 @@
 
     <span class="kw">let </span>ipc_init = IpcJavascript {
       isolation_origin: <span class="kw-2">&amp;</span><span class="kw">match </span><span class="self">self</span>.pattern() {
-        <span class="attr">#[cfg(feature = <span class="string">&quot;isolation&quot;</span>)]
+        <span class="attr">#[cfg(feature = <span class="string">"isolation"</span>)]
         </span>Pattern::Isolation { schema, .. } =&gt; {
           <span class="kw">crate</span>::pattern::format_real_schema(schema, pending.http_scheme)
         }
-        <span class="kw">_ </span>=&gt; <span class="string">&quot;&quot;</span>.to_string(),
+        <span class="kw">_ </span>=&gt; <span class="string">""</span>.to_string(),
       },
     }
     .render_default(<span class="kw-2">&amp;</span>Default::default())<span class="question-mark">?</span>;
@@ -1856,21 +1857,21 @@
     webview_attributes = webview_attributes
       .initialization_script(<span class="kw-2">&amp;</span><span class="self">self</span>.inner.invoke_initialization_script)
       .initialization_script(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
-        <span class="string">r#&quot;
-          Object.defineProperty(window, &#39;__TAURI_METADATA__&#39;, {{
+        <span class="string">r#"
+          Object.defineProperty(window, '__TAURI_METADATA__', {{
             value: {{
               __windows: {window_labels_array}.map(function (label) {{ return {{ label: label }} }}),
               __currentWindow: {{ label: {current_window_label} }}
             }}
           }})
-        &quot;#</span>,
+        "#</span>,
         window_labels_array = serde_json::to_string(<span class="kw-2">&amp;</span>window_labels)<span class="question-mark">?</span>,
         current_window_label = serde_json::to_string(<span class="kw-2">&amp;</span>label)<span class="question-mark">?</span>,
       ))
       .initialization_script(<span class="kw-2">&amp;</span><span class="self">self</span>.initialization_script(<span class="kw-2">&amp;</span>ipc_init.into_string(),<span class="kw-2">&amp;</span>pattern_init.into_string(),<span class="kw-2">&amp;</span>plugin_init, is_init_global)<span class="question-mark">?</span>)
       ;
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;isolation&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"isolation"</span>)]
     </span><span class="kw">if let </span>Pattern::Isolation { schema, .. } = <span class="self">self</span>.pattern() {
       webview_attributes = webview_attributes.initialization_script(
         <span class="kw-2">&amp;</span>IsolationJavascript {
@@ -1896,36 +1897,36 @@
     }
 
     <span class="kw">let </span>window_url = Url::parse(<span class="kw-2">&amp;</span>pending.url).unwrap();
-    <span class="kw">let </span>window_origin = <span class="kw">if </span>window_url.scheme() == <span class="string">&quot;data&quot; </span>{
-      <span class="string">&quot;null&quot;</span>.into()
-    } <span class="kw">else if </span><span class="macro">cfg!</span>(windows) &amp;&amp; window_url.scheme() != <span class="string">&quot;http&quot; </span>&amp;&amp; window_url.scheme() != <span class="string">&quot;https&quot; </span>{
-      <span class="kw">let </span>scheme = <span class="kw">if </span>pending.http_scheme { <span class="string">&quot;http&quot; </span>} <span class="kw">else </span>{ <span class="string">&quot;https&quot; </span>};
-      <span class="macro">format!</span>(<span class="string">&quot;{scheme}://{}.localhost&quot;</span>, window_url.scheme())
+    <span class="kw">let </span>window_origin = <span class="kw">if </span>window_url.scheme() == <span class="string">"data" </span>{
+      <span class="string">"null"</span>.into()
+    } <span class="kw">else if </span><span class="macro">cfg!</span>(windows) &amp;&amp; window_url.scheme() != <span class="string">"http" </span>&amp;&amp; window_url.scheme() != <span class="string">"https" </span>{
+      <span class="kw">let </span>scheme = <span class="kw">if </span>pending.http_scheme { <span class="string">"http" </span>} <span class="kw">else </span>{ <span class="string">"https" </span>};
+      <span class="macro">format!</span>(<span class="string">"{scheme}://{}.localhost"</span>, window_url.scheme())
     } <span class="kw">else </span>{
       <span class="macro">format!</span>(
-        <span class="string">&quot;{}://{}{}&quot;</span>,
+        <span class="string">"{}://{}{}"</span>,
         window_url.scheme(),
         window_url.host().unwrap(),
         window_url
           .port()
-          .map(|p| <span class="macro">format!</span>(<span class="string">&quot;:{p}&quot;</span>))
+          .map(|p| <span class="macro">format!</span>(<span class="string">":{p}"</span>))
           .unwrap_or_default()
       )
     };
 
-    <span class="kw">if </span>!registered_scheme_protocols.contains(<span class="kw-2">&amp;</span><span class="string">&quot;tauri&quot;</span>.into()) {
+    <span class="kw">if </span>!registered_scheme_protocols.contains(<span class="kw-2">&amp;</span><span class="string">"tauri"</span>.into()) {
       <span class="kw">let </span>web_resource_request_handler = pending.web_resource_request_handler.take();
       pending.register_uri_scheme_protocol(
-        <span class="string">&quot;tauri&quot;</span>,
+        <span class="string">"tauri"</span>,
         <span class="self">self</span>.prepare_uri_scheme_protocol(<span class="kw-2">&amp;</span>window_origin, web_resource_request_handler),
       );
-      registered_scheme_protocols.push(<span class="string">&quot;tauri&quot;</span>.into());
+      registered_scheme_protocols.push(<span class="string">"tauri"</span>.into());
     }
 
     <span class="attr">#[cfg(protocol_asset)]
-    </span><span class="kw">if </span>!registered_scheme_protocols.contains(<span class="kw-2">&amp;</span><span class="string">&quot;asset&quot;</span>.into()) {
+    </span><span class="kw">if </span>!registered_scheme_protocols.contains(<span class="kw-2">&amp;</span><span class="string">"asset"</span>.into()) {
       <span class="kw">let </span>asset_scope = <span class="self">self</span>.state().get::&lt;<span class="kw">crate</span>::Scopes&gt;().asset_protocol.clone();
-      pending.register_uri_scheme_protocol(<span class="string">&quot;asset&quot;</span>, <span class="kw">move </span>|request| {
+      pending.register_uri_scheme_protocol(<span class="string">"asset"</span>, <span class="kw">move </span>|request| {
         <span class="kw">crate</span>::asset_protocol::asset_protocol_handler(
           request,
           asset_scope.clone(),
@@ -1934,7 +1935,7 @@
       });
     }
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;isolation&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"isolation"</span>)]
     </span><span class="kw">if let </span>Pattern::Isolation {
       assets,
       schema,
@@ -1944,12 +1945,12 @@
     {
       <span class="kw">let </span>assets = assets.clone();
       <span class="kw">let </span>schema_ = schema.clone();
-      <span class="kw">let </span>url_base = <span class="macro">format!</span>(<span class="string">&quot;{schema_}://localhost&quot;</span>);
+      <span class="kw">let </span>url_base = <span class="macro">format!</span>(<span class="string">"{schema_}://localhost"</span>);
       <span class="kw">let </span>aes_gcm_key = <span class="kw-2">*</span>crypto_keys.aes_gcm().raw();
 
       pending.register_uri_scheme_protocol(schema, <span class="kw">move </span>|request| {
         <span class="kw">match </span>request_to_path(request, <span class="kw-2">&amp;</span>url_base).as_str() {
-          <span class="string">&quot;index.html&quot; </span>=&gt; <span class="kw">match </span>assets.get(<span class="kw-2">&amp;</span><span class="string">&quot;index.html&quot;</span>.into()) {
+          <span class="string">"index.html" </span>=&gt; <span class="kw">match </span>assets.get(<span class="kw-2">&amp;</span><span class="string">"index.html"</span>.into()) {
             <span class="prelude-val">Some</span>(asset) =&gt; {
               <span class="kw">let </span>asset = String::from_utf8_lossy(asset.as_ref());
               <span class="kw">let </span>template = tauri_utils::pattern::isolation::IsolationJavascriptRuntime {
@@ -1958,23 +1959,23 @@
               };
               <span class="kw">match </span>template.render(asset.as_ref(), <span class="kw-2">&amp;</span>Default::default()) {
                 <span class="prelude-val">Ok</span>(asset) =&gt; HttpResponseBuilder::new()
-                  .mimetype(<span class="string">&quot;text/html&quot;</span>)
+                  .mimetype(<span class="string">"text/html"</span>)
                   .body(asset.into_string().as_bytes().to_vec()),
                 <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; HttpResponseBuilder::new()
                   .status(<span class="number">500</span>)
-                  .mimetype(<span class="string">&quot;text/plain&quot;</span>)
+                  .mimetype(<span class="string">"text/plain"</span>)
                   .body(Vec::new()),
               }
             }
 
             <span class="prelude-val">None </span>=&gt; HttpResponseBuilder::new()
               .status(<span class="number">404</span>)
-              .mimetype(<span class="string">&quot;text/plain&quot;</span>)
+              .mimetype(<span class="string">"text/plain"</span>)
               .body(Vec::new()),
           },
           <span class="kw">_ </span>=&gt; HttpResponseBuilder::new()
             .status(<span class="number">404</span>)
-            .mimetype(<span class="string">&quot;text/plain&quot;</span>)
+            .mimetype(<span class="string">"text/plain"</span>)
             .body(Vec::new()),
         }
       });
@@ -1989,13 +1990,13 @@
   ) -&gt; WebviewIpcHandler&lt;EventLoopMessage, R&gt; {
     <span class="kw">let </span>manager = <span class="self">self</span>.clone();
     Box::new(<span class="kw">move </span>|window, <span class="attr">#[allow(unused_mut)] </span><span class="kw-2">mut </span>request| {
-      <span class="attr">#[cfg(feature = <span class="string">&quot;tracing&quot;</span>)]
+      <span class="attr">#[cfg(feature = <span class="string">"tracing"</span>)]
       </span><span class="kw">let </span>_span =
-        <span class="macro">tracing::trace_span!</span>(<span class="string">&quot;ipc::request&quot;</span>, kind = <span class="string">&quot;post-message&quot;</span>, request = request).entered();
+        <span class="macro">tracing::trace_span!</span>(<span class="string">"ipc::request"</span>, kind = <span class="string">"post-message"</span>, request = request).entered();
 
       <span class="kw">let </span>window = Window::new(manager.clone(), window, app_handle.clone());
 
-      <span class="attr">#[cfg(feature = <span class="string">&quot;isolation&quot;</span>)]
+      <span class="attr">#[cfg(feature = <span class="string">"isolation"</span>)]
       </span><span class="kw">if let </span>Pattern::Isolation { crypto_keys, .. } = manager.pattern() {
         <span class="kw">match </span>RawIsolationPayload::try_from(request.as_str())
           .and_then(|raw| crypto_keys.decrypt(raw))
@@ -2004,7 +2005,7 @@
           <span class="prelude-val">Err</span>(e) =&gt; {
             <span class="kw">let </span>error: <span class="kw">crate</span>::Error = e.into();
             <span class="kw">let _ </span>= window.eval(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
-              <span class="string">r#&quot;console.error({})&quot;#</span>,
+              <span class="string">r#"console.error({})"#</span>,
               JsonValue::String(error.to_string())
             ));
             <span class="kw">return</span>;
@@ -2014,17 +2015,17 @@
 
       <span class="kw">match </span>serde_json::from_str::&lt;InvokePayload&gt;(<span class="kw-2">&amp;</span>request) {
         <span class="prelude-val">Ok</span>(message) =&gt; {
-          <span class="attr">#[cfg(feature = <span class="string">&quot;tracing&quot;</span>)]
-          </span><span class="kw">let </span>_span = <span class="macro">tracing::trace_span!</span>(<span class="string">&quot;ipc::request::handle&quot;</span>, cmd = message.cmd).entered();
+          <span class="attr">#[cfg(feature = <span class="string">"tracing"</span>)]
+          </span><span class="kw">let </span>_span = <span class="macro">tracing::trace_span!</span>(<span class="string">"ipc::request::handle"</span>, cmd = message.cmd).entered();
 
           <span class="kw">let _ </span>= window.on_message(message);
         }
         <span class="prelude-val">Err</span>(e) =&gt; {
-          <span class="attr">#[cfg(feature = <span class="string">&quot;tracing&quot;</span>)]
-          </span><span class="macro">tracing::trace!</span>(<span class="string">&quot;ipc::request::error {}&quot;</span>, e);
+          <span class="attr">#[cfg(feature = <span class="string">"tracing"</span>)]
+          </span><span class="macro">tracing::trace!</span>(<span class="string">"ipc::request::error {}"</span>, e);
           <span class="kw">let </span>error: <span class="kw">crate</span>::Error = e.into();
           <span class="kw">let _ </span>= window.eval(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
-            <span class="string">r#&quot;console.error({})&quot;#</span>,
+            <span class="string">r#"console.error({})"#</span>,
             JsonValue::String(error.to_string())
           ));
         }
@@ -2032,13 +2033,13 @@
     })
   }
 
-  <span class="kw">pub fn </span>asset_iter(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Box&lt;<span class="kw">dyn </span>Iterator&lt;Item = (&amp;&amp;str, &amp;&amp;[u8])&gt; + <span class="lifetime">&#39;_</span>&gt; {
+  <span class="kw">pub fn </span>asset_iter(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Box&lt;<span class="kw">dyn </span>Iterator&lt;Item = (&amp;&amp;str, &amp;&amp;[u8])&gt; + <span class="lifetime">'_</span>&gt; {
     <span class="self">self</span>.inner.assets.iter()
   }
 
   <span class="kw">pub fn </span>get_asset(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut </span>path: String) -&gt; <span class="prelude-ty">Result</span>&lt;Asset, Box&lt;<span class="kw">dyn </span>std::error::Error&gt;&gt; {
     <span class="kw">let </span>assets = <span class="kw-2">&amp;</span><span class="self">self</span>.inner.assets;
-    <span class="kw">if </span>path.ends_with(<span class="string">&#39;/&#39;</span>) {
+    <span class="kw">if </span>path.ends_with(<span class="string">'/'</span>) {
       path.pop();
     }
     path = percent_encoding::percent_decode(path.as_bytes())
@@ -2046,7 +2047,7 @@
       .to_string();
     <span class="kw">let </span>path = <span class="kw">if </span>path.is_empty() {
       <span class="comment">// if the url is `tauri://localhost`, we should load `index.html`
-      </span><span class="string">&quot;index.html&quot;</span>.to_string()
+      </span><span class="string">"index.html"</span>.to_string()
     } <span class="kw">else </span>{
       <span class="comment">// skip leading `/`
       </span>path.chars().skip(<span class="number">1</span>).collect::&lt;String&gt;()
@@ -2057,26 +2058,26 @@
     <span class="kw">let </span>asset_response = assets
       .get(<span class="kw-2">&amp;</span>path.as_str().into())
       .or_else(|| {
-        <span class="macro">eprintln!</span>(<span class="string">&quot;Asset `{path}` not found; fallback to {path}.html&quot;</span>);
-        <span class="kw">let </span>fallback = <span class="macro">format!</span>(<span class="string">&quot;{}.html&quot;</span>, path.as_str()).into();
+        <span class="macro">eprintln!</span>(<span class="string">"Asset `{path}` not found; fallback to {path}.html"</span>);
+        <span class="kw">let </span>fallback = <span class="macro">format!</span>(<span class="string">"{}.html"</span>, path.as_str()).into();
         <span class="kw">let </span>asset = assets.get(<span class="kw-2">&amp;</span>fallback);
         asset_path = fallback;
         asset
       })
       .or_else(|| {
         <span class="macro">debug_eprintln!</span>(
-          <span class="string">&quot;Asset `{}` not found; fallback to {}/index.html&quot;</span>,
+          <span class="string">"Asset `{}` not found; fallback to {}/index.html"</span>,
           path,
           path
         );
-        <span class="kw">let </span>fallback = <span class="macro">format!</span>(<span class="string">&quot;{}/index.html&quot;</span>, path.as_str()).into();
+        <span class="kw">let </span>fallback = <span class="macro">format!</span>(<span class="string">"{}/index.html"</span>, path.as_str()).into();
         <span class="kw">let </span>asset = assets.get(<span class="kw-2">&amp;</span>fallback);
         asset_path = fallback;
         asset
       })
       .or_else(|| {
-        <span class="macro">debug_eprintln!</span>(<span class="string">&quot;Asset `{}` not found; fallback to index.html&quot;</span>, path);
-        <span class="kw">let </span>fallback = AssetKey::from(<span class="string">&quot;index.html&quot;</span>);
+        <span class="macro">debug_eprintln!</span>(<span class="string">"Asset `{}` not found; fallback to index.html"</span>, path);
+        <span class="kw">let </span>fallback = AssetKey::from(<span class="string">"index.html"</span>);
         <span class="kw">let </span>asset = assets.get(<span class="kw-2">&amp;</span>fallback);
         asset_path = fallback;
         asset
@@ -2085,7 +2086,7 @@
       .map(Cow::into_owned);
 
     <span class="kw">let </span><span class="kw-2">mut </span>csp_header = <span class="prelude-val">None</span>;
-    <span class="kw">let </span>is_html = asset_path.as_ref().ends_with(<span class="string">&quot;.html&quot;</span>);
+    <span class="kw">let </span>is_html = asset_path.as_ref().ends_with(<span class="string">".html"</span>);
 
     <span class="kw">match </span>asset_response {
       <span class="prelude-val">Ok</span>(asset) =&gt; {
@@ -2113,7 +2114,7 @@
         })
       }
       <span class="prelude-val">Err</span>(e) =&gt; {
-        <span class="macro">debug_eprintln!</span>(<span class="string">&quot;{:?}&quot;</span>, e); <span class="comment">// TODO log::error!
+        <span class="macro">debug_eprintln!</span>(<span class="string">"{:?}"</span>, e); <span class="comment">// TODO log::error!
         </span><span class="prelude-val">Err</span>(Box::new(e))
       }
     }
@@ -2133,35 +2134,35 @@
     Box::new(<span class="kw">move </span>|request| {
       <span class="kw">let </span>path = request
         .uri()
-        .split(<span class="kw-2">&amp;</span>[<span class="string">&#39;?&#39;</span>, <span class="string">&#39;#&#39;</span>][..])
+        .split(<span class="kw-2">&amp;</span>[<span class="string">'?'</span>, <span class="string">'#'</span>][..])
         <span class="comment">// ignore query string and fragment
         </span>.next()
         .unwrap()
-        .strip_prefix(<span class="string">&quot;tauri://localhost&quot;</span>)
+        .strip_prefix(<span class="string">"tauri://localhost"</span>)
         .map(|p| p.to_string())
         <span class="comment">// the `strip_prefix` only returns None when a request is made to `https://tauri.$P` on Windows
         // where `$P` is not `localhost/*`
-        </span>.unwrap_or_else(|| <span class="string">&quot;&quot;</span>.to_string());
+        </span>.unwrap_or_else(|| <span class="string">""</span>.to_string());
       <span class="kw">let </span>asset = manager.get_asset(path)<span class="question-mark">?</span>;
       <span class="kw">let </span><span class="kw-2">mut </span>builder = HttpResponseBuilder::new()
-        .header(<span class="string">&quot;Access-Control-Allow-Origin&quot;</span>, <span class="kw-2">&amp;</span>window_origin)
+        .header(<span class="string">"Access-Control-Allow-Origin"</span>, <span class="kw-2">&amp;</span>window_origin)
         .mimetype(<span class="kw-2">&amp;</span>asset.mime_type);
       <span class="kw">if let </span><span class="prelude-val">Some</span>(csp) = <span class="kw-2">&amp;</span>asset.csp_header {
-        builder = builder.header(<span class="string">&quot;Content-Security-Policy&quot;</span>, csp);
+        builder = builder.header(<span class="string">"Content-Security-Policy"</span>, csp);
       }
       <span class="kw">let </span><span class="kw-2">mut </span>response = builder.body(asset.bytes)<span class="question-mark">?</span>;
       <span class="kw">if let </span><span class="prelude-val">Some</span>(handler) = <span class="kw-2">&amp;</span>web_resource_request_handler {
         handler(request, <span class="kw-2">&amp;mut </span>response);
 
-        <span class="comment">// if it&#39;s an HTML file, we need to set the CSP meta tag on Linux
-        </span><span class="attr">#[cfg(target_os = <span class="string">&quot;linux&quot;</span>)]
-        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(response_csp) = response.headers().get(<span class="string">&quot;Content-Security-Policy&quot;</span>) {
+        <span class="comment">// if it's an HTML file, we need to set the CSP meta tag on Linux
+        </span><span class="attr">#[cfg(target_os = <span class="string">"linux"</span>)]
+        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(response_csp) = response.headers().get(<span class="string">"Content-Security-Policy"</span>) {
           <span class="kw">let </span>response_csp = String::from_utf8_lossy(response_csp.as_bytes());
           <span class="kw">let </span>body = set_html_csp(<span class="kw-2">&amp;</span>String::from_utf8_lossy(response.body()), <span class="kw-2">&amp;</span>response_csp);
           <span class="kw-2">*</span>response.body_mut() = body.as_bytes().to_vec();
         }
       } <span class="kw">else </span>{
-        <span class="attr">#[cfg(target_os = <span class="string">&quot;linux&quot;</span>)]
+        <span class="attr">#[cfg(target_os = <span class="string">"linux"</span>)]
         </span>{
           <span class="kw">if let </span><span class="prelude-val">Some</span>(csp) = <span class="kw-2">&amp;</span>asset.csp_header {
             <span class="kw">let </span>body = set_html_csp(<span class="kw-2">&amp;</span>String::from_utf8_lossy(response.body()), csp);
@@ -2181,61 +2182,61 @@
     with_global_tauri: bool,
   ) -&gt; <span class="kw">crate</span>::Result&lt;String&gt; {
     <span class="attr">#[derive(Template)]
-    #[default_template(<span class="string">&quot;../scripts/init.js&quot;</span>)]
-    </span><span class="kw">struct </span>InitJavascript&lt;<span class="lifetime">&#39;a</span>&gt; {
+    #[default_template(<span class="string">"../scripts/init.js"</span>)]
+    </span><span class="kw">struct </span>InitJavascript&lt;<span class="lifetime">'a</span>&gt; {
       <span class="attr">#[raw]
-      </span>pattern_script: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str,
+      </span>pattern_script: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str,
       <span class="attr">#[raw]
-      </span>ipc_script: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str,
+      </span>ipc_script: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str,
       <span class="attr">#[raw]
-      </span>bundle_script: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str,
+      </span>bundle_script: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str,
       <span class="comment">// A function to immediately listen to an event.
       </span><span class="attr">#[raw]
-      </span>listen_function: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str,
+      </span>listen_function: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str,
       <span class="attr">#[raw]
-      </span>core_script: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str,
+      </span>core_script: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str,
       <span class="attr">#[raw]
-      </span>event_initialization_script: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str,
+      </span>event_initialization_script: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str,
       <span class="attr">#[raw]
-      </span>plugin_initialization_script: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str,
+      </span>plugin_initialization_script: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str,
       <span class="attr">#[raw]
-      </span>freeze_prototype: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str,
+      </span>freeze_prototype: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str,
       <span class="attr">#[raw]
-      </span>hotkeys: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str,
+      </span>hotkeys: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str,
     }
 
     <span class="attr">#[derive(Template)]
-    #[default_template(<span class="string">&quot;../scripts/core.js&quot;</span>)]
-    </span><span class="kw">struct </span>CoreJavascript&lt;<span class="lifetime">&#39;a</span>&gt; {
-      os_name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str,
-      protocol_scheme: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str,
+    #[default_template(<span class="string">"../scripts/core.js"</span>)]
+    </span><span class="kw">struct </span>CoreJavascript&lt;<span class="lifetime">'a</span>&gt; {
+      os_name: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str,
+      protocol_scheme: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str,
     }
 
     <span class="attr">#[derive(Template)]
-    #[default_template(<span class="string">&quot;../scripts/toggle-devtools.js&quot;</span>)]
-    </span><span class="kw">struct </span>ToggleDevtoolsScript&lt;<span class="lifetime">&#39;a</span>&gt; {
-      os_name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str,
+    #[default_template(<span class="string">"../scripts/toggle-devtools.js"</span>)]
+    </span><span class="kw">struct </span>ToggleDevtoolsScript&lt;<span class="lifetime">'a</span>&gt; {
+      os_name: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str,
     }
 
     <span class="kw">let </span>bundle_script = <span class="kw">if </span>with_global_tauri {
-      <span class="macro">include_str!</span>(<span class="string">&quot;../scripts/bundle.global.js&quot;</span>)
+      <span class="macro">include_str!</span>(<span class="string">"../scripts/bundle.global.js"</span>)
     } <span class="kw">else </span>{
-      <span class="string">&quot;&quot;
+      <span class="string">""
     </span>};
 
     <span class="kw">let </span>freeze_prototype = <span class="kw">if </span><span class="self">self</span>.inner.config.tauri.security.freeze_prototype {
-      <span class="macro">include_str!</span>(<span class="string">&quot;../scripts/freeze_prototype.js&quot;</span>)
+      <span class="macro">include_str!</span>(<span class="string">"../scripts/freeze_prototype.js"</span>)
     } <span class="kw">else </span>{
-      <span class="string">&quot;&quot;
+      <span class="string">""
     </span>};
 
-    <span class="attr">#[cfg(any(debug_assertions, feature = <span class="string">&quot;devtools&quot;</span>))]
+    <span class="attr">#[cfg(any(debug_assertions, feature = <span class="string">"devtools"</span>))]
     </span><span class="kw">let </span>hotkeys = ToggleDevtoolsScript {
       os_name: std::env::consts::OS,
     }
     .render_default(<span class="kw-2">&amp;</span>Default::default())<span class="question-mark">?
     </span>.into_string();
-    <span class="attr">#[cfg(not(any(debug_assertions, feature = <span class="string">&quot;devtools&quot;</span>)))]
+    <span class="attr">#[cfg(not(any(debug_assertions, feature = <span class="string">"devtools"</span>)))]
     </span><span class="kw">let </span>hotkeys = String::default();
 
     InitJavascript {
@@ -2243,21 +2244,21 @@
       ipc_script,
       bundle_script,
       listen_function: <span class="kw-2">&amp;</span><span class="macro">format!</span>(
-        <span class="string">&quot;function listen(eventName, cb) {{ {} }}&quot;</span>,
+        <span class="string">"function listen(eventName, cb) {{ {} }}"</span>,
         <span class="kw">crate</span>::event::listen_js(
           <span class="self">self</span>.event_listeners_object_name(),
-          <span class="string">&quot;eventName&quot;</span>.into(),
+          <span class="string">"eventName"</span>.into(),
           <span class="number">0</span>,
           <span class="prelude-val">None</span>,
-          <span class="string">&quot;window[&#39;_&#39; + window.__TAURI__.transformCallback(cb) ]&quot;</span>.into()
+          <span class="string">"window['_' + window.__TAURI__.transformCallback(cb) ]"</span>.into()
         )
       ),
       core_script: <span class="kw-2">&amp;</span>CoreJavascript {
         os_name: std::env::consts::OS,
         protocol_scheme: <span class="kw">if </span><span class="self">self</span>.inner.config.tauri.security.dangerous_use_http_scheme {
-          <span class="string">&quot;http&quot;
+          <span class="string">"http"
         </span>} <span class="kw">else </span>{
-          <span class="string">&quot;https&quot;
+          <span class="string">"https"
         </span>},
       }
       .render_default(<span class="kw-2">&amp;</span>Default::default())<span class="question-mark">?
@@ -2274,10 +2275,10 @@
 
   <span class="kw">fn </span>event_initialization_script(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
     <span class="macro">format!</span>(
-      <span class="string">&quot;
-      Object.defineProperty(window, &#39;{function}&#39;, {{
+      <span class="string">"
+      Object.defineProperty(window, '{function}', {{
         value: function (eventData) {{
-          const listeners = (window[&#39;{listeners}&#39;] &amp;&amp; window[&#39;{listeners}&#39;][eventData.event]) || []
+          const listeners = (window['{listeners}'] &amp;&amp; window['{listeners}'][eventData.event]) || []
 
           for (let i = listeners.length - 1; i &gt;= 0; i--) {{
             const listener = listeners[i]
@@ -2288,7 +2289,7 @@
           }}
         }}
       }});
-    &quot;</span>,
+    "</span>,
       function = <span class="self">self</span>.event_emit_function_name(),
       listeners = <span class="self">self</span>.event_listeners_object_name()
     )
@@ -2303,7 +2304,7 @@
 
   <span class="attr">#[test]
   </span><span class="kw">fn </span>check_get_url() {
-    <span class="kw">let </span>context = <span class="macro">generate_context!</span>(<span class="string">&quot;test/fixture/src-tauri/tauri.conf.json&quot;</span>, <span class="kw">crate</span>);
+    <span class="kw">let </span>context = <span class="macro">generate_context!</span>(<span class="string">"test/fixture/src-tauri/tauri.conf.json"</span>, <span class="kw">crate</span>);
     <span class="kw">let </span>manager: WindowManager&lt;Wry&gt; = WindowManager::with_handlers(
       context,
       PluginStore::default(),
@@ -2313,7 +2314,7 @@
       StateManager::new(),
       Default::default(),
       Default::default(),
-      (std::sync::Arc::new(|<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>| ()), <span class="string">&quot;&quot;</span>.into()),
+      (std::sync::Arc::new(|<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>| ()), <span class="string">""</span>.into()),
     );
 
     <span class="attr">#[cfg(custom_protocol)]
@@ -2321,15 +2322,15 @@
       <span class="macro">assert_eq!</span>(
         manager.get_url().to_string(),
         <span class="kw">if </span><span class="macro">cfg!</span>(windows) {
-          <span class="string">&quot;https://tauri.localhost/&quot;
+          <span class="string">"https://tauri.localhost/"
         </span>} <span class="kw">else </span>{
-          <span class="string">&quot;tauri://localhost&quot;
+          <span class="string">"tauri://localhost"
         </span>}
       );
     }
 
     <span class="attr">#[cfg(dev)]
-    </span><span class="macro">assert_eq!</span>(manager.get_url().to_string(), <span class="string">&quot;http://localhost:4000/&quot;</span>);
+    </span><span class="macro">assert_eq!</span>(manager.get_url().to_string(), <span class="string">"http://localhost:4000/"</span>);
   }
 }
 
@@ -2344,7 +2345,7 @@
       </span>.inner
       .plugins
       .lock()
-      .expect(<span class="string">&quot;poisoned plugin store&quot;</span>)
+      .expect(<span class="string">"poisoned plugin store"</span>)
       .on_page_load(window, payload);
   }
 
@@ -2353,7 +2354,7 @@
       </span>.inner
       .plugins
       .lock()
-      .expect(<span class="string">&quot;poisoned plugin store&quot;</span>)
+      .expect(<span class="string">"poisoned plugin store"</span>)
       .extend_api(invoke);
   }
 
@@ -2362,7 +2363,7 @@
       </span>.inner
       .plugins
       .lock()
-      .expect(<span class="string">&quot;poisoned plugin store&quot;</span>)
+      .expect(<span class="string">"poisoned plugin store"</span>)
       .initialize_all(app, <span class="kw-2">&amp;</span><span class="self">self</span>.inner.config.plugins)
   }
 
@@ -2379,8 +2380,8 @@
     </span><span class="kw">let </span><span class="kw-2">mut </span>url = <span class="kw">match </span><span class="kw-2">&amp;</span>pending.webview_attributes.url {
       WindowUrl::App(path) =&gt; {
         <span class="kw">let </span>url = <span class="self">self</span>.get_url();
-        <span class="comment">// ignore &quot;index.html&quot; just to simplify the url
-        </span><span class="kw">if </span>path.to_str() != <span class="prelude-val">Some</span>(<span class="string">&quot;index.html&quot;</span>) {
+        <span class="comment">// ignore "index.html" just to simplify the url
+        </span><span class="kw">if </span>path.to_str() != <span class="prelude-val">Some</span>(<span class="string">"index.html"</span>) {
           url
             .join(<span class="kw-2">&amp;</span>path.to_string_lossy())
             .map_err(<span class="kw">crate</span>::Error::InvalidUrl)
@@ -2394,24 +2395,24 @@
       <span class="kw">_ </span>=&gt; <span class="macro">unimplemented!</span>(),
     };
 
-    <span class="attr">#[cfg(not(feature = <span class="string">&quot;window-data-url&quot;</span>))]
-    </span><span class="kw">if </span>url.scheme() == <span class="string">&quot;data&quot; </span>{
+    <span class="attr">#[cfg(not(feature = <span class="string">"window-data-url"</span>))]
+    </span><span class="kw">if </span>url.scheme() == <span class="string">"data" </span>{
       <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::InvalidWindowUrl(
-        <span class="string">&quot;data URLs are not supported without the `window-data-url` feature.&quot;</span>,
+        <span class="string">"data URLs are not supported without the `window-data-url` feature."</span>,
       ));
     }
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;window-data-url&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"window-data-url"</span>)]
     </span><span class="kw">if let </span><span class="prelude-val">Some</span>(csp) = <span class="self">self</span>.csp() {
-      <span class="kw">if </span>url.scheme() == <span class="string">&quot;data&quot; </span>{
+      <span class="kw">if </span>url.scheme() == <span class="string">"data" </span>{
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(data_url) = data_url::DataUrl::process(url.as_str()) {
           <span class="kw">let </span>(body, <span class="kw">_</span>) = data_url.decode_to_vec().unwrap();
           <span class="kw">let </span>html = String::from_utf8_lossy(<span class="kw-2">&amp;</span>body).into_owned();
-          <span class="comment">// naive way to check if it&#39;s an html
-          </span><span class="kw">if </span>html.contains(<span class="string">&#39;&lt;&#39;</span>) &amp;&amp; html.contains(<span class="string">&#39;&gt;&#39;</span>) {
+          <span class="comment">// naive way to check if it's an html
+          </span><span class="kw">if </span>html.contains(<span class="string">'&lt;'</span>) &amp;&amp; html.contains(<span class="string">'&gt;'</span>) {
             <span class="kw">let </span><span class="kw-2">mut </span>document = tauri_utils::html::parse(html);
             tauri_utils::html::inject_csp(<span class="kw-2">&amp;mut </span>document, <span class="kw-2">&amp;</span>csp.to_string());
-            url.set_path(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;text/html,{}&quot;</span>, document.to_string()));
+            url.set_path(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"text/html,{}"</span>, document.to_string()));
           }
         }
       }
@@ -2439,7 +2440,7 @@
 
     <span class="comment">// in `Windows`, we need to force a data_directory
     // but we do respect user-specification
-    </span><span class="attr">#[cfg(any(target_os = <span class="string">&quot;linux&quot;</span>, target_os = <span class="string">&quot;windows&quot;</span>))]
+    </span><span class="attr">#[cfg(any(target_os = <span class="string">"linux"</span>, target_os = <span class="string">"windows"</span>))]
     </span><span class="kw">if </span>pending.webview_attributes.data_directory.is_none() {
       <span class="kw">let </span>local_app_data = resolve_path(
         <span class="kw-2">&amp;</span><span class="self">self</span>.inner.config,
@@ -2460,12 +2461,12 @@
       }
     }
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;isolation&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"isolation"</span>)]
     </span><span class="kw">let </span>pattern = <span class="self">self</span>.pattern().clone();
     <span class="kw">let </span>navigation_handler = pending.navigation_handler.take();
     pending.navigation_handler = <span class="prelude-val">Some</span>(Box::new(<span class="kw">move </span>|url| {
       <span class="comment">// always allow navigation events for the isolation iframe and do not emit them for consumers
-      </span><span class="attr">#[cfg(feature = <span class="string">&quot;isolation&quot;</span>)]
+      </span><span class="attr">#[cfg(feature = <span class="string">"isolation"</span>)]
       </span><span class="kw">if let </span>Pattern::Isolation { schema, .. } = <span class="kw-2">&amp;</span>pattern {
         <span class="kw">if </span>url.scheme() == schema
           &amp;&amp; url.domain() == <span class="prelude-val">Some</span>(<span class="kw">crate</span>::pattern::ISOLATION_IFRAME_SRC_DOMAIN)
@@ -2526,12 +2527,12 @@
     <span class="comment">// let plugins know that a new window has been added to the manager
     </span><span class="kw">let </span>manager = <span class="self">self</span>.inner.clone();
     <span class="kw">let </span>window_ = window.clone();
-    <span class="comment">// run on main thread so the plugin store doesn&#39;t dead lock with the event loop handler in App
+    <span class="comment">// run on main thread so the plugin store doesn't dead lock with the event loop handler in App
     </span><span class="kw">let _ </span>= window.run_on_main_thread(<span class="kw">move </span>|| {
       manager
         .plugins
         .lock()
-        .expect(<span class="string">&quot;poisoned plugin store&quot;</span>)
+        .expect(<span class="string">"poisoned plugin store"</span>)
         .created(window_);
     });
 
@@ -2553,8 +2554,8 @@
     </span>S: Serialize + Clone,
     F: Fn(<span class="kw-2">&amp;</span>Window&lt;R&gt;) -&gt; bool,
   {
-    <span class="attr">#[cfg(feature = <span class="string">&quot;tracing&quot;</span>)]
-    </span><span class="kw">let </span>_span = <span class="macro">tracing::debug_span!</span>(<span class="string">&quot;emit::run&quot;</span>).entered();
+    <span class="attr">#[cfg(feature = <span class="string">"tracing"</span>)]
+    </span><span class="kw">let </span>_span = <span class="macro">tracing::debug_span!</span>(<span class="string">"emit::run"</span>).entered();
     <span class="kw">let </span>emit_args = WindowEmitArgs::from(event, source_window_label, payload)<span class="question-mark">?</span>;
     assert_event_name_is_valid(event);
     <span class="self">self
@@ -2593,7 +2594,7 @@
     <span class="self">self</span>.inner.listeners.trigger(event, window, data)
   }
 
-  <span class="kw">pub fn </span>listen&lt;F: Fn(Event) + Send + <span class="lifetime">&#39;static</span>&gt;(
+  <span class="kw">pub fn </span>listen&lt;F: Fn(Event) + Send + <span class="lifetime">'static</span>&gt;(
     <span class="kw-2">&amp;</span><span class="self">self</span>,
     event: String,
     window: <span class="prelude-ty">Option</span>&lt;String&gt;,
@@ -2603,7 +2604,7 @@
     <span class="self">self</span>.inner.listeners.listen(event, window, handler)
   }
 
-  <span class="kw">pub fn </span>once&lt;F: FnOnce(Event) + Send + <span class="lifetime">&#39;static</span>&gt;(
+  <span class="kw">pub fn </span>once&lt;F: FnOnce(Event) + Send + <span class="lifetime">'static</span>&gt;(
     <span class="kw-2">&amp;</span><span class="self">self</span>,
     event: String,
     window: <span class="prelude-ty">Option</span>&lt;String&gt;,
@@ -2639,7 +2640,7 @@
 }
 
 <span class="doccomment">/// Tray APIs
-</span><span class="attr">#[cfg(all(desktop, feature = <span class="string">&quot;system-tray&quot;</span>))]
+</span><span class="attr">#[cfg(all(desktop, feature = <span class="string">"system-tray"</span>))]
 </span><span class="kw">impl</span>&lt;R: Runtime&gt; WindowManager&lt;R&gt; {
   <span class="kw">pub fn </span>get_tray(<span class="kw-2">&amp;</span><span class="self">self</span>, id: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::SystemTrayHandle&lt;R&gt;&gt; {
     <span class="self">self</span>.inner.trays.lock().unwrap().get(id).cloned()
@@ -2686,7 +2687,7 @@
       <span class="kw">let </span>windows = windows_map.values();
       <span class="kw">for </span>window <span class="kw">in </span>windows {
         window.eval(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
-          <span class="string">r#&quot;(function () {{ const metadata = window.__TAURI_METADATA__; if (metadata != null) {{ metadata.__windows = window.__TAURI_METADATA__.__windows.filter(w =&gt; w.label !== &quot;{label}&quot;); }} }})()&quot;#
+          <span class="string">r#"(function () {{ const metadata = window.__TAURI_METADATA__; if (metadata != null) {{ metadata.__windows = window.__TAURI_METADATA__.__windows.filter(w =&gt; w.label !== "{label}"); }} }})()"#
         </span>))<span class="question-mark">?</span>;
       }
     }
@@ -2731,7 +2732,7 @@
 }
 
 <span class="attr">#[derive(Clone, Serialize)]
-#[serde(rename_all = <span class="string">&quot;camelCase&quot;</span>)]
+#[serde(rename_all = <span class="string">"camelCase"</span>)]
 </span><span class="kw">struct </span>ScaleFactorChanged {
   scale_factor: f64,
   size: PhysicalSize&lt;u32&gt;,
@@ -2741,18 +2742,18 @@
   window.emit(MENU_EVENT, event.menu_item_id.clone())
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;isolation&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"isolation"</span>)]
 </span><span class="kw">fn </span>request_to_path(request: <span class="kw-2">&amp;</span>tauri_runtime::http::Request, base_url: <span class="kw-2">&amp;</span>str) -&gt; String {
   <span class="kw">let </span><span class="kw-2">mut </span>path = request
     .uri()
-    .split(<span class="kw-2">&amp;</span>[<span class="string">&#39;?&#39;</span>, <span class="string">&#39;#&#39;</span>][..])
+    .split(<span class="kw-2">&amp;</span>[<span class="string">'?'</span>, <span class="string">'#'</span>][..])
     <span class="comment">// ignore query string
     </span>.next()
     .unwrap()
     .trim_start_matches(base_url)
     .to_string();
 
-  <span class="kw">if </span>path.ends_with(<span class="string">&#39;/&#39;</span>) {
+  <span class="kw">if </span>path.ends_with(<span class="string">'/'</span>) {
     path.pop();
   }
 
@@ -2762,7 +2763,7 @@
 
   <span class="kw">if </span>path.is_empty() {
     <span class="comment">// if the url has no path, we should load `index.html`
-    </span><span class="string">&quot;index.html&quot;</span>.to_string()
+    </span><span class="string">"index.html"</span>.to_string()
   } <span class="kw">else </span>{
     <span class="comment">// skip leading `/`
     </span>path.chars().skip(<span class="number">1</span>).collect()
@@ -2778,13 +2779,13 @@
     <span class="kw">let </span><span class="kw-2">mut </span>tauri_index = <span class="number">0</span>;
     <span class="attr">#[allow(clippy::single_element_loop)]
     </span><span class="kw">for </span>(src, pattern, replacement, result) <span class="kw">in </span>[(
-      <span class="string">&quot;tauri is awesome, tauri is amazing&quot;</span>,
-      <span class="string">&quot;tauri&quot;</span>,
+      <span class="string">"tauri is awesome, tauri is amazing"</span>,
+      <span class="string">"tauri"</span>,
       || {
         tauri_index += <span class="number">1</span>;
         tauri_index.to_string()
       },
-      <span class="string">&quot;1 is awesome, 2 is amazing&quot;</span>,
+      <span class="string">"1 is awesome, 2 is amazing"</span>,
     )] {
       <span class="macro">assert_eq!</span>(replace_with_callback(src, pattern, replacement), result);
     }

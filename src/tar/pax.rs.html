@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tar-0.4.40/src/pax.rs`."><title>pax.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tar" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tar-0.4.40/src/pax.rs`."><title>pax.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tar" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -153,47 +154,47 @@
 <span class="kw">use </span><span class="kw">crate</span>::other;
 
 <span class="comment">// Keywords for PAX extended header records.
-</span><span class="kw">pub const </span>PAX_NONE: <span class="kw-2">&amp;</span>str = <span class="string">&quot;&quot;</span>; <span class="comment">// Indicates that no PAX key is suitable
-</span><span class="kw">pub const </span>PAX_PATH: <span class="kw-2">&amp;</span>str = <span class="string">&quot;path&quot;</span>;
-<span class="kw">pub const </span>PAX_LINKPATH: <span class="kw-2">&amp;</span>str = <span class="string">&quot;linkpath&quot;</span>;
-<span class="kw">pub const </span>PAX_SIZE: <span class="kw-2">&amp;</span>str = <span class="string">&quot;size&quot;</span>;
-<span class="kw">pub const </span>PAX_UID: <span class="kw-2">&amp;</span>str = <span class="string">&quot;uid&quot;</span>;
-<span class="kw">pub const </span>PAX_GID: <span class="kw-2">&amp;</span>str = <span class="string">&quot;gid&quot;</span>;
-<span class="kw">pub const </span>PAX_UNAME: <span class="kw-2">&amp;</span>str = <span class="string">&quot;uname&quot;</span>;
-<span class="kw">pub const </span>PAX_GNAME: <span class="kw-2">&amp;</span>str = <span class="string">&quot;gname&quot;</span>;
-<span class="kw">pub const </span>PAX_MTIME: <span class="kw-2">&amp;</span>str = <span class="string">&quot;mtime&quot;</span>;
-<span class="kw">pub const </span>PAX_ATIME: <span class="kw-2">&amp;</span>str = <span class="string">&quot;atime&quot;</span>;
-<span class="kw">pub const </span>PAX_CTIME: <span class="kw-2">&amp;</span>str = <span class="string">&quot;ctime&quot;</span>; <span class="comment">// Removed from later revision of PAX spec, but was valid
-</span><span class="kw">pub const </span>PAX_CHARSET: <span class="kw-2">&amp;</span>str = <span class="string">&quot;charset&quot;</span>; <span class="comment">// Currently unused
-</span><span class="kw">pub const </span>PAX_COMMENT: <span class="kw-2">&amp;</span>str = <span class="string">&quot;comment&quot;</span>; <span class="comment">// Currently unused
+</span><span class="kw">pub const </span>PAX_NONE: <span class="kw-2">&amp;</span>str = <span class="string">""</span>; <span class="comment">// Indicates that no PAX key is suitable
+</span><span class="kw">pub const </span>PAX_PATH: <span class="kw-2">&amp;</span>str = <span class="string">"path"</span>;
+<span class="kw">pub const </span>PAX_LINKPATH: <span class="kw-2">&amp;</span>str = <span class="string">"linkpath"</span>;
+<span class="kw">pub const </span>PAX_SIZE: <span class="kw-2">&amp;</span>str = <span class="string">"size"</span>;
+<span class="kw">pub const </span>PAX_UID: <span class="kw-2">&amp;</span>str = <span class="string">"uid"</span>;
+<span class="kw">pub const </span>PAX_GID: <span class="kw-2">&amp;</span>str = <span class="string">"gid"</span>;
+<span class="kw">pub const </span>PAX_UNAME: <span class="kw-2">&amp;</span>str = <span class="string">"uname"</span>;
+<span class="kw">pub const </span>PAX_GNAME: <span class="kw-2">&amp;</span>str = <span class="string">"gname"</span>;
+<span class="kw">pub const </span>PAX_MTIME: <span class="kw-2">&amp;</span>str = <span class="string">"mtime"</span>;
+<span class="kw">pub const </span>PAX_ATIME: <span class="kw-2">&amp;</span>str = <span class="string">"atime"</span>;
+<span class="kw">pub const </span>PAX_CTIME: <span class="kw-2">&amp;</span>str = <span class="string">"ctime"</span>; <span class="comment">// Removed from later revision of PAX spec, but was valid
+</span><span class="kw">pub const </span>PAX_CHARSET: <span class="kw-2">&amp;</span>str = <span class="string">"charset"</span>; <span class="comment">// Currently unused
+</span><span class="kw">pub const </span>PAX_COMMENT: <span class="kw-2">&amp;</span>str = <span class="string">"comment"</span>; <span class="comment">// Currently unused
 
-</span><span class="kw">pub const </span>PAX_SCHILYXATTR: <span class="kw-2">&amp;</span>str = <span class="string">&quot;SCHILY.xattr.&quot;</span>;
+</span><span class="kw">pub const </span>PAX_SCHILYXATTR: <span class="kw-2">&amp;</span>str = <span class="string">"SCHILY.xattr."</span>;
 
 <span class="comment">// Keywords for GNU sparse files in a PAX extended header.
-</span><span class="kw">pub const </span>PAX_GNUSPARSE: <span class="kw-2">&amp;</span>str = <span class="string">&quot;GNU.sparse.&quot;</span>;
-<span class="kw">pub const </span>PAX_GNUSPARSENUMBLOCKS: <span class="kw-2">&amp;</span>str = <span class="string">&quot;GNU.sparse.numblocks&quot;</span>;
-<span class="kw">pub const </span>PAX_GNUSPARSEOFFSET: <span class="kw-2">&amp;</span>str = <span class="string">&quot;GNU.sparse.offset&quot;</span>;
-<span class="kw">pub const </span>PAX_GNUSPARSENUMBYTES: <span class="kw-2">&amp;</span>str = <span class="string">&quot;GNU.sparse.numbytes&quot;</span>;
-<span class="kw">pub const </span>PAX_GNUSPARSEMAP: <span class="kw-2">&amp;</span>str = <span class="string">&quot;GNU.sparse.map&quot;</span>;
-<span class="kw">pub const </span>PAX_GNUSPARSENAME: <span class="kw-2">&amp;</span>str = <span class="string">&quot;GNU.sparse.name&quot;</span>;
-<span class="kw">pub const </span>PAX_GNUSPARSEMAJOR: <span class="kw-2">&amp;</span>str = <span class="string">&quot;GNU.sparse.major&quot;</span>;
-<span class="kw">pub const </span>PAX_GNUSPARSEMINOR: <span class="kw-2">&amp;</span>str = <span class="string">&quot;GNU.sparse.minor&quot;</span>;
-<span class="kw">pub const </span>PAX_GNUSPARSESIZE: <span class="kw-2">&amp;</span>str = <span class="string">&quot;GNU.sparse.size&quot;</span>;
-<span class="kw">pub const </span>PAX_GNUSPARSEREALSIZE: <span class="kw-2">&amp;</span>str = <span class="string">&quot;GNU.sparse.realsize&quot;</span>;
+</span><span class="kw">pub const </span>PAX_GNUSPARSE: <span class="kw-2">&amp;</span>str = <span class="string">"GNU.sparse."</span>;
+<span class="kw">pub const </span>PAX_GNUSPARSENUMBLOCKS: <span class="kw-2">&amp;</span>str = <span class="string">"GNU.sparse.numblocks"</span>;
+<span class="kw">pub const </span>PAX_GNUSPARSEOFFSET: <span class="kw-2">&amp;</span>str = <span class="string">"GNU.sparse.offset"</span>;
+<span class="kw">pub const </span>PAX_GNUSPARSENUMBYTES: <span class="kw-2">&amp;</span>str = <span class="string">"GNU.sparse.numbytes"</span>;
+<span class="kw">pub const </span>PAX_GNUSPARSEMAP: <span class="kw-2">&amp;</span>str = <span class="string">"GNU.sparse.map"</span>;
+<span class="kw">pub const </span>PAX_GNUSPARSENAME: <span class="kw-2">&amp;</span>str = <span class="string">"GNU.sparse.name"</span>;
+<span class="kw">pub const </span>PAX_GNUSPARSEMAJOR: <span class="kw-2">&amp;</span>str = <span class="string">"GNU.sparse.major"</span>;
+<span class="kw">pub const </span>PAX_GNUSPARSEMINOR: <span class="kw-2">&amp;</span>str = <span class="string">"GNU.sparse.minor"</span>;
+<span class="kw">pub const </span>PAX_GNUSPARSESIZE: <span class="kw-2">&amp;</span>str = <span class="string">"GNU.sparse.size"</span>;
+<span class="kw">pub const </span>PAX_GNUSPARSEREALSIZE: <span class="kw-2">&amp;</span>str = <span class="string">"GNU.sparse.realsize"</span>;
 
 <span class="doccomment">/// An iterator over the pax extensions in an archive entry.
 ///
 /// This iterator yields structures which can themselves be parsed into
 /// key/value pairs.
-</span><span class="kw">pub struct </span>PaxExtensions&lt;<span class="lifetime">&#39;entry</span>&gt; {
-    data: slice::Split&lt;<span class="lifetime">&#39;entry</span>, u8, <span class="kw">fn</span>(<span class="kw-2">&amp;</span>u8) -&gt; bool&gt;,
+</span><span class="kw">pub struct </span>PaxExtensions&lt;<span class="lifetime">'entry</span>&gt; {
+    data: slice::Split&lt;<span class="lifetime">'entry</span>, u8, <span class="kw">fn</span>(<span class="kw-2">&amp;</span>u8) -&gt; bool&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;entry</span>&gt; PaxExtensions&lt;<span class="lifetime">&#39;entry</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'entry</span>&gt; PaxExtensions&lt;<span class="lifetime">'entry</span>&gt; {
     <span class="doccomment">/// Create new pax extensions iterator from the given entry data.
-    </span><span class="kw">pub fn </span>new(a: <span class="kw-2">&amp;</span><span class="lifetime">&#39;entry </span>[u8]) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>new(a: <span class="kw-2">&amp;</span><span class="lifetime">'entry </span>[u8]) -&gt; <span class="self">Self </span>{
         <span class="kw">fn </span>is_newline(a: <span class="kw-2">&amp;</span>u8) -&gt; bool {
-            <span class="kw-2">*</span>a == <span class="string">b&#39;\n&#39;
+            <span class="kw-2">*</span>a == <span class="string">b'\n'
         </span>}
         PaxExtensions {
             data: a.split(is_newline),
@@ -202,9 +203,9 @@
 }
 
 <span class="doccomment">/// A key/value pair corresponding to a pax extension.
-</span><span class="kw">pub struct </span>PaxExtension&lt;<span class="lifetime">&#39;entry</span>&gt; {
-    key: <span class="kw-2">&amp;</span><span class="lifetime">&#39;entry </span>[u8],
-    value: <span class="kw-2">&amp;</span><span class="lifetime">&#39;entry </span>[u8],
+</span><span class="kw">pub struct </span>PaxExtension&lt;<span class="lifetime">'entry</span>&gt; {
+    key: <span class="kw-2">&amp;</span><span class="lifetime">'entry </span>[u8],
+    value: <span class="kw-2">&amp;</span><span class="lifetime">'entry </span>[u8],
 }
 
 <span class="kw">pub fn </span>pax_extensions_value(a: <span class="kw-2">&amp;</span>[u8], key: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Option</span>&lt;u64&gt; {
@@ -230,10 +231,10 @@
     <span class="prelude-val">None
 </span>}
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;entry</span>&gt; Iterator <span class="kw">for </span>PaxExtensions&lt;<span class="lifetime">&#39;entry</span>&gt; {
-    <span class="kw">type </span>Item = io::Result&lt;PaxExtension&lt;<span class="lifetime">&#39;entry</span>&gt;&gt;;
+<span class="kw">impl</span>&lt;<span class="lifetime">'entry</span>&gt; Iterator <span class="kw">for </span>PaxExtensions&lt;<span class="lifetime">'entry</span>&gt; {
+    <span class="kw">type </span>Item = io::Result&lt;PaxExtension&lt;<span class="lifetime">'entry</span>&gt;&gt;;
 
-    <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;io::Result&lt;PaxExtension&lt;<span class="lifetime">&#39;entry</span>&gt;&gt;&gt; {
+    <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;io::Result&lt;PaxExtension&lt;<span class="lifetime">'entry</span>&gt;&gt;&gt; {
         <span class="kw">let </span>line = <span class="kw">match </span><span class="self">self</span>.data.next() {
             <span class="prelude-val">Some</span>(line) <span class="kw">if </span>line.is_empty() =&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
             <span class="prelude-val">Some</span>(line) =&gt; line,
@@ -242,7 +243,7 @@
 
         <span class="prelude-val">Some</span>(
             line.iter()
-                .position(|b| <span class="kw-2">*</span>b == <span class="string">b&#39; &#39;</span>)
+                .position(|b| <span class="kw-2">*</span>b == <span class="string">b' '</span>)
                 .and_then(|i| {
                     str::from_utf8(<span class="kw-2">&amp;</span>line[..i])
                         .ok()
@@ -252,7 +253,7 @@
                     <span class="kw">if </span>line.len() + <span class="number">1 </span>== reported_len {
                         line[kvstart..]
                             .iter()
-                            .position(|b| <span class="kw-2">*</span>b == <span class="string">b&#39;=&#39;</span>)
+                            .position(|b| <span class="kw-2">*</span>b == <span class="string">b'='</span>)
                             .map(|equals| (kvstart, equals))
                     } <span class="kw">else </span>{
                         <span class="prelude-val">None
@@ -262,33 +263,33 @@
                     key: <span class="kw-2">&amp;</span>line[kvstart..kvstart + equals],
                     value: <span class="kw-2">&amp;</span>line[kvstart + equals + <span class="number">1</span>..],
                 })
-                .ok_or_else(|| other(<span class="string">&quot;malformed pax extension&quot;</span>)),
+                .ok_or_else(|| other(<span class="string">"malformed pax extension"</span>)),
         )
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;entry</span>&gt; PaxExtension&lt;<span class="lifetime">&#39;entry</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'entry</span>&gt; PaxExtension&lt;<span class="lifetime">'entry</span>&gt; {
     <span class="doccomment">/// Returns the key for this key/value pair parsed as a string.
     ///
-    /// May fail if the key isn&#39;t actually utf-8.
-    </span><span class="kw">pub fn </span>key(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;entry </span>str, str::Utf8Error&gt; {
+    /// May fail if the key isn't actually utf-8.
+    </span><span class="kw">pub fn </span>key(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'entry </span>str, str::Utf8Error&gt; {
         str::from_utf8(<span class="self">self</span>.key)
     }
 
     <span class="doccomment">/// Returns the underlying raw bytes for the key of this key/value pair.
-    </span><span class="kw">pub fn </span>key_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;entry </span>[u8] {
+    </span><span class="kw">pub fn </span>key_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'entry </span>[u8] {
         <span class="self">self</span>.key
     }
 
     <span class="doccomment">/// Returns the value for this key/value pair parsed as a string.
     ///
-    /// May fail if the value isn&#39;t actually utf-8.
-    </span><span class="kw">pub fn </span>value(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;entry </span>str, str::Utf8Error&gt; {
+    /// May fail if the value isn't actually utf-8.
+    </span><span class="kw">pub fn </span>value(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'entry </span>str, str::Utf8Error&gt; {
         str::from_utf8(<span class="self">self</span>.value)
     }
 
     <span class="doccomment">/// Returns the underlying raw bytes for this value of this key/value pair.
-    </span><span class="kw">pub fn </span>value_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;entry </span>[u8] {
+    </span><span class="kw">pub fn </span>value_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'entry </span>[u8] {
         <span class="self">self</span>.value
     }
 }

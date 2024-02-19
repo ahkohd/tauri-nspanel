@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_with_macros-3.6.0/src/apply.rs`."><title>apply.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="serde_with_macros" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_with_macros-3.6.1/src/apply.rs`."><title>apply.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="serde_with_macros" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -334,7 +335,7 @@
 }
 
 <span class="kw">impl </span>Parse <span class="kw">for </span>AddAttributesRule {
-    <span class="kw">fn </span>parse(input: ParseStream&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, Error&gt; {
+    <span class="kw">fn </span>parse(input: ParseStream&lt;<span class="lifetime">'_</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, Error&gt; {
         <span class="kw">let </span>ty: Type = input.parse()<span class="question-mark">?</span>;
         input.parse::&lt;<span class="macro">Token!</span>[=&gt;]&gt;()<span class="question-mark">?</span>;
         <span class="kw">let </span>attr = Attribute::parse_outer(input)<span class="question-mark">?</span>;
@@ -352,7 +353,7 @@
 }
 
 <span class="kw">impl </span>Parse <span class="kw">for </span>ApplyInput {
-    <span class="kw">fn </span>parse(input: ParseStream&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, Error&gt; {
+    <span class="kw">fn </span>parse(input: ParseStream&lt;<span class="lifetime">'_</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, Error&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>metas: Vec&lt;NestedMeta&gt; = Vec::new();
 
         <span class="kw">while </span>input.peek2(<span class="macro">Token!</span>[=]) &amp;&amp; !input.peek2(<span class="macro">Token!</span>[=&gt;]) {
@@ -375,7 +376,7 @@
 
     <span class="attr">#[derive(FromMeta)]
     </span><span class="kw">struct </span>SerdeContainerOptions {
-        <span class="attr">#[darling(rename = <span class="string">&quot;crate&quot;</span>)]
+        <span class="attr">#[darling(rename = <span class="string">"crate"</span>)]
         </span>alt_crate_path: <span class="prelude-ty">Option</span>&lt;Path&gt;,
     }
 
@@ -408,7 +409,7 @@
     input: ApplyInput,
 ) -&gt; <span class="kw">impl </span>Fn(<span class="kw-2">&amp;mut </span>Field) -&gt; <span class="prelude-ty">Result</span>&lt;(), DarlingError&gt; {
     <span class="kw">move </span>|field: <span class="kw-2">&amp;mut </span>Field| {
-        <span class="kw">let </span>has_skip_attr = <span class="kw">super</span>::field_has_attribute(field, <span class="string">&quot;serde_with&quot;</span>, <span class="string">&quot;skip_apply&quot;</span>);
+        <span class="kw">let </span>has_skip_attr = <span class="kw">super</span>::field_has_attribute(field, <span class="string">"serde_with"</span>, <span class="string">"skip_apply"</span>);
         <span class="kw">if </span>has_skip_attr {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(());
         }
@@ -425,7 +426,7 @@
 <span class="kw">fn </span>ty_pattern_matches_ty(ty_pattern: <span class="kw-2">&amp;</span>Type, ty: <span class="kw-2">&amp;</span>Type) -&gt; bool {
     <span class="kw">match </span>(ty_pattern, ty) {
         <span class="comment">// Groups are invisible groupings which can for example come from macro_rules expansion.
-        // This can lead to a mismatch where the `ty` is &quot;Group { Option&lt;String&gt; }&quot; and the `ty_pattern` is &quot;Option&lt;String&gt;&quot;.
+        // This can lead to a mismatch where the `ty` is "Group { Option&lt;String&gt; }" and the `ty_pattern` is "Option&lt;String&gt;".
         // To account for this we unwrap the group and compare the inner types.
         </span>(
             Type::Group(TypeGroup {
@@ -447,7 +448,7 @@
             Type::Array(TypeArray { elem: ty, len, .. }),
         ) =&gt; {
             <span class="kw">let </span>ty_match = ty_pattern_matches_ty(ty_pattern, ty);
-            <span class="kw">let </span>len_match = len_pattern == len || len_pattern.to_token_stream().to_string() == <span class="string">&quot;_&quot;</span>;
+            <span class="kw">let </span>len_match = len_pattern == len || len_pattern.to_token_stream().to_string() == <span class="string">"_"</span>;
             ty_match &amp;&amp; len_match
         }
         (Type::BareFn(ty_pattern), Type::BareFn(ty)) =&gt; ty_pattern == ty,
@@ -583,43 +584,43 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_ty_generic() {
-        <span class="macro">assert!</span>(matches(<span class="string">&quot;Option&lt;u8&gt;&quot;</span>, <span class="string">&quot;Option&lt;u8&gt;&quot;</span>));
-        <span class="macro">assert!</span>(matches(<span class="string">&quot;Option&quot;</span>, <span class="string">&quot;Option&lt;u8&gt;&quot;</span>));
-        <span class="macro">assert!</span>(!matches(<span class="string">&quot;Option&lt;u8&gt;&quot;</span>, <span class="string">&quot;Option&lt;String&gt;&quot;</span>));
+        <span class="macro">assert!</span>(matches(<span class="string">"Option&lt;u8&gt;"</span>, <span class="string">"Option&lt;u8&gt;"</span>));
+        <span class="macro">assert!</span>(matches(<span class="string">"Option"</span>, <span class="string">"Option&lt;u8&gt;"</span>));
+        <span class="macro">assert!</span>(!matches(<span class="string">"Option&lt;u8&gt;"</span>, <span class="string">"Option&lt;String&gt;"</span>));
 
-        <span class="macro">assert!</span>(matches(<span class="string">&quot;BTreeMap&lt;u8, u8&gt;&quot;</span>, <span class="string">&quot;BTreeMap&lt;u8, u8&gt;&quot;</span>));
-        <span class="macro">assert!</span>(matches(<span class="string">&quot;BTreeMap&quot;</span>, <span class="string">&quot;BTreeMap&lt;u8, u8&gt;&quot;</span>));
-        <span class="macro">assert!</span>(!matches(<span class="string">&quot;BTreeMap&lt;String, String&gt;&quot;</span>, <span class="string">&quot;BTreeMap&lt;u8, u8&gt;&quot;</span>));
-        <span class="macro">assert!</span>(matches(<span class="string">&quot;BTreeMap&lt;_, _&gt;&quot;</span>, <span class="string">&quot;BTreeMap&lt;u8, u8&gt;&quot;</span>));
-        <span class="macro">assert!</span>(matches(<span class="string">&quot;BTreeMap&lt;_, u8&gt;&quot;</span>, <span class="string">&quot;BTreeMap&lt;u8, u8&gt;&quot;</span>));
-        <span class="macro">assert!</span>(!matches(<span class="string">&quot;BTreeMap&lt;String, _&gt;&quot;</span>, <span class="string">&quot;BTreeMap&lt;u8, u8&gt;&quot;</span>));
+        <span class="macro">assert!</span>(matches(<span class="string">"BTreeMap&lt;u8, u8&gt;"</span>, <span class="string">"BTreeMap&lt;u8, u8&gt;"</span>));
+        <span class="macro">assert!</span>(matches(<span class="string">"BTreeMap"</span>, <span class="string">"BTreeMap&lt;u8, u8&gt;"</span>));
+        <span class="macro">assert!</span>(!matches(<span class="string">"BTreeMap&lt;String, String&gt;"</span>, <span class="string">"BTreeMap&lt;u8, u8&gt;"</span>));
+        <span class="macro">assert!</span>(matches(<span class="string">"BTreeMap&lt;_, _&gt;"</span>, <span class="string">"BTreeMap&lt;u8, u8&gt;"</span>));
+        <span class="macro">assert!</span>(matches(<span class="string">"BTreeMap&lt;_, u8&gt;"</span>, <span class="string">"BTreeMap&lt;u8, u8&gt;"</span>));
+        <span class="macro">assert!</span>(!matches(<span class="string">"BTreeMap&lt;String, _&gt;"</span>, <span class="string">"BTreeMap&lt;u8, u8&gt;"</span>));
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_array() {
-        <span class="macro">assert!</span>(matches(<span class="string">&quot;[u8; 1]&quot;</span>, <span class="string">&quot;[u8; 1]&quot;</span>));
-        <span class="macro">assert!</span>(matches(<span class="string">&quot;[_; 1]&quot;</span>, <span class="string">&quot;[u8; 1]&quot;</span>));
-        <span class="macro">assert!</span>(matches(<span class="string">&quot;[u8; _]&quot;</span>, <span class="string">&quot;[u8; 1]&quot;</span>));
-        <span class="macro">assert!</span>(matches(<span class="string">&quot;[u8; _]&quot;</span>, <span class="string">&quot;[u8; N]&quot;</span>));
+        <span class="macro">assert!</span>(matches(<span class="string">"[u8; 1]"</span>, <span class="string">"[u8; 1]"</span>));
+        <span class="macro">assert!</span>(matches(<span class="string">"[_; 1]"</span>, <span class="string">"[u8; 1]"</span>));
+        <span class="macro">assert!</span>(matches(<span class="string">"[u8; _]"</span>, <span class="string">"[u8; 1]"</span>));
+        <span class="macro">assert!</span>(matches(<span class="string">"[u8; _]"</span>, <span class="string">"[u8; N]"</span>));
 
-        <span class="macro">assert!</span>(!matches(<span class="string">&quot;[u8; 1]&quot;</span>, <span class="string">&quot;[u8; 2]&quot;</span>));
-        <span class="macro">assert!</span>(!matches(<span class="string">&quot;[u8; 1]&quot;</span>, <span class="string">&quot;[u8; _]&quot;</span>));
-        <span class="macro">assert!</span>(!matches(<span class="string">&quot;[u8; 1]&quot;</span>, <span class="string">&quot;[String; 1]&quot;</span>));
+        <span class="macro">assert!</span>(!matches(<span class="string">"[u8; 1]"</span>, <span class="string">"[u8; 2]"</span>));
+        <span class="macro">assert!</span>(!matches(<span class="string">"[u8; 1]"</span>, <span class="string">"[u8; _]"</span>));
+        <span class="macro">assert!</span>(!matches(<span class="string">"[u8; 1]"</span>, <span class="string">"[String; 1]"</span>));
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_reference() {
-        <span class="macro">assert!</span>(matches(<span class="string">&quot;&amp;str&quot;</span>, <span class="string">&quot;&amp;str&quot;</span>));
-        <span class="macro">assert!</span>(matches(<span class="string">&quot;&amp;mut str&quot;</span>, <span class="string">&quot;&amp;str&quot;</span>));
-        <span class="macro">assert!</span>(matches(<span class="string">&quot;&amp;str&quot;</span>, <span class="string">&quot;&amp;mut str&quot;</span>));
-        <span class="macro">assert!</span>(matches(<span class="string">&quot;&amp;str&quot;</span>, <span class="string">&quot;&amp;&#39;a str&quot;</span>));
-        <span class="macro">assert!</span>(matches(<span class="string">&quot;&amp;str&quot;</span>, <span class="string">&quot;&amp;&#39;static str&quot;</span>));
-        <span class="macro">assert!</span>(matches(<span class="string">&quot;&amp;str&quot;</span>, <span class="string">&quot;&amp;&#39;static mut str&quot;</span>));
+        <span class="macro">assert!</span>(matches(<span class="string">"&amp;str"</span>, <span class="string">"&amp;str"</span>));
+        <span class="macro">assert!</span>(matches(<span class="string">"&amp;mut str"</span>, <span class="string">"&amp;str"</span>));
+        <span class="macro">assert!</span>(matches(<span class="string">"&amp;str"</span>, <span class="string">"&amp;mut str"</span>));
+        <span class="macro">assert!</span>(matches(<span class="string">"&amp;str"</span>, <span class="string">"&amp;'a str"</span>));
+        <span class="macro">assert!</span>(matches(<span class="string">"&amp;str"</span>, <span class="string">"&amp;'static str"</span>));
+        <span class="macro">assert!</span>(matches(<span class="string">"&amp;str"</span>, <span class="string">"&amp;'static mut str"</span>));
 
-        <span class="macro">assert!</span>(matches(<span class="string">&quot;&amp;&#39;a str&quot;</span>, <span class="string">&quot;&amp;&#39;a str&quot;</span>));
-        <span class="macro">assert!</span>(matches(<span class="string">&quot;&amp;&#39;a mut str&quot;</span>, <span class="string">&quot;&amp;&#39;a str&quot;</span>));
+        <span class="macro">assert!</span>(matches(<span class="string">"&amp;'a str"</span>, <span class="string">"&amp;'a str"</span>));
+        <span class="macro">assert!</span>(matches(<span class="string">"&amp;'a mut str"</span>, <span class="string">"&amp;'a str"</span>));
 
-        <span class="macro">assert!</span>(!matches(<span class="string">&quot;&amp;&#39;b str&quot;</span>, <span class="string">&quot;&amp;&#39;a str&quot;</span>));
+        <span class="macro">assert!</span>(!matches(<span class="string">"&amp;'b str"</span>, <span class="string">"&amp;'a str"</span>));
     }
 }
 </code></pre></div></section></main></body></html>

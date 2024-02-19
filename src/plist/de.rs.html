@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/plist-1.6.0/src/de.rs`."><title>de.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="plist" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/plist-1.6.0/src/de.rs`."><title>de.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="plist" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -503,20 +504,20 @@
 }
 
 <span class="doccomment">/// A structure that deserializes plist event streams into Rust values.
-</span><span class="kw">pub struct </span>Deserializer&lt;<span class="lifetime">&#39;event</span>, I&gt;
+</span><span class="kw">pub struct </span>Deserializer&lt;<span class="lifetime">'event</span>, I&gt;
 <span class="kw">where
-    </span>I: IntoIterator&lt;Item = <span class="prelude-ty">Result</span>&lt;Event&lt;<span class="lifetime">&#39;event</span>&gt;, Error&gt;&gt;,
+    </span>I: IntoIterator&lt;Item = <span class="prelude-ty">Result</span>&lt;Event&lt;<span class="lifetime">'event</span>&gt;, Error&gt;&gt;,
 {
     events: Peekable&lt;&lt;I <span class="kw">as </span>IntoIterator&gt;::IntoIter&gt;,
     option_mode: OptionMode,
     in_plist_value: bool,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;event</span>, I&gt; Deserializer&lt;<span class="lifetime">&#39;event</span>, I&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'event</span>, I&gt; Deserializer&lt;<span class="lifetime">'event</span>, I&gt;
 <span class="kw">where
-    </span>I: IntoIterator&lt;Item = <span class="prelude-ty">Result</span>&lt;Event&lt;<span class="lifetime">&#39;event</span>&gt;, Error&gt;&gt;,
+    </span>I: IntoIterator&lt;Item = <span class="prelude-ty">Result</span>&lt;Event&lt;<span class="lifetime">'event</span>&gt;, Error&gt;&gt;,
 {
-    <span class="kw">pub fn </span>new(iter: I) -&gt; Deserializer&lt;<span class="lifetime">&#39;event</span>, I&gt; {
+    <span class="kw">pub fn </span>new(iter: I) -&gt; Deserializer&lt;<span class="lifetime">'event</span>, I&gt; {
         Deserializer {
             events: iter.into_iter().peekable(),
             option_mode: OptionMode::Root,
@@ -524,7 +525,7 @@
         }
     }
 
-    <span class="kw">fn </span>with_option_mode&lt;T, F: FnOnce(<span class="kw-2">&amp;mut </span>Deserializer&lt;<span class="lifetime">&#39;event</span>, I&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;T, Error&gt;&gt;(
+    <span class="kw">fn </span>with_option_mode&lt;T, F: FnOnce(<span class="kw-2">&amp;mut </span>Deserializer&lt;<span class="lifetime">'event</span>, I&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;T, Error&gt;&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         option_mode: OptionMode,
         f: F,
@@ -535,7 +536,7 @@
         ret
     }
 
-    <span class="kw">fn </span>enter_plist_value&lt;T, F: FnOnce(<span class="kw-2">&amp;mut </span>Deserializer&lt;<span class="lifetime">&#39;event</span>, I&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;T, Error&gt;&gt;(
+    <span class="kw">fn </span>enter_plist_value&lt;T, F: FnOnce(<span class="kw-2">&amp;mut </span>Deserializer&lt;<span class="lifetime">'event</span>, I&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;T, Error&gt;&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         f: F,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;T, Error&gt; {
@@ -546,15 +547,15 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, <span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;event</span>, I&gt; de::Deserializer&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Deserializer&lt;<span class="lifetime">&#39;event</span>, I&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, <span class="lifetime">'a</span>, <span class="lifetime">'event</span>, I&gt; de::Deserializer&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Deserializer&lt;<span class="lifetime">'event</span>, I&gt;
 <span class="kw">where
-    </span>I: IntoIterator&lt;Item = <span class="prelude-ty">Result</span>&lt;Event&lt;<span class="lifetime">&#39;event</span>&gt;, Error&gt;&gt;,
+    </span>I: IntoIterator&lt;Item = <span class="prelude-ty">Result</span>&lt;Event&lt;<span class="lifetime">'event</span>&gt;, Error&gt;&gt;,
 {
     <span class="kw">type </span>Error = Error;
 
     <span class="kw">fn </span>deserialize_any&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, Error&gt;
     <span class="kw">where
-        </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: de::Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="macro">try_next!</span>(<span class="self">self</span>.events.next()) {
             Event::StartArray(len) =&gt; {
@@ -610,7 +611,7 @@
 
     <span class="kw">fn </span>deserialize_unit&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, Error&gt;
     <span class="kw">where
-        </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: de::Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="macro">expect!</span>(<span class="self">self</span>.events.next(), EventKind::String);
         visitor.visit_unit()
@@ -618,7 +619,7 @@
 
     <span class="kw">fn </span>deserialize_option&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, Error&gt;
     <span class="kw">where
-        </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: de::Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">match </span><span class="self">self</span>.option_mode {
             OptionMode::Root =&gt; {
@@ -629,18 +630,18 @@
                 }
             }
             OptionMode::StructField =&gt; {
-                <span class="comment">// None struct values are ignored so if we&#39;re here the value must be Some.
+                <span class="comment">// None struct values are ignored so if we're here the value must be Some.
                 </span><span class="self">self</span>.with_option_mode(OptionMode::Explicit, |this| visitor.visit_some(this))
             }
             OptionMode::Explicit =&gt; {
                 <span class="macro">expect!</span>(<span class="self">self</span>.events.next(), EventKind::StartDictionary);
 
                 <span class="kw">let </span>ret = <span class="kw">match </span><span class="macro">try_next!</span>(<span class="self">self</span>.events.next()) {
-                    Event::String(<span class="kw-2">ref </span>s) <span class="kw">if </span><span class="kw-2">&amp;</span>s[..] == <span class="string">&quot;None&quot; </span>=&gt; {
+                    Event::String(<span class="kw-2">ref </span>s) <span class="kw">if </span><span class="kw-2">&amp;</span>s[..] == <span class="string">"None" </span>=&gt; {
                         <span class="macro">expect!</span>(<span class="self">self</span>.events.next(), EventKind::String);
                         visitor.visit_none::&lt;Error&gt;()<span class="question-mark">?
                     </span>}
-                    Event::String(<span class="kw-2">ref </span>s) <span class="kw">if </span><span class="kw-2">&amp;</span>s[..] == <span class="string">&quot;Some&quot; </span>=&gt; visitor.visit_some(<span class="kw-2">&amp;mut *</span><span class="self">self</span>)<span class="question-mark">?</span>,
+                    Event::String(<span class="kw-2">ref </span>s) <span class="kw">if </span><span class="kw-2">&amp;</span>s[..] == <span class="string">"Some" </span>=&gt; visitor.visit_some(<span class="kw-2">&amp;mut *</span><span class="self">self</span>)<span class="question-mark">?</span>,
                     event =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(error::unexpected_event_type(EventKind::String, <span class="kw-2">&amp;</span>event))<span class="question-mark">?</span>,
                 };
 
@@ -653,11 +654,11 @@
 
     <span class="kw">fn </span>deserialize_newtype_struct&lt;V&gt;(
         <span class="self">self</span>,
-        name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         visitor: V,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, Error&gt;
     <span class="kw">where
-        </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: de::Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">if </span>name == VALUE_NEWTYPE_STRUCT_NAME {
             <span class="self">self</span>.enter_plist_value(|this| visitor.visit_newtype_struct(this))
@@ -668,12 +669,12 @@
 
     <span class="kw">fn </span>deserialize_struct&lt;V&gt;(
         <span class="self">self</span>,
-        _name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
-        _fields: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str],
+        _name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
+        _fields: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>[<span class="kw-2">&amp;</span><span class="lifetime">'static </span>str],
         visitor: V,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, Error&gt;
     <span class="kw">where
-        </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: de::Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="macro">expect!</span>(<span class="self">self</span>.events.next(), EventKind::StartDictionary);
         <span class="kw">let </span>ret = visitor.visit_map(MapAndSeqAccess::new(<span class="self">self</span>, <span class="bool-val">true</span>, <span class="prelude-val">None</span>))<span class="question-mark">?</span>;
@@ -683,12 +684,12 @@
 
     <span class="kw">fn </span>deserialize_enum&lt;V&gt;(
         <span class="self">self</span>,
-        name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
-        variants: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str],
+        name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
+        variants: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>[<span class="kw-2">&amp;</span><span class="lifetime">'static </span>str],
         visitor: V,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, Error&gt;
     <span class="kw">where
-        </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: de::Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">let </span>event = <span class="self">self</span>.events.next();
 
@@ -711,24 +712,24 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, <span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;event</span>, I&gt; de::EnumAccess&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Deserializer&lt;<span class="lifetime">&#39;event</span>, I&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, <span class="lifetime">'a</span>, <span class="lifetime">'event</span>, I&gt; de::EnumAccess&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Deserializer&lt;<span class="lifetime">'event</span>, I&gt;
 <span class="kw">where
-    </span>I: IntoIterator&lt;Item = <span class="prelude-ty">Result</span>&lt;Event&lt;<span class="lifetime">&#39;event</span>&gt;, Error&gt;&gt;,
+    </span>I: IntoIterator&lt;Item = <span class="prelude-ty">Result</span>&lt;Event&lt;<span class="lifetime">'event</span>&gt;, Error&gt;&gt;,
 {
     <span class="kw">type </span>Error = Error;
     <span class="kw">type </span>Variant = <span class="self">Self</span>;
 
     <span class="kw">fn </span>variant_seed&lt;V&gt;(<span class="self">self</span>, seed: V) -&gt; <span class="prelude-ty">Result</span>&lt;(V::Value, <span class="self">Self</span>), Error&gt;
     <span class="kw">where
-        </span>V: de::DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: de::DeserializeSeed&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="prelude-val">Ok</span>((seed.deserialize(<span class="kw-2">&amp;mut *</span><span class="self">self</span>)<span class="question-mark">?</span>, <span class="self">self</span>))
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, <span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;event</span>, I&gt; de::VariantAccess&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Deserializer&lt;<span class="lifetime">&#39;event</span>, I&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, <span class="lifetime">'a</span>, <span class="lifetime">'event</span>, I&gt; de::VariantAccess&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Deserializer&lt;<span class="lifetime">'event</span>, I&gt;
 <span class="kw">where
-    </span>I: IntoIterator&lt;Item = <span class="prelude-ty">Result</span>&lt;Event&lt;<span class="lifetime">&#39;event</span>&gt;, Error&gt;&gt;,
+    </span>I: IntoIterator&lt;Item = <span class="prelude-ty">Result</span>&lt;Event&lt;<span class="lifetime">'event</span>&gt;, Error&gt;&gt;,
 {
     <span class="kw">type </span>Error = Error;
 
@@ -738,49 +739,49 @@
 
     <span class="kw">fn </span>newtype_variant_seed&lt;T&gt;(<span class="self">self</span>, seed: T) -&gt; <span class="prelude-ty">Result</span>&lt;T::Value, Error&gt;
     <span class="kw">where
-        </span>T: de::DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>T: de::DeserializeSeed&lt;<span class="lifetime">'de</span>&gt;,
     {
         seed.deserialize(<span class="self">self</span>)
     }
 
     <span class="kw">fn </span>tuple_variant&lt;V&gt;(<span class="self">self</span>, len: usize, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, Error&gt;
     <span class="kw">where
-        </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: de::Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         de::Deserializer::deserialize_tuple(<span class="self">self</span>, len, visitor)
     }
 
     <span class="kw">fn </span>struct_variant&lt;V&gt;(
         <span class="self">self</span>,
-        fields: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str],
+        fields: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>[<span class="kw-2">&amp;</span><span class="lifetime">'static </span>str],
         visitor: V,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, Error&gt;
     <span class="kw">where
-        </span>V: de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: de::Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
-        <span class="kw">let </span>name = <span class="string">&quot;&quot;</span>;
+        <span class="kw">let </span>name = <span class="string">""</span>;
         de::Deserializer::deserialize_struct(<span class="self">self</span>, name, fields, visitor)
     }
 }
 
-<span class="kw">struct </span>MapAndSeqAccess&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;event</span>, I&gt;
+<span class="kw">struct </span>MapAndSeqAccess&lt;<span class="lifetime">'a</span>, <span class="lifetime">'event</span>, I&gt;
 <span class="kw">where
-    </span>I: <span class="lifetime">&#39;a </span>+ IntoIterator&lt;Item = <span class="prelude-ty">Result</span>&lt;Event&lt;<span class="lifetime">&#39;event</span>&gt;, Error&gt;&gt;,
+    </span>I: <span class="lifetime">'a </span>+ IntoIterator&lt;Item = <span class="prelude-ty">Result</span>&lt;Event&lt;<span class="lifetime">'event</span>&gt;, Error&gt;&gt;,
 {
-    de: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Deserializer&lt;<span class="lifetime">&#39;event</span>, I&gt;,
+    de: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Deserializer&lt;<span class="lifetime">'event</span>, I&gt;,
     is_struct: bool,
     remaining: <span class="prelude-ty">Option</span>&lt;usize&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;event</span>, I&gt; MapAndSeqAccess&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;event</span>, I&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'event</span>, I&gt; MapAndSeqAccess&lt;<span class="lifetime">'a</span>, <span class="lifetime">'event</span>, I&gt;
 <span class="kw">where
-    </span>I: <span class="lifetime">&#39;a </span>+ IntoIterator&lt;Item = <span class="prelude-ty">Result</span>&lt;Event&lt;<span class="lifetime">&#39;event</span>&gt;, Error&gt;&gt;,
+    </span>I: <span class="lifetime">'a </span>+ IntoIterator&lt;Item = <span class="prelude-ty">Result</span>&lt;Event&lt;<span class="lifetime">'event</span>&gt;, Error&gt;&gt;,
 {
     <span class="kw">fn </span>new(
-        de: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Deserializer&lt;<span class="lifetime">&#39;event</span>, I&gt;,
+        de: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Deserializer&lt;<span class="lifetime">'event</span>, I&gt;,
         is_struct: bool,
         len: <span class="prelude-ty">Option</span>&lt;usize&gt;,
-    ) -&gt; MapAndSeqAccess&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;event</span>, I&gt; {
+    ) -&gt; MapAndSeqAccess&lt;<span class="lifetime">'a</span>, <span class="lifetime">'event</span>, I&gt; {
         MapAndSeqAccess {
             de,
             is_struct,
@@ -789,15 +790,15 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, <span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;event</span>, I&gt; de::SeqAccess&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>MapAndSeqAccess&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;event</span>, I&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, <span class="lifetime">'a</span>, <span class="lifetime">'event</span>, I&gt; de::SeqAccess&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>MapAndSeqAccess&lt;<span class="lifetime">'a</span>, <span class="lifetime">'event</span>, I&gt;
 <span class="kw">where
-    </span>I: <span class="lifetime">&#39;a </span>+ IntoIterator&lt;Item = <span class="prelude-ty">Result</span>&lt;Event&lt;<span class="lifetime">&#39;event</span>&gt;, Error&gt;&gt;,
+    </span>I: <span class="lifetime">'a </span>+ IntoIterator&lt;Item = <span class="prelude-ty">Result</span>&lt;Event&lt;<span class="lifetime">'event</span>&gt;, Error&gt;&gt;,
 {
     <span class="kw">type </span>Error = Error;
 
     <span class="kw">fn </span>next_element_seed&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, seed: T) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;T::Value&gt;, Error&gt;
     <span class="kw">where
-        </span>T: de::DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>T: de::DeserializeSeed&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="prelude-val">Ok</span>(Event::EndCollection)) = <span class="self">self</span>.de.events.peek() {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
@@ -814,15 +815,15 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, <span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;event</span>, I&gt; de::MapAccess&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>MapAndSeqAccess&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;event</span>, I&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, <span class="lifetime">'a</span>, <span class="lifetime">'event</span>, I&gt; de::MapAccess&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>MapAndSeqAccess&lt;<span class="lifetime">'a</span>, <span class="lifetime">'event</span>, I&gt;
 <span class="kw">where
-    </span>I: <span class="lifetime">&#39;a </span>+ IntoIterator&lt;Item = <span class="prelude-ty">Result</span>&lt;Event&lt;<span class="lifetime">&#39;event</span>&gt;, Error&gt;&gt;,
+    </span>I: <span class="lifetime">'a </span>+ IntoIterator&lt;Item = <span class="prelude-ty">Result</span>&lt;Event&lt;<span class="lifetime">'event</span>&gt;, Error&gt;&gt;,
 {
     <span class="kw">type </span>Error = Error;
 
     <span class="kw">fn </span>next_key_seed&lt;K&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, seed: K) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;K::Value&gt;, Error&gt;
     <span class="kw">where
-        </span>K: de::DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>K: de::DeserializeSeed&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="prelude-val">Ok</span>(Event::EndCollection)) = <span class="self">self</span>.de.events.peek() {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
@@ -836,7 +837,7 @@
 
     <span class="kw">fn </span>next_value_seed&lt;V&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, seed: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, Error&gt;
     <span class="kw">where
-        </span>V: de::DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: de::DeserializeSeed&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">let </span>option_mode = <span class="kw">if </span><span class="self">self</span>.is_struct {
             OptionMode::StructField

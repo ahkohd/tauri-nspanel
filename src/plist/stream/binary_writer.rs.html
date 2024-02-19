@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/plist-1.6.0/src/stream/binary_writer.rs`."><title>binary_writer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="plist" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/plist-1.6.0/src/stream/binary_writer.rs`."><title>binary_writer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="plist" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -755,7 +756,7 @@
     writer: PosWriter&lt;W&gt;,
     events: Vec&lt;Event&gt;,
     dictionary_key_events: Vec&lt;usize&gt;,
-    values: IndexMap&lt;Value&lt;<span class="lifetime">&#39;static</span>&gt;, ValueState&gt;,
+    values: IndexMap&lt;Value&lt;<span class="lifetime">'static</span>&gt;, ValueState&gt;,
     <span class="doccomment">/// Pointers into `events` for each of the currently unclosed `Collection` events.
     </span>collection_stack: Vec&lt;usize&gt;,
     <span class="doccomment">/// The number of `Collection` and unique `Value` events in `events`.
@@ -827,14 +828,14 @@
 }
 
 <span class="attr">#[derive(Eq, Hash, PartialEq)]
-</span><span class="kw">enum </span>Value&lt;<span class="lifetime">&#39;a</span>&gt; {
+</span><span class="kw">enum </span>Value&lt;<span class="lifetime">'a</span>&gt; {
     Boolean(bool),
-    Data(Cow&lt;<span class="lifetime">&#39;a</span>, [u8]&gt;),
+    Data(Cow&lt;<span class="lifetime">'a</span>, [u8]&gt;),
     Date(Date),
     Integer(Integer),
     <span class="doccomment">/// Floats are deduplicated based on their bitwise value.
     </span>Real(u64),
-    String(Cow&lt;<span class="lifetime">&#39;a</span>, str&gt;),
+    String(Cow&lt;<span class="lifetime">'a</span>, str&gt;),
     Uid(Uid),
 }
 
@@ -896,7 +897,7 @@
         <span class="kw">let </span>c = <span class="kw">if let </span>Event::Collection(c) = <span class="kw-2">&amp;mut </span><span class="self">self</span>.events[collection_event_index] {
             c
         } <span class="kw">else </span>{
-            <span class="macro">unreachable!</span>(<span class="string">&quot;items in `collection_stack` always point to a collection event&quot;</span>);
+            <span class="macro">unreachable!</span>(<span class="string">"items in `collection_stack` always point to a collection event"</span>);
         };
 
         c.skip = current_event_index - collection_event_index;
@@ -985,7 +986,7 @@
             <span class="kw">if let </span>Event::Collection(c) = <span class="kw-2">&amp;</span><span class="self">self</span>.events[event_index] {
                 c.ty == CollectionType::Dictionary &amp;&amp; is_even(c.len)
             } <span class="kw">else </span>{
-                <span class="macro">unreachable!</span>(<span class="string">&quot;items in `collection_stack` always point to a collection event&quot;</span>);
+                <span class="macro">unreachable!</span>(<span class="string">"items in `collection_stack` always point to a collection event"</span>);
             }
         } <span class="kw">else </span>{
             <span class="bool-val">false
@@ -997,7 +998,7 @@
             <span class="kw">if let </span>Event::Collection(c) = <span class="kw-2">&amp;mut </span><span class="self">self</span>.events[event_index] {
                 c.len += <span class="number">1</span>;
             } <span class="kw">else </span>{
-                <span class="macro">unreachable!</span>(<span class="string">&quot;items in `collection_stack` always point to a collection event&quot;</span>);
+                <span class="macro">unreachable!</span>(<span class="string">"items in `collection_stack` always point to a collection event"</span>);
             }
         }
     }
@@ -1006,7 +1007,7 @@
         <span class="macro">assert!</span>(<span class="self">self</span>.collection_stack.is_empty());
 
         <span class="comment">// Write header
-        </span><span class="self">self</span>.writer.write_exact(<span class="string">b&quot;bplist00&quot;</span>)<span class="question-mark">?</span>;
+        </span><span class="self">self</span>.writer.write_exact(<span class="string">b"bplist00"</span>)<span class="question-mark">?</span>;
 
         <span class="comment">// Write objects
         </span><span class="kw">let </span><span class="kw-2">mut </span>events_vec = std::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.events);
@@ -1025,7 +1026,7 @@
                 c.object_ref = <span class="prelude-val">Some</span>(next_object_ref.clone_and_increment_self());
             }
             Event::DictionaryKeys(<span class="kw">_</span>) =&gt; {
-                <span class="macro">unreachable!</span>(<span class="string">&quot;`events` starts with a value or collection event&quot;</span>)
+                <span class="macro">unreachable!</span>(<span class="string">"`events` starts with a value or collection event"</span>)
             }
         }
 
@@ -1099,7 +1100,7 @@
         <span class="kw">if let </span><span class="prelude-val">Some</span>(object_ref) = <span class="kw-2">&amp;</span>collection.object_ref {
             offset_table[object_ref.value()] = <span class="self">self</span>.writer.pos;
         } <span class="kw">else </span>{
-            <span class="macro">unreachable!</span>(<span class="string">&quot;collection object refs are assigned before this function is called&quot;</span>);
+            <span class="macro">unreachable!</span>(<span class="string">"collection object refs are assigned before this function is called"</span>);
         }
 
         <span class="comment">// Split the events in the current collection into keys and values (arrays contain only
@@ -1151,7 +1152,7 @@
                     }
                 }
                 Event::DictionaryKeys(<span class="kw">_</span>) =&gt; <span class="macro">unreachable!</span>(
-                    <span class="string">&quot;`DictionaryKeys` events are specifically excluded from the iterator&quot;
+                    <span class="string">"`DictionaryKeys` events are specifically excluded from the iterator"
                 </span>),
             };
             write_plist_ref(<span class="kw-2">&amp;mut </span><span class="self">self</span>.writer, ref_size, object_ref.value())<span class="question-mark">?</span>;
@@ -1163,7 +1164,7 @@
             <span class="kw">if let </span>Event::Value(value_index) = key {
                 <span class="self">self</span>.write_plist_value(<span class="kw-2">*</span>value_index, offset_table)<span class="question-mark">?</span>;
             } <span class="kw">else </span>{
-                <span class="macro">unreachable!</span>(<span class="string">&quot;dictionary keys are assigned as values in `write_end_collection`&quot;</span>);
+                <span class="macro">unreachable!</span>(<span class="string">"dictionary keys are assigned as values in `write_end_collection`"</span>);
             }
         }
 
@@ -1179,7 +1180,7 @@
 
         <span class="kw">let </span>object_ref = <span class="kw">match </span>value_state {
             ValueState::Unassigned =&gt; {
-                <span class="macro">unreachable!</span>(<span class="string">&quot;value object refs are assigned before this function is called&quot;</span>);
+                <span class="macro">unreachable!</span>(<span class="string">"value object refs are assigned before this function is called"</span>);
             }
             ValueState::Unwritten(object_ref) =&gt; object_ref.clone(),
             ValueState::Written(<span class="kw">_</span>) =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(()),
@@ -1229,7 +1230,7 @@
                     buf[<span class="number">1</span>..].copy_from_slice(<span class="kw-2">&amp;</span>i128::from(v).to_be_bytes());
                     <span class="self">self</span>.writer.write_exact(<span class="kw-2">&amp;</span>buf)<span class="question-mark">?</span>;
                 } <span class="kw">else </span>{
-                    <span class="macro">unreachable!</span>(<span class="string">&quot;an integer can be represented as either an i64 or u64&quot;</span>);
+                    <span class="macro">unreachable!</span>(<span class="string">"an integer can be represented as either an i64 or u64"</span>);
                 }
             }
             Value::Real(v) =&gt; {
@@ -1312,13 +1313,13 @@
     value &amp; <span class="number">1 </span>== <span class="number">0
 </span>}
 
-<span class="kw">fn </span>value_mut&lt;<span class="lifetime">&#39;a</span>&gt;(
-    values: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>IndexMap&lt;Value&lt;<span class="lifetime">&#39;static</span>&gt;, ValueState&gt;,
+<span class="kw">fn </span>value_mut&lt;<span class="lifetime">'a</span>&gt;(
+    values: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>IndexMap&lt;Value&lt;<span class="lifetime">'static</span>&gt;, ValueState&gt;,
     value_index: usize,
-) -&gt; (<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Value&lt;<span class="lifetime">&#39;static</span>&gt;, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>ValueState) {
+) -&gt; (<span class="kw-2">&amp;</span><span class="lifetime">'a </span>Value&lt;<span class="lifetime">'static</span>&gt;, <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>ValueState) {
     values
         .get_index_mut(value_index)
-        .expect(<span class="string">&quot;internal consistency error&quot;</span>)
+        .expect(<span class="string">"internal consistency error"</span>)
 }
 
 <span class="kw">fn </span>write_plist_value_ty_and_size(
@@ -1364,7 +1365,7 @@
         <span class="number">2 </span>=&gt; writer.write_exact(<span class="kw-2">&amp;</span>(value <span class="kw">as </span>u16).to_be_bytes()),
         <span class="number">4 </span>=&gt; writer.write_exact(<span class="kw-2">&amp;</span>(value <span class="kw">as </span>u32).to_be_bytes()),
         <span class="number">8 </span>=&gt; writer.write_exact(<span class="kw-2">&amp;</span>(value <span class="kw">as </span>u64).to_be_bytes()),
-        <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(<span class="string">&quot;`ref_size` is a power of two less than or equal to 8&quot;</span>),
+        <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(<span class="string">"`ref_size` is a power of two less than or equal to 8"</span>),
     }
 }
 
@@ -1382,7 +1383,7 @@
         <span class="self">self</span>.pos = <span class="self">self
             </span>.pos
             .checked_add(count)
-            .expect(<span class="string">&quot;binary plist cannot be larger than `usize::max_value()` bytes&quot;</span>);
+            .expect(<span class="string">"binary plist cannot be larger than `usize::max_value()` bytes"</span>);
         <span class="prelude-val">Ok</span>(count)
     }
 
@@ -1407,8 +1408,8 @@
     </span>}
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Value&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">fn </span>into_owned(<span class="self">self</span>) -&gt; Value&lt;<span class="lifetime">&#39;static</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Value&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">fn </span>into_owned(<span class="self">self</span>) -&gt; Value&lt;<span class="lifetime">'static</span>&gt; {
         <span class="kw">match </span><span class="self">self </span>{
             Value::Boolean(v) =&gt; Value::Boolean(v),
             Value::Data(v) =&gt; Value::Data(Cow::Owned(v.into_owned())),
@@ -1459,17 +1460,17 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>bplist_roundtrip() {
-        test_roundtrip(<span class="string">&quot;./tests/data/binary.plist&quot;</span>)
+        test_roundtrip(<span class="string">"./tests/data/binary.plist"</span>)
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>utf16_roundtrip() {
-        test_roundtrip(<span class="string">&quot;./tests/data/utf16_bplist.plist&quot;</span>)
+        test_roundtrip(<span class="string">"./tests/data/utf16_bplist.plist"</span>)
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>nskeyedarchiver_roundtrip() {
-        test_roundtrip(<span class="string">&quot;./tests/data/binary_NSKeyedArchiver.plist&quot;</span>)
+        test_roundtrip(<span class="string">"./tests/data/binary_NSKeyedArchiver.plist"</span>)
     }
 }
 </code></pre></div></section></main></body></html>

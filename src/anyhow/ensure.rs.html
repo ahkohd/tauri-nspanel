@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/anyhow-1.0.79/src/ensure.rs`."><title>ensure.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="anyhow" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/anyhow-1.0.79/src/ensure.rs`."><title>ensure.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="anyhow" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -847,7 +848,7 @@
 
 <span class="attr">#[doc(hidden)]
 </span><span class="kw">pub trait </span>BothDebug {
-    <span class="kw">fn </span>__dispatch_ensure(<span class="self">self</span>, msg: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str) -&gt; Error;
+    <span class="kw">fn </span>__dispatch_ensure(<span class="self">self</span>, msg: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str) -&gt; Error;
 }
 
 <span class="kw">impl</span>&lt;A, B&gt; BothDebug <span class="kw">for </span>(A, B)
@@ -855,18 +856,18 @@
     </span>A: Debug,
     B: Debug,
 {
-    <span class="kw">fn </span>__dispatch_ensure(<span class="self">self</span>, msg: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str) -&gt; Error {
+    <span class="kw">fn </span>__dispatch_ensure(<span class="self">self</span>, msg: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str) -&gt; Error {
         render(msg, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">1</span>)
     }
 }
 
 <span class="attr">#[doc(hidden)]
 </span><span class="kw">pub trait </span>NotBothDebug {
-    <span class="kw">fn </span>__dispatch_ensure(<span class="self">self</span>, msg: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str) -&gt; Error;
+    <span class="kw">fn </span>__dispatch_ensure(<span class="self">self</span>, msg: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str) -&gt; Error;
 }
 
 <span class="kw">impl</span>&lt;A, B&gt; NotBothDebug <span class="kw">for </span><span class="kw-2">&amp;</span>(A, B) {
-    <span class="kw">fn </span>__dispatch_ensure(<span class="self">self</span>, msg: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str) -&gt; Error {
+    <span class="kw">fn </span>__dispatch_ensure(<span class="self">self</span>, msg: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str) -&gt; Error {
         Error::msg(msg)
     }
 }
@@ -896,7 +897,7 @@
 
 <span class="kw">impl </span>Write <span class="kw">for </span>Buf {
     <span class="kw">fn </span>write_str(<span class="kw-2">&amp;mut </span><span class="self">self</span>, s: <span class="kw-2">&amp;</span>str) -&gt; fmt::Result {
-        <span class="kw">if </span>s.bytes().any(|b| b == <span class="string">b&#39; &#39; </span>|| b == <span class="string">b&#39;\n&#39;</span>) {
+        <span class="kw">if </span>s.bytes().any(|b| b == <span class="string">b' ' </span>|| b == <span class="string">b'\n'</span>) {
             <span class="kw">return </span><span class="prelude-val">Err</span>(fmt::Error);
         }
 
@@ -917,22 +918,22 @@
     }
 }
 
-<span class="kw">fn </span>render(msg: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str, lhs: <span class="kw-2">&amp;</span><span class="kw">dyn </span>Debug, rhs: <span class="kw-2">&amp;</span><span class="kw">dyn </span>Debug) -&gt; Error {
+<span class="kw">fn </span>render(msg: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str, lhs: <span class="kw-2">&amp;</span><span class="kw">dyn </span>Debug, rhs: <span class="kw-2">&amp;</span><span class="kw">dyn </span>Debug) -&gt; Error {
     <span class="kw">let </span><span class="kw-2">mut </span>lhs_buf = Buf::new();
-    <span class="kw">if </span>fmt::write(<span class="kw-2">&amp;mut </span>lhs_buf, <span class="macro">format_args!</span>(<span class="string">&quot;{:?}&quot;</span>, lhs)).is_ok() {
+    <span class="kw">if </span>fmt::write(<span class="kw-2">&amp;mut </span>lhs_buf, <span class="macro">format_args!</span>(<span class="string">"{:?}"</span>, lhs)).is_ok() {
         <span class="kw">let </span><span class="kw-2">mut </span>rhs_buf = Buf::new();
-        <span class="kw">if </span>fmt::write(<span class="kw-2">&amp;mut </span>rhs_buf, <span class="macro">format_args!</span>(<span class="string">&quot;{:?}&quot;</span>, rhs)).is_ok() {
+        <span class="kw">if </span>fmt::write(<span class="kw-2">&amp;mut </span>rhs_buf, <span class="macro">format_args!</span>(<span class="string">"{:?}"</span>, rhs)).is_ok() {
             <span class="kw">let </span>lhs_str = lhs_buf.as_str();
             <span class="kw">let </span>rhs_str = rhs_buf.as_str();
-            <span class="comment">// &quot;{msg} ({lhs} vs {rhs})&quot;
+            <span class="comment">// "{msg} ({lhs} vs {rhs})"
             </span><span class="kw">let </span>len = msg.len() + <span class="number">2 </span>+ lhs_str.len() + <span class="number">4 </span>+ rhs_str.len() + <span class="number">1</span>;
             <span class="kw">let </span><span class="kw-2">mut </span>string = String::with_capacity(len);
             string.push_str(msg);
-            string.push_str(<span class="string">&quot; (&quot;</span>);
+            string.push_str(<span class="string">" ("</span>);
             string.push_str(lhs_str);
-            string.push_str(<span class="string">&quot; vs &quot;</span>);
+            string.push_str(<span class="string">" vs "</span>);
             string.push_str(rhs_str);
-            string.push(<span class="string">&#39;)&#39;</span>);
+            string.push(<span class="string">')'</span>);
             <span class="kw">return </span>Error::msg(string);
         }
     }
@@ -1635,13 +1636,13 @@
                     </span><span class="kw">use </span><span class="macro-nonterminal">$crate::__private</span>::{BothDebug, NotBothDebug};
                     <span class="kw">return </span><span class="prelude-val">Err</span>((lhs, rhs).__dispatch_ensure(
                         <span class="macro-nonterminal">$</span><span class="macro">crate::__private::concat!</span>(
-                            <span class="string">&quot;Condition failed: `&quot;</span>,
+                            <span class="string">"Condition failed: `"</span>,
                             <span class="macro-nonterminal">$</span><span class="macro">crate::__private::stringify!</span>(<span class="macro-nonterminal">$lhs</span>),
-                            <span class="string">&quot; &quot;</span>,
+                            <span class="string">" "</span>,
                             <span class="macro-nonterminal">$</span><span class="macro">crate::__private::stringify!</span>(<span class="macro-nonterminal">$op</span>),
-                            <span class="string">&quot; &quot;</span>,
+                            <span class="string">" "</span>,
                             <span class="macro-nonterminal">$</span><span class="macro">crate::__private::stringify!</span>(<span class="macro-nonterminal">$rhs</span>),
-                            <span class="string">&quot;`&quot;</span>,
+                            <span class="string">"`"</span>,
                         ),
                     ));
                 }
@@ -1656,7 +1657,7 @@
     (<span class="macro-nonterminal">$cond</span>:expr $(,)<span class="question-mark">?</span>) =&gt; {
         <span class="kw">if </span>!<span class="macro-nonterminal">$cond </span>{
             <span class="kw">return </span><span class="macro-nonterminal">$crate::__private::Err</span>(<span class="macro-nonterminal">$crate::Error::msg</span>(
-                <span class="macro-nonterminal">$</span><span class="macro">crate::__private::concat!</span>(<span class="string">&quot;Condition failed: `&quot;</span>, <span class="macro-nonterminal">$</span><span class="macro">crate::__private::stringify!</span>(<span class="macro-nonterminal">$cond</span>), <span class="string">&quot;`&quot;</span>)
+                <span class="macro-nonterminal">$</span><span class="macro">crate::__private::concat!</span>(<span class="string">"Condition failed: `"</span>, <span class="macro-nonterminal">$</span><span class="macro">crate::__private::stringify!</span>(<span class="macro-nonterminal">$cond</span>), <span class="string">"`"</span>)
             ));
         }
     };

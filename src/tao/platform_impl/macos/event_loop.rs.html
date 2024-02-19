@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tao-0.16.7/src/platform_impl/macos/event_loop.rs`."><title>event_loop.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="tao" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tao-0.16.7/src/platform_impl/macos/event_loop.rs`."><title>event_loop.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="tao" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -354,7 +355,7 @@
 
 <span class="attr">#[derive(Default)]
 </span><span class="kw">pub struct </span>PanicInfo {
-  inner: Cell&lt;<span class="prelude-ty">Option</span>&lt;Box&lt;<span class="kw">dyn </span>Any + Send + <span class="lifetime">&#39;static</span>&gt;&gt;&gt;,
+  inner: Cell&lt;<span class="prelude-ty">Option</span>&lt;Box&lt;<span class="kw">dyn </span>Any + Send + <span class="lifetime">'static</span>&gt;&gt;&gt;,
 }
 
 <span class="comment">// WARNING:
@@ -370,18 +371,18 @@
     result
   }
   <span class="doccomment">/// Overwrites the curret state if the current state is not panicking
-  </span><span class="kw">pub fn </span>set_panic(<span class="kw-2">&amp;</span><span class="self">self</span>, p: Box&lt;<span class="kw">dyn </span>Any + Send + <span class="lifetime">&#39;static</span>&gt;) {
+  </span><span class="kw">pub fn </span>set_panic(<span class="kw-2">&amp;</span><span class="self">self</span>, p: Box&lt;<span class="kw">dyn </span>Any + Send + <span class="lifetime">'static</span>&gt;) {
     <span class="kw">if </span>!<span class="self">self</span>.is_panicking() {
       <span class="self">self</span>.inner.set(<span class="prelude-val">Some</span>(p));
     }
   }
-  <span class="kw">pub fn </span>take(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Box&lt;<span class="kw">dyn </span>Any + Send + <span class="lifetime">&#39;static</span>&gt;&gt; {
+  <span class="kw">pub fn </span>take(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Box&lt;<span class="kw">dyn </span>Any + Send + <span class="lifetime">'static</span>&gt;&gt; {
     <span class="self">self</span>.inner.take()
   }
 }
 
 <span class="attr">#[derive(Clone)]
-</span><span class="kw">pub struct </span>EventLoopWindowTarget&lt;T: <span class="lifetime">&#39;static</span>&gt; {
+</span><span class="kw">pub struct </span>EventLoopWindowTarget&lt;T: <span class="lifetime">'static</span>&gt; {
   <span class="kw">pub </span>sender: Sender&lt;T&gt;, <span class="comment">// this is only here to be cloned elsewhere
   </span><span class="kw">pub </span>receiver: Receiver&lt;T&gt;,
 }
@@ -393,7 +394,7 @@
   }
 }
 
-<span class="kw">impl</span>&lt;T: <span class="lifetime">&#39;static</span>&gt; EventLoopWindowTarget&lt;T&gt; {
+<span class="kw">impl</span>&lt;T: <span class="lifetime">'static</span>&gt; EventLoopWindowTarget&lt;T&gt; {
   <span class="attr">#[inline]
   </span><span class="kw">pub fn </span>available_monitors(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; VecDeque&lt;MonitorHandle&gt; {
     monitor::available_monitors()
@@ -416,7 +417,7 @@
   }
 }
 
-<span class="kw">pub struct </span>EventLoop&lt;T: <span class="lifetime">&#39;static</span>&gt; {
+<span class="kw">pub struct </span>EventLoop&lt;T: <span class="lifetime">'static</span>&gt; {
   <span class="kw">pub</span>(<span class="kw">crate</span>) delegate: IdRef,
 
   window_target: Rc&lt;RootWindowTarget&lt;T&gt;&gt;,
@@ -428,7 +429,7 @@
   /// Every other reference should be a Weak reference which is only upgraded
   /// into a strong reference in order to call the callback but then the
   /// strong reference should be dropped as soon as possible.
-  </span>_callback: <span class="prelude-ty">Option</span>&lt;Rc&lt;RefCell&lt;<span class="kw">dyn </span>FnMut(Event&lt;<span class="lifetime">&#39;_</span>, T&gt;, <span class="kw-2">&amp;</span>RootWindowTarget&lt;T&gt;, <span class="kw-2">&amp;mut </span>ControlFlow)&gt;&gt;&gt;,
+  </span>_callback: <span class="prelude-ty">Option</span>&lt;Rc&lt;RefCell&lt;<span class="kw">dyn </span>FnMut(Event&lt;<span class="lifetime">'_</span>, T&gt;, <span class="kw-2">&amp;</span>RootWindowTarget&lt;T&gt;, <span class="kw-2">&amp;mut </span>ControlFlow)&gt;&gt;&gt;,
 }
 
 <span class="kw">impl</span>&lt;T&gt; EventLoop&lt;T&gt; {
@@ -436,11 +437,11 @@
     <span class="kw">let </span>delegate = <span class="kw">unsafe </span>{
       <span class="kw">let </span>is_main_thread: BOOL = <span class="macro">msg_send!</span>(<span class="macro">class!</span>(NSThread), isMainThread);
       <span class="kw">if </span>is_main_thread == NO {
-        <span class="macro">panic!</span>(<span class="string">&quot;On macOS, `EventLoop` must be created on the main thread!&quot;</span>);
+        <span class="macro">panic!</span>(<span class="string">"On macOS, `EventLoop` must be created on the main thread!"</span>);
       }
 
       <span class="comment">// This must be done before `NSApp()` (equivalent to sending
-      // `sharedApplication`) is called anywhere else, or we&#39;ll end up
+      // `sharedApplication`) is called anywhere else, or we'll end up
       // with the wrong `NSApplication` class and the wrong thread could
       // be marked as main.
       </span><span class="kw">let </span>app: id = <span class="macro">msg_send!</span>[APP_CLASS.<span class="number">0</span>, sharedApplication];
@@ -470,7 +471,7 @@
 
   <span class="kw">pub fn </span>run&lt;F&gt;(<span class="kw-2">mut </span><span class="self">self</span>, callback: F) -&gt; !
   <span class="kw">where
-    </span>F: <span class="lifetime">&#39;static </span>+ FnMut(Event&lt;<span class="lifetime">&#39;_</span>, T&gt;, <span class="kw-2">&amp;</span>RootWindowTarget&lt;T&gt;, <span class="kw-2">&amp;mut </span>ControlFlow),
+    </span>F: <span class="lifetime">'static </span>+ FnMut(Event&lt;<span class="lifetime">'_</span>, T&gt;, <span class="kw-2">&amp;</span>RootWindowTarget&lt;T&gt;, <span class="kw-2">&amp;mut </span>ControlFlow),
   {
     <span class="kw">let </span>exit_code = <span class="self">self</span>.run_return(callback);
     process::exit(exit_code);
@@ -478,16 +479,16 @@
 
   <span class="kw">pub fn </span>run_return&lt;F&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, callback: F) -&gt; i32
   <span class="kw">where
-    </span>F: FnMut(Event&lt;<span class="lifetime">&#39;_</span>, T&gt;, <span class="kw-2">&amp;</span>RootWindowTarget&lt;T&gt;, <span class="kw-2">&amp;mut </span>ControlFlow),
+    </span>F: FnMut(Event&lt;<span class="lifetime">'_</span>, T&gt;, <span class="kw-2">&amp;</span>RootWindowTarget&lt;T&gt;, <span class="kw-2">&amp;mut </span>ControlFlow),
   {
     <span class="comment">// This transmute is always safe, in case it was reached through `run`, since our
-    // lifetime will be already &#39;static. In other cases caller should ensure that all data
-    // they passed to callback will actually outlive it, some apps just can&#39;t move
+    // lifetime will be already 'static. In other cases caller should ensure that all data
+    // they passed to callback will actually outlive it, some apps just can't move
     // everything to event loop, so this is something that they should care about.
     </span><span class="kw">let </span>callback = <span class="kw">unsafe </span>{
       mem::transmute::&lt;
-        Rc&lt;RefCell&lt;<span class="kw">dyn </span>FnMut(Event&lt;<span class="lifetime">&#39;_</span>, T&gt;, <span class="kw-2">&amp;</span>RootWindowTarget&lt;T&gt;, <span class="kw-2">&amp;mut </span>ControlFlow)&gt;&gt;,
-        Rc&lt;RefCell&lt;<span class="kw">dyn </span>FnMut(Event&lt;<span class="lifetime">&#39;_</span>, T&gt;, <span class="kw-2">&amp;</span>RootWindowTarget&lt;T&gt;, <span class="kw-2">&amp;mut </span>ControlFlow)&gt;&gt;,
+        Rc&lt;RefCell&lt;<span class="kw">dyn </span>FnMut(Event&lt;<span class="lifetime">'_</span>, T&gt;, <span class="kw-2">&amp;</span>RootWindowTarget&lt;T&gt;, <span class="kw-2">&amp;mut </span>ControlFlow)&gt;&gt;,
+        Rc&lt;RefCell&lt;<span class="kw">dyn </span>FnMut(Event&lt;<span class="lifetime">'_</span>, T&gt;, <span class="kw-2">&amp;</span>RootWindowTarget&lt;T&gt;, <span class="kw-2">&amp;mut </span>ControlFlow)&gt;&gt;,
       &gt;(Rc::new(RefCell::new(callback)))
     };
 
@@ -551,7 +552,7 @@
   <span class="kw">match </span>catch_unwind(f) {
     <span class="prelude-val">Ok</span>(r) =&gt; <span class="prelude-val">Some</span>(r),
     <span class="prelude-val">Err</span>(e) =&gt; {
-      <span class="comment">// It&#39;s important that we set the panic before requesting a `stop`
+      <span class="comment">// It's important that we set the panic before requesting a `stop`
       // because some callback are still called during the `stop` message
       // and we need to know in those callbacks if the application is currently
       // panicking
@@ -599,7 +600,7 @@
   <span class="kw">fn </span>new(sender: Sender&lt;T&gt;) -&gt; <span class="self">Self </span>{
     <span class="kw">unsafe </span>{
       <span class="comment">// just wake up the eventloop
-      </span><span class="kw">extern </span><span class="string">&quot;C&quot; </span><span class="kw">fn </span>event_loop_proxy_handler(<span class="kw">_</span>: <span class="kw-2">*mut </span>c_void) {}
+      </span><span class="kw">extern </span><span class="string">"C" </span><span class="kw">fn </span>event_loop_proxy_handler(<span class="kw">_</span>: <span class="kw-2">*mut </span>c_void) {}
 
       <span class="comment">// adding a Source to the main CFRunLoop lets us wake it up and
       // process user events through the normal OS EventLoop mechanisms.
@@ -620,7 +621,7 @@
       .send(event)
       .map_err(|channel::SendError(x)| EventLoopClosed(x))<span class="question-mark">?</span>;
     <span class="kw">unsafe </span>{
-      <span class="comment">// let the main thread know there&#39;s a new event
+      <span class="comment">// let the main thread know there's a new event
       </span>CFRunLoopSourceSignal(<span class="self">self</span>.source);
       <span class="kw">let </span>rl = CFRunLoopGetMain();
       CFRunLoopWakeUp(rl);

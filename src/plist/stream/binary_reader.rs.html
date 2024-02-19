@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/plist-1.6.0/src/stream/binary_reader.rs`."><title>binary_reader.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="plist" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/plist-1.6.0/src/stream/binary_reader.rs`."><title>binary_reader.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="plist" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -551,7 +552,7 @@
         <span class="kw">let </span>count = <span class="self">self</span>.reader.read(buf)<span class="question-mark">?</span>;
         <span class="self">self</span>.pos
             .checked_add(count <span class="kw">as </span>u64)
-            .expect(<span class="string">&quot;file cannot be larger than `u64::max_value()` bytes&quot;</span>);
+            .expect(<span class="string">"file cannot be larger than `u64::max_value()` bytes"</span>);
         <span class="prelude-val">Ok</span>(count)
     }
 }
@@ -589,7 +590,7 @@
         <span class="self">self</span>.reader.seek(SeekFrom::Start(<span class="number">0</span>))<span class="question-mark">?</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>magic = [<span class="number">0</span>; <span class="number">8</span>];
         <span class="self">self</span>.reader.read_all(<span class="kw-2">&amp;mut </span>magic)<span class="question-mark">?</span>;
-        <span class="kw">if </span><span class="kw-2">&amp;</span>magic != <span class="string">b&quot;bplist00&quot; </span>{
+        <span class="kw">if </span><span class="kw-2">&amp;</span>magic != <span class="string">b"bplist00" </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="self">self</span>.with_pos(ErrorKind::InvalidMagic));
         }
 
@@ -632,7 +633,7 @@
                 <span class="number">2 </span>=&gt; ints.push(<span class="self">self</span>.read_be_u16()<span class="question-mark">?</span>.into()),
                 <span class="number">4 </span>=&gt; ints.push(<span class="self">self</span>.read_be_u32()<span class="question-mark">?</span>.into()),
                 <span class="number">8 </span>=&gt; ints.push(<span class="self">self</span>.read_be_u64()<span class="question-mark">?</span>),
-                <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(<span class="string">&quot;size is either self.ref_size or offset_size both of which are already validated&quot;</span>)
+                <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(<span class="string">"size is either self.ref_size or offset_size both of which are already validated"</span>)
             }
         }
         <span class="prelude-val">Ok</span>(ints)
@@ -683,7 +684,7 @@
     }
 
     <span class="kw">fn </span>push_stack_item_and_check_for_recursion(<span class="kw-2">&amp;mut </span><span class="self">self</span>, item: StackItem) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
-        <span class="kw">let </span>object_ref = u64_to_usize(item.object_ref).expect(<span class="string">&quot;internal consistency error&quot;</span>);
+        <span class="kw">let </span>object_ref = u64_to_usize(item.object_ref).expect(<span class="string">"internal consistency error"</span>);
         <span class="kw">let </span>is_on_stack = <span class="kw-2">&amp;mut </span><span class="self">self</span>.object_on_stack[object_ref];
         <span class="kw">if </span><span class="kw-2">*</span>is_on_stack {
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="self">self</span>.with_pos(ErrorKind::RecursiveObject));
@@ -694,8 +695,8 @@
     }
 
     <span class="kw">fn </span>pop_stack_item(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; StackItem {
-        <span class="kw">let </span>item = <span class="self">self</span>.stack.pop().expect(<span class="string">&quot;internal consistency error&quot;</span>);
-        <span class="kw">let </span>object_ref = u64_to_usize(item.object_ref).expect(<span class="string">&quot;internal consistency error&quot;</span>);
+        <span class="kw">let </span>item = <span class="self">self</span>.stack.pop().expect(<span class="string">"internal consistency error"</span>);
+        <span class="kw">let </span>object_ref = u64_to_usize(item.object_ref).expect(<span class="string">"internal consistency error"</span>);
         <span class="self">self</span>.object_on_stack[object_ref] = <span class="bool-val">false</span>;
         item
     }
@@ -716,7 +717,7 @@
             <span class="kw">if let </span><span class="prelude-val">Some</span>(object_ref) = maybe_object_ref {
                 object_ref
             } <span class="kw">else </span>{
-                <span class="comment">// We&#39;re at the end of an array or dict. Pop the top stack item and return.
+                <span class="comment">// We're at the end of an array or dict. Pop the top stack item and return.
                 </span><span class="kw">let </span>stack_item = <span class="self">self</span>.pop_stack_item();
                 <span class="kw">match </span>stack_item.ty {
                     StackType::Array | StackType::Dict =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::EndCollection)),
@@ -910,42 +911,42 @@
     </span><span class="kw">fn </span>streaming_parser() {
         <span class="kw">use </span><span class="kw">crate</span>::stream::Event::<span class="kw-2">*</span>;
 
-        <span class="kw">let </span>reader = File::open(<span class="string">&quot;./tests/data/binary.plist&quot;</span>).unwrap();
+        <span class="kw">let </span>reader = File::open(<span class="string">"./tests/data/binary.plist"</span>).unwrap();
         <span class="kw">let </span>streaming_parser = BinaryReader::new(reader);
         <span class="kw">let </span>events: Vec&lt;Event&gt; = streaming_parser.map(|e| e.unwrap()).collect();
 
         <span class="kw">let </span>comparison = <span class="kw-2">&amp;</span>[
             StartDictionary(<span class="prelude-val">Some</span>(<span class="number">13</span>)),
-            String(<span class="string">&quot;Author&quot;</span>.into()),
-            String(<span class="string">&quot;William Shakespeare&quot;</span>.into()),
-            String(<span class="string">&quot;Birthdate&quot;</span>.into()),
-            Date(<span class="kw">super</span>::Date::from_xml_format(<span class="string">&quot;1981-05-16T11:32:06Z&quot;</span>).unwrap()),
-            String(<span class="string">&quot;EmptyArray&quot;</span>.into()),
+            String(<span class="string">"Author"</span>.into()),
+            String(<span class="string">"William Shakespeare"</span>.into()),
+            String(<span class="string">"Birthdate"</span>.into()),
+            Date(<span class="kw">super</span>::Date::from_xml_format(<span class="string">"1981-05-16T11:32:06Z"</span>).unwrap()),
+            String(<span class="string">"EmptyArray"</span>.into()),
             StartArray(<span class="prelude-val">Some</span>(<span class="number">0</span>)),
             EndCollection,
-            String(<span class="string">&quot;IsNotFalse&quot;</span>.into()),
+            String(<span class="string">"IsNotFalse"</span>.into()),
             Boolean(<span class="bool-val">false</span>),
-            String(<span class="string">&quot;SmallestNumber&quot;</span>.into()),
+            String(<span class="string">"SmallestNumber"</span>.into()),
             Integer((-<span class="number">9223372036854775808i64</span>).into()),
-            String(<span class="string">&quot;EmptyDictionary&quot;</span>.into()),
+            String(<span class="string">"EmptyDictionary"</span>.into()),
             StartDictionary(<span class="prelude-val">Some</span>(<span class="number">0</span>)),
             EndCollection,
-            String(<span class="string">&quot;Height&quot;</span>.into()),
+            String(<span class="string">"Height"</span>.into()),
             Real(<span class="number">1.6</span>),
-            String(<span class="string">&quot;Lines&quot;</span>.into()),
+            String(<span class="string">"Lines"</span>.into()),
             StartArray(<span class="prelude-val">Some</span>(<span class="number">2</span>)),
-            String(<span class="string">&quot;It is a tale told by an idiot,     &quot;</span>.into()),
-            String(<span class="string">&quot;Full of sound and fury, signifying nothing.&quot;</span>.into()),
+            String(<span class="string">"It is a tale told by an idiot,     "</span>.into()),
+            String(<span class="string">"Full of sound and fury, signifying nothing."</span>.into()),
             EndCollection,
-            String(<span class="string">&quot;Death&quot;</span>.into()),
+            String(<span class="string">"Death"</span>.into()),
             Integer(<span class="number">1564</span>.into()),
-            String(<span class="string">&quot;Blank&quot;</span>.into()),
-            String(<span class="string">&quot;&quot;</span>.into()),
-            String(<span class="string">&quot;BiggestNumber&quot;</span>.into()),
+            String(<span class="string">"Blank"</span>.into()),
+            String(<span class="string">""</span>.into()),
+            String(<span class="string">"BiggestNumber"</span>.into()),
             Integer(<span class="number">18446744073709551615u64</span>.into()),
-            String(<span class="string">&quot;IsTrue&quot;</span>.into()),
+            String(<span class="string">"IsTrue"</span>.into()),
             Boolean(<span class="bool-val">true</span>),
-            String(<span class="string">&quot;Data&quot;</span>.into()),
+            String(<span class="string">"Data"</span>.into()),
             Data(<span class="macro">vec!</span>[<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">190</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">3</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">30</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>].into()),
             EndCollection,
         ];
@@ -955,24 +956,24 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>utf16_plist() {
-        <span class="kw">let </span>reader = File::open(<span class="string">&quot;./tests/data/utf16_bplist.plist&quot;</span>).unwrap();
+        <span class="kw">let </span>reader = File::open(<span class="string">"./tests/data/utf16_bplist.plist"</span>).unwrap();
         <span class="kw">let </span>streaming_parser = BinaryReader::new(reader);
         <span class="kw">let </span><span class="kw-2">mut </span>events: Vec&lt;Event&gt; = streaming_parser.map(|e| e.unwrap()).collect();
 
-        <span class="macro">assert_eq!</span>(events[<span class="number">2</span>], Event::String(<span class="string">&quot;\u{2605} or better&quot;</span>.into()));
+        <span class="macro">assert_eq!</span>(events[<span class="number">2</span>], Event::String(<span class="string">"\u{2605} or better"</span>.into()));
 
         <span class="kw">let </span>poem = <span class="kw">if let </span>Event::String(<span class="kw-2">ref mut </span>poem) = events[<span class="number">4</span>] {
             poem
         } <span class="kw">else </span>{
-            <span class="macro">panic!</span>(<span class="string">&quot;not a string&quot;</span>)
+            <span class="macro">panic!</span>(<span class="string">"not a string"</span>)
         };
         <span class="macro">assert_eq!</span>(poem.len(), <span class="number">643</span>);
-        <span class="macro">assert_eq!</span>(poem.to_mut().pop().unwrap(), <span class="string">&#39;\u{2605}&#39;</span>);
+        <span class="macro">assert_eq!</span>(poem.to_mut().pop().unwrap(), <span class="string">'\u{2605}'</span>);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>nskeyedarchiver_plist() {
-        <span class="kw">let </span>reader = File::open(<span class="string">&quot;./tests/data/binary_NSKeyedArchiver.plist&quot;</span>).unwrap();
+        <span class="kw">let </span>reader = File::open(<span class="string">"./tests/data/binary_NSKeyedArchiver.plist"</span>).unwrap();
         <span class="kw">let </span>streaming_parser = BinaryReader::new(reader);
         <span class="kw">let </span>events: Vec&lt;Event&gt; = streaming_parser.map(|e| e.unwrap()).collect();
 

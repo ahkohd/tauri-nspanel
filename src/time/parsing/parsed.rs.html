@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/time-0.3.34/src/parsing/parsed.rs`."><title>parsed.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="time" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="icon" href="https://avatars0.githubusercontent.com/u/55999857"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../time/index.html"><img src="https://avatars0.githubusercontent.com/u/55999857" alt="time"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/time-0.3.34/src/parsing/parsed.rs`."><title>parsed.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="time" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="icon" href="https://avatars0.githubusercontent.com/u/55999857"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><a class="sub-logo-container" href="../../../time/index.html"><img src="https://avatars0.githubusercontent.com/u/55999857" alt="time"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -908,7 +909,7 @@
 <span class="kw">use </span><span class="kw">crate</span>::convert::{Day, Hour, Minute, Nanosecond, Second};
 <span class="kw">use </span><span class="kw">crate</span>::date::{MAX_YEAR, MIN_YEAR};
 <span class="kw">use </span><span class="kw">crate</span>::error::TryFromParsed::InsufficientInformation;
-<span class="attr">#[cfg(feature = <span class="string">&quot;alloc&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"alloc"</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::format_description::OwnedFormatItem;
 <span class="kw">use </span><span class="kw">crate</span>::format_description::{modifier, Component, FormatItem};
 <span class="kw">use </span><span class="kw">crate</span>::internal_macros::{bug, const_try_opt};
@@ -927,20 +928,20 @@
     <span class="doccomment">/// A trait to allow `parse_item` to be generic.
     </span><span class="kw">pub trait </span>AnyFormatItem {
         <span class="doccomment">/// Parse a single item, returning the remaining input on success.
-        </span><span class="kw">fn </span>parse_item&lt;<span class="lifetime">&#39;a</span>&gt;(
+        </span><span class="kw">fn </span>parse_item&lt;<span class="lifetime">'a</span>&gt;(
             <span class="kw-2">&amp;</span><span class="self">self</span>,
             parsed: <span class="kw-2">&amp;mut </span>Parsed,
-            input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8],
-        ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8], error::ParseFromDescription&gt;;
+            input: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8],
+        ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8], error::ParseFromDescription&gt;;
     }
 }
 
-<span class="kw">impl </span>sealed::AnyFormatItem <span class="kw">for </span>FormatItem&lt;<span class="lifetime">&#39;_</span>&gt; {
-    <span class="kw">fn </span>parse_item&lt;<span class="lifetime">&#39;a</span>&gt;(
+<span class="kw">impl </span>sealed::AnyFormatItem <span class="kw">for </span>FormatItem&lt;<span class="lifetime">'_</span>&gt; {
+    <span class="kw">fn </span>parse_item&lt;<span class="lifetime">'a</span>&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         parsed: <span class="kw-2">&amp;mut </span>Parsed,
-        input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8],
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8], error::ParseFromDescription&gt; {
+        input: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8],
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8], error::ParseFromDescription&gt; {
         <span class="kw">match </span><span class="self">self </span>{
             <span class="self">Self</span>::Literal(literal) =&gt; Parsed::parse_literal(input, literal),
             <span class="self">Self</span>::Component(component) =&gt; parsed.parse_component(input, <span class="kw-2">*</span>component),
@@ -960,7 +961,7 @@
                 <span class="kw">match </span>first_err {
                     <span class="prelude-val">Some</span>(err) =&gt; <span class="prelude-val">Err</span>(err),
                     <span class="comment">// This location will be reached if the slice is empty, skipping the `for` loop.
-                    // As this case is expected to be uncommon, there&#39;s no need to check up front.
+                    // As this case is expected to be uncommon, there's no need to check up front.
                     </span><span class="prelude-val">None </span>=&gt; <span class="prelude-val">Ok</span>(input),
                 }
             }
@@ -968,13 +969,13 @@
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;alloc&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"alloc"</span>)]
 </span><span class="kw">impl </span>sealed::AnyFormatItem <span class="kw">for </span>OwnedFormatItem {
-    <span class="kw">fn </span>parse_item&lt;<span class="lifetime">&#39;a</span>&gt;(
+    <span class="kw">fn </span>parse_item&lt;<span class="lifetime">'a</span>&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         parsed: <span class="kw-2">&amp;mut </span>Parsed,
-        input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8],
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8], error::ParseFromDescription&gt; {
+        input: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8],
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8], error::ParseFromDescription&gt; {
         <span class="kw">match </span><span class="self">self </span>{
             <span class="self">Self</span>::Literal(literal) =&gt; Parsed::parse_literal(input, literal),
             <span class="self">Self</span>::Component(component) =&gt; parsed.parse_component(input, <span class="kw-2">*</span>component),
@@ -994,7 +995,7 @@
                 <span class="kw">match </span>first_err {
                     <span class="prelude-val">Some</span>(err) =&gt; <span class="prelude-val">Err</span>(err),
                     <span class="comment">// This location will be reached if the slice is empty, skipping the `for` loop.
-                    // As this case is expected to be uncommon, there&#39;s no need to check up front.
+                    // As this case is expected to be uncommon, there's no need to check up front.
                     </span><span class="prelude-val">None </span>=&gt; <span class="prelude-val">Ok</span>(input),
                 }
             }
@@ -1037,7 +1038,7 @@
     <span class="doccomment">/// Hour within the 12-hour period (midnight to noon or vice versa). This is typically used in
     /// conjunction with AM/PM, which is indicated by the `hour_12_is_pm` field.
     </span>hour_12: OptionRangedU8&lt;<span class="number">1</span>, <span class="number">12</span>&gt;,
-    <span class="doccomment">/// Whether the `hour_12` field indicates a time that &quot;PM&quot;.
+    <span class="doccomment">/// Whether the `hour_12` field indicates a time that "PM".
     </span>hour_12_is_pm: <span class="prelude-ty">Option</span>&lt;bool&gt;,
     <span class="doccomment">/// Minute within the hour.
     </span><span class="comment">// minute: MaybeUninit&lt;u8&gt;,
@@ -1067,7 +1068,7 @@
         },
     &gt;,
     <span class="doccomment">/// Indicates whether the [`UtcOffset`] is negative. This information is obtained when parsing
-    /// the offset hour, but may not otherwise be stored due to &quot;-0&quot; being equivalent to &quot;0&quot;.
+    /// the offset hour, but may not otherwise be stored due to "-0" being equivalent to "0".
     </span>offset_is_negative: <span class="prelude-ty">Option</span>&lt;bool&gt;,
     <span class="doccomment">/// Indicates whether a leap second is permitted to be parsed. This is required by some
     /// well-known formats.
@@ -1109,11 +1110,11 @@
     ///
     /// If a [`FormatItem::Optional`] or [`OwnedFormatItem::Optional`] is passed, parsing will not
     /// fail; the input will be returned as-is if the expected format is not present.
-    </span><span class="kw">pub fn </span>parse_item&lt;<span class="lifetime">&#39;a</span>&gt;(
+    </span><span class="kw">pub fn </span>parse_item&lt;<span class="lifetime">'a</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8],
+        input: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8],
         item: <span class="kw-2">&amp;</span><span class="kw">impl </span>sealed::AnyFormatItem,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8], error::ParseFromDescription&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8], error::ParseFromDescription&gt; {
         item.parse_item(<span class="self">self</span>, input)
     }
 
@@ -1122,12 +1123,12 @@
     ///
     /// This method will fail if any of the contained [`FormatItem`]s or [`OwnedFormatItem`]s fail
     /// to parse. `self` will not be mutated in this instance.
-    </span><span class="kw">pub fn </span>parse_items&lt;<span class="lifetime">&#39;a</span>&gt;(
+    </span><span class="kw">pub fn </span>parse_items&lt;<span class="lifetime">'a</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        <span class="kw-2">mut </span>input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8],
+        <span class="kw-2">mut </span>input: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8],
         items: <span class="kw-2">&amp;</span>[<span class="kw">impl </span>sealed::AnyFormatItem],
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8], error::ParseFromDescription&gt; {
-        <span class="comment">// Make a copy that we can mutate. It will only be set to the user&#39;s copy if everything
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8], error::ParseFromDescription&gt; {
+        <span class="comment">// Make a copy that we can mutate. It will only be set to the user's copy if everything
         // succeeds.
         </span><span class="kw">let </span><span class="kw-2">mut </span>this = <span class="kw-2">*</span><span class="self">self</span>;
         <span class="kw">for </span>item <span class="kw">in </span>items {
@@ -1138,10 +1139,10 @@
     }
 
     <span class="doccomment">/// Parse a literal byte sequence. The remaining input is returned as the `Ok` value.
-    </span><span class="kw">pub fn </span>parse_literal&lt;<span class="lifetime">&#39;a</span>&gt;(
-        input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8],
+    </span><span class="kw">pub fn </span>parse_literal&lt;<span class="lifetime">'a</span>&gt;(
+        input: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8],
         literal: <span class="kw-2">&amp;</span>[u8],
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8], error::ParseFromDescription&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8], error::ParseFromDescription&gt; {
         input
             .strip_prefix(literal)
             .ok_or(error::ParseFromDescription::InvalidLiteral)
@@ -1149,29 +1150,29 @@
 
     <span class="doccomment">/// Parse a single component, mutating the struct. The remaining input is returned as the `Ok`
     /// value.
-    </span><span class="kw">pub fn </span>parse_component&lt;<span class="lifetime">&#39;a</span>&gt;(
+    </span><span class="kw">pub fn </span>parse_component&lt;<span class="lifetime">'a</span>&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8],
+        input: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8],
         component: Component,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8], error::ParseFromDescription&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8], error::ParseFromDescription&gt; {
         <span class="kw">use </span>error::ParseFromDescription::InvalidComponent;
 
         <span class="kw">match </span>component {
             Component::Day(modifiers) =&gt; parse_day(input, modifiers)
                 .and_then(|parsed| parsed.consume_value(|value| <span class="self">self</span>.set_day(value)))
-                .ok_or(InvalidComponent(<span class="string">&quot;day&quot;</span>)),
+                .ok_or(InvalidComponent(<span class="string">"day"</span>)),
             Component::Month(modifiers) =&gt; parse_month(input, modifiers)
                 .and_then(|parsed| parsed.consume_value(|value| <span class="self">self</span>.set_month(value)))
-                .ok_or(InvalidComponent(<span class="string">&quot;month&quot;</span>)),
+                .ok_or(InvalidComponent(<span class="string">"month"</span>)),
             Component::Ordinal(modifiers) =&gt; parse_ordinal(input, modifiers)
                 .and_then(|parsed| parsed.consume_value(|value| <span class="self">self</span>.set_ordinal(value)))
-                .ok_or(InvalidComponent(<span class="string">&quot;ordinal&quot;</span>)),
+                .ok_or(InvalidComponent(<span class="string">"ordinal"</span>)),
             Component::Weekday(modifiers) =&gt; parse_weekday(input, modifiers)
                 .and_then(|parsed| parsed.consume_value(|value| <span class="self">self</span>.set_weekday(value)))
-                .ok_or(InvalidComponent(<span class="string">&quot;weekday&quot;</span>)),
+                .ok_or(InvalidComponent(<span class="string">"weekday"</span>)),
             Component::WeekNumber(modifiers) =&gt; {
                 <span class="kw">let </span>ParsedItem(remaining, value) =
-                    parse_week_number(input, modifiers).ok_or(InvalidComponent(<span class="string">&quot;week number&quot;</span>))<span class="question-mark">?</span>;
+                    parse_week_number(input, modifiers).ok_or(InvalidComponent(<span class="string">"week number"</span>))<span class="question-mark">?</span>;
                 <span class="kw">match </span>modifiers.repr {
                     modifier::WeekNumberRepr::Iso =&gt; {
                         NonZeroU8::new(value).and_then(|value| <span class="self">self</span>.set_iso_week_number(value))
@@ -1179,12 +1180,12 @@
                     modifier::WeekNumberRepr::Sunday =&gt; <span class="self">self</span>.set_sunday_week_number(value),
                     modifier::WeekNumberRepr::Monday =&gt; <span class="self">self</span>.set_monday_week_number(value),
                 }
-                .ok_or(InvalidComponent(<span class="string">&quot;week number&quot;</span>))<span class="question-mark">?</span>;
+                .ok_or(InvalidComponent(<span class="string">"week number"</span>))<span class="question-mark">?</span>;
                 <span class="prelude-val">Ok</span>(remaining)
             }
             Component::Year(modifiers) =&gt; {
                 <span class="kw">let </span>ParsedItem(remaining, value) =
-                    parse_year(input, modifiers).ok_or(InvalidComponent(<span class="string">&quot;year&quot;</span>))<span class="question-mark">?</span>;
+                    parse_year(input, modifiers).ok_or(InvalidComponent(<span class="string">"year"</span>))<span class="question-mark">?</span>;
                 <span class="kw">match </span>(modifiers.iso_week_based, modifiers.repr) {
                     (<span class="bool-val">false</span>, modifier::YearRepr::Full) =&gt; <span class="self">self</span>.set_year(value),
                     (<span class="bool-val">false</span>, modifier::YearRepr::LastTwo) =&gt; {
@@ -1195,34 +1196,34 @@
                         <span class="self">self</span>.set_iso_year_last_two(value.cast_unsigned().truncate())
                     }
                 }
-                .ok_or(InvalidComponent(<span class="string">&quot;year&quot;</span>))<span class="question-mark">?</span>;
+                .ok_or(InvalidComponent(<span class="string">"year"</span>))<span class="question-mark">?</span>;
                 <span class="prelude-val">Ok</span>(remaining)
             }
             Component::Hour(modifiers) =&gt; {
                 <span class="kw">let </span>ParsedItem(remaining, value) =
-                    parse_hour(input, modifiers).ok_or(InvalidComponent(<span class="string">&quot;hour&quot;</span>))<span class="question-mark">?</span>;
+                    parse_hour(input, modifiers).ok_or(InvalidComponent(<span class="string">"hour"</span>))<span class="question-mark">?</span>;
                 <span class="kw">if </span>modifiers.is_12_hour_clock {
                     NonZeroU8::new(value).and_then(|value| <span class="self">self</span>.set_hour_12(value))
                 } <span class="kw">else </span>{
                     <span class="self">self</span>.set_hour_24(value)
                 }
-                .ok_or(InvalidComponent(<span class="string">&quot;hour&quot;</span>))<span class="question-mark">?</span>;
+                .ok_or(InvalidComponent(<span class="string">"hour"</span>))<span class="question-mark">?</span>;
                 <span class="prelude-val">Ok</span>(remaining)
             }
             Component::Minute(modifiers) =&gt; parse_minute(input, modifiers)
                 .and_then(|parsed| parsed.consume_value(|value| <span class="self">self</span>.set_minute(value)))
-                .ok_or(InvalidComponent(<span class="string">&quot;minute&quot;</span>)),
+                .ok_or(InvalidComponent(<span class="string">"minute"</span>)),
             Component::Period(modifiers) =&gt; parse_period(input, modifiers)
                 .and_then(|parsed| {
                     parsed.consume_value(|value| <span class="self">self</span>.set_hour_12_is_pm(value == Period::Pm))
                 })
-                .ok_or(InvalidComponent(<span class="string">&quot;period&quot;</span>)),
+                .ok_or(InvalidComponent(<span class="string">"period"</span>)),
             Component::Second(modifiers) =&gt; parse_second(input, modifiers)
                 .and_then(|parsed| parsed.consume_value(|value| <span class="self">self</span>.set_second(value)))
-                .ok_or(InvalidComponent(<span class="string">&quot;second&quot;</span>)),
+                .ok_or(InvalidComponent(<span class="string">"second"</span>)),
             Component::Subsecond(modifiers) =&gt; parse_subsecond(input, modifiers)
                 .and_then(|parsed| parsed.consume_value(|value| <span class="self">self</span>.set_subsecond(value)))
-                .ok_or(InvalidComponent(<span class="string">&quot;subsecond&quot;</span>)),
+                .ok_or(InvalidComponent(<span class="string">"subsecond"</span>)),
             Component::OffsetHour(modifiers) =&gt; parse_offset_hour(input, modifiers)
                 .and_then(|parsed| {
                     parsed.consume_value(|(value, is_negative)| {
@@ -1231,25 +1232,25 @@
                         <span class="prelude-val">Some</span>(())
                     })
                 })
-                .ok_or(InvalidComponent(<span class="string">&quot;offset hour&quot;</span>)),
+                .ok_or(InvalidComponent(<span class="string">"offset hour"</span>)),
             Component::OffsetMinute(modifiers) =&gt; parse_offset_minute(input, modifiers)
                 .and_then(|parsed| {
                     parsed.consume_value(|value| <span class="self">self</span>.set_offset_minute_signed(value))
                 })
-                .ok_or(InvalidComponent(<span class="string">&quot;offset minute&quot;</span>)),
+                .ok_or(InvalidComponent(<span class="string">"offset minute"</span>)),
             Component::OffsetSecond(modifiers) =&gt; parse_offset_second(input, modifiers)
                 .and_then(|parsed| {
                     parsed.consume_value(|value| <span class="self">self</span>.set_offset_second_signed(value))
                 })
-                .ok_or(InvalidComponent(<span class="string">&quot;offset second&quot;</span>)),
+                .ok_or(InvalidComponent(<span class="string">"offset second"</span>)),
             Component::Ignore(modifiers) =&gt; parse_ignore(input, modifiers)
                 .map(ParsedItem::&lt;()&gt;::into_inner)
-                .ok_or(InvalidComponent(<span class="string">&quot;ignore&quot;</span>)),
+                .ok_or(InvalidComponent(<span class="string">"ignore"</span>)),
             Component::UnixTimestamp(modifiers) =&gt; parse_unix_timestamp(input, modifiers)
                 .and_then(|parsed| {
                     parsed.consume_value(|value| <span class="self">self</span>.set_unix_timestamp_nanos(value))
                 })
-                .ok_or(InvalidComponent(<span class="string">&quot;unix_timestamp&quot;</span>)),
+                .ok_or(InvalidComponent(<span class="string">"unix_timestamp"</span>)),
             Component::End(modifiers) =&gt; parse_end(input, modifiers)
                 .map(ParsedItem::&lt;()&gt;::into_inner)
                 .ok_or(error::ParseFromDescription::UnexpectedTrailingCharacters),
@@ -1351,7 +1352,7 @@
 
     <span class="doccomment">/// Obtain the absolute value of the `offset_minute` component.
     </span><span class="attr">#[doc(hidden)]
-    #[deprecated(since = <span class="string">&quot;0.3.8&quot;</span>, note = <span class="string">&quot;use `parsed.offset_minute_signed()` instead&quot;</span>)]
+    #[deprecated(since = <span class="string">"0.3.8"</span>, note = <span class="string">"use `parsed.offset_minute_signed()` instead"</span>)]
     </span><span class="kw">pub const fn </span>offset_minute(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;u8&gt; {
         <span class="prelude-val">Some</span>(<span class="macro">const_try_opt!</span>(<span class="self">self</span>.offset_minute_signed()).unsigned_abs())
     }
@@ -1367,7 +1368,7 @@
 
     <span class="doccomment">/// Obtain the absolute value of the `offset_second` component.
     </span><span class="attr">#[doc(hidden)]
-    #[deprecated(since = <span class="string">&quot;0.3.8&quot;</span>, note = <span class="string">&quot;use `parsed.offset_second_signed()` instead&quot;</span>)]
+    #[deprecated(since = <span class="string">"0.3.8"</span>, note = <span class="string">"use `parsed.offset_second_signed()` instead"</span>)]
     </span><span class="kw">pub const fn </span>offset_second(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;u8&gt; {
         <span class="prelude-val">Some</span>(<span class="macro">const_try_opt!</span>(<span class="self">self</span>.offset_second_signed()).unsigned_abs())
     }
@@ -1390,7 +1391,7 @@
 <span class="doccomment">/// Generate setters based on the builders.
 </span><span class="macro">macro_rules! </span>setters {
     ($(<span class="macro-nonterminal">$name</span>:ident <span class="macro-nonterminal">$setter</span>:ident <span class="macro-nonterminal">$builder</span>:ident <span class="macro-nonterminal">$</span><span class="kw">type</span>:<span class="macro-nonterminal">ty</span>;)<span class="kw-2">*</span>) =&gt; {$(
-        <span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">&quot;Set the `&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$setter</span>), <span class="string">&quot;` component.&quot;</span>)]
+        <span class="attr">#[doc = <span class="macro">concat!</span>(<span class="string">"Set the `"</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$setter</span>), <span class="string">"` component."</span>)]
         </span><span class="kw">pub fn </span><span class="macro-nonterminal">$setter</span>(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: <span class="macro-nonterminal">$</span><span class="kw">type</span>) -&gt; <span class="prelude-ty">Option</span>&lt;()&gt; {
             <span class="kw-2">*</span><span class="macro-nonterminal">self </span>= <span class="self">self</span>.<span class="macro-nonterminal">$builder</span>(value)<span class="question-mark">?</span>;
             <span class="prelude-val">Some</span>(())
@@ -1430,8 +1431,8 @@
     <span class="doccomment">/// Set the `offset_minute` component.
     </span><span class="attr">#[doc(hidden)]
     #[deprecated(
-        since = <span class="string">&quot;0.3.8&quot;</span>,
-        note = <span class="string">&quot;use `parsed.set_offset_minute_signed()` instead&quot;
+        since = <span class="string">"0.3.8"</span>,
+        note = <span class="string">"use `parsed.set_offset_minute_signed()` instead"
     </span>)]
     </span><span class="kw">pub fn </span>set_offset_minute(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: u8) -&gt; <span class="prelude-ty">Option</span>&lt;()&gt; {
         <span class="kw">if </span>value &gt; i8::MAX.cast_unsigned() {
@@ -1444,8 +1445,8 @@
     <span class="doccomment">/// Set the `offset_minute` component.
     </span><span class="attr">#[doc(hidden)]
     #[deprecated(
-        since = <span class="string">&quot;0.3.8&quot;</span>,
-        note = <span class="string">&quot;use `parsed.set_offset_second_signed()` instead&quot;
+        since = <span class="string">"0.3.8"</span>,
+        note = <span class="string">"use `parsed.set_offset_second_signed()` instead"
     </span>)]
     </span><span class="kw">pub fn </span>set_offset_second(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: u8) -&gt; <span class="prelude-ty">Option</span>&lt;()&gt; {
         <span class="kw">if </span>value &gt; i8::MAX.cast_unsigned() {
@@ -1572,8 +1573,8 @@
     <span class="doccomment">/// Set the `offset_minute` component and return `self`.
     </span><span class="attr">#[doc(hidden)]
     #[deprecated(
-        since = <span class="string">&quot;0.3.8&quot;</span>,
-        note = <span class="string">&quot;use `parsed.with_offset_minute_signed()` instead&quot;
+        since = <span class="string">"0.3.8"</span>,
+        note = <span class="string">"use `parsed.with_offset_minute_signed()` instead"
     </span>)]
     </span><span class="kw">pub const fn </span>with_offset_minute(<span class="self">self</span>, value: u8) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt; {
         <span class="kw">if </span>value &gt; i8::MAX <span class="kw">as </span>u8 {
@@ -1592,8 +1593,8 @@
     <span class="doccomment">/// Set the `offset_minute` component and return `self`.
     </span><span class="attr">#[doc(hidden)]
     #[deprecated(
-        since = <span class="string">&quot;0.3.8&quot;</span>,
-        note = <span class="string">&quot;use `parsed.with_offset_second_signed()` instead&quot;
+        since = <span class="string">"0.3.8"</span>,
+        note = <span class="string">"use `parsed.with_offset_second_signed()` instead"
     </span>)]
     </span><span class="kw">pub const fn </span>with_offset_second(<span class="self">self</span>, value: u8) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt; {
         <span class="kw">if </span>value &gt; i8::MAX <span class="kw">as </span>u8 {
@@ -1725,12 +1726,12 @@
 
         <span class="self">Self</span>::from_hms(hour, minute, second).map_err(|<span class="kw-2">mut </span>err| {
             <span class="comment">// Provide the user a more accurate error.
-            </span><span class="kw">if </span>err.name == <span class="string">&quot;hours&quot; </span>{
-                err.name = <span class="string">&quot;offset hour&quot;</span>;
-            } <span class="kw">else if </span>err.name == <span class="string">&quot;minutes&quot; </span>{
-                err.name = <span class="string">&quot;offset minute&quot;</span>;
-            } <span class="kw">else if </span>err.name == <span class="string">&quot;seconds&quot; </span>{
-                err.name = <span class="string">&quot;offset second&quot;</span>;
+            </span><span class="kw">if </span>err.name == <span class="string">"hours" </span>{
+                err.name = <span class="string">"offset hour"</span>;
+            } <span class="kw">else if </span>err.name == <span class="string">"minutes" </span>{
+                err.name = <span class="string">"offset minute"</span>;
+            } <span class="kw">else if </span>err.name == <span class="string">"seconds" </span>{
+                err.name = <span class="string">"offset second"</span>;
             }
             err.into()
         })
@@ -1757,15 +1758,15 @@
             <span class="kw">return </span><span class="prelude-val">Ok</span>(value);
         }
 
-        <span class="comment">// Some well-known formats explicitly allow leap seconds. We don&#39;t currently support them,
+        <span class="comment">// Some well-known formats explicitly allow leap seconds. We don't currently support them,
         // so treat it as the nearest preceding moment that can be represented. Because leap seconds
         // always fall at the end of a month UTC, reject any that are at other times.
         </span><span class="kw">let </span>leap_second_input = <span class="kw">if </span>parsed.leap_second_allowed &amp;&amp; parsed.second() == <span class="prelude-val">Some</span>(<span class="number">60</span>) {
             <span class="kw">if </span>parsed.set_second(<span class="number">59</span>).is_none() {
-                <span class="macro">bug!</span>(<span class="string">&quot;59 is a valid second&quot;</span>);
+                <span class="macro">bug!</span>(<span class="string">"59 is a valid second"</span>);
             }
             <span class="kw">if </span>parsed.set_subsecond(<span class="number">999_999_999</span>).is_none() {
-                <span class="macro">bug!</span>(<span class="string">&quot;999_999_999 is a valid subsecond&quot;</span>);
+                <span class="macro">bug!</span>(<span class="string">"999_999_999 is a valid subsecond"</span>);
             }
             <span class="bool-val">true
         </span>} <span class="kw">else </span>{
@@ -1781,7 +1782,7 @@
         <span class="kw">if </span>leap_second_input &amp;&amp; !dt.is_valid_leap_second_stand_in() {
             <span class="kw">return </span><span class="prelude-val">Err</span>(error::TryFromParsed::ComponentRange(
                 error::ComponentRange {
-                    name: <span class="string">&quot;second&quot;</span>,
+                    name: <span class="string">"second"</span>,
                     minimum: <span class="number">0</span>,
                     maximum: <span class="number">59</span>,
                     value: <span class="number">60</span>,

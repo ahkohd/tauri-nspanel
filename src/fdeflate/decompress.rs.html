@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/fdeflate-0.3.4/src/decompress.rs`."><title>decompress.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="fdeflate" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/fdeflate-0.3.4/src/decompress.rs`."><title>decompress.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="fdeflate" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1282,11 +1283,11 @@
 </span><span class="kw">pub enum </span>DecompressionError {
     <span class="doccomment">/// The zlib header is corrupt.
     </span>BadZlibHeader,
-    <span class="doccomment">/// All input was consumed, but the end of the stream hasn&#39;t been reached.
+    <span class="doccomment">/// All input was consumed, but the end of the stream hasn't been reached.
     </span>InsufficientInput,
     <span class="doccomment">/// A block header specifies an invalid block type.
     </span>InvalidBlockType,
-    <span class="doccomment">/// An uncompressed block&#39;s NLEN value is invalid.
+    <span class="doccomment">/// An uncompressed block's NLEN value is invalid.
     </span>InvalidUncompressedBlockLength,
     <span class="doccomment">/// Too many literals were specified.
     </span>InvalidHlit,
@@ -1295,11 +1296,11 @@
     <span class="doccomment">/// Attempted to repeat a previous code before reading any codes, or past the end of the code
     /// lengths.
     </span>InvalidCodeLengthRepeat,
-    <span class="doccomment">/// The stream doesn&#39;t specify a valid huffman tree.
+    <span class="doccomment">/// The stream doesn't specify a valid huffman tree.
     </span>BadCodeLengthHuffmanTree,
-    <span class="doccomment">/// The stream doesn&#39;t specify a valid huffman tree.
+    <span class="doccomment">/// The stream doesn't specify a valid huffman tree.
     </span>BadLiteralLengthHuffmanTree,
-    <span class="doccomment">/// The stream doesn&#39;t specify a valid huffman tree.
+    <span class="doccomment">/// The stream doesn't specify a valid huffman tree.
     </span>BadDistanceHuffmanTree,
     <span class="doccomment">/// The stream contains a literal/length code that was not allowed by the header.
     </span>InvalidLiteralLengthCode,
@@ -1912,15 +1913,15 @@
                 </span><span class="kw">let </span>advance_output_bytes = ((litlen_entry &amp; <span class="number">0xf00</span>) &gt;&gt; <span class="number">8</span>) <span class="kw">as </span>usize;
 
                 <span class="comment">// match advance_output_bytes {
-                //     1 =&gt; println!(&quot;[{output_index}] LIT1 {}&quot;, litlen_entry &gt;&gt; 16),
+                //     1 =&gt; println!("[{output_index}] LIT1 {}", litlen_entry &gt;&gt; 16),
                 //     2 =&gt; println!(
-                //         &quot;[{output_index}] LIT2 {} {} {}&quot;,
+                //         "[{output_index}] LIT2 {} {} {}",
                 //         (litlen_entry &gt;&gt; 16) as u8,
                 //         litlen_entry &gt;&gt; 24,
                 //         bits &amp; 0xfff
                 //     ),
                 //     n =&gt; println!(
-                //         &quot;[{output_index}] LIT{n} {} {}&quot;,
+                //         "[{output_index}] LIT{n} {} {}",
                 //         (litlen_entry &gt;&gt; 16) as u8,
                 //         litlen_entry &gt;&gt; 24,
                 //     ),
@@ -1967,14 +1968,14 @@
                     <span class="kw">if </span><span class="self">self</span>.nbits &lt; litlen_code_bits {
                         <span class="kw">break</span>;
                     } <span class="kw">else if </span>litlen_symbol &lt; <span class="number">256 </span>{
-                        <span class="comment">// println!(&quot;[{output_index}] LIT1b {} (val={:04x})&quot;, litlen_symbol, self.peak_bits(15));
+                        <span class="comment">// println!("[{output_index}] LIT1b {} (val={:04x})", litlen_symbol, self.peak_bits(15));
 
                         </span><span class="self">self</span>.consume_bits(litlen_code_bits);
                         output[output_index] = litlen_symbol <span class="kw">as </span>u8;
                         output_index += <span class="number">1</span>;
                         <span class="kw">continue</span>;
                     } <span class="kw">else if </span>litlen_symbol == <span class="number">256 </span>{
-                        <span class="comment">// println!(&quot;[{output_index}] EOF&quot;);
+                        <span class="comment">// println!("[{output_index}] EOF");
                         </span><span class="self">self</span>.consume_bits(litlen_code_bits);
                         <span class="self">self</span>.state = <span class="kw">match </span><span class="self">self</span>.last_block {
                             <span class="bool-val">true </span>=&gt; State::Checksum,
@@ -1994,7 +1995,7 @@
                     <span class="kw">if </span><span class="self">self</span>.nbits &lt; litlen_code_bits {
                         <span class="kw">break</span>;
                     }
-                    <span class="comment">// println!(&quot;[{output_index}] EOF&quot;);
+                    <span class="comment">// println!("[{output_index}] EOF");
                     </span><span class="self">self</span>.consume_bits(litlen_code_bits);
                     <span class="self">self</span>.state = <span class="kw">match </span><span class="self">self</span>.last_block {
                         <span class="bool-val">true </span>=&gt; State::Checksum,
@@ -2046,7 +2047,7 @@
                 <span class="kw">return </span><span class="prelude-val">Err</span>(DecompressionError::DistanceTooFarBack);
             }
 
-            <span class="comment">// println!(&quot;[{output_index}] BACKREF len={} dist={} {:x}&quot;, length, dist, dist_entry);
+            <span class="comment">// println!("[{output_index}] BACKREF len={} dist={} {:x}", length, dist, dist_entry);
             </span><span class="self">self</span>.consume_bits(total_bits);
 
             <span class="kw">let </span>copy_length = length.min(output.len() - output_index);
@@ -2280,7 +2281,7 @@
         <span class="prelude-val">Ok</span>(output) =&gt; <span class="prelude-val">Ok</span>(output),
         <span class="prelude-val">Err</span>(BoundedDecompressionError::DecompressionError { inner }) =&gt; <span class="prelude-val">Err</span>(inner),
         <span class="prelude-val">Err</span>(BoundedDecompressionError::OutputTooLarge { .. }) =&gt; {
-            <span class="macro">unreachable!</span>(<span class="string">&quot;Impossible to allocate more than isize::MAX bytes&quot;</span>)
+            <span class="macro">unreachable!</span>(<span class="string">"Impossible to allocate more than isize::MAX bytes"</span>)
         }
     }
 }
@@ -2354,7 +2355,7 @@
         <span class="kw">let </span>decompressed = decompress_to_vec(<span class="kw-2">&amp;</span>compressed).unwrap();
         <span class="macro">assert_eq!</span>(decompressed.len(), data.len());
         <span class="kw">for </span>(i, (a, b)) <span class="kw">in </span>decompressed.chunks(<span class="number">1</span>).zip(data.chunks(<span class="number">1</span>)).enumerate() {
-            <span class="macro">assert_eq!</span>(a, b, <span class="string">&quot;chunk {}..{}&quot;</span>, i * <span class="number">1</span>, i * <span class="number">1 </span>+ <span class="number">1</span>);
+            <span class="macro">assert_eq!</span>(a, b, <span class="string">"chunk {}..{}"</span>, i * <span class="number">1</span>, i * <span class="number">1 </span>+ <span class="number">1</span>);
         }
         <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>decompressed, data);
     }
@@ -2370,7 +2371,7 @@
         <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..decompressed.len().min(decompressed2.len()) {
             <span class="kw">if </span>decompressed[i] != decompressed2[i] {
                 <span class="macro">panic!</span>(
-                    <span class="string">&quot;mismatch at index {} {:?} {:?}&quot;</span>,
+                    <span class="string">"mismatch at index {} {:?} {:?}"</span>,
                     i,
                     <span class="kw-2">&amp;</span>decompressed[i.saturating_sub(<span class="number">1</span>)..(i + <span class="number">16</span>).min(decompressed.len())],
                     <span class="kw-2">&amp;</span>decompressed2[i.saturating_sub(<span class="number">1</span>)..(i + <span class="number">16</span>).min(decompressed2.len())]
@@ -2379,7 +2380,7 @@
         }
         <span class="kw">if </span>decompressed != decompressed2 {
             <span class="macro">panic!</span>(
-                <span class="string">&quot;length mismatch {} {} {:x?}&quot;</span>,
+                <span class="string">"length mismatch {} {} {:x?}"</span>,
                 decompressed.len(),
                 decompressed2.len(),
                 <span class="kw-2">&amp;</span>decompressed2[decompressed.len()..][..<span class="number">16</span>]
@@ -2396,11 +2397,11 @@
                 <span class="kw">if </span>i == <span class="number">27 </span>&amp;&amp; j == <span class="number">31 </span>{
                     <span class="kw">continue</span>;
                 }
-                <span class="macro">assert_eq!</span>(LENGTH_TO_LEN_EXTRA[len_base + j - <span class="number">3</span>], bits, <span class="string">&quot;{} {}&quot;</span>, i, j);
+                <span class="macro">assert_eq!</span>(LENGTH_TO_LEN_EXTRA[len_base + j - <span class="number">3</span>], bits, <span class="string">"{} {}"</span>, i, j);
                 <span class="macro">assert_eq!</span>(
                     LENGTH_TO_SYMBOL[len_base + j - <span class="number">3</span>],
                     i <span class="kw">as </span>u16 + <span class="number">257</span>,
-                    <span class="string">&quot;{} {}&quot;</span>,
+                    <span class="string">"{} {}"</span>,
                     i,
                     j
                 );
@@ -2429,14 +2430,14 @@
 
         <span class="macro">assert_eq!</span>(
             compression, FDEFLATE_COMPRESSED_BLOCK,
-            <span class="string">&quot;{:#x?}&quot;</span>,
+            <span class="string">"{:#x?}"</span>,
             compression
         );
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>it_works() {
-        roundtrip(<span class="string">b&quot;Hello world!&quot;</span>);
+        roundtrip(<span class="string">b"Hello world!"</span>);
     }
 
     <span class="attr">#[test]
@@ -2455,20 +2456,20 @@
             <span class="kw">for </span>byte <span class="kw">in </span><span class="kw-2">&amp;mut </span>data {
                 <span class="kw-2">*</span>byte = rng.gen::&lt;u8&gt;() % <span class="number">5</span>;
             }
-            <span class="macro">println!</span>(<span class="string">&quot;Random data: {:?}&quot;</span>, data);
+            <span class="macro">println!</span>(<span class="string">"Random data: {:?}"</span>, data);
             roundtrip_miniz_oxide(<span class="kw-2">&amp;</span>data);
         }
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>ignore_adler32() {
-        <span class="kw">let </span><span class="kw-2">mut </span>compressed = <span class="kw">crate</span>::compress_to_vec(<span class="string">b&quot;Hello world!&quot;</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>compressed = <span class="kw">crate</span>::compress_to_vec(<span class="string">b"Hello world!"</span>);
         <span class="kw">let </span>last_byte = compressed.len() - <span class="number">1</span>;
         compressed[last_byte] = compressed[last_byte].wrapping_add(<span class="number">1</span>);
 
         <span class="kw">match </span>decompress_to_vec(<span class="kw-2">&amp;</span>compressed) {
             <span class="prelude-val">Err</span>(DecompressionError::WrongChecksum) =&gt; {}
-            r =&gt; <span class="macro">panic!</span>(<span class="string">&quot;expected WrongChecksum, got {:?}&quot;</span>, r),
+            r =&gt; <span class="macro">panic!</span>(<span class="string">"expected WrongChecksum, got {:?}"</span>, r),
         }
 
         <span class="kw">let </span><span class="kw-2">mut </span>decompressor = Decompressor::new();
@@ -2478,12 +2479,12 @@
             .read(<span class="kw-2">&amp;</span>compressed, <span class="kw-2">&amp;mut </span>decompressed, <span class="number">0</span>, <span class="bool-val">true</span>)
             .unwrap()
             .<span class="number">1</span>;
-        <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>decompressed[..decompressed_len], <span class="string">b&quot;Hello world!&quot;</span>);
+        <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span>decompressed[..decompressed_len], <span class="string">b"Hello world!"</span>);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>checksum_after_eof() {
-        <span class="kw">let </span>input = <span class="string">b&quot;Hello world!&quot;</span>;
+        <span class="kw">let </span>input = <span class="string">b"Hello world!"</span>;
         <span class="kw">let </span>compressed = <span class="kw">crate</span>::compress_to_vec(input);
 
         <span class="kw">let </span><span class="kw-2">mut </span>decompressor = Decompressor::new();
@@ -2516,11 +2517,11 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>zero_length() {
-        <span class="kw">let </span><span class="kw-2">mut </span>compressed = <span class="kw">crate</span>::compress_to_vec(<span class="string">b&quot;&quot;</span>).to_vec();
+        <span class="kw">let </span><span class="kw-2">mut </span>compressed = <span class="kw">crate</span>::compress_to_vec(<span class="string">b""</span>).to_vec();
 
         <span class="comment">// Splice in zero-length non-compressed blocks.
         </span><span class="kw">for _ in </span><span class="number">0</span>..<span class="number">10 </span>{
-            <span class="macro">println!</span>(<span class="string">&quot;compressed len: {}&quot;</span>, compressed.len());
+            <span class="macro">println!</span>(<span class="string">"compressed len: {}"</span>, compressed.len());
             compressed.splice(<span class="number">2</span>..<span class="number">2</span>, [<span class="number">0u8</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0xff</span>, <span class="number">0xff</span>].into_iter());
         }
 

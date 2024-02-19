@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/raw-window-handle-0.5.2/src/borrowed.rs`."><title>borrowed.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="raw_window_handle" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/raw-window-handle-0.5.2/src/borrowed.rs`."><title>borrowed.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="raw_window_handle" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -617,8 +618,8 @@
 //!
 //! These should be 100% safe to pass around and use, no possibility of dangling or invalidity.
 
-</span><span class="attr">#[cfg(all(not(feature = <span class="string">&quot;std&quot;</span>), target_os = <span class="string">&quot;android&quot;</span>))]
-</span><span class="macro">compile_error!</span>(<span class="string">&quot;Using borrowed handles on Android requires the `std` feature to be enabled.&quot;</span>);
+</span><span class="attr">#[cfg(all(not(feature = <span class="string">"std"</span>), target_os = <span class="string">"android"</span>))]
+</span><span class="macro">compile_error!</span>(<span class="string">"Using borrowed handles on Android requires the `std` feature to be enabled."</span>);
 
 <span class="kw">use </span>core::fmt;
 <span class="kw">use </span>core::hash::{Hash, Hasher};
@@ -628,7 +629,7 @@
 
 <span class="doccomment">/// Keeps track of whether the application is currently active.
 ///
-/// On certain platforms (e.g. Android), it is possible for the application to enter a &quot;suspended&quot;
+/// On certain platforms (e.g. Android), it is possible for the application to enter a "suspended"
 /// state. While in this state, all previously valid window handles become invalid. Therefore, in
 /// order for window handles to be valid, the application must be active.
 ///
@@ -678,25 +679,25 @@
 </span><span class="kw">pub struct </span>Active(imp::Active);
 
 <span class="kw">impl </span>fmt::Debug <span class="kw">for </span>Active {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        f.write_str(<span class="string">&quot;Active { .. }&quot;</span>)
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
+        f.write_str(<span class="string">"Active { .. }"</span>)
     }
 }
 
 <span class="doccomment">/// Represents a live window handle.
 ///
-/// This is carried around by the [`Active`] type, and is used to ensure that the application doesn&#39;t
+/// This is carried around by the [`Active`] type, and is used to ensure that the application doesn't
 /// enter the suspended state while there are still live window handles. See documentation on the
 /// [`Active`] type for more information.
 ///
 /// On non-Android platforms, this is a ZST. On Android, this is a reference counted handle that
 /// keeps the application active while it is alive.
 </span><span class="attr">#[derive(Clone)]
-</span><span class="kw">pub struct </span>ActiveHandle&lt;<span class="lifetime">&#39;a</span>&gt;(imp::ActiveHandle&lt;<span class="lifetime">&#39;a</span>&gt;);
+</span><span class="kw">pub struct </span>ActiveHandle&lt;<span class="lifetime">'a</span>&gt;(imp::ActiveHandle&lt;<span class="lifetime">'a</span>&gt;);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; fmt::Debug <span class="kw">for </span>ActiveHandle&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        f.write_str(<span class="string">&quot;ActiveHandle { .. }&quot;</span>)
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; fmt::Debug <span class="kw">for </span>ActiveHandle&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
+        f.write_str(<span class="string">"ActiveHandle { .. }"</span>)
     }
 }
 
@@ -735,7 +736,7 @@
     /// drop(handle);
     /// active.set_inactive();
     /// ```
-    </span><span class="kw">pub fn </span>handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;ActiveHandle&lt;<span class="lifetime">&#39;_</span>&gt;&gt; {
+    </span><span class="kw">pub fn </span>handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;ActiveHandle&lt;<span class="lifetime">'_</span>&gt;&gt; {
         <span class="self">self</span>.<span class="number">0</span>.handle().map(ActiveHandle)
     }
 
@@ -783,10 +784,10 @@
     }
 }
 
-<span class="kw">impl </span>ActiveHandle&lt;<span class="lifetime">&#39;_</span>&gt; {
+<span class="kw">impl </span>ActiveHandle&lt;<span class="lifetime">'_</span>&gt; {
     <span class="doccomment">/// Create a new freestanding active handle.
     ///
-    /// This function acts as an &quot;escape hatch&quot; to allow the user to create a live window handle
+    /// This function acts as an "escape hatch" to allow the user to create a live window handle
     /// without having to go through the [`Active`] type. This is useful if the user *knows* that the
     /// application is active, and wants to create a live window handle without having to go through
     /// the [`Active`] type.
@@ -841,32 +842,32 @@
 /// [`glutin`]: https://crates.io/crates/glutin
 </span><span class="kw">pub trait </span>HasDisplayHandle {
     <span class="doccomment">/// Get a handle to the display controller of the windowing system.
-    </span><span class="kw">fn </span>display_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;DisplayHandle&lt;<span class="lifetime">&#39;_</span>&gt;, HandleError&gt;;
+    </span><span class="kw">fn </span>display_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;DisplayHandle&lt;<span class="lifetime">'_</span>&gt;, HandleError&gt;;
 }
 
 <span class="kw">impl</span>&lt;H: HasDisplayHandle + <span class="question-mark">?</span>Sized&gt; HasDisplayHandle <span class="kw">for </span><span class="kw-2">&amp;</span>H {
-    <span class="kw">fn </span>display_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;DisplayHandle&lt;<span class="lifetime">&#39;_</span>&gt;, HandleError&gt; {
+    <span class="kw">fn </span>display_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;DisplayHandle&lt;<span class="lifetime">'_</span>&gt;, HandleError&gt; {
         (<span class="kw-2">**</span><span class="self">self</span>).display_handle()
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;alloc&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"alloc"</span>)]
 </span><span class="kw">impl</span>&lt;H: HasDisplayHandle + <span class="question-mark">?</span>Sized&gt; HasDisplayHandle <span class="kw">for </span>alloc::boxed::Box&lt;H&gt; {
-    <span class="kw">fn </span>display_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;DisplayHandle&lt;<span class="lifetime">&#39;_</span>&gt;, HandleError&gt; {
+    <span class="kw">fn </span>display_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;DisplayHandle&lt;<span class="lifetime">'_</span>&gt;, HandleError&gt; {
         (<span class="kw-2">**</span><span class="self">self</span>).display_handle()
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;alloc&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"alloc"</span>)]
 </span><span class="kw">impl</span>&lt;H: HasDisplayHandle + <span class="question-mark">?</span>Sized&gt; HasDisplayHandle <span class="kw">for </span>alloc::rc::Rc&lt;H&gt; {
-    <span class="kw">fn </span>display_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;DisplayHandle&lt;<span class="lifetime">&#39;_</span>&gt;, HandleError&gt; {
+    <span class="kw">fn </span>display_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;DisplayHandle&lt;<span class="lifetime">'_</span>&gt;, HandleError&gt; {
         (<span class="kw-2">**</span><span class="self">self</span>).display_handle()
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;alloc&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"alloc"</span>)]
 </span><span class="kw">impl</span>&lt;H: HasDisplayHandle + <span class="question-mark">?</span>Sized&gt; HasDisplayHandle <span class="kw">for </span>alloc::sync::Arc&lt;H&gt; {
-    <span class="kw">fn </span>display_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;DisplayHandle&lt;<span class="lifetime">&#39;_</span>&gt;, HandleError&gt; {
+    <span class="kw">fn </span>display_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;DisplayHandle&lt;<span class="lifetime">'_</span>&gt;, HandleError&gt; {
         (<span class="kw-2">**</span><span class="self">self</span>).display_handle()
     }
 }
@@ -879,18 +880,18 @@
 /// Get the underlying raw display handle with the [`HasRawDisplayHandle`] trait.
 </span><span class="attr">#[repr(transparent)]
 #[derive(PartialEq, Eq, Hash)]
-</span><span class="kw">pub struct </span>DisplayHandle&lt;<span class="lifetime">&#39;a</span>&gt; {
+</span><span class="kw">pub struct </span>DisplayHandle&lt;<span class="lifetime">'a</span>&gt; {
     raw: RawDisplayHandle,
-    _marker: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">*const </span>()&gt;,
+    _marker: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">*const </span>()&gt;,
 }
 
-<span class="kw">impl </span>fmt::Debug <span class="kw">for </span>DisplayHandle&lt;<span class="lifetime">&#39;_</span>&gt; {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        f.debug_tuple(<span class="string">&quot;DisplayHandle&quot;</span>).field(<span class="kw-2">&amp;</span><span class="self">self</span>.raw).finish()
+<span class="kw">impl </span>fmt::Debug <span class="kw">for </span>DisplayHandle&lt;<span class="lifetime">'_</span>&gt; {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
+        f.debug_tuple(<span class="string">"DisplayHandle"</span>).field(<span class="kw-2">&amp;</span><span class="self">self</span>.raw).finish()
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Clone <span class="kw">for </span>DisplayHandle&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Clone <span class="kw">for </span>DisplayHandle&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             raw: <span class="self">self</span>.raw,
@@ -899,7 +900,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; DisplayHandle&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; DisplayHandle&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// Create a `DisplayHandle` from a [`RawDisplayHandle`].
     ///
     /// # Safety
@@ -913,14 +914,14 @@
     }
 }
 
-<span class="kw">unsafe impl </span>HasRawDisplayHandle <span class="kw">for </span>DisplayHandle&lt;<span class="lifetime">&#39;_</span>&gt; {
+<span class="kw">unsafe impl </span>HasRawDisplayHandle <span class="kw">for </span>DisplayHandle&lt;<span class="lifetime">'_</span>&gt; {
     <span class="kw">fn </span>raw_display_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RawDisplayHandle {
         <span class="self">self</span>.raw
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; HasDisplayHandle <span class="kw">for </span>DisplayHandle&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="kw">fn </span>display_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;DisplayHandle&lt;<span class="lifetime">&#39;_</span>&gt;, HandleError&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; HasDisplayHandle <span class="kw">for </span>DisplayHandle&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="kw">fn </span>display_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;DisplayHandle&lt;<span class="lifetime">'_</span>&gt;, HandleError&gt; {
         <span class="prelude-val">Ok</span>(<span class="self">self</span>.clone())
     }
 }
@@ -973,32 +974,32 @@
 /// [`glutin`]: https://crates.io/crates/glutin
 </span><span class="kw">pub trait </span>HasWindowHandle {
     <span class="doccomment">/// Get a handle to the window.
-    </span><span class="kw">fn </span>window_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;WindowHandle&lt;<span class="lifetime">&#39;_</span>&gt;, HandleError&gt;;
+    </span><span class="kw">fn </span>window_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;WindowHandle&lt;<span class="lifetime">'_</span>&gt;, HandleError&gt;;
 }
 
 <span class="kw">impl</span>&lt;H: HasWindowHandle + <span class="question-mark">?</span>Sized&gt; HasWindowHandle <span class="kw">for </span><span class="kw-2">&amp;</span>H {
-    <span class="kw">fn </span>window_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;WindowHandle&lt;<span class="lifetime">&#39;_</span>&gt;, HandleError&gt; {
+    <span class="kw">fn </span>window_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;WindowHandle&lt;<span class="lifetime">'_</span>&gt;, HandleError&gt; {
         (<span class="kw-2">**</span><span class="self">self</span>).window_handle()
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;alloc&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"alloc"</span>)]
 </span><span class="kw">impl</span>&lt;H: HasWindowHandle + <span class="question-mark">?</span>Sized&gt; HasWindowHandle <span class="kw">for </span>alloc::boxed::Box&lt;H&gt; {
-    <span class="kw">fn </span>window_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;WindowHandle&lt;<span class="lifetime">&#39;_</span>&gt;, HandleError&gt; {
+    <span class="kw">fn </span>window_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;WindowHandle&lt;<span class="lifetime">'_</span>&gt;, HandleError&gt; {
         (<span class="kw-2">**</span><span class="self">self</span>).window_handle()
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;alloc&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"alloc"</span>)]
 </span><span class="kw">impl</span>&lt;H: HasWindowHandle + <span class="question-mark">?</span>Sized&gt; HasWindowHandle <span class="kw">for </span>alloc::rc::Rc&lt;H&gt; {
-    <span class="kw">fn </span>window_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;WindowHandle&lt;<span class="lifetime">&#39;_</span>&gt;, HandleError&gt; {
+    <span class="kw">fn </span>window_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;WindowHandle&lt;<span class="lifetime">'_</span>&gt;, HandleError&gt; {
         (<span class="kw-2">**</span><span class="self">self</span>).window_handle()
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;alloc&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"alloc"</span>)]
 </span><span class="kw">impl</span>&lt;H: HasWindowHandle + <span class="question-mark">?</span>Sized&gt; HasWindowHandle <span class="kw">for </span>alloc::sync::Arc&lt;H&gt; {
-    <span class="kw">fn </span>window_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;WindowHandle&lt;<span class="lifetime">&#39;_</span>&gt;, HandleError&gt; {
+    <span class="kw">fn </span>window_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;WindowHandle&lt;<span class="lifetime">'_</span>&gt;, HandleError&gt; {
         (<span class="kw-2">**</span><span class="self">self</span>).window_handle()
     }
 }
@@ -1013,33 +1014,33 @@
 /// This handle is guaranteed to be safe and valid. Get the underlying raw window handle with the
 /// [`HasRawWindowHandle`] trait.
 </span><span class="attr">#[derive(Clone)]
-</span><span class="kw">pub struct </span>WindowHandle&lt;<span class="lifetime">&#39;a</span>&gt; {
+</span><span class="kw">pub struct </span>WindowHandle&lt;<span class="lifetime">'a</span>&gt; {
     raw: RawWindowHandle,
-    _active: ActiveHandle&lt;<span class="lifetime">&#39;a</span>&gt;,
-    _marker: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">*const </span>()&gt;,
+    _active: ActiveHandle&lt;<span class="lifetime">'a</span>&gt;,
+    _marker: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">*const </span>()&gt;,
 }
 
-<span class="kw">impl </span>fmt::Debug <span class="kw">for </span>WindowHandle&lt;<span class="lifetime">&#39;_</span>&gt; {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        f.debug_tuple(<span class="string">&quot;WindowHandle&quot;</span>).field(<span class="kw-2">&amp;</span><span class="self">self</span>.raw).finish()
+<span class="kw">impl </span>fmt::Debug <span class="kw">for </span>WindowHandle&lt;<span class="lifetime">'_</span>&gt; {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
+        f.debug_tuple(<span class="string">"WindowHandle"</span>).field(<span class="kw-2">&amp;</span><span class="self">self</span>.raw).finish()
     }
 }
 
-<span class="kw">impl </span>PartialEq <span class="kw">for </span>WindowHandle&lt;<span class="lifetime">&#39;_</span>&gt; {
+<span class="kw">impl </span>PartialEq <span class="kw">for </span>WindowHandle&lt;<span class="lifetime">'_</span>&gt; {
     <span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; bool {
         <span class="self">self</span>.raw == other.raw
     }
 }
 
-<span class="kw">impl </span>Eq <span class="kw">for </span>WindowHandle&lt;<span class="lifetime">&#39;_</span>&gt; {}
+<span class="kw">impl </span>Eq <span class="kw">for </span>WindowHandle&lt;<span class="lifetime">'_</span>&gt; {}
 
-<span class="kw">impl </span>Hash <span class="kw">for </span>WindowHandle&lt;<span class="lifetime">&#39;_</span>&gt; {
+<span class="kw">impl </span>Hash <span class="kw">for </span>WindowHandle&lt;<span class="lifetime">'_</span>&gt; {
     <span class="kw">fn </span>hash&lt;H: Hasher&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H) {
         <span class="self">self</span>.raw.hash(state);
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; WindowHandle&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; WindowHandle&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// Borrow a `WindowHandle` from a [`RawWindowHandle`].
     ///
     /// # Safety
@@ -1047,7 +1048,7 @@
     /// The [`RawWindowHandle`] must be valid for the lifetime and the application must not be
     /// suspended. The [`Active`] object that the [`ActiveHandle`] was created from must be
     /// associated directly with the display that the window handle is associated with.
-    </span><span class="kw">pub unsafe fn </span>borrow_raw(raw: RawWindowHandle, active: ActiveHandle&lt;<span class="lifetime">&#39;a</span>&gt;) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub unsafe fn </span>borrow_raw(raw: RawWindowHandle, active: ActiveHandle&lt;<span class="lifetime">'a</span>&gt;) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             raw,
             _active: active,
@@ -1056,13 +1057,13 @@
     }
 }
 
-<span class="kw">unsafe impl </span>HasRawWindowHandle <span class="kw">for </span>WindowHandle&lt;<span class="lifetime">&#39;_</span>&gt; {
+<span class="kw">unsafe impl </span>HasRawWindowHandle <span class="kw">for </span>WindowHandle&lt;<span class="lifetime">'_</span>&gt; {
     <span class="kw">fn </span>raw_window_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RawWindowHandle {
         <span class="self">self</span>.raw
     }
 }
 
-<span class="kw">impl </span>HasWindowHandle <span class="kw">for </span>WindowHandle&lt;<span class="lifetime">&#39;_</span>&gt; {
+<span class="kw">impl </span>HasWindowHandle <span class="kw">for </span>WindowHandle&lt;<span class="lifetime">'_</span>&gt; {
     <span class="kw">fn </span>window_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, HandleError&gt; {
         <span class="prelude-val">Ok</span>(<span class="self">self</span>.clone())
     }
@@ -1079,29 +1080,29 @@
 }
 
 <span class="kw">impl </span>fmt::Display <span class="kw">for </span>HandleError {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
         <span class="kw">match </span><span class="self">self </span>{
-            <span class="self">Self</span>::Inactive =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;the handle is not currently active&quot;</span>),
+            <span class="self">Self</span>::Inactive =&gt; <span class="macro">write!</span>(f, <span class="string">"the handle is not currently active"</span>),
         }
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
 </span><span class="kw">impl </span>std::error::Error <span class="kw">for </span>HandleError {}
 
 <span class="doccomment">/// ```compile_fail
 /// use raw_window_handle::{Active, DisplayHandle, WindowHandle};
 /// fn _assert&lt;T: Send + Sync&gt;() {}
-/// _assert::&lt;Active&lt;&#39;static&gt;&gt;();
-/// _assert::&lt;DisplayHandle&lt;&#39;static&gt;&gt;();
-/// _assert::&lt;WindowHandle&lt;&#39;static&gt;&gt;();
+/// _assert::&lt;Active&lt;'static&gt;&gt;();
+/// _assert::&lt;DisplayHandle&lt;'static&gt;&gt;();
+/// _assert::&lt;WindowHandle&lt;'static&gt;&gt;();
 /// ```
 </span><span class="kw">fn </span>_not_send_or_sync() {}
 
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;android&quot;</span>, raw_window_handle_force_refcount)))]
-#[cfg_attr(docsrs, doc(cfg(not(target_os = <span class="string">&quot;android&quot;</span>))))]
+<span class="attr">#[cfg(not(any(target_os = <span class="string">"android"</span>, raw_window_handle_force_refcount)))]
+#[cfg_attr(docsrs, doc(cfg(not(target_os = <span class="string">"android"</span>))))]
 </span><span class="kw">mod </span>imp {
-    <span class="doccomment">//! We don&#39;t need to refcount the handles, so we can just use no-ops.
+    <span class="doccomment">//! We don't need to refcount the handles, so we can just use no-ops.
 
     </span><span class="kw">use </span>core::cell::UnsafeCell;
     <span class="kw">use </span>core::marker::PhantomData;
@@ -1109,8 +1110,8 @@
     <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">struct </span>Active;
 
     <span class="attr">#[derive(Clone)]
-    </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">struct </span>ActiveHandle&lt;<span class="lifetime">&#39;a</span>&gt; {
-        _marker: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>UnsafeCell&lt;()&gt;&gt;,
+    </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">struct </span>ActiveHandle&lt;<span class="lifetime">'a</span>&gt; {
+        _marker: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>UnsafeCell&lt;()&gt;&gt;,
     }
 
     <span class="kw">impl </span>Active {
@@ -1118,7 +1119,7 @@
             <span class="self">Self
         </span>}
 
-        <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;ActiveHandle&lt;<span class="lifetime">&#39;_</span>&gt;&gt; {
+        <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;ActiveHandle&lt;<span class="lifetime">'_</span>&gt;&gt; {
             <span class="comment">// SAFETY: The handle is always active.
             </span><span class="prelude-val">Some</span>(<span class="kw">unsafe </span>{ ActiveHandle::new_unchecked() })
         }
@@ -1128,7 +1129,7 @@
         <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>set_inactive(<span class="kw-2">&amp;</span><span class="self">self</span>) {}
     }
 
-    <span class="kw">impl </span>ActiveHandle&lt;<span class="lifetime">&#39;_</span>&gt; {
+    <span class="kw">impl </span>ActiveHandle&lt;<span class="lifetime">'_</span>&gt; {
         <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">unsafe fn </span>new_unchecked() -&gt; <span class="self">Self </span>{
             <span class="self">Self </span>{
                 _marker: PhantomData,
@@ -1136,13 +1137,13 @@
         }
     }
 
-    <span class="kw">impl </span>Drop <span class="kw">for </span>ActiveHandle&lt;<span class="lifetime">&#39;_</span>&gt; {
+    <span class="kw">impl </span>Drop <span class="kw">for </span>ActiveHandle&lt;<span class="lifetime">'_</span>&gt; {
         <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
             <span class="comment">// Done for consistency with the refcounted version.
         </span>}
     }
 
-    <span class="kw">impl </span><span class="kw">super</span>::ActiveHandle&lt;<span class="lifetime">&#39;_</span>&gt; {
+    <span class="kw">impl </span><span class="kw">super</span>::ActiveHandle&lt;<span class="lifetime">'_</span>&gt; {
         <span class="doccomment">/// Create a new `ActiveHandle`.
         ///
         /// This is safe because the handle is always active.
@@ -1161,8 +1162,8 @@
     }
 }
 
-<span class="attr">#[cfg(any(target_os = <span class="string">&quot;android&quot;</span>, raw_window_handle_force_refcount))]
-#[cfg_attr(docsrs, doc(cfg(any(target_os = <span class="string">&quot;android&quot;</span>))))]
+<span class="attr">#[cfg(any(target_os = <span class="string">"android"</span>, raw_window_handle_force_refcount))]
+#[cfg_attr(docsrs, doc(cfg(any(target_os = <span class="string">"android"</span>))))]
 </span><span class="kw">mod </span>imp {
     <span class="doccomment">//! We need to refcount the handles, so we use an `RwLock` to do so.
 
@@ -1172,16 +1173,16 @@
         active: RwLock&lt;bool&gt;,
     }
 
-    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">struct </span>ActiveHandle&lt;<span class="lifetime">&#39;a</span>&gt; {
-        inner: <span class="prelude-ty">Option</span>&lt;Inner&lt;<span class="lifetime">&#39;a</span>&gt;&gt;,
+    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">struct </span>ActiveHandle&lt;<span class="lifetime">'a</span>&gt; {
+        inner: <span class="prelude-ty">Option</span>&lt;Inner&lt;<span class="lifetime">'a</span>&gt;&gt;,
     }
 
-    <span class="kw">struct </span>Inner&lt;<span class="lifetime">&#39;a</span>&gt; {
-        _read_guard: RwLockReadGuard&lt;<span class="lifetime">&#39;a</span>, bool&gt;,
-        active: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Active,
+    <span class="kw">struct </span>Inner&lt;<span class="lifetime">'a</span>&gt; {
+        _read_guard: RwLockReadGuard&lt;<span class="lifetime">'a</span>, bool&gt;,
+        active: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Active,
     }
 
-    <span class="kw">impl </span>Clone <span class="kw">for </span>ActiveHandle&lt;<span class="lifetime">&#39;_</span>&gt; {
+    <span class="kw">impl </span>Clone <span class="kw">for </span>ActiveHandle&lt;<span class="lifetime">'_</span>&gt; {
         <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
             <span class="self">Self </span>{
                 inner: <span class="self">self</span>.inner.as_ref().map(|inner| Inner {
@@ -1199,7 +1200,7 @@
             }
         }
 
-        <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;ActiveHandle&lt;<span class="lifetime">&#39;_</span>&gt;&gt; {
+        <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;ActiveHandle&lt;<span class="lifetime">'_</span>&gt;&gt; {
             <span class="kw">let </span>active = <span class="self">self</span>.active.read().ok()<span class="question-mark">?</span>;
             <span class="kw">if </span>!<span class="kw-2">*</span>active {
                 <span class="kw">return </span><span class="prelude-val">None</span>;
@@ -1222,7 +1223,7 @@
         }
     }
 
-    <span class="kw">impl </span>ActiveHandle&lt;<span class="lifetime">&#39;_</span>&gt; {
+    <span class="kw">impl </span>ActiveHandle&lt;<span class="lifetime">'_</span>&gt; {
         <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">unsafe fn </span>new_unchecked() -&gt; <span class="self">Self </span>{
             <span class="self">Self </span>{ inner: <span class="prelude-val">None </span>}
         }

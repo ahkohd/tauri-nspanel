@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/crossbeam-epoch-0.9.18/src/atomic.rs`."><title>atomic.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="crossbeam_epoch" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/crossbeam-epoch-0.9.18/src/atomic.rs`."><title>atomic.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="crossbeam_epoch" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1729,23 +1730,23 @@
 
 <span class="doccomment">/// The error returned on failed compare-and-set operation.
 </span><span class="comment">// TODO: remove in the next major version.
-</span><span class="attr">#[deprecated(note = <span class="string">&quot;Use `CompareExchangeError` instead&quot;</span>)]
-</span><span class="kw">pub type </span>CompareAndSetError&lt;<span class="lifetime">&#39;g</span>, T, P&gt; = CompareExchangeError&lt;<span class="lifetime">&#39;g</span>, T, P&gt;;
+</span><span class="attr">#[deprecated(note = <span class="string">"Use `CompareExchangeError` instead"</span>)]
+</span><span class="kw">pub type </span>CompareAndSetError&lt;<span class="lifetime">'g</span>, T, P&gt; = CompareExchangeError&lt;<span class="lifetime">'g</span>, T, P&gt;;
 
 <span class="doccomment">/// The error returned on failed compare-and-swap operation.
-</span><span class="kw">pub struct </span>CompareExchangeError&lt;<span class="lifetime">&#39;g</span>, T: <span class="question-mark">?</span>Sized + Pointable, P: Pointer&lt;T&gt;&gt; {
+</span><span class="kw">pub struct </span>CompareExchangeError&lt;<span class="lifetime">'g</span>, T: <span class="question-mark">?</span>Sized + Pointable, P: Pointer&lt;T&gt;&gt; {
     <span class="doccomment">/// The value in the atomic pointer at the time of the failed operation.
-    </span><span class="kw">pub </span>current: Shared&lt;<span class="lifetime">&#39;g</span>, T&gt;,
+    </span><span class="kw">pub </span>current: Shared&lt;<span class="lifetime">'g</span>, T&gt;,
 
     <span class="doccomment">/// The new value, which the operation failed to store.
     </span><span class="kw">pub </span>new: P,
 }
 
-<span class="kw">impl</span>&lt;T, P: Pointer&lt;T&gt; + fmt::Debug&gt; fmt::Debug <span class="kw">for </span>CompareExchangeError&lt;<span class="lifetime">&#39;_</span>, T, P&gt; {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        f.debug_struct(<span class="string">&quot;CompareExchangeError&quot;</span>)
-            .field(<span class="string">&quot;current&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.current)
-            .field(<span class="string">&quot;new&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.new)
+<span class="kw">impl</span>&lt;T, P: Pointer&lt;T&gt; + fmt::Debug&gt; fmt::Debug <span class="kw">for </span>CompareExchangeError&lt;<span class="lifetime">'_</span>, T, P&gt; {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
+        f.debug_struct(<span class="string">"CompareExchangeError"</span>)
+            .field(<span class="string">"current"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.current)
+            .field(<span class="string">"new"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.new)
             .finish()
     }
 }
@@ -1763,8 +1764,8 @@
 ///    for the failure case.
 </span><span class="comment">// TODO: remove in the next major version.
 </span><span class="attr">#[deprecated(
-    note = <span class="string">&quot;`compare_and_set` and `compare_and_set_weak` that use this trait are deprecated, \
-            use `compare_exchange` or `compare_exchange_weak instead`&quot;
+    note = <span class="string">"`compare_and_set` and `compare_and_set_weak` that use this trait are deprecated, \
+            use `compare_exchange` or `compare_exchange_weak instead`"
 </span>)]
 </span><span class="kw">pub trait </span>CompareAndSetOrdering {
     <span class="doccomment">/// The ordering of the operation when it succeeds.
@@ -1772,7 +1773,7 @@
 
     <span class="doccomment">/// The ordering of the operation when it fails.
     ///
-    /// The failure ordering can&#39;t be `Release` or `AcqRel` and must be equivalent or weaker than
+    /// The failure ordering can't be `Release` or `AcqRel` and must be equivalent or weaker than
     /// the success ordering.
     </span><span class="kw">fn </span>failure(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Ordering;
 }
@@ -1812,7 +1813,7 @@
 <span class="doccomment">/// Panics if the pointer is not properly unaligned.
 </span><span class="attr">#[inline]
 </span><span class="kw">fn </span>ensure_aligned&lt;T: <span class="question-mark">?</span>Sized + Pointable&gt;(raw: usize) {
-    <span class="macro">assert_eq!</span>(raw &amp; low_bits::&lt;T&gt;(), <span class="number">0</span>, <span class="string">&quot;unaligned pointer&quot;</span>);
+    <span class="macro">assert_eq!</span>(raw &amp; low_bits::&lt;T&gt;(), <span class="number">0</span>, <span class="string">"unaligned pointer"</span>);
 }
 
 <span class="doccomment">/// Given a tagged pointer `data`, returns the same pointer, but tagged with `tag`.
@@ -1870,7 +1871,7 @@
     /// - The given `ptr` should have been initialized with [`Pointable::init`].
     /// - `ptr` should not have yet been dropped by [`Pointable::drop`].
     /// - `ptr` should not be mutably dereferenced by [`Pointable::deref_mut`] concurrently.
-    </span><span class="kw">unsafe fn </span>deref&lt;<span class="lifetime">&#39;a</span>&gt;(ptr: usize) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">Self</span>;
+    </span><span class="kw">unsafe fn </span>deref&lt;<span class="lifetime">'a</span>&gt;(ptr: usize) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="self">Self</span>;
 
     <span class="doccomment">/// Mutably dereferences the given pointer.
     ///
@@ -1880,7 +1881,7 @@
     /// - `ptr` should not have yet been dropped by [`Pointable::drop`].
     /// - `ptr` should not be dereferenced by [`Pointable::deref`] or [`Pointable::deref_mut`]
     ///   concurrently.
-    </span><span class="kw">unsafe fn </span>deref_mut&lt;<span class="lifetime">&#39;a</span>&gt;(ptr: usize) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span><span class="self">Self</span>;
+    </span><span class="kw">unsafe fn </span>deref_mut&lt;<span class="lifetime">'a</span>&gt;(ptr: usize) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span><span class="self">Self</span>;
 
     <span class="doccomment">/// Drops the object pointed to by the given pointer.
     ///
@@ -1902,11 +1903,11 @@
         Box::into_raw(Box::new(init)) <span class="kw">as </span>usize
     }
 
-    <span class="kw">unsafe fn </span>deref&lt;<span class="lifetime">&#39;a</span>&gt;(ptr: usize) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">Self </span>{
+    <span class="kw">unsafe fn </span>deref&lt;<span class="lifetime">'a</span>&gt;(ptr: usize) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="self">Self </span>{
         <span class="kw-2">&amp;*</span>(ptr <span class="kw">as </span><span class="kw-2">*const </span>T)
     }
 
-    <span class="kw">unsafe fn </span>deref_mut&lt;<span class="lifetime">&#39;a</span>&gt;(ptr: usize) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span><span class="self">Self </span>{
+    <span class="kw">unsafe fn </span>deref_mut&lt;<span class="lifetime">'a</span>&gt;(ptr: usize) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span><span class="self">Self </span>{
         <span class="kw-2">&amp;mut *</span>(ptr <span class="kw">as </span><span class="kw-2">*mut </span>T)
     }
 
@@ -1967,12 +1968,12 @@
         ptr <span class="kw">as </span>usize
     }
 
-    <span class="kw">unsafe fn </span>deref&lt;<span class="lifetime">&#39;a</span>&gt;(ptr: usize) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">Self </span>{
+    <span class="kw">unsafe fn </span>deref&lt;<span class="lifetime">'a</span>&gt;(ptr: usize) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="self">Self </span>{
         <span class="kw">let </span>array = <span class="kw-2">&amp;*</span>(ptr <span class="kw">as </span><span class="kw-2">*const </span>Array&lt;T&gt;);
         slice::from_raw_parts(array.elements.as_ptr() <span class="kw">as </span><span class="kw-2">*const </span><span class="kw">_</span>, array.len)
     }
 
-    <span class="kw">unsafe fn </span>deref_mut&lt;<span class="lifetime">&#39;a</span>&gt;(ptr: usize) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span><span class="self">Self </span>{
+    <span class="kw">unsafe fn </span>deref_mut&lt;<span class="lifetime">'a</span>&gt;(ptr: usize) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span><span class="self">Self </span>{
         <span class="kw">let </span>array = <span class="kw-2">&amp;*</span>(ptr <span class="kw">as </span><span class="kw-2">*mut </span>Array&lt;T&gt;);
         slice::from_raw_parts_mut(array.elements.as_ptr() <span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">_</span>, array.len)
     }
@@ -2081,19 +2082,19 @@
     /// let p = a.load(SeqCst, guard);
     /// # unsafe { drop(a.into_owned()); } // avoid leak
     /// ```
-    </span><span class="kw">pub fn </span>load&lt;<span class="lifetime">&#39;g</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, ord: Ordering, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;g </span>Guard) -&gt; Shared&lt;<span class="lifetime">&#39;g</span>, T&gt; {
+    </span><span class="kw">pub fn </span>load&lt;<span class="lifetime">'g</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, ord: Ordering, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="lifetime">'g </span>Guard) -&gt; Shared&lt;<span class="lifetime">'g</span>, T&gt; {
         <span class="kw">unsafe </span>{ Shared::from_usize(<span class="self">self</span>.data.load(ord)) }
     }
 
-    <span class="doccomment">/// Loads a `Shared` from the atomic pointer using a &quot;consume&quot; memory ordering.
+    <span class="doccomment">/// Loads a `Shared` from the atomic pointer using a "consume" memory ordering.
     ///
-    /// This is similar to the &quot;acquire&quot; ordering, except that an ordering is
-    /// only guaranteed with operations that &quot;depend on&quot; the result of the load.
+    /// This is similar to the "acquire" ordering, except that an ordering is
+    /// only guaranteed with operations that "depend on" the result of the load.
     /// However consume loads are usually much faster than acquire loads on
-    /// architectures with a weak memory model since they don&#39;t require memory
+    /// architectures with a weak memory model since they don't require memory
     /// fence instructions.
     ///
-    /// The exact definition of &quot;depend on&quot; is a bit vague, but it works as you
+    /// The exact definition of "depend on" is a bit vague, but it works as you
     /// would expect in practice since a lot of software, especially the Linux
     /// kernel, rely on this behavior.
     ///
@@ -2107,7 +2108,7 @@
     /// let p = a.load_consume(guard);
     /// # unsafe { drop(a.into_owned()); } // avoid leak
     /// ```
-    </span><span class="kw">pub fn </span>load_consume&lt;<span class="lifetime">&#39;g</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;g </span>Guard) -&gt; Shared&lt;<span class="lifetime">&#39;g</span>, T&gt; {
+    </span><span class="kw">pub fn </span>load_consume&lt;<span class="lifetime">'g</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="lifetime">'g </span>Guard) -&gt; Shared&lt;<span class="lifetime">'g</span>, T&gt; {
         <span class="kw">unsafe </span>{ Shared::from_usize(<span class="self">self</span>.data.load_consume()) }
     }
 
@@ -2149,7 +2150,7 @@
     /// let p = a.swap(Shared::null(), SeqCst, guard);
     /// # unsafe { drop(p.into_owned()); } // avoid leak
     /// ```
-    </span><span class="kw">pub fn </span>swap&lt;<span class="lifetime">&#39;g</span>, P: Pointer&lt;T&gt;&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, new: P, ord: Ordering, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;g </span>Guard) -&gt; Shared&lt;<span class="lifetime">&#39;g</span>, T&gt; {
+    </span><span class="kw">pub fn </span>swap&lt;<span class="lifetime">'g</span>, P: Pointer&lt;T&gt;&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, new: P, ord: Ordering, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="lifetime">'g </span>Guard) -&gt; Shared&lt;<span class="lifetime">'g</span>, T&gt; {
         <span class="kw">unsafe </span>{ Shared::from_usize(<span class="self">self</span>.data.swap(new.into_usize(), ord)) }
     }
 
@@ -2184,14 +2185,14 @@
     /// let res2 = a.compare_exchange(curr, Owned::new(5678), SeqCst, SeqCst, guard);
     /// # unsafe { drop(curr.into_owned()); } // avoid leak
     /// ```
-    </span><span class="kw">pub fn </span>compare_exchange&lt;<span class="lifetime">&#39;g</span>, P&gt;(
+    </span><span class="kw">pub fn </span>compare_exchange&lt;<span class="lifetime">'g</span>, P&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        current: Shared&lt;<span class="lifetime">&#39;_</span>, T&gt;,
+        current: Shared&lt;<span class="lifetime">'_</span>, T&gt;,
         new: P,
         success: Ordering,
         failure: Ordering,
-        <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;g </span>Guard,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Shared&lt;<span class="lifetime">&#39;g</span>, T&gt;, CompareExchangeError&lt;<span class="lifetime">&#39;g</span>, T, P&gt;&gt;
+        <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="lifetime">'g </span>Guard,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Shared&lt;<span class="lifetime">'g</span>, T&gt;, CompareExchangeError&lt;<span class="lifetime">'g</span>, T, P&gt;&gt;
     <span class="kw">where
         </span>P: Pointer&lt;T&gt;,
     {
@@ -2261,14 +2262,14 @@
     /// }
     /// # unsafe { drop(curr.into_owned()); } // avoid leak
     /// ```
-    </span><span class="kw">pub fn </span>compare_exchange_weak&lt;<span class="lifetime">&#39;g</span>, P&gt;(
+    </span><span class="kw">pub fn </span>compare_exchange_weak&lt;<span class="lifetime">'g</span>, P&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        current: Shared&lt;<span class="lifetime">&#39;_</span>, T&gt;,
+        current: Shared&lt;<span class="lifetime">'_</span>, T&gt;,
         new: P,
         success: Ordering,
         failure: Ordering,
-        <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;g </span>Guard,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Shared&lt;<span class="lifetime">&#39;g</span>, T&gt;, CompareExchangeError&lt;<span class="lifetime">&#39;g</span>, T, P&gt;&gt;
+        <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="lifetime">'g </span>Guard,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Shared&lt;<span class="lifetime">'g</span>, T&gt;, CompareExchangeError&lt;<span class="lifetime">'g</span>, T, P&gt;&gt;
     <span class="kw">where
         </span>P: Pointer&lt;T&gt;,
     {
@@ -2324,15 +2325,15 @@
     /// assert!(res2.is_err());
     /// # unsafe { drop(a.into_owned()); } // avoid leak
     /// ```
-    </span><span class="kw">pub fn </span>fetch_update&lt;<span class="lifetime">&#39;g</span>, F&gt;(
+    </span><span class="kw">pub fn </span>fetch_update&lt;<span class="lifetime">'g</span>, F&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         set_order: Ordering,
         fail_order: Ordering,
-        guard: <span class="kw-2">&amp;</span><span class="lifetime">&#39;g </span>Guard,
+        guard: <span class="kw-2">&amp;</span><span class="lifetime">'g </span>Guard,
         <span class="kw-2">mut </span>func: F,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Shared&lt;<span class="lifetime">&#39;g</span>, T&gt;, Shared&lt;<span class="lifetime">&#39;g</span>, T&gt;&gt;
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Shared&lt;<span class="lifetime">'g</span>, T&gt;, Shared&lt;<span class="lifetime">'g</span>, T&gt;&gt;
     <span class="kw">where
-        </span>F: FnMut(Shared&lt;<span class="lifetime">&#39;g</span>, T&gt;) -&gt; <span class="prelude-ty">Option</span>&lt;Shared&lt;<span class="lifetime">&#39;g</span>, T&gt;&gt;,
+        </span>F: FnMut(Shared&lt;<span class="lifetime">'g</span>, T&gt;) -&gt; <span class="prelude-ty">Option</span>&lt;Shared&lt;<span class="lifetime">'g</span>, T&gt;&gt;,
     {
         <span class="kw">let </span><span class="kw-2">mut </span>prev = <span class="self">self</span>.load(fail_order, guard);
         <span class="kw">while let </span><span class="prelude-val">Some</span>(next) = func(prev) {
@@ -2385,14 +2386,14 @@
     /// ```
     </span><span class="comment">// TODO: remove in the next major version.
     </span><span class="attr">#[allow(deprecated)]
-    #[deprecated(note = <span class="string">&quot;Use `compare_exchange` instead&quot;</span>)]
-    </span><span class="kw">pub fn </span>compare_and_set&lt;<span class="lifetime">&#39;g</span>, O, P&gt;(
+    #[deprecated(note = <span class="string">"Use `compare_exchange` instead"</span>)]
+    </span><span class="kw">pub fn </span>compare_and_set&lt;<span class="lifetime">'g</span>, O, P&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        current: Shared&lt;<span class="lifetime">&#39;_</span>, T&gt;,
+        current: Shared&lt;<span class="lifetime">'_</span>, T&gt;,
         new: P,
         ord: O,
-        guard: <span class="kw-2">&amp;</span><span class="lifetime">&#39;g </span>Guard,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Shared&lt;<span class="lifetime">&#39;g</span>, T&gt;, CompareAndSetError&lt;<span class="lifetime">&#39;g</span>, T, P&gt;&gt;
+        guard: <span class="kw-2">&amp;</span><span class="lifetime">'g </span>Guard,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Shared&lt;<span class="lifetime">'g</span>, T&gt;, CompareAndSetError&lt;<span class="lifetime">'g</span>, T, P&gt;&gt;
     <span class="kw">where
         </span>O: CompareAndSetOrdering,
         P: Pointer&lt;T&gt;,
@@ -2464,14 +2465,14 @@
     /// ```
     </span><span class="comment">// TODO: remove in the next major version.
     </span><span class="attr">#[allow(deprecated)]
-    #[deprecated(note = <span class="string">&quot;Use `compare_exchange_weak` instead&quot;</span>)]
-    </span><span class="kw">pub fn </span>compare_and_set_weak&lt;<span class="lifetime">&#39;g</span>, O, P&gt;(
+    #[deprecated(note = <span class="string">"Use `compare_exchange_weak` instead"</span>)]
+    </span><span class="kw">pub fn </span>compare_and_set_weak&lt;<span class="lifetime">'g</span>, O, P&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        current: Shared&lt;<span class="lifetime">&#39;_</span>, T&gt;,
+        current: Shared&lt;<span class="lifetime">'_</span>, T&gt;,
         new: P,
         ord: O,
-        guard: <span class="kw-2">&amp;</span><span class="lifetime">&#39;g </span>Guard,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;Shared&lt;<span class="lifetime">&#39;g</span>, T&gt;, CompareAndSetError&lt;<span class="lifetime">&#39;g</span>, T, P&gt;&gt;
+        guard: <span class="kw-2">&amp;</span><span class="lifetime">'g </span>Guard,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Shared&lt;<span class="lifetime">'g</span>, T&gt;, CompareAndSetError&lt;<span class="lifetime">'g</span>, T, P&gt;&gt;
     <span class="kw">where
         </span>O: CompareAndSetOrdering,
         P: Pointer&lt;T&gt;,
@@ -2479,9 +2480,9 @@
         <span class="self">self</span>.compare_exchange_weak(current, new, ord.success(), ord.failure(), guard)
     }
 
-    <span class="doccomment">/// Bitwise &quot;and&quot; with the current tag.
+    <span class="doccomment">/// Bitwise "and" with the current tag.
     ///
-    /// Performs a bitwise &quot;and&quot; operation on the current tag and the argument `val`, and sets the
+    /// Performs a bitwise "and" operation on the current tag and the argument `val`, and sets the
     /// new tag to the result. Returns the previous pointer.
     ///
     /// This method takes an [`Ordering`] argument which describes the memory ordering of this
@@ -2498,13 +2499,13 @@
     /// assert_eq!(a.fetch_and(2, SeqCst, guard).tag(), 3);
     /// assert_eq!(a.load(SeqCst, guard).tag(), 2);
     /// ```
-    </span><span class="kw">pub fn </span>fetch_and&lt;<span class="lifetime">&#39;g</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, val: usize, ord: Ordering, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;g </span>Guard) -&gt; Shared&lt;<span class="lifetime">&#39;g</span>, T&gt; {
+    </span><span class="kw">pub fn </span>fetch_and&lt;<span class="lifetime">'g</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, val: usize, ord: Ordering, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="lifetime">'g </span>Guard) -&gt; Shared&lt;<span class="lifetime">'g</span>, T&gt; {
         <span class="kw">unsafe </span>{ Shared::from_usize(<span class="self">self</span>.data.fetch_and(val | !low_bits::&lt;T&gt;(), ord)) }
     }
 
-    <span class="doccomment">/// Bitwise &quot;or&quot; with the current tag.
+    <span class="doccomment">/// Bitwise "or" with the current tag.
     ///
-    /// Performs a bitwise &quot;or&quot; operation on the current tag and the argument `val`, and sets the
+    /// Performs a bitwise "or" operation on the current tag and the argument `val`, and sets the
     /// new tag to the result. Returns the previous pointer.
     ///
     /// This method takes an [`Ordering`] argument which describes the memory ordering of this
@@ -2521,13 +2522,13 @@
     /// assert_eq!(a.fetch_or(2, SeqCst, guard).tag(), 1);
     /// assert_eq!(a.load(SeqCst, guard).tag(), 3);
     /// ```
-    </span><span class="kw">pub fn </span>fetch_or&lt;<span class="lifetime">&#39;g</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, val: usize, ord: Ordering, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;g </span>Guard) -&gt; Shared&lt;<span class="lifetime">&#39;g</span>, T&gt; {
+    </span><span class="kw">pub fn </span>fetch_or&lt;<span class="lifetime">'g</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, val: usize, ord: Ordering, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="lifetime">'g </span>Guard) -&gt; Shared&lt;<span class="lifetime">'g</span>, T&gt; {
         <span class="kw">unsafe </span>{ Shared::from_usize(<span class="self">self</span>.data.fetch_or(val &amp; low_bits::&lt;T&gt;(), ord)) }
     }
 
-    <span class="doccomment">/// Bitwise &quot;xor&quot; with the current tag.
+    <span class="doccomment">/// Bitwise "xor" with the current tag.
     ///
-    /// Performs a bitwise &quot;xor&quot; operation on the current tag and the argument `val`, and sets the
+    /// Performs a bitwise "xor" operation on the current tag and the argument `val`, and sets the
     /// new tag to the result. Returns the previous pointer.
     ///
     /// This method takes an [`Ordering`] argument which describes the memory ordering of this
@@ -2544,14 +2545,14 @@
     /// assert_eq!(a.fetch_xor(3, SeqCst, guard).tag(), 1);
     /// assert_eq!(a.load(SeqCst, guard).tag(), 2);
     /// ```
-    </span><span class="kw">pub fn </span>fetch_xor&lt;<span class="lifetime">&#39;g</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, val: usize, ord: Ordering, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;g </span>Guard) -&gt; Shared&lt;<span class="lifetime">&#39;g</span>, T&gt; {
+    </span><span class="kw">pub fn </span>fetch_xor&lt;<span class="lifetime">'g</span>&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, val: usize, ord: Ordering, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="lifetime">'g </span>Guard) -&gt; Shared&lt;<span class="lifetime">'g</span>, T&gt; {
         <span class="kw">unsafe </span>{ Shared::from_usize(<span class="self">self</span>.data.fetch_xor(val &amp; low_bits::&lt;T&gt;(), ord)) }
     }
 
     <span class="doccomment">/// Takes ownership of the pointee.
     ///
-    /// This consumes the atomic and converts it into [`Owned`]. As [`Atomic`] doesn&#39;t have a
-    /// destructor and doesn&#39;t drop the pointee while [`Owned`] does, this is suitable for
+    /// This consumes the atomic and converts it into [`Owned`]. As [`Atomic`] doesn't have a
+    /// destructor and doesn't drop the pointee while [`Owned`] does, this is suitable for
     /// destructors of data structures.
     ///
     /// # Panics
@@ -2574,7 +2575,7 @@
     ///
     /// impl Drop for DataStructure {
     ///     fn drop(&amp;mut self) {
-    ///         // By now the DataStructure lives only in our thread and we are sure we don&#39;t hold
+    ///         // By now the DataStructure lives only in our thread and we are sure we don't hold
     ///         // any Shared or &amp; to it ourselves.
     ///         unsafe {
     ///             drop(mem::replace(&amp;mut self.ptr, Atomic::null()).into_owned());
@@ -2588,8 +2589,8 @@
 
     <span class="doccomment">/// Takes ownership of the pointee if it is non-null.
     ///
-    /// This consumes the atomic and converts it into [`Owned`]. As [`Atomic`] doesn&#39;t have a
-    /// destructor and doesn&#39;t drop the pointee while [`Owned`] does, this is suitable for
+    /// This consumes the atomic and converts it into [`Owned`]. As [`Atomic`] doesn't have a
+    /// destructor and doesn't drop the pointee while [`Owned`] does, this is suitable for
     /// destructors of data structures.
     ///
     /// # Safety
@@ -2608,7 +2609,7 @@
     ///
     /// impl Drop for DataStructure {
     ///     fn drop(&amp;mut self) {
-    ///         // By now the DataStructure lives only in our thread and we are sure we don&#39;t hold
+    ///         // By now the DataStructure lives only in our thread and we are sure we don't hold
     ///         // any Shared or &amp; to it ourselves, but it may be null, so we have to be careful.
     ///         let old = mem::replace(&amp;mut self.ptr, Atomic::null());
     ///         unsafe {
@@ -2630,19 +2631,19 @@
 }
 
 <span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + Pointable&gt; fmt::Debug <span class="kw">for </span>Atomic&lt;T&gt; {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
         <span class="kw">let </span>data = <span class="self">self</span>.data.load(Ordering::SeqCst);
         <span class="kw">let </span>(raw, tag) = decompose_tag::&lt;T&gt;(data);
 
-        f.debug_struct(<span class="string">&quot;Atomic&quot;</span>)
-            .field(<span class="string">&quot;raw&quot;</span>, <span class="kw-2">&amp;</span>raw)
-            .field(<span class="string">&quot;tag&quot;</span>, <span class="kw-2">&amp;</span>tag)
+        f.debug_struct(<span class="string">"Atomic"</span>)
+            .field(<span class="string">"raw"</span>, <span class="kw-2">&amp;</span>raw)
+            .field(<span class="string">"tag"</span>, <span class="kw-2">&amp;</span>tag)
             .finish()
     }
 }
 
 <span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + Pointable&gt; fmt::Pointer <span class="kw">for </span>Atomic&lt;T&gt; {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
         <span class="kw">let </span>data = <span class="self">self</span>.data.load(Ordering::SeqCst);
         <span class="kw">let </span>(raw, <span class="kw">_</span>) = decompose_tag::&lt;T&gt;(data);
         fmt::Pointer::fmt(<span class="kw-2">&amp;</span>(<span class="kw">unsafe </span>{ T::deref(raw) <span class="kw">as </span><span class="kw-2">*const </span><span class="kw">_ </span>}), f)
@@ -2696,7 +2697,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;g</span>, T: <span class="question-mark">?</span>Sized + Pointable&gt; From&lt;Shared&lt;<span class="lifetime">&#39;g</span>, T&gt;&gt; <span class="kw">for </span>Atomic&lt;T&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'g</span>, T: <span class="question-mark">?</span>Sized + Pointable&gt; From&lt;Shared&lt;<span class="lifetime">'g</span>, T&gt;&gt; <span class="kw">for </span>Atomic&lt;T&gt; {
     <span class="doccomment">/// Returns a new atomic pointer pointing to `ptr`.
     ///
     /// # Examples
@@ -2706,7 +2707,7 @@
     ///
     /// let a = Atomic::&lt;i32&gt;::from(Shared::&lt;i32&gt;::null());
     /// ```
-    </span><span class="kw">fn </span>from(ptr: Shared&lt;<span class="lifetime">&#39;g</span>, T&gt;) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">fn </span>from(ptr: Shared&lt;<span class="lifetime">'g</span>, T&gt;) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::from_usize(ptr.data)
     }
 }
@@ -2767,7 +2768,7 @@
     /// Panics if the data is zero in debug mode.
     </span><span class="attr">#[inline]
     </span><span class="kw">unsafe fn </span>from_usize(data: usize) -&gt; <span class="self">Self </span>{
-        <span class="macro">debug_assert!</span>(data != <span class="number">0</span>, <span class="string">&quot;converting zero into `Owned`&quot;</span>);
+        <span class="macro">debug_assert!</span>(data != <span class="number">0</span>, <span class="string">"converting zero into `Owned`"</span>);
         Owned {
             data,
             _marker: PhantomData,
@@ -2862,7 +2863,7 @@
     /// # unsafe { drop(p.into_owned()); } // avoid leak
     /// ```
     </span><span class="attr">#[allow(clippy::needless_lifetimes)]
-    </span><span class="kw">pub fn </span>into_shared&lt;<span class="lifetime">&#39;g</span>&gt;(<span class="self">self</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;g </span>Guard) -&gt; Shared&lt;<span class="lifetime">&#39;g</span>, T&gt; {
+    </span><span class="kw">pub fn </span>into_shared&lt;<span class="lifetime">'g</span>&gt;(<span class="self">self</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="lifetime">'g </span>Guard) -&gt; Shared&lt;<span class="lifetime">'g</span>, T&gt; {
         <span class="kw">unsafe </span>{ Shared::from_usize(<span class="self">self</span>.into_usize()) }
     }
 
@@ -2909,12 +2910,12 @@
 }
 
 <span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + Pointable&gt; fmt::Debug <span class="kw">for </span>Owned&lt;T&gt; {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
         <span class="kw">let </span>(raw, tag) = decompose_tag::&lt;T&gt;(<span class="self">self</span>.data);
 
-        f.debug_struct(<span class="string">&quot;Owned&quot;</span>)
-            .field(<span class="string">&quot;raw&quot;</span>, <span class="kw-2">&amp;</span>raw)
-            .field(<span class="string">&quot;tag&quot;</span>, <span class="kw-2">&amp;</span>tag)
+        f.debug_struct(<span class="string">"Owned"</span>)
+            .field(<span class="string">"raw"</span>, <span class="kw-2">&amp;</span>raw)
+            .field(<span class="string">"tag"</span>, <span class="kw-2">&amp;</span>tag)
             .finish()
     }
 }
@@ -2992,24 +2993,24 @@
 
 <span class="doccomment">/// A pointer to an object protected by the epoch GC.
 ///
-/// The pointer is valid for use only during the lifetime `&#39;g`.
+/// The pointer is valid for use only during the lifetime `'g`.
 ///
 /// The pointer must be properly aligned. Since it is aligned, a tag can be stored into the unused
 /// least significant bits of the address.
-</span><span class="kw">pub struct </span>Shared&lt;<span class="lifetime">&#39;g</span>, T: <span class="lifetime">&#39;g </span>+ <span class="question-mark">?</span>Sized + Pointable&gt; {
+</span><span class="kw">pub struct </span>Shared&lt;<span class="lifetime">'g</span>, T: <span class="lifetime">'g </span>+ <span class="question-mark">?</span>Sized + Pointable&gt; {
     data: usize,
-    _marker: PhantomData&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;g </span>(), <span class="kw-2">*const </span>T)&gt;,
+    _marker: PhantomData&lt;(<span class="kw-2">&amp;</span><span class="lifetime">'g </span>(), <span class="kw-2">*const </span>T)&gt;,
 }
 
-<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + Pointable&gt; Clone <span class="kw">for </span>Shared&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + Pointable&gt; Clone <span class="kw">for </span>Shared&lt;<span class="lifetime">'_</span>, T&gt; {
     <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="kw-2">*</span><span class="self">self
     </span>}
 }
 
-<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + Pointable&gt; Copy <span class="kw">for </span>Shared&lt;<span class="lifetime">&#39;_</span>, T&gt; {}
+<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + Pointable&gt; Copy <span class="kw">for </span>Shared&lt;<span class="lifetime">'_</span>, T&gt; {}
 
-<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + Pointable&gt; Pointer&lt;T&gt; <span class="kw">for </span>Shared&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + Pointable&gt; Pointer&lt;T&gt; <span class="kw">for </span>Shared&lt;<span class="lifetime">'_</span>, T&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>into_usize(<span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.data
@@ -3024,7 +3025,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;g</span>, T&gt; Shared&lt;<span class="lifetime">&#39;g</span>, T&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'g</span>, T&gt; Shared&lt;<span class="lifetime">'g</span>, T&gt; {
     <span class="doccomment">/// Converts the pointer to a raw pointer (without the tag).
     ///
     /// # Examples
@@ -3048,7 +3049,7 @@
     </span>}
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;g</span>, T: <span class="question-mark">?</span>Sized + Pointable&gt; Shared&lt;<span class="lifetime">&#39;g</span>, T&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'g</span>, T: <span class="question-mark">?</span>Sized + Pointable&gt; Shared&lt;<span class="lifetime">'g</span>, T&gt; {
     <span class="doccomment">/// Returns a new null pointer.
     ///
     /// # Examples
@@ -3059,7 +3060,7 @@
     /// let p = Shared::&lt;i32&gt;::null();
     /// assert!(p.is_null());
     /// ```
-    </span><span class="kw">pub fn </span>null() -&gt; Shared&lt;<span class="lifetime">&#39;g</span>, T&gt; {
+    </span><span class="kw">pub fn </span>null() -&gt; Shared&lt;<span class="lifetime">'g</span>, T&gt; {
         Shared {
             data: <span class="number">0</span>,
             _marker: PhantomData,
@@ -3088,7 +3089,7 @@
 
     <span class="doccomment">/// Dereferences the pointer.
     ///
-    /// Returns a reference to the pointee that is valid during the lifetime `&#39;g`.
+    /// Returns a reference to the pointee that is valid during the lifetime `'g`.
     ///
     /// # Safety
     ///
@@ -3100,7 +3101,7 @@
     /// 1. A thread creates a new object: `a.store(Owned::new(10), Relaxed)`
     /// 2. Another thread reads it: `*a.load(Relaxed, guard).as_ref().unwrap()`
     ///
-    /// The problem is that relaxed orderings don&#39;t synchronize initialization of the object with
+    /// The problem is that relaxed orderings don't synchronize initialization of the object with
     /// the read from the second thread. This is a data race. A possible solution would be to use
     /// `Release` and `Acquire` orderings.
     ///
@@ -3118,14 +3119,14 @@
     /// }
     /// # unsafe { drop(a.into_owned()); } // avoid leak
     /// ```
-    </span><span class="kw">pub unsafe fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;g </span>T {
+    </span><span class="kw">pub unsafe fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'g </span>T {
         <span class="kw">let </span>(raw, <span class="kw">_</span>) = decompose_tag::&lt;T&gt;(<span class="self">self</span>.data);
         T::deref(raw)
     }
 
     <span class="doccomment">/// Dereferences the pointer.
     ///
-    /// Returns a mutable reference to the pointee that is valid during the lifetime `&#39;g`.
+    /// Returns a mutable reference to the pointee that is valid during the lifetime `'g`.
     ///
     /// # Safety
     ///
@@ -3160,7 +3161,7 @@
     /// }
     /// # unsafe { drop(a.into_owned()); } // avoid leak
     /// ```
-    </span><span class="kw">pub unsafe fn </span>deref_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;g </span><span class="kw-2">mut </span>T {
+    </span><span class="kw">pub unsafe fn </span>deref_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'g </span><span class="kw-2">mut </span>T {
         <span class="kw">let </span>(raw, <span class="kw">_</span>) = decompose_tag::&lt;T&gt;(<span class="self">self</span>.data);
         T::deref_mut(raw)
     }
@@ -3179,7 +3180,7 @@
     /// 1. A thread creates a new object: `a.store(Owned::new(10), Relaxed)`
     /// 2. Another thread reads it: `*a.load(Relaxed, guard).as_ref().unwrap()`
     ///
-    /// The problem is that relaxed orderings don&#39;t synchronize initialization of the object with
+    /// The problem is that relaxed orderings don't synchronize initialization of the object with
     /// the read from the second thread. This is a data race. A possible solution would be to use
     /// `Release` and `Acquire` orderings.
     ///
@@ -3197,7 +3198,7 @@
     /// }
     /// # unsafe { drop(a.into_owned()); } // avoid leak
     /// ```
-    </span><span class="kw">pub unsafe fn </span>as_ref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;g </span>T&gt; {
+    </span><span class="kw">pub unsafe fn </span>as_ref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'g </span>T&gt; {
         <span class="kw">let </span>(raw, <span class="kw">_</span>) = decompose_tag::&lt;T&gt;(<span class="self">self</span>.data);
         <span class="kw">if </span>raw == <span class="number">0 </span>{
             <span class="prelude-val">None
@@ -3231,7 +3232,7 @@
     /// }
     /// ```
     </span><span class="kw">pub unsafe fn </span>into_owned(<span class="self">self</span>) -&gt; Owned&lt;T&gt; {
-        <span class="macro">debug_assert!</span>(!<span class="self">self</span>.is_null(), <span class="string">&quot;converting a null `Shared` into `Owned`&quot;</span>);
+        <span class="macro">debug_assert!</span>(!<span class="self">self</span>.is_null(), <span class="string">"converting a null `Shared` into `Owned`"</span>);
         Owned::from_usize(<span class="self">self</span>.data)
     }
 
@@ -3303,12 +3304,12 @@
     /// assert_eq!(p1.as_raw(), p2.as_raw());
     /// # unsafe { drop(a.into_owned()); } // avoid leak
     /// ```
-    </span><span class="kw">pub fn </span>with_tag(<span class="kw-2">&amp;</span><span class="self">self</span>, tag: usize) -&gt; Shared&lt;<span class="lifetime">&#39;g</span>, T&gt; {
+    </span><span class="kw">pub fn </span>with_tag(<span class="kw-2">&amp;</span><span class="self">self</span>, tag: usize) -&gt; Shared&lt;<span class="lifetime">'g</span>, T&gt; {
         <span class="kw">unsafe </span>{ <span class="self">Self</span>::from_usize(compose_tag::&lt;T&gt;(<span class="self">self</span>.data, tag)) }
     }
 }
 
-<span class="kw">impl</span>&lt;T&gt; From&lt;<span class="kw-2">*const </span>T&gt; <span class="kw">for </span>Shared&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+<span class="kw">impl</span>&lt;T&gt; From&lt;<span class="kw-2">*const </span>T&gt; <span class="kw">for </span>Shared&lt;<span class="lifetime">'_</span>, T&gt; {
     <span class="doccomment">/// Returns a new pointer pointing to `raw`.
     ///
     /// # Panics
@@ -3331,44 +3332,44 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;g</span>, T: <span class="question-mark">?</span>Sized + Pointable&gt; PartialEq&lt;Shared&lt;<span class="lifetime">&#39;g</span>, T&gt;&gt; <span class="kw">for </span>Shared&lt;<span class="lifetime">&#39;g</span>, T&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'g</span>, T: <span class="question-mark">?</span>Sized + Pointable&gt; PartialEq&lt;Shared&lt;<span class="lifetime">'g</span>, T&gt;&gt; <span class="kw">for </span>Shared&lt;<span class="lifetime">'g</span>, T&gt; {
     <span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; bool {
         <span class="self">self</span>.data == other.data
     }
 }
 
-<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + Pointable&gt; Eq <span class="kw">for </span>Shared&lt;<span class="lifetime">&#39;_</span>, T&gt; {}
+<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + Pointable&gt; Eq <span class="kw">for </span>Shared&lt;<span class="lifetime">'_</span>, T&gt; {}
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;g</span>, T: <span class="question-mark">?</span>Sized + Pointable&gt; PartialOrd&lt;Shared&lt;<span class="lifetime">&#39;g</span>, T&gt;&gt; <span class="kw">for </span>Shared&lt;<span class="lifetime">&#39;g</span>, T&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'g</span>, T: <span class="question-mark">?</span>Sized + Pointable&gt; PartialOrd&lt;Shared&lt;<span class="lifetime">'g</span>, T&gt;&gt; <span class="kw">for </span>Shared&lt;<span class="lifetime">'g</span>, T&gt; {
     <span class="kw">fn </span>partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;cmp::Ordering&gt; {
         <span class="self">self</span>.data.partial_cmp(<span class="kw-2">&amp;</span>other.data)
     }
 }
 
-<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + Pointable&gt; Ord <span class="kw">for </span>Shared&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + Pointable&gt; Ord <span class="kw">for </span>Shared&lt;<span class="lifetime">'_</span>, T&gt; {
     <span class="kw">fn </span>cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; cmp::Ordering {
         <span class="self">self</span>.data.cmp(<span class="kw-2">&amp;</span>other.data)
     }
 }
 
-<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + Pointable&gt; fmt::Debug <span class="kw">for </span>Shared&lt;<span class="lifetime">&#39;_</span>, T&gt; {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + Pointable&gt; fmt::Debug <span class="kw">for </span>Shared&lt;<span class="lifetime">'_</span>, T&gt; {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
         <span class="kw">let </span>(raw, tag) = decompose_tag::&lt;T&gt;(<span class="self">self</span>.data);
 
-        f.debug_struct(<span class="string">&quot;Shared&quot;</span>)
-            .field(<span class="string">&quot;raw&quot;</span>, <span class="kw-2">&amp;</span>raw)
-            .field(<span class="string">&quot;tag&quot;</span>, <span class="kw-2">&amp;</span>tag)
+        f.debug_struct(<span class="string">"Shared"</span>)
+            .field(<span class="string">"raw"</span>, <span class="kw-2">&amp;</span>raw)
+            .field(<span class="string">"tag"</span>, <span class="kw-2">&amp;</span>tag)
             .finish()
     }
 }
 
-<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + Pointable&gt; fmt::Pointer <span class="kw">for </span>Shared&lt;<span class="lifetime">&#39;_</span>, T&gt; {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + Pointable&gt; fmt::Pointer <span class="kw">for </span>Shared&lt;<span class="lifetime">'_</span>, T&gt; {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
         fmt::Pointer::fmt(<span class="kw-2">&amp;</span>(<span class="kw">unsafe </span>{ <span class="self">self</span>.deref() <span class="kw">as </span><span class="kw-2">*const </span><span class="kw">_ </span>}), f)
     }
 }
 
-<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + Pointable&gt; Default <span class="kw">for </span>Shared&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized + Pointable&gt; Default <span class="kw">for </span>Shared&lt;<span class="lifetime">'_</span>, T&gt; {
     <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
         Shared::null()
     }

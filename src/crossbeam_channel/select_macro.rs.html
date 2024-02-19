@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/crossbeam-channel-0.5.11/src/select_macro.rs`."><title>select_macro.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="crossbeam_channel" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/crossbeam-channel-0.5.11/src/select_macro.rs`."><title>select_macro.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="crossbeam_channel" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1167,16 +1168,16 @@
         ($(<span class="macro-nonterminal">$head</span>:tt)<span class="kw-2">*</span>)
     ) =&gt; {
         <span class="macro">compile_error!</span>(
-            <span class="string">&quot;expected `=&gt;` after `default` case, found `-&gt;`&quot;
+            <span class="string">"expected `=&gt;` after `default` case, found `-&gt;`"
         </span>)
     };
-    <span class="comment">// Print an error if there&#39;s an `-&gt;` after the argument list in the default case.
+    <span class="comment">// Print an error if there's an `-&gt;` after the argument list in the default case.
     </span>(@list
         (default <span class="macro-nonterminal">$args</span>:tt -&gt; $(<span class="macro-nonterminal">$tail</span>:tt)<span class="kw-2">*</span>)
         ($(<span class="macro-nonterminal">$head</span>:tt)<span class="kw-2">*</span>)
     ) =&gt; {
         <span class="macro">compile_error!</span>(
-            <span class="string">&quot;expected `=&gt;` after `default` case, found `-&gt;`&quot;
+            <span class="string">"expected `=&gt;` after `default` case, found `-&gt;`"
         </span>)
     };
     <span class="comment">// Print an error if there is a missing result in a recv case.
@@ -1185,7 +1186,7 @@
         ($(<span class="macro-nonterminal">$head</span>:tt)<span class="kw-2">*</span>)
     ) =&gt; {
         <span class="macro">compile_error!</span>(
-            <span class="string">&quot;expected `-&gt;` after `recv` case, found `=&gt;`&quot;
+            <span class="string">"expected `-&gt;` after `recv` case, found `=&gt;`"
         </span>)
     };
     <span class="comment">// Print an error if there is a missing result in a send case.
@@ -1194,7 +1195,7 @@
         ($(<span class="macro-nonterminal">$head</span>:tt)<span class="kw-2">*</span>)
     ) =&gt; {
         <span class="macro">compile_error!</span>(
-            <span class="string">&quot;expected `-&gt;` after `send` operation, found `=&gt;`&quot;
+            <span class="string">"expected `-&gt;` after `send` operation, found `=&gt;`"
         </span>)
     };
     <span class="comment">// Make sure the arrow and the result are not repeated.
@@ -1202,7 +1203,7 @@
         (<span class="macro-nonterminal">$case</span>:ident <span class="macro-nonterminal">$args</span>:tt -&gt; <span class="macro-nonterminal">$res</span>:tt -&gt; $(<span class="macro-nonterminal">$tail</span>:tt)<span class="kw-2">*</span>)
         ($(<span class="macro-nonterminal">$head</span>:tt)<span class="kw-2">*</span>)
     ) =&gt; {
-        <span class="macro">compile_error!</span>(<span class="string">&quot;expected `=&gt;`, found `-&gt;`&quot;</span>)
+        <span class="macro">compile_error!</span>(<span class="string">"expected `=&gt;`, found `-&gt;`"</span>)
     };
     <span class="comment">// Print an error if there is a semicolon after the block.
     </span>(@list
@@ -1210,7 +1211,7 @@
         ($(<span class="macro-nonterminal">$head</span>:tt)<span class="kw-2">*</span>)
     ) =&gt; {
         <span class="macro">compile_error!</span>(
-            <span class="string">&quot;did you mean to put a comma instead of the semicolon after `}`?&quot;
+            <span class="string">"did you mean to put a comma instead of the semicolon after `}`?"
         </span>)
     };
     <span class="comment">// The first case is separated by a comma.
@@ -1224,7 +1225,7 @@
             ($(<span class="macro-nonterminal">$head</span>)* <span class="macro-nonterminal">$case </span>($(<span class="macro-nonterminal">$args</span>)<span class="kw-2">*</span>) $(-&gt; <span class="macro-nonterminal">$res</span>)* =&gt; { <span class="macro-nonterminal">$body </span>},)
         )
     };
-    <span class="comment">// Don&#39;t require a comma after the case if it has a proper block.
+    <span class="comment">// Don't require a comma after the case if it has a proper block.
     </span>(@list
         (<span class="macro-nonterminal">$case</span>:ident ($(<span class="macro-nonterminal">$args</span>:tt)<span class="kw-2">*</span>) $(-&gt; <span class="macro-nonterminal">$res</span>:pat)* =&gt; <span class="macro-nonterminal">$body</span>:block $(<span class="macro-nonterminal">$tail</span>:tt)<span class="kw-2">*</span>)
         ($(<span class="macro-nonterminal">$head</span>:tt)<span class="kw-2">*</span>)
@@ -1266,9 +1267,9 @@
     (@list_error1 <span class="macro-nonterminal">$t</span>:tt $(<span class="macro-nonterminal">$tail</span>:tt)<span class="kw-2">*</span>) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;expected one of `recv`, `send`, or `default`, found `&quot;</span>,
+                <span class="string">"expected one of `recv`, `send`, or `default`, found `"</span>,
                 <span class="macro">stringify!</span>(<span class="macro-nonterminal">$t</span>),
-                <span class="string">&quot;`&quot;</span>,
+                <span class="string">"`"</span>,
             )
         )
     };
@@ -1279,18 +1280,18 @@
     </span>(@list_error2 <span class="macro-nonterminal">$case</span>:ident) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;missing argument list after `&quot;</span>,
+                <span class="string">"missing argument list after `"</span>,
                 <span class="macro">stringify!</span>(<span class="macro-nonterminal">$case</span>),
-                <span class="string">&quot;`&quot;</span>,
+                <span class="string">"`"</span>,
             )
         )
     };
     (@list_error2 <span class="macro-nonterminal">$case</span>:ident =&gt; $(<span class="macro-nonterminal">$tail</span>:tt)<span class="kw-2">*</span>) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;missing argument list after `&quot;</span>,
+                <span class="string">"missing argument list after `"</span>,
                 <span class="macro">stringify!</span>(<span class="macro-nonterminal">$case</span>),
-                <span class="string">&quot;`&quot;</span>,
+                <span class="string">"`"</span>,
             )
         )
     };
@@ -1301,157 +1302,157 @@
     </span>(@list_error3 <span class="macro-nonterminal">$case</span>:ident($(<span class="macro-nonterminal">$args</span>:tt)<span class="kw-2">*</span>) $(-&gt; <span class="macro-nonterminal">$r</span>:pat)<span class="kw-2">*</span>) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;missing `=&gt;` after `&quot;</span>,
+                <span class="string">"missing `=&gt;` after `"</span>,
                 <span class="macro">stringify!</span>(<span class="macro-nonterminal">$case</span>),
-                <span class="string">&quot;` case&quot;</span>,
+                <span class="string">"` case"</span>,
             )
         )
     };
     (@list_error3 <span class="macro-nonterminal">$case</span>:ident($(<span class="macro-nonterminal">$args</span>:tt)<span class="kw-2">*</span>) $(-&gt; <span class="macro-nonterminal">$r</span>:pat)* =&gt;) =&gt; {
         <span class="macro">compile_error!</span>(
-            <span class="string">&quot;expected expression after `=&gt;`&quot;
+            <span class="string">"expected expression after `=&gt;`"
         </span>)
     };
     (@list_error3 <span class="macro-nonterminal">$case</span>:ident($(<span class="macro-nonterminal">$args</span>:tt)<span class="kw-2">*</span>) $(-&gt; <span class="macro-nonterminal">$r</span>:pat)* =&gt; <span class="macro-nonterminal">$body</span>:expr; $(<span class="macro-nonterminal">$tail</span>:tt)<span class="kw-2">*</span>) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;did you mean to put a comma instead of the semicolon after `&quot;</span>,
+                <span class="string">"did you mean to put a comma instead of the semicolon after `"</span>,
                 <span class="macro">stringify!</span>(<span class="macro-nonterminal">$body</span>),
-                <span class="string">&quot;`?&quot;</span>,
+                <span class="string">"`?"</span>,
             )
         )
     };
     (@list_error3 <span class="macro-nonterminal">$case</span>:ident($(<span class="macro-nonterminal">$args</span>:tt)<span class="kw-2">*</span>) $(-&gt; <span class="macro-nonterminal">$r</span>:pat)* =&gt; recv($(<span class="macro-nonterminal">$a</span>:tt)<span class="kw-2">*</span>) $(<span class="macro-nonterminal">$tail</span>:tt)<span class="kw-2">*</span>) =&gt; {
         <span class="macro">compile_error!</span>(
-            <span class="string">&quot;expected an expression after `=&gt;`&quot;
+            <span class="string">"expected an expression after `=&gt;`"
         </span>)
     };
     (@list_error3 <span class="macro-nonterminal">$case</span>:ident($(<span class="macro-nonterminal">$args</span>:tt)<span class="kw-2">*</span>) $(-&gt; <span class="macro-nonterminal">$r</span>:pat)* =&gt; send($(<span class="macro-nonterminal">$a</span>:tt)<span class="kw-2">*</span>) $(<span class="macro-nonterminal">$tail</span>:tt)<span class="kw-2">*</span>) =&gt; {
         <span class="macro">compile_error!</span>(
-            <span class="string">&quot;expected an expression after `=&gt;`&quot;
+            <span class="string">"expected an expression after `=&gt;`"
         </span>)
     };
     (@list_error3 <span class="macro-nonterminal">$case</span>:ident($(<span class="macro-nonterminal">$args</span>:tt)<span class="kw-2">*</span>) $(-&gt; <span class="macro-nonterminal">$r</span>:pat)* =&gt; default($(<span class="macro-nonterminal">$a</span>:tt)<span class="kw-2">*</span>) $(<span class="macro-nonterminal">$tail</span>:tt)<span class="kw-2">*</span>) =&gt; {
         <span class="macro">compile_error!</span>(
-            <span class="string">&quot;expected an expression after `=&gt;`&quot;
+            <span class="string">"expected an expression after `=&gt;`"
         </span>)
     };
     (@list_error3 <span class="macro-nonterminal">$case</span>:ident($(<span class="macro-nonterminal">$args</span>:tt)<span class="kw-2">*</span>) $(-&gt; <span class="macro-nonterminal">$r</span>:pat)* =&gt; <span class="macro-nonterminal">$f</span>:ident($(<span class="macro-nonterminal">$a</span>:tt)<span class="kw-2">*</span>) $(<span class="macro-nonterminal">$tail</span>:tt)<span class="kw-2">*</span>) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;did you mean to put a comma after `&quot;</span>,
+                <span class="string">"did you mean to put a comma after `"</span>,
                 <span class="macro">stringify!</span>(<span class="macro-nonterminal">$f</span>),
-                <span class="string">&quot;(&quot;</span>,
+                <span class="string">"("</span>,
                 <span class="macro">stringify!</span>($(<span class="macro-nonterminal">$a</span>)<span class="kw-2">*</span>),
-                <span class="string">&quot;)`?&quot;</span>,
+                <span class="string">")`?"</span>,
             )
         )
     };
     (@list_error3 <span class="macro-nonterminal">$case</span>:ident($(<span class="macro-nonterminal">$args</span>:tt)<span class="kw-2">*</span>) $(-&gt; <span class="macro-nonterminal">$r</span>:pat)* =&gt; <span class="macro-nonterminal">$f</span>:<span class="macro">ident!</span>($(<span class="macro-nonterminal">$a</span>:tt)<span class="kw-2">*</span>) $(<span class="macro-nonterminal">$tail</span>:tt)<span class="kw-2">*</span>) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;did you mean to put a comma after `&quot;</span>,
+                <span class="string">"did you mean to put a comma after `"</span>,
                 <span class="macro">stringify!</span>(<span class="macro-nonterminal">$f</span>),
-                <span class="string">&quot;!(&quot;</span>,
+                <span class="string">"!("</span>,
                 <span class="macro">stringify!</span>($(<span class="macro-nonterminal">$a</span>)<span class="kw-2">*</span>),
-                <span class="string">&quot;)`?&quot;</span>,
+                <span class="string">")`?"</span>,
             )
         )
     };
     (@list_error3 <span class="macro-nonterminal">$case</span>:ident($(<span class="macro-nonterminal">$args</span>:tt)<span class="kw-2">*</span>) $(-&gt; <span class="macro-nonterminal">$r</span>:pat)* =&gt; <span class="macro-nonterminal">$f</span>:<span class="macro">ident!</span>[$(<span class="macro-nonterminal">$a</span>:tt)<span class="kw-2">*</span>] $(<span class="macro-nonterminal">$tail</span>:tt)<span class="kw-2">*</span>) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;did you mean to put a comma after `&quot;</span>,
+                <span class="string">"did you mean to put a comma after `"</span>,
                 <span class="macro">stringify!</span>(<span class="macro-nonterminal">$f</span>),
-                <span class="string">&quot;![&quot;</span>,
+                <span class="string">"!["</span>,
                 <span class="macro">stringify!</span>($(<span class="macro-nonterminal">$a</span>)<span class="kw-2">*</span>),
-                <span class="string">&quot;]`?&quot;</span>,
+                <span class="string">"]`?"</span>,
             )
         )
     };
     (@list_error3 <span class="macro-nonterminal">$case</span>:ident($(<span class="macro-nonterminal">$args</span>:tt)<span class="kw-2">*</span>) $(-&gt; <span class="macro-nonterminal">$r</span>:pat)* =&gt; <span class="macro-nonterminal">$f</span>:<span class="macro">ident!</span>{$(<span class="macro-nonterminal">$a</span>:tt)<span class="kw-2">*</span>} $(<span class="macro-nonterminal">$tail</span>:tt)<span class="kw-2">*</span>) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;did you mean to put a comma after `&quot;</span>,
+                <span class="string">"did you mean to put a comma after `"</span>,
                 <span class="macro">stringify!</span>(<span class="macro-nonterminal">$f</span>),
-                <span class="string">&quot;!{&quot;</span>,
+                <span class="string">"!{"</span>,
                 <span class="macro">stringify!</span>($(<span class="macro-nonterminal">$a</span>)<span class="kw-2">*</span>),
-                <span class="string">&quot;}`?&quot;</span>,
+                <span class="string">"}`?"</span>,
             )
         )
     };
     (@list_error3 <span class="macro-nonterminal">$case</span>:ident($(<span class="macro-nonterminal">$args</span>:tt)<span class="kw-2">*</span>) $(-&gt; <span class="macro-nonterminal">$r</span>:pat)* =&gt; <span class="macro-nonterminal">$body</span>:tt $(<span class="macro-nonterminal">$tail</span>:tt)<span class="kw-2">*</span>) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;did you mean to put a comma after `&quot;</span>,
+                <span class="string">"did you mean to put a comma after `"</span>,
                 <span class="macro">stringify!</span>(<span class="macro-nonterminal">$body</span>),
-                <span class="string">&quot;`?&quot;</span>,
+                <span class="string">"`?"</span>,
             )
         )
     };
     (@list_error3 <span class="macro-nonterminal">$case</span>:ident($(<span class="macro-nonterminal">$args</span>:tt)<span class="kw-2">*</span>) -&gt; =&gt; $(<span class="macro-nonterminal">$tail</span>:tt)<span class="kw-2">*</span>) =&gt; {
-        <span class="macro">compile_error!</span>(<span class="string">&quot;missing pattern after `-&gt;`&quot;</span>)
+        <span class="macro">compile_error!</span>(<span class="string">"missing pattern after `-&gt;`"</span>)
     };
     (@list_error3 <span class="macro-nonterminal">$case</span>:ident($(<span class="macro-nonterminal">$args</span>:tt)<span class="kw-2">*</span>) <span class="macro-nonterminal">$t</span>:tt $(-&gt; <span class="macro-nonterminal">$r</span>:pat)* =&gt; $(<span class="macro-nonterminal">$tail</span>:tt)<span class="kw-2">*</span>) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;expected `-&gt;`, found `&quot;</span>,
+                <span class="string">"expected `-&gt;`, found `"</span>,
                 <span class="macro">stringify!</span>(<span class="macro-nonterminal">$t</span>),
-                <span class="string">&quot;`&quot;</span>,
+                <span class="string">"`"</span>,
             )
         )
     };
     (@list_error3 <span class="macro-nonterminal">$case</span>:ident($(<span class="macro-nonterminal">$args</span>:tt)<span class="kw-2">*</span>) -&gt; <span class="macro-nonterminal">$t</span>:tt $(<span class="macro-nonterminal">$tail</span>:tt)<span class="kw-2">*</span>) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;expected a pattern, found `&quot;</span>,
+                <span class="string">"expected a pattern, found `"</span>,
                 <span class="macro">stringify!</span>(<span class="macro-nonterminal">$t</span>),
-                <span class="string">&quot;`&quot;</span>,
+                <span class="string">"`"</span>,
             )
         )
     };
     (@list_error3 recv($(<span class="macro-nonterminal">$args</span>:tt)<span class="kw-2">*</span>) <span class="macro-nonterminal">$t</span>:tt $(<span class="macro-nonterminal">$tail</span>:tt)<span class="kw-2">*</span>) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;expected `-&gt;`, found `&quot;</span>,
+                <span class="string">"expected `-&gt;`, found `"</span>,
                 <span class="macro">stringify!</span>(<span class="macro-nonterminal">$t</span>),
-                <span class="string">&quot;`&quot;</span>,
+                <span class="string">"`"</span>,
             )
         )
     };
     (@list_error3 send($(<span class="macro-nonterminal">$args</span>:tt)<span class="kw-2">*</span>) <span class="macro-nonterminal">$t</span>:tt $(<span class="macro-nonterminal">$tail</span>:tt)<span class="kw-2">*</span>) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;expected `-&gt;`, found `&quot;</span>,
+                <span class="string">"expected `-&gt;`, found `"</span>,
                 <span class="macro">stringify!</span>(<span class="macro-nonterminal">$t</span>),
-                <span class="string">&quot;`&quot;</span>,
+                <span class="string">"`"</span>,
             )
         )
     };
     (@list_error3 recv <span class="macro-nonterminal">$args</span>:tt $(<span class="macro-nonterminal">$tail</span>:tt)<span class="kw-2">*</span>) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;expected an argument list after `recv`, found `&quot;</span>,
+                <span class="string">"expected an argument list after `recv`, found `"</span>,
                 <span class="macro">stringify!</span>(<span class="macro-nonterminal">$args</span>),
-                <span class="string">&quot;`&quot;</span>,
+                <span class="string">"`"</span>,
             )
         )
     };
     (@list_error3 send <span class="macro-nonterminal">$args</span>:tt $(<span class="macro-nonterminal">$tail</span>:tt)<span class="kw-2">*</span>) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;expected an argument list after `send`, found `&quot;</span>,
+                <span class="string">"expected an argument list after `send`, found `"</span>,
                 <span class="macro">stringify!</span>(<span class="macro-nonterminal">$args</span>),
-                <span class="string">&quot;`&quot;</span>,
+                <span class="string">"`"</span>,
             )
         )
     };
     (@list_error3 default <span class="macro-nonterminal">$args</span>:tt $(<span class="macro-nonterminal">$tail</span>:tt)<span class="kw-2">*</span>) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;expected an argument list or `=&gt;` after `default`, found `&quot;</span>,
+                <span class="string">"expected an argument list or `=&gt;` after `default`, found `"</span>,
                 <span class="macro">stringify!</span>(<span class="macro-nonterminal">$args</span>),
-                <span class="string">&quot;`&quot;</span>,
+                <span class="string">"`"</span>,
             )
         )
     };
@@ -1460,7 +1461,7 @@
     };
     <span class="comment">// Stage 4: fail with a generic error message.
     </span>(@list_error4 $(<span class="macro-nonterminal">$tail</span>:tt)<span class="kw-2">*</span>) =&gt; {
-        <span class="macro">compile_error!</span>(<span class="string">&quot;invalid syntax&quot;</span>)
+        <span class="macro">compile_error!</span>(<span class="string">"invalid syntax"</span>)
     };
 
     <span class="comment">// Success! All cases were parsed.
@@ -1497,9 +1498,9 @@
     ) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;invalid argument list in `recv(&quot;</span>,
+                <span class="string">"invalid argument list in `recv("</span>,
                 <span class="macro">stringify!</span>($(<span class="macro-nonterminal">$args</span>)<span class="kw-2">*</span>),
-                <span class="string">&quot;)`&quot;</span>,
+                <span class="string">")`"</span>,
             )
         )
     };
@@ -1511,9 +1512,9 @@
     ) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;expected an argument list after `recv`, found `&quot;</span>,
+                <span class="string">"expected an argument list after `recv`, found `"</span>,
                 <span class="macro">stringify!</span>(<span class="macro-nonterminal">$t</span>),
-                <span class="string">&quot;`&quot;</span>,
+                <span class="string">"`"</span>,
             )
         )
     };
@@ -1539,9 +1540,9 @@
     ) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;invalid argument list in `send(&quot;</span>,
+                <span class="string">"invalid argument list in `send("</span>,
                 <span class="macro">stringify!</span>($(<span class="macro-nonterminal">$args</span>)<span class="kw-2">*</span>),
-                <span class="string">&quot;)`&quot;</span>,
+                <span class="string">")`"</span>,
             )
         )
     };
@@ -1553,9 +1554,9 @@
     ) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;expected an argument list after `send`, found `&quot;</span>,
+                <span class="string">"expected an argument list after `send`, found `"</span>,
                 <span class="macro">stringify!</span>(<span class="macro-nonterminal">$t</span>),
-                <span class="string">&quot;`&quot;</span>,
+                <span class="string">"`"</span>,
             )
         )
     };
@@ -1593,7 +1594,7 @@
         ($(<span class="macro-nonterminal">$def</span>:tt)+)
     ) =&gt; {
         <span class="macro">compile_error!</span>(
-            <span class="string">&quot;there can be only one `default` case in a `select!` block&quot;
+            <span class="string">"there can be only one `default` case in a `select!` block"
         </span>)
     };
     <span class="comment">// Print an error if the argument list is invalid.
@@ -1604,9 +1605,9 @@
     ) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;invalid argument list in `default(&quot;</span>,
+                <span class="string">"invalid argument list in `default("</span>,
                 <span class="macro">stringify!</span>($(<span class="macro-nonterminal">$args</span>)<span class="kw-2">*</span>),
-                <span class="string">&quot;)`&quot;</span>,
+                <span class="string">")`"</span>,
             )
         )
     };
@@ -1618,9 +1619,9 @@
     ) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;expected an argument list or `=&gt;` after `default`, found `&quot;</span>,
+                <span class="string">"expected an argument list or `=&gt;` after `default`, found `"</span>,
                 <span class="macro">stringify!</span>(<span class="macro-nonterminal">$t</span>),
-                <span class="string">&quot;`&quot;</span>,
+                <span class="string">"`"</span>,
             )
         )
     };
@@ -1633,9 +1634,9 @@
     ) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;expected one of `recv`, `send`, or `default`, found `&quot;</span>,
+                <span class="string">"expected one of `recv`, `send`, or `default`, found `"</span>,
                 <span class="macro">stringify!</span>(<span class="macro-nonterminal">$case</span>),
-                <span class="string">&quot;`&quot;</span>,
+                <span class="string">"`"</span>,
             )
         )
     };
@@ -1865,7 +1866,7 @@
         <span class="macro-nonterminal">$labels</span>:tt
         <span class="macro-nonterminal">$cases</span>:tt
     ) =&gt; {{
-        <span class="kw">let </span>_oper: <span class="macro-nonterminal">$crate::SelectedOperation</span>&lt;<span class="lifetime">&#39;_</span>&gt; = {
+        <span class="kw">let </span>_oper: <span class="macro-nonterminal">$crate::SelectedOperation</span>&lt;<span class="lifetime">'_</span>&gt; = {
             <span class="kw">let </span>_oper = <span class="macro-nonterminal">$crate::internal::select</span>(<span class="kw-2">&amp;mut </span><span class="macro-nonterminal">$sel</span>);
 
             <span class="comment">// Erase the lifetime so that `sel` can be dropped early even without NLL.
@@ -1887,7 +1888,7 @@
         <span class="macro-nonterminal">$labels</span>:tt
         <span class="macro-nonterminal">$cases</span>:tt
     ) =&gt; {{
-        <span class="kw">let </span>_oper: ::std::option::Option&lt;<span class="macro-nonterminal">$crate::SelectedOperation</span>&lt;<span class="lifetime">&#39;_</span>&gt;&gt; = {
+        <span class="kw">let </span>_oper: ::std::option::Option&lt;<span class="macro-nonterminal">$crate::SelectedOperation</span>&lt;<span class="lifetime">'_</span>&gt;&gt; = {
             <span class="kw">let </span>_oper = <span class="macro-nonterminal">$crate::internal::try_select</span>(<span class="kw-2">&amp;mut </span><span class="macro-nonterminal">$sel</span>);
 
             <span class="comment">// Erase the lifetime so that `sel` can be dropped early even without NLL.
@@ -1917,7 +1918,7 @@
         <span class="macro-nonterminal">$labels</span>:tt
         <span class="macro-nonterminal">$cases</span>:tt
     ) =&gt; {{
-        <span class="kw">let </span>_oper: ::std::option::Option&lt;<span class="macro-nonterminal">$crate::SelectedOperation</span>&lt;<span class="lifetime">&#39;_</span>&gt;&gt; = {
+        <span class="kw">let </span>_oper: ::std::option::Option&lt;<span class="macro-nonterminal">$crate::SelectedOperation</span>&lt;<span class="lifetime">'_</span>&gt;&gt; = {
             <span class="kw">let </span>_oper = <span class="macro-nonterminal">$crate::internal::select_timeout</span>(<span class="kw-2">&amp;mut </span><span class="macro-nonterminal">$sel</span>, <span class="macro-nonterminal">$timeout</span>);
 
             <span class="comment">// Erase the lifetime so that `sel` can be dropped early even without NLL.
@@ -1947,7 +1948,7 @@
         ()
         <span class="macro-nonterminal">$cases</span>:tt
     ) =&gt; {
-        <span class="macro">compile_error!</span>(<span class="string">&quot;too many operations in a `select!` block&quot;</span>)
+        <span class="macro">compile_error!</span>(<span class="string">"too many operations in a `select!` block"</span>)
     };
     <span class="comment">// Add a receive operation to `sel`.
     </span>(@add
@@ -1963,7 +1964,7 @@
                     <span class="kw">let </span>_r: <span class="kw-2">&amp;</span><span class="macro-nonterminal">$crate::Receiver</span>&lt;<span class="kw">_</span>&gt; = _r;
 
                     <span class="comment">// Erase the lifetime so that `sel` can be dropped early even without NLL.
-                    </span><span class="kw">unsafe fn </span>unbind&lt;<span class="lifetime">&#39;a</span>, T&gt;(x: <span class="kw-2">&amp;</span>T) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T {
+                    </span><span class="kw">unsafe fn </span>unbind&lt;<span class="lifetime">'a</span>, T&gt;(x: <span class="kw-2">&amp;</span>T) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span>T {
                         ::std::mem::transmute(x)
                     }
                     unbind(_r)
@@ -1995,7 +1996,7 @@
                     <span class="kw">let </span>_s: <span class="kw-2">&amp;</span><span class="macro-nonterminal">$crate::Sender</span>&lt;<span class="kw">_</span>&gt; = _s;
 
                     <span class="comment">// Erase the lifetime so that `sel` can be dropped early even without NLL.
-                    </span><span class="kw">unsafe fn </span>unbind&lt;<span class="lifetime">&#39;a</span>, T&gt;(x: <span class="kw-2">&amp;</span>T) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>T {
+                    </span><span class="kw">unsafe fn </span>unbind&lt;<span class="lifetime">'a</span>, T&gt;(x: <span class="kw-2">&amp;</span>T) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'a </span>T {
                         ::std::mem::transmute(x)
                     }
                     unbind(_s)
@@ -2056,14 +2057,14 @@
             }
         }
     }};
-    <span class="comment">// Panic if we don&#39;t identify the selected case, but this should never happen.
+    <span class="comment">// Panic if we don't identify the selected case, but this should never happen.
     </span>(@complete
         <span class="macro-nonterminal">$sel</span>:ident
         <span class="macro-nonterminal">$oper</span>:ident
         ()
     ) =&gt; {{
         <span class="macro">unreachable!</span>(
-            <span class="string">&quot;internal error in crossbeam-channel: invalid case&quot;
+            <span class="string">"internal error in crossbeam-channel: invalid case"
         </span>)
     }};
 
@@ -2071,7 +2072,7 @@
     </span>(@$(<span class="macro-nonterminal">$tokens</span>:tt)<span class="kw-2">*</span>) =&gt; {
         <span class="macro">compile_error!</span>(
             <span class="macro">concat!</span>(
-                <span class="string">&quot;internal error in crossbeam-channel: &quot;</span>,
+                <span class="string">"internal error in crossbeam-channel: "</span>,
                 <span class="macro">stringify!</span>(@$(<span class="macro-nonterminal">$tokens</span>)<span class="kw-2">*</span>),
             )
         )
@@ -2079,7 +2080,7 @@
 
     <span class="comment">// The entry points.
     </span>() =&gt; {
-        <span class="macro">compile_error!</span>(<span class="string">&quot;empty `select!` block&quot;</span>)
+        <span class="macro">compile_error!</span>(<span class="string">"empty `select!` block"</span>)
     };
     ($(<span class="macro-nonterminal">$case</span>:ident $(($(<span class="macro-nonterminal">$args</span>:tt)<span class="kw-2">*</span>))* =&gt; <span class="macro-nonterminal">$body</span>:expr $(,)<span class="kw-2">*</span>)<span class="kw-2">*</span>) =&gt; {
         <span class="macro-nonterminal">$</span><span class="macro">crate::crossbeam_channel_internal!</span>(
@@ -2106,7 +2107,7 @@
 /// It is also possible to define a `default` case that gets executed if none of the operations are
 /// ready, either right away or for a certain duration of time.
 ///
-/// An operation is considered to be ready if it doesn&#39;t have to block. Note that it is ready even
+/// An operation is considered to be ready if it doesn't have to block. Note that it is ready even
 /// when it will simply return an error because the channel is disconnected.
 ///
 /// The `select!` macro is a convenience wrapper around [`Select`]. However, it cannot select over a
@@ -2158,7 +2159,7 @@
 /// select! {
 ///     recv(r1) -&gt; msg =&gt; panic!(),
 ///     recv(r2) -&gt; msg =&gt; panic!(),
-///     default =&gt; println!(&quot;not ready&quot;),
+///     default =&gt; println!("not ready"),
 /// }
 /// ```
 ///
@@ -2185,7 +2186,7 @@
 /// select! {
 ///     recv(r1) -&gt; msg =&gt; panic!(),
 ///     recv(r2) -&gt; msg =&gt; panic!(),
-///     default(Duration::from_millis(100)) =&gt; println!(&quot;timed out&quot;),
+///     default(Duration::from_millis(100)) =&gt; println!("timed out"),
 /// }
 /// ```
 ///

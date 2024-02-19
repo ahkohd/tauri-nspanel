@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-runtime-0.14.2/src/window.rs`."><title>window.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tauri_runtime" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-runtime-0.14.2/src/window.rs`."><title>window.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tauri_runtime" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -419,7 +420,7 @@
 };
 
 <span class="kw">type </span>UriSchemeProtocol =
-  <span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>HttpRequest) -&gt; <span class="prelude-ty">Result</span>&lt;HttpResponse, Box&lt;<span class="kw">dyn </span>std::error::Error&gt;&gt; + Send + Sync + <span class="lifetime">&#39;static</span>;
+  <span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>HttpRequest) -&gt; <span class="prelude-ty">Result</span>&lt;HttpResponse, Box&lt;<span class="kw">dyn </span>std::error::Error&gt;&gt; + Send + Sync + <span class="lifetime">'static</span>;
 
 <span class="kw">type </span>WebResourceRequestHandler = <span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>HttpRequest, <span class="kw-2">&amp;mut </span>HttpResponse) + Send + Sync;
 
@@ -429,13 +430,13 @@
 <span class="doccomment">/// An event from a window.
 </span><span class="attr">#[derive(Debug, Clone)]
 </span><span class="kw">pub enum </span>WindowEvent {
-  <span class="doccomment">/// The size of the window has changed. Contains the client area&#39;s new dimensions.
+  <span class="doccomment">/// The size of the window has changed. Contains the client area's new dimensions.
   </span>Resized(dpi::PhysicalSize&lt;u32&gt;),
-  <span class="doccomment">/// The position of the window has changed. Contains the window&#39;s new position.
+  <span class="doccomment">/// The position of the window has changed. Contains the window's new position.
   </span>Moved(dpi::PhysicalPosition&lt;i32&gt;),
   <span class="doccomment">/// The window has been requested to close.
   </span>CloseRequested {
-    <span class="doccomment">/// A signal sender. If a `true` value is emitted, the window won&#39;t be closed.
+    <span class="doccomment">/// A signal sender. If a `true` value is emitted, the window won't be closed.
     </span>signal_tx: Sender&lt;bool&gt;,
   },
   <span class="doccomment">/// The window has been destroyed.
@@ -444,12 +445,12 @@
   ///
   /// The parameter is true if the window has gained focus, and false if it has lost focus.
   </span>Focused(bool),
-  <span class="doccomment">/// The window&#39;s scale factor has changed.
+  <span class="doccomment">/// The window's scale factor has changed.
   ///
   /// The following user actions can cause DPI changes:
   ///
-  /// - Changing the display&#39;s resolution.
-  /// - Changing the display&#39;s scale factor (e.g. in Control Panel on Windows).
+  /// - Changing the display's resolution.
+  /// - Changing the display's scale factor (e.g. in Control Panel on Windows).
   /// - Moving the window to a display with a different scale factor.
   </span>ScaleFactorChanged {
     <span class="doccomment">/// The new scale factor.
@@ -479,7 +480,7 @@
 
 <span class="doccomment">/// A menu event.
 </span><span class="attr">#[derive(Debug, Serialize)]
-#[serde(rename_all = <span class="string">&quot;camelCase&quot;</span>)]
+#[serde(rename_all = <span class="string">"camelCase"</span>)]
 </span><span class="kw">pub struct </span>MenuEvent {
   <span class="kw">pub </span>menu_item_id: u16,
 }
@@ -514,10 +515,10 @@
   </span>Text,
   <span class="doccomment">/// Program busy indicator.
   </span>Wait,
-  <span class="doccomment">/// Help indicator (often rendered as a &quot;?&quot;)
+  <span class="doccomment">/// Help indicator (often rendered as a "?")
   </span>Help,
   <span class="doccomment">/// Progress indicator. Shows that processing is being done. But in contrast
-  /// with &quot;Wait&quot; the user may still interact with the program. Often rendered
+  /// with "Wait" the user may still interact with the program. Often rendered
   /// as a spinning beach ball, or an arrow with a watch or hourglass.
   </span>Progress,
 
@@ -537,7 +538,7 @@
   ZoomIn,
   ZoomOut,
 
-  <span class="doccomment">/// Indicate that some edge is to be moved. For example, the &#39;SeResize&#39; cursor
+  <span class="doccomment">/// Indicate that some edge is to be moved. For example, the 'SeResize' cursor
   /// is used when the movement starts from the south-east corner of the box.
   </span>EResize,
   NResize,
@@ -555,48 +556,48 @@
   RowResize,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>&gt; Deserialize&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>CursorIcon {
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>&gt; Deserialize&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>CursorIcon {
   <span class="kw">fn </span>deserialize&lt;D&gt;(deserializer: D) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, D::Error&gt;
   <span class="kw">where
-    </span>D: Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;,
+    </span>D: Deserializer&lt;<span class="lifetime">'de</span>&gt;,
   {
     <span class="kw">let </span>s = String::deserialize(deserializer)<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>(<span class="kw">match </span>s.to_lowercase().as_str() {
-      <span class="string">&quot;default&quot; </span>=&gt; CursorIcon::Default,
-      <span class="string">&quot;crosshair&quot; </span>=&gt; CursorIcon::Crosshair,
-      <span class="string">&quot;hand&quot; </span>=&gt; CursorIcon::Hand,
-      <span class="string">&quot;arrow&quot; </span>=&gt; CursorIcon::Arrow,
-      <span class="string">&quot;move&quot; </span>=&gt; CursorIcon::Move,
-      <span class="string">&quot;text&quot; </span>=&gt; CursorIcon::Text,
-      <span class="string">&quot;wait&quot; </span>=&gt; CursorIcon::Wait,
-      <span class="string">&quot;help&quot; </span>=&gt; CursorIcon::Help,
-      <span class="string">&quot;progress&quot; </span>=&gt; CursorIcon::Progress,
-      <span class="string">&quot;notallowed&quot; </span>=&gt; CursorIcon::NotAllowed,
-      <span class="string">&quot;contextmenu&quot; </span>=&gt; CursorIcon::ContextMenu,
-      <span class="string">&quot;cell&quot; </span>=&gt; CursorIcon::Cell,
-      <span class="string">&quot;verticaltext&quot; </span>=&gt; CursorIcon::VerticalText,
-      <span class="string">&quot;alias&quot; </span>=&gt; CursorIcon::Alias,
-      <span class="string">&quot;copy&quot; </span>=&gt; CursorIcon::Copy,
-      <span class="string">&quot;nodrop&quot; </span>=&gt; CursorIcon::NoDrop,
-      <span class="string">&quot;grab&quot; </span>=&gt; CursorIcon::Grab,
-      <span class="string">&quot;grabbing&quot; </span>=&gt; CursorIcon::Grabbing,
-      <span class="string">&quot;allscroll&quot; </span>=&gt; CursorIcon::AllScroll,
-      <span class="string">&quot;zoomin&quot; </span>=&gt; CursorIcon::ZoomIn,
-      <span class="string">&quot;zoomout&quot; </span>=&gt; CursorIcon::ZoomOut,
-      <span class="string">&quot;eresize&quot; </span>=&gt; CursorIcon::EResize,
-      <span class="string">&quot;nresize&quot; </span>=&gt; CursorIcon::NResize,
-      <span class="string">&quot;neresize&quot; </span>=&gt; CursorIcon::NeResize,
-      <span class="string">&quot;nwresize&quot; </span>=&gt; CursorIcon::NwResize,
-      <span class="string">&quot;sresize&quot; </span>=&gt; CursorIcon::SResize,
-      <span class="string">&quot;seresize&quot; </span>=&gt; CursorIcon::SeResize,
-      <span class="string">&quot;swresize&quot; </span>=&gt; CursorIcon::SwResize,
-      <span class="string">&quot;wresize&quot; </span>=&gt; CursorIcon::WResize,
-      <span class="string">&quot;ewresize&quot; </span>=&gt; CursorIcon::EwResize,
-      <span class="string">&quot;nsresize&quot; </span>=&gt; CursorIcon::NsResize,
-      <span class="string">&quot;neswresize&quot; </span>=&gt; CursorIcon::NeswResize,
-      <span class="string">&quot;nwseresize&quot; </span>=&gt; CursorIcon::NwseResize,
-      <span class="string">&quot;colresize&quot; </span>=&gt; CursorIcon::ColResize,
-      <span class="string">&quot;rowresize&quot; </span>=&gt; CursorIcon::RowResize,
+      <span class="string">"default" </span>=&gt; CursorIcon::Default,
+      <span class="string">"crosshair" </span>=&gt; CursorIcon::Crosshair,
+      <span class="string">"hand" </span>=&gt; CursorIcon::Hand,
+      <span class="string">"arrow" </span>=&gt; CursorIcon::Arrow,
+      <span class="string">"move" </span>=&gt; CursorIcon::Move,
+      <span class="string">"text" </span>=&gt; CursorIcon::Text,
+      <span class="string">"wait" </span>=&gt; CursorIcon::Wait,
+      <span class="string">"help" </span>=&gt; CursorIcon::Help,
+      <span class="string">"progress" </span>=&gt; CursorIcon::Progress,
+      <span class="string">"notallowed" </span>=&gt; CursorIcon::NotAllowed,
+      <span class="string">"contextmenu" </span>=&gt; CursorIcon::ContextMenu,
+      <span class="string">"cell" </span>=&gt; CursorIcon::Cell,
+      <span class="string">"verticaltext" </span>=&gt; CursorIcon::VerticalText,
+      <span class="string">"alias" </span>=&gt; CursorIcon::Alias,
+      <span class="string">"copy" </span>=&gt; CursorIcon::Copy,
+      <span class="string">"nodrop" </span>=&gt; CursorIcon::NoDrop,
+      <span class="string">"grab" </span>=&gt; CursorIcon::Grab,
+      <span class="string">"grabbing" </span>=&gt; CursorIcon::Grabbing,
+      <span class="string">"allscroll" </span>=&gt; CursorIcon::AllScroll,
+      <span class="string">"zoomin" </span>=&gt; CursorIcon::ZoomIn,
+      <span class="string">"zoomout" </span>=&gt; CursorIcon::ZoomOut,
+      <span class="string">"eresize" </span>=&gt; CursorIcon::EResize,
+      <span class="string">"nresize" </span>=&gt; CursorIcon::NResize,
+      <span class="string">"neresize" </span>=&gt; CursorIcon::NeResize,
+      <span class="string">"nwresize" </span>=&gt; CursorIcon::NwResize,
+      <span class="string">"sresize" </span>=&gt; CursorIcon::SResize,
+      <span class="string">"seresize" </span>=&gt; CursorIcon::SeResize,
+      <span class="string">"swresize" </span>=&gt; CursorIcon::SwResize,
+      <span class="string">"wresize" </span>=&gt; CursorIcon::WResize,
+      <span class="string">"ewresize" </span>=&gt; CursorIcon::EwResize,
+      <span class="string">"nsresize" </span>=&gt; CursorIcon::NsResize,
+      <span class="string">"neswresize" </span>=&gt; CursorIcon::NeswResize,
+      <span class="string">"nwseresize" </span>=&gt; CursorIcon::NwseResize,
+      <span class="string">"colresize" </span>=&gt; CursorIcon::ColResize,
+      <span class="string">"rowresize" </span>=&gt; CursorIcon::RowResize,
       <span class="kw">_ </span>=&gt; CursorIcon::Default,
     })
   }
@@ -645,13 +646,13 @@
 <span class="kw">pub fn </span>is_label_valid(label: <span class="kw-2">&amp;</span>str) -&gt; bool {
   label
     .chars()
-    .all(|c| char::is_alphanumeric(c) || c == <span class="string">&#39;-&#39; </span>|| c == <span class="string">&#39;/&#39; </span>|| c == <span class="string">&#39;:&#39; </span>|| c == <span class="string">&#39;_&#39;</span>)
+    .all(|c| char::is_alphanumeric(c) || c == <span class="string">'-' </span>|| c == <span class="string">'/' </span>|| c == <span class="string">':' </span>|| c == <span class="string">'_'</span>)
 }
 
 <span class="kw">pub fn </span>assert_label_is_valid(label: <span class="kw-2">&amp;</span>str) {
   <span class="macro">assert!</span>(
     is_label_valid(label),
-    <span class="string">&quot;Window label must include only alphanumeric characters, `-`, `/`, `:` and `_`.&quot;
+    <span class="string">"Window label must include only alphanumeric characters, `-`, `/`, `:` and `_`."
   </span>);
 }
 
@@ -680,7 +681,7 @@
         js_event_listeners: Default::default(),
         navigation_handler: Default::default(),
         web_resource_request_handler: Default::default(),
-        url: <span class="string">&quot;tauri://localhost&quot;</span>.to_string(),
+        url: <span class="string">"tauri://localhost"</span>.to_string(),
         http_scheme: <span class="bool-val">false</span>,
       })
     }
@@ -712,7 +713,7 @@
         js_event_listeners: Default::default(),
         navigation_handler: Default::default(),
         web_resource_request_handler: Default::default(),
-        url: <span class="string">&quot;tauri://localhost&quot;</span>.to_string(),
+        url: <span class="string">"tauri://localhost"</span>.to_string(),
         http_scheme: <span class="bool-val">false</span>,
       })
     }
@@ -729,7 +730,7 @@
 
   <span class="kw">pub fn </span>register_uri_scheme_protocol&lt;
     N: Into&lt;String&gt;,
-    H: Fn(<span class="kw-2">&amp;</span>HttpRequest) -&gt; <span class="prelude-ty">Result</span>&lt;HttpResponse, Box&lt;<span class="kw">dyn </span>std::error::Error&gt;&gt; + Send + Sync + <span class="lifetime">&#39;static</span>,
+    H: Fn(<span class="kw-2">&amp;</span>HttpRequest) -&gt; <span class="prelude-ty">Result</span>&lt;HttpResponse, Box&lt;<span class="kw">dyn </span>std::error::Error&gt;&gt; + Send + Sync + <span class="lifetime">'static</span>,
   &gt;(
     <span class="kw-2">&amp;mut </span><span class="self">self</span>,
     uri_scheme: N,
@@ -779,7 +780,7 @@
 }
 
 <span class="kw">impl</span>&lt;T: UserEvent, R: Runtime&lt;T&gt;&gt; Hash <span class="kw">for </span>DetachedWindow&lt;T, R&gt; {
-  <span class="doccomment">/// Only use the [`DetachedWindow`]&#39;s label to represent its hash.
+  <span class="doccomment">/// Only use the [`DetachedWindow`]'s label to represent its hash.
   </span><span class="kw">fn </span>hash&lt;H: Hasher&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H) {
     <span class="self">self</span>.label.hash(state)
   }
@@ -787,7 +788,7 @@
 
 <span class="kw">impl</span>&lt;T: UserEvent, R: Runtime&lt;T&gt;&gt; Eq <span class="kw">for </span>DetachedWindow&lt;T, R&gt; {}
 <span class="kw">impl</span>&lt;T: UserEvent, R: Runtime&lt;T&gt;&gt; PartialEq <span class="kw">for </span>DetachedWindow&lt;T, R&gt; {
-  <span class="doccomment">/// Only use the [`DetachedWindow`]&#39;s label to compare equality.
+  <span class="doccomment">/// Only use the [`DetachedWindow`]'s label to compare equality.
   </span><span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; bool {
     <span class="self">self</span>.label.eq(<span class="kw-2">&amp;</span>other.label)
   }

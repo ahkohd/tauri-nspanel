@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/crossbeam-utils-0.8.19/src/thread.rs`."><title>thread.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="crossbeam_utils" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/crossbeam-utils-0.8.19/src/thread.rs`."><title>thread.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="crossbeam_utils" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -614,15 +615,15 @@
 //! use crossbeam_utils::thread;
 //!
 //! let people = vec![
-//!     &quot;Alice&quot;.to_string(),
-//!     &quot;Bob&quot;.to_string(),
-//!     &quot;Carol&quot;.to_string(),
+//!     "Alice".to_string(),
+//!     "Bob".to_string(),
+//!     "Carol".to_string(),
 //! ];
 //!
 //! thread::scope(|s| {
 //!     for person in &amp;people {
 //!         s.spawn(move |_| {
-//!             println!(&quot;Hello, {}!&quot;, person);
+//!             println!("Hello, {}!", person);
 //!         });
 //!     }
 //! }).unwrap();
@@ -636,16 +637,16 @@
 //! use std::thread;
 //!
 //! let people = vec![
-//!     &quot;Alice&quot;.to_string(),
-//!     &quot;Bob&quot;.to_string(),
-//!     &quot;Carol&quot;.to_string(),
+//!     "Alice".to_string(),
+//!     "Bob".to_string(),
+//!     "Carol".to_string(),
 //! ];
 //!
 //! let mut threads = Vec::new();
 //!
 //! for person in &amp;people {
 //!     threads.push(thread::spawn(move || {
-//!         println!(&quot;Hello, {}!&quot;, person);
+//!         println!("Hello, {}!", person);
 //!     }));
 //! }
 //!
@@ -654,7 +655,7 @@
 //! }
 //! ```
 //!
-//! This doesn&#39;t work because the borrow checker complains about `people` not living long enough:
+//! This doesn't work because the borrow checker complains about `people` not living long enough:
 //!
 //! ```text
 //! error[E0597]: `people` does not live long enough
@@ -679,7 +680,7 @@
 //!
 //! If a variable is borrowed by a thread, the thread must complete before the variable is
 //! destroyed. Threads spawned using [`std::thread::spawn`] can only borrow variables with the
-//! `&#39;static` lifetime because the borrow checker cannot be sure when the thread will complete.
+//! `'static` lifetime because the borrow checker cannot be sure when the thread will complete.
 //!
 //! A scope creates a clear boundary between variables outside the scope and threads inside the
 //! scope. Whenever a scope spawns a thread, it promises to join the thread before the scope ends.
@@ -697,9 +698,9 @@
 //!
 //! thread::scope(|s| {
 //!     s.spawn(|_| {
-//!         // Not going to compile because we&#39;re trying to borrow `s`,
+//!         // Not going to compile because we're trying to borrow `s`,
 //!         // which lives *inside* the scope! :(
-//!         s.spawn(|_| println!(&quot;nested thread&quot;));
+//!         s.spawn(|_| println!("nested thread"));
 //!     });
 //! });
 //! ```
@@ -713,8 +714,8 @@
 //! thread::scope(|s| {
 //!     // Note the `|s|` here.
 //!     s.spawn(|s| {
-//!         // Yay, this works because we&#39;re using a fresh argument `s`! :)
-//!         s.spawn(|_| println!(&quot;nested thread&quot;));
+//!         // Yay, this works because we're using a fresh argument `s`! :)
+//!         s.spawn(|_| println!("nested thread"));
 //!     });
 //! }).unwrap();
 //! ```
@@ -734,7 +735,7 @@
 
 <span class="doccomment">/// Creates a new scope for spawning threads.
 ///
-/// All child threads that haven&#39;t been manually joined will be automatically joined just before
+/// All child threads that haven't been manually joined will be automatically joined just before
 /// this function invocation ends. If all joined threads have successfully completed, `Ok` is
 /// returned with the return value of `f`. If any of the joined threads has panicked, an `Err` is
 /// returned containing errors from panicked threads. Note that if panics are implemented by
@@ -751,13 +752,13 @@
 ///
 /// thread::scope(|s| {
 ///     s.spawn(|_| {
-///         println!(&quot;A child thread borrowing `var`: {:?}&quot;, var);
+///         println!("A child thread borrowing `var`: {:?}", var);
 ///     });
 /// }).unwrap();
 /// ```
-</span><span class="kw">pub fn </span>scope&lt;<span class="lifetime">&#39;env</span>, F, R&gt;(f: F) -&gt; thread::Result&lt;R&gt;
+</span><span class="kw">pub fn </span>scope&lt;<span class="lifetime">'env</span>, F, R&gt;(f: F) -&gt; thread::Result&lt;R&gt;
 <span class="kw">where
-    </span>F: FnOnce(<span class="kw-2">&amp;</span>Scope&lt;<span class="lifetime">&#39;env</span>&gt;) -&gt; R,
+    </span>F: FnOnce(<span class="kw-2">&amp;</span>Scope&lt;<span class="lifetime">'env</span>&gt;) -&gt; R,
 {
     <span class="kw">struct </span>AbortOnPanic;
     <span class="kw">impl </span>Drop <span class="kw">for </span>AbortOnPanic {
@@ -769,7 +770,7 @@
     }
 
     <span class="kw">let </span>wg = WaitGroup::new();
-    <span class="kw">let </span>scope = Scope::&lt;<span class="lifetime">&#39;env</span>&gt; {
+    <span class="kw">let </span>scope = Scope::&lt;<span class="lifetime">'env</span>&gt; {
         handles: SharedVec::default(),
         wait_group: wg.clone(),
         _marker: PhantomData,
@@ -791,7 +792,7 @@
         .handles
         .lock()
         .unwrap()
-        <span class="comment">// Filter handles that haven&#39;t been joined, join them, and collect errors.
+        <span class="comment">// Filter handles that haven't been joined, join them, and collect errors.
         </span>.drain(..)
         .filter_map(|handle| handle.lock().unwrap().take())
         .filter_map(|handle| handle.join().err())
@@ -815,24 +816,24 @@
 }
 
 <span class="doccomment">/// A scope for spawning threads.
-</span><span class="kw">pub struct </span>Scope&lt;<span class="lifetime">&#39;env</span>&gt; {
+</span><span class="kw">pub struct </span>Scope&lt;<span class="lifetime">'env</span>&gt; {
     <span class="doccomment">/// The list of the thread join handles.
     </span>handles: SharedVec&lt;SharedOption&lt;thread::JoinHandle&lt;()&gt;&gt;&gt;,
 
     <span class="doccomment">/// Used to wait until all subscopes all dropped.
     </span>wait_group: WaitGroup,
 
-    <span class="doccomment">/// Borrows data with invariant lifetime `&#39;env`.
-    </span>_marker: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;env </span><span class="kw-2">mut &amp;</span><span class="lifetime">&#39;env </span>()&gt;,
+    <span class="doccomment">/// Borrows data with invariant lifetime `'env`.
+    </span>_marker: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">'env </span><span class="kw-2">mut &amp;</span><span class="lifetime">'env </span>()&gt;,
 }
 
-<span class="kw">unsafe impl </span>Sync <span class="kw">for </span>Scope&lt;<span class="lifetime">&#39;_</span>&gt; {}
+<span class="kw">unsafe impl </span>Sync <span class="kw">for </span>Scope&lt;<span class="lifetime">'_</span>&gt; {}
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;env</span>&gt; Scope&lt;<span class="lifetime">&#39;env</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'env</span>&gt; Scope&lt;<span class="lifetime">'env</span>&gt; {
     <span class="doccomment">/// Spawns a scoped thread.
     ///
-    /// This method is similar to the [`spawn`] function in Rust&#39;s standard library. The difference
-    /// is that this thread is scoped, meaning it&#39;s guaranteed to terminate before the scope exits,
+    /// This method is similar to the [`spawn`] function in Rust's standard library. The difference
+    /// is that this thread is scoped, meaning it's guaranteed to terminate before the scope exits,
     /// allowing it to reference variables outside the scope.
     ///
     /// The scoped thread is passed a reference to this scope as an argument, which can be used for
@@ -858,7 +859,7 @@
     ///
     /// thread::scope(|s| {
     ///     let handle = s.spawn(|_| {
-    ///         println!(&quot;A child thread is running&quot;);
+    ///         println!("A child thread is running");
     ///         42
     ///     });
     ///
@@ -867,15 +868,15 @@
     ///     assert_eq!(res, 42);
     /// }).unwrap();
     /// ```
-    </span><span class="kw">pub fn </span>spawn&lt;<span class="lifetime">&#39;scope</span>, F, T&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;scope </span><span class="self">self</span>, f: F) -&gt; ScopedJoinHandle&lt;<span class="lifetime">&#39;scope</span>, T&gt;
+    </span><span class="kw">pub fn </span>spawn&lt;<span class="lifetime">'scope</span>, F, T&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'scope </span><span class="self">self</span>, f: F) -&gt; ScopedJoinHandle&lt;<span class="lifetime">'scope</span>, T&gt;
     <span class="kw">where
-        </span>F: FnOnce(<span class="kw-2">&amp;</span>Scope&lt;<span class="lifetime">&#39;env</span>&gt;) -&gt; T,
-        F: Send + <span class="lifetime">&#39;env</span>,
-        T: Send + <span class="lifetime">&#39;env</span>,
+        </span>F: FnOnce(<span class="kw-2">&amp;</span>Scope&lt;<span class="lifetime">'env</span>&gt;) -&gt; T,
+        F: Send + <span class="lifetime">'env</span>,
+        T: Send + <span class="lifetime">'env</span>,
     {
         <span class="self">self</span>.builder()
             .spawn(f)
-            .expect(<span class="string">&quot;failed to spawn scoped thread&quot;</span>)
+            .expect(<span class="string">"failed to spawn scoped thread"</span>)
     }
 
     <span class="doccomment">/// Creates a builder that can configure a thread before spawning.
@@ -887,11 +888,11 @@
     ///
     /// thread::scope(|s| {
     ///     s.builder()
-    ///         .spawn(|_| println!(&quot;A child thread is running&quot;))
+    ///         .spawn(|_| println!("A child thread is running"))
     ///         .unwrap();
     /// }).unwrap();
     /// ```
-    </span><span class="kw">pub fn </span>builder&lt;<span class="lifetime">&#39;scope</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;scope </span><span class="self">self</span>) -&gt; ScopedThreadBuilder&lt;<span class="lifetime">&#39;scope</span>, <span class="lifetime">&#39;env</span>&gt; {
+    </span><span class="kw">pub fn </span>builder&lt;<span class="lifetime">'scope</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'scope </span><span class="self">self</span>) -&gt; ScopedThreadBuilder&lt;<span class="lifetime">'scope</span>, <span class="lifetime">'env</span>&gt; {
         ScopedThreadBuilder {
             scope: <span class="self">self</span>,
             builder: thread::Builder::new(),
@@ -899,9 +900,9 @@
     }
 }
 
-<span class="kw">impl </span>fmt::Debug <span class="kw">for </span>Scope&lt;<span class="lifetime">&#39;_</span>&gt; {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        f.pad(<span class="string">&quot;Scope { .. }&quot;</span>)
+<span class="kw">impl </span>fmt::Debug <span class="kw">for </span>Scope&lt;<span class="lifetime">'_</span>&gt; {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
+        f.pad(<span class="string">"Scope { .. }"</span>)
     }
 }
 
@@ -926,7 +927,7 @@
 ///
 /// thread::scope(|s| {
 ///     s.builder()
-///         .spawn(|_| println!(&quot;Running a child thread&quot;))
+///         .spawn(|_| println!("Running a child thread"))
 ///         .unwrap();
 /// }).unwrap();
 /// ```
@@ -938,12 +939,12 @@
 /// [naming-threads]: std::thread#naming-threads
 /// [stack-size]: std::thread#stack-size
 </span><span class="attr">#[derive(Debug)]
-</span><span class="kw">pub struct </span>ScopedThreadBuilder&lt;<span class="lifetime">&#39;scope</span>, <span class="lifetime">&#39;env</span>&gt; {
-    scope: <span class="kw-2">&amp;</span><span class="lifetime">&#39;scope </span>Scope&lt;<span class="lifetime">&#39;env</span>&gt;,
+</span><span class="kw">pub struct </span>ScopedThreadBuilder&lt;<span class="lifetime">'scope</span>, <span class="lifetime">'env</span>&gt; {
+    scope: <span class="kw-2">&amp;</span><span class="lifetime">'scope </span>Scope&lt;<span class="lifetime">'env</span>&gt;,
     builder: thread::Builder,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;scope</span>, <span class="lifetime">&#39;env</span>&gt; ScopedThreadBuilder&lt;<span class="lifetime">&#39;scope</span>, <span class="lifetime">&#39;env</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'scope</span>, <span class="lifetime">'env</span>&gt; ScopedThreadBuilder&lt;<span class="lifetime">'scope</span>, <span class="lifetime">'env</span>&gt; {
     <span class="doccomment">/// Sets the name for the new thread.
     ///
     /// The name must not contain null bytes (`\0`).
@@ -958,14 +959,14 @@
     ///
     /// thread::scope(|s| {
     ///     s.builder()
-    ///         .name(&quot;my thread&quot;.to_string())
-    ///         .spawn(|_| assert_eq!(current().name(), Some(&quot;my thread&quot;)))
+    ///         .name("my thread".to_string())
+    ///         .spawn(|_| assert_eq!(current().name(), Some("my thread")))
     ///         .unwrap();
     /// }).unwrap();
     /// ```
     ///
     /// [naming-threads]: std::thread#naming-threads
-    </span><span class="kw">pub fn </span>name(<span class="kw-2">mut </span><span class="self">self</span>, name: String) -&gt; ScopedThreadBuilder&lt;<span class="lifetime">&#39;scope</span>, <span class="lifetime">&#39;env</span>&gt; {
+    </span><span class="kw">pub fn </span>name(<span class="kw-2">mut </span><span class="self">self</span>, name: String) -&gt; ScopedThreadBuilder&lt;<span class="lifetime">'scope</span>, <span class="lifetime">'env</span>&gt; {
         <span class="self">self</span>.builder = <span class="self">self</span>.builder.name(name);
         <span class="self">self
     </span>}
@@ -984,13 +985,13 @@
     /// thread::scope(|s| {
     ///     s.builder()
     ///         .stack_size(32 * 1024)
-    ///         .spawn(|_| println!(&quot;Running a child thread&quot;))
+    ///         .spawn(|_| println!("Running a child thread"))
     ///         .unwrap();
     /// }).unwrap();
     /// ```
     ///
     /// [stack-size]: std::thread#stack-size
-    </span><span class="kw">pub fn </span>stack_size(<span class="kw-2">mut </span><span class="self">self</span>, size: usize) -&gt; ScopedThreadBuilder&lt;<span class="lifetime">&#39;scope</span>, <span class="lifetime">&#39;env</span>&gt; {
+    </span><span class="kw">pub fn </span>stack_size(<span class="kw-2">mut </span><span class="self">self</span>, size: usize) -&gt; ScopedThreadBuilder&lt;<span class="lifetime">'scope</span>, <span class="lifetime">'env</span>&gt; {
         <span class="self">self</span>.builder = <span class="self">self</span>.builder.stack_size(size);
         <span class="self">self
     </span>}
@@ -1022,7 +1023,7 @@
     /// thread::scope(|s| {
     ///     let handle = s.builder()
     ///         .spawn(|_| {
-    ///             println!(&quot;A child thread is running&quot;);
+    ///             println!("A child thread is running");
     ///             42
     ///         })
     ///         .unwrap();
@@ -1032,11 +1033,11 @@
     ///     assert_eq!(res, 42);
     /// }).unwrap();
     /// ```
-    </span><span class="kw">pub fn </span>spawn&lt;F, T&gt;(<span class="self">self</span>, f: F) -&gt; io::Result&lt;ScopedJoinHandle&lt;<span class="lifetime">&#39;scope</span>, T&gt;&gt;
+    </span><span class="kw">pub fn </span>spawn&lt;F, T&gt;(<span class="self">self</span>, f: F) -&gt; io::Result&lt;ScopedJoinHandle&lt;<span class="lifetime">'scope</span>, T&gt;&gt;
     <span class="kw">where
-        </span>F: FnOnce(<span class="kw-2">&amp;</span>Scope&lt;<span class="lifetime">&#39;env</span>&gt;) -&gt; T,
-        F: Send + <span class="lifetime">&#39;env</span>,
-        T: Send + <span class="lifetime">&#39;env</span>,
+        </span>F: FnOnce(<span class="kw-2">&amp;</span>Scope&lt;<span class="lifetime">'env</span>&gt;) -&gt; T,
+        F: Send + <span class="lifetime">'env</span>,
+        T: Send + <span class="lifetime">'env</span>,
     {
         <span class="comment">// The result of `f` will be stored here.
         </span><span class="kw">let </span>result = SharedOption::default();
@@ -1046,7 +1047,7 @@
             <span class="kw">let </span>result = Arc::clone(<span class="kw-2">&amp;</span>result);
 
             <span class="comment">// A clone of the scope that will be moved into the new thread.
-            </span><span class="kw">let </span>scope = Scope::&lt;<span class="lifetime">&#39;env</span>&gt; {
+            </span><span class="kw">let </span>scope = Scope::&lt;<span class="lifetime">'env</span>&gt; {
                 handles: Arc::clone(<span class="kw-2">&amp;</span><span class="self">self</span>.scope.handles),
                 wait_group: <span class="self">self</span>.scope.wait_group.clone(),
                 _marker: PhantomData,
@@ -1055,19 +1056,19 @@
             <span class="comment">// Spawn the thread.
             </span><span class="kw">let </span>handle = {
                 <span class="kw">let </span>closure = <span class="kw">move </span>|| {
-                    <span class="comment">// Make sure the scope is inside the closure with the proper `&#39;env` lifetime.
-                    </span><span class="kw">let </span>scope: Scope&lt;<span class="lifetime">&#39;env</span>&gt; = scope;
+                    <span class="comment">// Make sure the scope is inside the closure with the proper `'env` lifetime.
+                    </span><span class="kw">let </span>scope: Scope&lt;<span class="lifetime">'env</span>&gt; = scope;
 
                     <span class="comment">// Run the closure.
                     </span><span class="kw">let </span>res = f(<span class="kw-2">&amp;</span>scope);
 
-                    <span class="comment">// Store the result if the closure didn&#39;t panic.
+                    <span class="comment">// Store the result if the closure didn't panic.
                     </span><span class="kw-2">*</span>result.lock().unwrap() = <span class="prelude-val">Some</span>(res);
                 };
 
-                <span class="comment">// Allocate `closure` on the heap and erase the `&#39;env` bound.
-                </span><span class="kw">let </span>closure: Box&lt;<span class="kw">dyn </span>FnOnce() + Send + <span class="lifetime">&#39;env</span>&gt; = Box::new(closure);
-                <span class="kw">let </span>closure: Box&lt;<span class="kw">dyn </span>FnOnce() + Send + <span class="lifetime">&#39;static</span>&gt; =
+                <span class="comment">// Allocate `closure` on the heap and erase the `'env` bound.
+                </span><span class="kw">let </span>closure: Box&lt;<span class="kw">dyn </span>FnOnce() + Send + <span class="lifetime">'env</span>&gt; = Box::new(closure);
+                <span class="kw">let </span>closure: Box&lt;<span class="kw">dyn </span>FnOnce() + Send + <span class="lifetime">'static</span>&gt; =
                     <span class="kw">unsafe </span>{ mem::transmute(closure) };
 
                 <span class="comment">// Finally, spawn the closure.
@@ -1091,14 +1092,14 @@
     }
 }
 
-<span class="kw">unsafe impl</span>&lt;T&gt; Send <span class="kw">for </span>ScopedJoinHandle&lt;<span class="lifetime">&#39;_</span>, T&gt; {}
-<span class="kw">unsafe impl</span>&lt;T&gt; Sync <span class="kw">for </span>ScopedJoinHandle&lt;<span class="lifetime">&#39;_</span>, T&gt; {}
+<span class="kw">unsafe impl</span>&lt;T&gt; Send <span class="kw">for </span>ScopedJoinHandle&lt;<span class="lifetime">'_</span>, T&gt; {}
+<span class="kw">unsafe impl</span>&lt;T&gt; Sync <span class="kw">for </span>ScopedJoinHandle&lt;<span class="lifetime">'_</span>, T&gt; {}
 
 <span class="doccomment">/// A handle that can be used to join its scoped thread.
 ///
 /// This struct is created by the [`Scope::spawn`] method and the
 /// [`ScopedThreadBuilder::spawn`] method.
-</span><span class="kw">pub struct </span>ScopedJoinHandle&lt;<span class="lifetime">&#39;scope</span>, T&gt; {
+</span><span class="kw">pub struct </span>ScopedJoinHandle&lt;<span class="lifetime">'scope</span>, T&gt; {
     <span class="doccomment">/// A join handle to the spawned thread.
     </span>handle: SharedOption&lt;thread::JoinHandle&lt;()&gt;&gt;,
 
@@ -1108,11 +1109,11 @@
     <span class="doccomment">/// A handle to the the spawned thread.
     </span>thread: thread::Thread,
 
-    <span class="doccomment">/// Borrows the parent scope with lifetime `&#39;scope`.
-    </span>_marker: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;scope </span>()&gt;,
+    <span class="doccomment">/// Borrows the parent scope with lifetime `'scope`.
+    </span>_marker: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">'scope </span>()&gt;,
 }
 
-<span class="kw">impl</span>&lt;T&gt; ScopedJoinHandle&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+<span class="kw">impl</span>&lt;T&gt; ScopedJoinHandle&lt;<span class="lifetime">'_</span>, T&gt; {
     <span class="doccomment">/// Waits for the thread to finish and returns its result.
     ///
     /// If the child thread panics, an error is returned. Note that if panics are implemented by
@@ -1129,8 +1130,8 @@
     /// use crossbeam_utils::thread;
     ///
     /// thread::scope(|s| {
-    ///     let handle1 = s.spawn(|_| println!(&quot;I&#39;m a happy thread :)&quot;));
-    ///     let handle2 = s.spawn(|_| panic!(&quot;I&#39;m a sad thread :(&quot;));
+    ///     let handle1 = s.spawn(|_| println!("I'm a happy thread :)"));
+    ///     let handle2 = s.spawn(|_| panic!("I'm a sad thread :("));
     ///
     ///     // Join the first thread and verify that it succeeded.
     ///     let res = handle1.join();
@@ -1160,8 +1161,8 @@
     /// use crossbeam_utils::thread;
     ///
     /// thread::scope(|s| {
-    ///     let handle = s.spawn(|_| println!(&quot;A child thread is running&quot;));
-    ///     println!(&quot;The child thread ID: {:?}&quot;, handle.thread().id());
+    ///     let handle = s.spawn(|_| println!("A child thread is running"));
+    ///     println!("The child thread ID: {:?}", handle.thread().id());
     /// }).unwrap();
     /// ```
     </span><span class="kw">pub fn </span>thread(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>thread::Thread {
@@ -1175,7 +1176,7 @@
     <span class="kw">use </span><span class="kw">super</span>::ScopedJoinHandle;
     <span class="kw">use </span>std::os::unix::thread::{JoinHandleExt, RawPthread};
 
-    <span class="kw">impl</span>&lt;T&gt; JoinHandleExt <span class="kw">for </span>ScopedJoinHandle&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+    <span class="kw">impl</span>&lt;T&gt; JoinHandleExt <span class="kw">for </span>ScopedJoinHandle&lt;<span class="lifetime">'_</span>, T&gt; {
         <span class="kw">fn </span>as_pthread_t(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RawPthread {
             <span class="comment">// Borrow the handle. The handle will surely be available because the root scope waits
             // for nested scopes before joining remaining threads.
@@ -1193,7 +1194,7 @@
     <span class="kw">use </span><span class="kw">super</span>::ScopedJoinHandle;
     <span class="kw">use </span>std::os::windows::io::{AsRawHandle, IntoRawHandle, RawHandle};
 
-    <span class="kw">impl</span>&lt;T&gt; AsRawHandle <span class="kw">for </span>ScopedJoinHandle&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+    <span class="kw">impl</span>&lt;T&gt; AsRawHandle <span class="kw">for </span>ScopedJoinHandle&lt;<span class="lifetime">'_</span>, T&gt; {
         <span class="kw">fn </span>as_raw_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RawHandle {
             <span class="comment">// Borrow the handle. The handle will surely be available because the root scope waits
             // for nested scopes before joining remaining threads.
@@ -1202,16 +1203,16 @@
         }
     }
 
-    <span class="kw">impl</span>&lt;T&gt; IntoRawHandle <span class="kw">for </span>ScopedJoinHandle&lt;<span class="lifetime">&#39;_</span>, T&gt; {
+    <span class="kw">impl</span>&lt;T&gt; IntoRawHandle <span class="kw">for </span>ScopedJoinHandle&lt;<span class="lifetime">'_</span>, T&gt; {
         <span class="kw">fn </span>into_raw_handle(<span class="self">self</span>) -&gt; RawHandle {
             <span class="self">self</span>.as_raw_handle()
         }
     }
 }
 
-<span class="kw">impl</span>&lt;T&gt; fmt::Debug <span class="kw">for </span>ScopedJoinHandle&lt;<span class="lifetime">&#39;_</span>, T&gt; {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        f.pad(<span class="string">&quot;ScopedJoinHandle { .. }&quot;</span>)
+<span class="kw">impl</span>&lt;T&gt; fmt::Debug <span class="kw">for </span>ScopedJoinHandle&lt;<span class="lifetime">'_</span>, T&gt; {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
+        f.pad(<span class="string">"ScopedJoinHandle { .. }"</span>)
     }
 }
 </code></pre></div></section></main></body></html>

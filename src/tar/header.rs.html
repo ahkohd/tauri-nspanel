@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tar-0.4.40/src/header.rs`."><title>header.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tar" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tar-0.4.40/src/header.rs`."><title>header.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tar" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1784,8 +1785,8 @@
         <span class="kw">let </span><span class="kw-2">mut </span>header = Header { bytes: [<span class="number">0</span>; <span class="number">512</span>] };
         <span class="kw">unsafe </span>{
             <span class="kw">let </span>gnu = cast_mut::&lt;<span class="kw">_</span>, GnuHeader&gt;(<span class="kw-2">&amp;mut </span>header);
-            gnu.magic = <span class="kw-2">*</span><span class="string">b&quot;ustar &quot;</span>;
-            gnu.version = <span class="kw-2">*</span><span class="string">b&quot; \0&quot;</span>;
+            gnu.magic = <span class="kw-2">*</span><span class="string">b"ustar "</span>;
+            gnu.version = <span class="kw-2">*</span><span class="string">b" \0"</span>;
         }
         header.set_mtime(<span class="number">0</span>);
         header
@@ -1802,8 +1803,8 @@
         <span class="kw">let </span><span class="kw-2">mut </span>header = Header { bytes: [<span class="number">0</span>; <span class="number">512</span>] };
         <span class="kw">unsafe </span>{
             <span class="kw">let </span>gnu = cast_mut::&lt;<span class="kw">_</span>, UstarHeader&gt;(<span class="kw-2">&amp;mut </span>header);
-            gnu.magic = <span class="kw-2">*</span><span class="string">b&quot;ustar\0&quot;</span>;
-            gnu.version = <span class="kw-2">*</span><span class="string">b&quot;00&quot;</span>;
+            gnu.magic = <span class="kw-2">*</span><span class="string">b"ustar\0"</span>;
+            gnu.version = <span class="kw-2">*</span><span class="string">b"00"</span>;
         }
         header.set_mtime(<span class="number">0</span>);
         header
@@ -1813,7 +1814,7 @@
     ///
     /// This header format is the original archive header format which all other
     /// versions are compatible with (e.g. they are a superset). This header
-    /// format limits the path name limit and isn&#39;t able to contain extra
+    /// format limits the path name limit and isn't able to contain extra
     /// metadata like atime/ctime.
     </span><span class="kw">pub fn </span>new_old() -&gt; Header {
         <span class="kw">let </span><span class="kw-2">mut </span>header = Header { bytes: [<span class="number">0</span>; <span class="number">512</span>] };
@@ -1823,15 +1824,15 @@
 
     <span class="kw">fn </span>is_ustar(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="kw">let </span>ustar = <span class="kw">unsafe </span>{ cast::&lt;<span class="kw">_</span>, UstarHeader&gt;(<span class="self">self</span>) };
-        ustar.magic[..] == <span class="string">b&quot;ustar\0&quot;</span>[..] &amp;&amp; ustar.version[..] == <span class="string">b&quot;00&quot;</span>[..]
+        ustar.magic[..] == <span class="string">b"ustar\0"</span>[..] &amp;&amp; ustar.version[..] == <span class="string">b"00"</span>[..]
     }
 
     <span class="kw">fn </span>is_gnu(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="kw">let </span>ustar = <span class="kw">unsafe </span>{ cast::&lt;<span class="kw">_</span>, UstarHeader&gt;(<span class="self">self</span>) };
-        ustar.magic[..] == <span class="string">b&quot;ustar &quot;</span>[..] &amp;&amp; ustar.version[..] == <span class="string">b&quot; \0&quot;</span>[..]
+        ustar.magic[..] == <span class="string">b"ustar "</span>[..] &amp;&amp; ustar.version[..] == <span class="string">b" \0"</span>[..]
     }
 
-    <span class="doccomment">/// View this archive header as a raw &quot;old&quot; archive header.
+    <span class="doccomment">/// View this archive header as a raw "old" archive header.
     ///
     /// This view will always succeed as all archive header formats will fill
     /// out at least the fields specified in the old header format.
@@ -1852,7 +1853,7 @@
     ///
     /// This cast may not succeed as this function will test whether the
     /// magic/version fields of the UStar format have the appropriate values,
-    /// returning `None` if they aren&#39;t correct.
+    /// returning `None` if they aren't correct.
     </span><span class="kw">pub fn </span>as_ustar(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>UstarHeader&gt; {
         <span class="kw">if </span><span class="self">self</span>.is_ustar() {
             <span class="prelude-val">Some</span>(<span class="kw">unsafe </span>{ cast(<span class="self">self</span>) })
@@ -1878,7 +1879,7 @@
     ///
     /// This cast may not succeed as this function will test whether the
     /// magic/version fields of the GNU format have the appropriate values,
-    /// returning `None` if they aren&#39;t correct.
+    /// returning `None` if they aren't correct.
     </span><span class="kw">pub fn </span>as_gnu(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>GnuHeader&gt; {
         <span class="kw">if </span><span class="self">self</span>.is_gnu() {
             <span class="prelude-val">Some</span>(<span class="kw">unsafe </span>{ cast(<span class="self">self</span>) })
@@ -1918,7 +1919,7 @@
     <span class="doccomment">/// Blanket sets the metadata in this header from the metadata argument
     /// provided.
     ///
-    /// This is useful for initializing a `Header` from the OS&#39;s metadata from a
+    /// This is useful for initializing a `Header` from the OS's metadata from a
     /// file. By default, this will use `HeaderMode::Complete` to include all
     /// metadata.
     </span><span class="kw">pub fn </span>set_metadata(<span class="kw-2">&amp;mut </span><span class="self">self</span>, meta: <span class="kw-2">&amp;</span>fs::Metadata) {
@@ -1931,7 +1932,7 @@
         <span class="self">self</span>.fill_from(meta, mode);
     }
 
-    <span class="doccomment">/// Returns the size of entry&#39;s data this header represents.
+    <span class="doccomment">/// Returns the size of entry's data this header represents.
     ///
     /// This is different from `Header::size` for sparse files, which have
     /// some longer `size()` but shorter `entry_size()`. The `entry_size()`
@@ -1943,7 +1944,7 @@
         num_field_wrapper_from(<span class="kw-2">&amp;</span><span class="self">self</span>.as_old().size).map_err(|err| {
             io::Error::new(
                 err.kind(),
-                <span class="macro">format!</span>(<span class="string">&quot;{} when getting size for {}&quot;</span>, err, <span class="self">self</span>.path_lossy()),
+                <span class="macro">format!</span>(<span class="string">"{} when getting size for {}"</span>, err, <span class="self">self</span>.path_lossy()),
             )
         })
     }
@@ -1954,7 +1955,7 @@
     </span><span class="kw">pub fn </span>size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; io::Result&lt;u64&gt; {
         <span class="kw">if </span><span class="self">self</span>.entry_type().is_gnu_sparse() {
             <span class="self">self</span>.as_gnu()
-                .ok_or_else(|| other(<span class="string">&quot;sparse header was not a gnu header&quot;</span>))
+                .ok_or_else(|| other(<span class="string">"sparse header was not a gnu header"</span>))
                 .and_then(|h| h.real_size())
         } <span class="kw">else </span>{
             <span class="self">self</span>.entry_size()
@@ -1993,7 +1994,7 @@
         }
     }
 
-    <span class="doccomment">/// Gets the path in a &quot;lossy&quot; way, used for error reporting ONLY.
+    <span class="doccomment">/// Gets the path in a "lossy" way, used for error reporting ONLY.
     </span><span class="kw">fn </span>path_lossy(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
         String::from_utf8_lossy(<span class="kw-2">&amp;</span><span class="self">self</span>.path_bytes()).to_string()
     }
@@ -2003,7 +2004,7 @@
     /// This function will set the pathname listed in this header, encoding it
     /// in the appropriate format. May fail if the path is too long or if the
     /// path specified is not Unicode and this is a Windows platform. Will
-    /// strip out any &quot;.&quot; path component, which signifies the current directory.
+    /// strip out any "." path component, which signifies the current directory.
     ///
     /// Note: This function does not support names over 100 bytes, or paths
     /// over 255 bytes, even for formats that support longer names. Instead,
@@ -2020,7 +2021,7 @@
         copy_path_into(<span class="kw-2">&amp;mut </span><span class="self">self</span>.as_old_mut().name, path, <span class="bool-val">false</span>).map_err(|err| {
             io::Error::new(
                 err.kind(),
-                <span class="macro">format!</span>(<span class="string">&quot;{} when setting path for {}&quot;</span>, err, <span class="self">self</span>.path_lossy()),
+                <span class="macro">format!</span>(<span class="string">"{} when setting path for {}"</span>, err, <span class="self">self</span>.path_lossy()),
             )
         })
     }
@@ -2061,7 +2062,7 @@
     /// This function will set the linkname listed in this header, encoding it
     /// in the appropriate format. May fail if the link name is too long or if
     /// the path specified is not Unicode and this is a Windows platform. Will
-    /// strip out any &quot;.&quot; path component, which signifies the current directory.
+    /// strip out any "." path component, which signifies the current directory.
     ///
     /// To use GNU long link names, prefer instead [`crate::Builder::append_link`].
     </span><span class="kw">pub fn </span>set_link_name&lt;P: AsRef&lt;Path&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, p: P) -&gt; io::Result&lt;()&gt; {
@@ -2072,7 +2073,7 @@
         copy_path_into(<span class="kw-2">&amp;mut </span><span class="self">self</span>.as_old_mut().linkname, path, <span class="bool-val">true</span>).map_err(|err| {
             io::Error::new(
                 err.kind(),
-                <span class="macro">format!</span>(<span class="string">&quot;{} when setting link name for {}&quot;</span>, err, <span class="self">self</span>.path_lossy()),
+                <span class="macro">format!</span>(<span class="string">"{} when setting link name for {}"</span>, err, <span class="self">self</span>.path_lossy()),
             )
         })
     }
@@ -2098,7 +2099,7 @@
             .map_err(|err| {
                 io::Error::new(
                     err.kind(),
-                    <span class="macro">format!</span>(<span class="string">&quot;{} when getting mode for {}&quot;</span>, err, <span class="self">self</span>.path_lossy()),
+                    <span class="macro">format!</span>(<span class="string">"{} when getting mode for {}"</span>, err, <span class="self">self</span>.path_lossy()),
                 )
             })
     }
@@ -2108,7 +2109,7 @@
         octal_into(<span class="kw-2">&amp;mut </span><span class="self">self</span>.as_old_mut().mode, mode);
     }
 
-    <span class="doccomment">/// Returns the value of the owner&#39;s user ID field
+    <span class="doccomment">/// Returns the value of the owner's user ID field
     ///
     /// May return an error if the field is corrupted.
     </span><span class="kw">pub fn </span>uid(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; io::Result&lt;u64&gt; {
@@ -2117,7 +2118,7 @@
             .map_err(|err| {
                 io::Error::new(
                     err.kind(),
-                    <span class="macro">format!</span>(<span class="string">&quot;{} when getting uid for {}&quot;</span>, err, <span class="self">self</span>.path_lossy()),
+                    <span class="macro">format!</span>(<span class="string">"{} when getting uid for {}"</span>, err, <span class="self">self</span>.path_lossy()),
                 )
             })
     }
@@ -2127,14 +2128,14 @@
         num_field_wrapper_into(<span class="kw-2">&amp;mut </span><span class="self">self</span>.as_old_mut().uid, uid);
     }
 
-    <span class="doccomment">/// Returns the value of the group&#39;s user ID field
+    <span class="doccomment">/// Returns the value of the group's user ID field
     </span><span class="kw">pub fn </span>gid(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; io::Result&lt;u64&gt; {
         num_field_wrapper_from(<span class="kw-2">&amp;</span><span class="self">self</span>.as_old().gid)
             .map(|u| u <span class="kw">as </span>u64)
             .map_err(|err| {
                 io::Error::new(
                     err.kind(),
-                    <span class="macro">format!</span>(<span class="string">&quot;{} when getting gid for {}&quot;</span>, err, <span class="self">self</span>.path_lossy()),
+                    <span class="macro">format!</span>(<span class="string">"{} when getting gid for {}"</span>, err, <span class="self">self</span>.path_lossy()),
                 )
             })
     }
@@ -2149,7 +2150,7 @@
         num_field_wrapper_from(<span class="kw-2">&amp;</span><span class="self">self</span>.as_old().mtime).map_err(|err| {
             io::Error::new(
                 err.kind(),
-                <span class="macro">format!</span>(<span class="string">&quot;{} when getting mtime for {}&quot;</span>, err, <span class="self">self</span>.path_lossy()),
+                <span class="macro">format!</span>(<span class="string">"{} when getting mtime for {}"</span>, err, <span class="self">self</span>.path_lossy()),
             )
         })
     }
@@ -2200,7 +2201,7 @@
         <span class="kw">if let </span><span class="prelude-val">Some</span>(gnu) = <span class="self">self</span>.as_gnu_mut() {
             gnu.set_username(name)
         } <span class="kw">else </span>{
-            <span class="prelude-val">Err</span>(other(<span class="string">&quot;not a ustar or gnu archive, cannot set username&quot;</span>))
+            <span class="prelude-val">Err</span>(other(<span class="string">"not a ustar or gnu archive, cannot set username"</span>))
         }
     }
 
@@ -2242,7 +2243,7 @@
         <span class="kw">if let </span><span class="prelude-val">Some</span>(gnu) = <span class="self">self</span>.as_gnu_mut() {
             gnu.set_groupname(name)
         } <span class="kw">else </span>{
-            <span class="prelude-val">Err</span>(other(<span class="string">&quot;not a ustar or gnu archive, cannot set groupname&quot;</span>))
+            <span class="prelude-val">Err</span>(other(<span class="string">"not a ustar or gnu archive, cannot set groupname"</span>))
         }
     }
 
@@ -2275,7 +2276,7 @@
             gnu.set_device_major(major);
             <span class="prelude-val">Ok</span>(())
         } <span class="kw">else </span>{
-            <span class="prelude-val">Err</span>(other(<span class="string">&quot;not a ustar or gnu archive, cannot set dev_major&quot;</span>))
+            <span class="prelude-val">Err</span>(other(<span class="string">"not a ustar or gnu archive, cannot set dev_major"</span>))
         }
     }
 
@@ -2308,7 +2309,7 @@
             gnu.set_device_minor(minor);
             <span class="prelude-val">Ok</span>(())
         } <span class="kw">else </span>{
-            <span class="prelude-val">Err</span>(other(<span class="string">&quot;not a ustar or gnu archive, cannot set dev_minor&quot;</span>))
+            <span class="prelude-val">Err</span>(other(<span class="string">"not a ustar or gnu archive, cannot set dev_minor"</span>))
         }
     }
 
@@ -2331,7 +2332,7 @@
             .map_err(|err| {
                 io::Error::new(
                     err.kind(),
-                    <span class="macro">format!</span>(<span class="string">&quot;{} when getting cksum for {}&quot;</span>, err, <span class="self">self</span>.path_lossy()),
+                    <span class="macro">format!</span>(<span class="string">"{} when getting cksum for {}"</span>, err, <span class="self">self</span>.path_lossy()),
                 )
             })
     }
@@ -2351,7 +2352,7 @@
         <span class="kw">let </span>len = old.cksum.len();
         <span class="self">self</span>.bytes[<span class="number">0</span>..offset]
             .iter()
-            .chain(iter::repeat(<span class="kw-2">&amp;</span><span class="string">b&#39; &#39;</span>).take(len))
+            .chain(iter::repeat(<span class="kw-2">&amp;</span><span class="string">b' '</span>).take(len))
             .chain(<span class="kw-2">&amp;</span><span class="self">self</span>.bytes[offset + len..])
             .fold(<span class="number">0</span>, |a, b| a + (<span class="kw-2">*</span>b <span class="kw">as </span>u32))
     }
@@ -2374,7 +2375,7 @@
         }
     }
 
-    <span class="attr">#[cfg(target_arch = <span class="string">&quot;wasm32&quot;</span>)]
+    <span class="attr">#[cfg(target_arch = <span class="string">"wasm32"</span>)]
     #[allow(unused_variables)]
     </span><span class="kw">fn </span>fill_platform_from(<span class="kw-2">&amp;mut </span><span class="self">self</span>, meta: <span class="kw-2">&amp;</span>fs::Metadata, mode: HeaderMode) {
         <span class="macro">unimplemented!</span>();
@@ -2393,10 +2394,10 @@
                 <span class="comment">// We could in theory set the mtime to zero here, but not all
                 // tools seem to behave well when ingesting files with a 0
                 // timestamp. For example rust-lang/cargo#9512 shows that lldb
-                // doesn&#39;t ingest files with a zero timestamp correctly.
+                // doesn't ingest files with a zero timestamp correctly.
                 //
                 // We just need things to be deterministic here so just pick
-                // something that isn&#39;t zero. This time, chosen after careful
+                // something that isn't zero. This time, chosen after careful
                 // deliberation, corresponds to Jul 23, 2006 -- the date of the
                 // first commit for what would become Rust.
                 </span><span class="self">self</span>.set_mtime(<span class="number">1153704088</span>);
@@ -2415,10 +2416,10 @@
         }
 
         <span class="comment">// Note that if we are a GNU header we *could* set atime/ctime, except
-        // the `tar` utility doesn&#39;t do that by default and it causes problems
+        // the `tar` utility doesn't do that by default and it causes problems
         // with 7-zip [1].
         //
-        // It&#39;s always possible to fill them out manually, so we just don&#39;t fill
+        // It's always possible to fill them out manually, so we just don't fill
         // it out automatically here.
         //
         // [1]: https://github.com/alexcrichton/tar-rs/issues/70
@@ -2434,14 +2435,14 @@
                 libc::S_IFBLK =&gt; EntryType::block_special(),
                 libc::S_IFDIR =&gt; EntryType::dir(),
                 libc::S_IFIFO =&gt; EntryType::fifo(),
-                <span class="kw">_ </span>=&gt; EntryType::new(<span class="string">b&#39; &#39;</span>),
+                <span class="kw">_ </span>=&gt; EntryType::new(<span class="string">b' '</span>),
             }
         }
     }
 
     <span class="attr">#[cfg(windows)]
     </span><span class="kw">fn </span>fill_platform_from(<span class="kw-2">&amp;mut </span><span class="self">self</span>, meta: <span class="kw-2">&amp;</span>fs::Metadata, mode: HeaderMode) {
-        <span class="comment">// There&#39;s no concept of a file mode on Windows, so do a best approximation here.
+        <span class="comment">// There's no concept of a file mode on Windows, so do a best approximation here.
         </span><span class="kw">match </span>mode {
             HeaderMode::Complete =&gt; {
                 <span class="self">self</span>.set_uid(<span class="number">0</span>);
@@ -2481,50 +2482,50 @@
         } <span class="kw">else if </span>ft.is_symlink() {
             EntryType::symlink()
         } <span class="kw">else </span>{
-            EntryType::new(<span class="string">b&#39; &#39;</span>)
+            EntryType::new(<span class="string">b' '</span>)
         });
     }
 
     <span class="kw">fn </span>debug_fields(<span class="kw-2">&amp;</span><span class="self">self</span>, b: <span class="kw-2">&amp;mut </span>fmt::DebugStruct) {
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(entry_size) = <span class="self">self</span>.entry_size() {
-            b.field(<span class="string">&quot;entry_size&quot;</span>, <span class="kw-2">&amp;</span>entry_size);
+            b.field(<span class="string">"entry_size"</span>, <span class="kw-2">&amp;</span>entry_size);
         }
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(size) = <span class="self">self</span>.size() {
-            b.field(<span class="string">&quot;size&quot;</span>, <span class="kw-2">&amp;</span>size);
+            b.field(<span class="string">"size"</span>, <span class="kw-2">&amp;</span>size);
         }
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(path) = <span class="self">self</span>.path() {
-            b.field(<span class="string">&quot;path&quot;</span>, <span class="kw-2">&amp;</span>path);
+            b.field(<span class="string">"path"</span>, <span class="kw-2">&amp;</span>path);
         }
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(link_name) = <span class="self">self</span>.link_name() {
-            b.field(<span class="string">&quot;link_name&quot;</span>, <span class="kw-2">&amp;</span>link_name);
+            b.field(<span class="string">"link_name"</span>, <span class="kw-2">&amp;</span>link_name);
         }
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(mode) = <span class="self">self</span>.mode() {
-            b.field(<span class="string">&quot;mode&quot;</span>, <span class="kw-2">&amp;</span>DebugAsOctal(mode));
+            b.field(<span class="string">"mode"</span>, <span class="kw-2">&amp;</span>DebugAsOctal(mode));
         }
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(uid) = <span class="self">self</span>.uid() {
-            b.field(<span class="string">&quot;uid&quot;</span>, <span class="kw-2">&amp;</span>uid);
+            b.field(<span class="string">"uid"</span>, <span class="kw-2">&amp;</span>uid);
         }
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(gid) = <span class="self">self</span>.gid() {
-            b.field(<span class="string">&quot;gid&quot;</span>, <span class="kw-2">&amp;</span>gid);
+            b.field(<span class="string">"gid"</span>, <span class="kw-2">&amp;</span>gid);
         }
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(mtime) = <span class="self">self</span>.mtime() {
-            b.field(<span class="string">&quot;mtime&quot;</span>, <span class="kw-2">&amp;</span>mtime);
+            b.field(<span class="string">"mtime"</span>, <span class="kw-2">&amp;</span>mtime);
         }
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(username) = <span class="self">self</span>.username() {
-            b.field(<span class="string">&quot;username&quot;</span>, <span class="kw-2">&amp;</span>username);
+            b.field(<span class="string">"username"</span>, <span class="kw-2">&amp;</span>username);
         }
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(groupname) = <span class="self">self</span>.groupname() {
-            b.field(<span class="string">&quot;groupname&quot;</span>, <span class="kw-2">&amp;</span>groupname);
+            b.field(<span class="string">"groupname"</span>, <span class="kw-2">&amp;</span>groupname);
         }
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(device_major) = <span class="self">self</span>.device_major() {
-            b.field(<span class="string">&quot;device_major&quot;</span>, <span class="kw-2">&amp;</span>device_major);
+            b.field(<span class="string">"device_major"</span>, <span class="kw-2">&amp;</span>device_major);
         }
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(device_minor) = <span class="self">self</span>.device_minor() {
-            b.field(<span class="string">&quot;device_minor&quot;</span>, <span class="kw-2">&amp;</span>device_minor);
+            b.field(<span class="string">"device_minor"</span>, <span class="kw-2">&amp;</span>device_minor);
         }
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(cksum) = <span class="self">self</span>.cksum() {
-            b.field(<span class="string">&quot;cksum&quot;</span>, <span class="kw-2">&amp;</span>cksum);
-            b.field(<span class="string">&quot;cksum_valid&quot;</span>, <span class="kw-2">&amp;</span>(cksum == <span class="self">self</span>.calculate_cksum()));
+            b.field(<span class="string">"cksum"</span>, <span class="kw-2">&amp;</span>cksum);
+            b.field(<span class="string">"cksum_valid"</span>, <span class="kw-2">&amp;</span>(cksum == <span class="self">self</span>.calculate_cksum()));
         }
     }
 }
@@ -2581,7 +2582,7 @@
 
 <span class="kw">impl </span>fmt::Debug <span class="kw">for </span>OldHeader {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
-        <span class="kw">let </span><span class="kw-2">mut </span>f = f.debug_struct(<span class="string">&quot;OldHeader&quot;</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>f = f.debug_struct(<span class="string">"OldHeader"</span>);
         <span class="self">self</span>.as_header().debug_fields(<span class="kw-2">&amp;mut </span>f);
         f.finish()
     }
@@ -2590,21 +2591,21 @@
 <span class="kw">impl </span>UstarHeader {
     <span class="doccomment">/// See `Header::path_bytes`
     </span><span class="kw">pub fn </span>path_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Cow&lt;[u8]&gt; {
-        <span class="kw">if </span><span class="self">self</span>.prefix[<span class="number">0</span>] == <span class="number">0 </span>&amp;&amp; !<span class="self">self</span>.name.contains(<span class="kw-2">&amp;</span><span class="string">b&#39;\\&#39;</span>) {
+        <span class="kw">if </span><span class="self">self</span>.prefix[<span class="number">0</span>] == <span class="number">0 </span>&amp;&amp; !<span class="self">self</span>.name.contains(<span class="kw-2">&amp;</span><span class="string">b'\\'</span>) {
             Cow::Borrowed(truncate(<span class="kw-2">&amp;</span><span class="self">self</span>.name))
         } <span class="kw">else </span>{
             <span class="kw">let </span><span class="kw-2">mut </span>bytes = Vec::new();
             <span class="kw">let </span>prefix = truncate(<span class="kw-2">&amp;</span><span class="self">self</span>.prefix);
             <span class="kw">if </span>!prefix.is_empty() {
                 bytes.extend_from_slice(prefix);
-                bytes.push(<span class="string">b&#39;/&#39;</span>);
+                bytes.push(<span class="string">b'/'</span>);
             }
             bytes.extend_from_slice(truncate(<span class="kw-2">&amp;</span><span class="self">self</span>.name));
             Cow::Owned(bytes)
         }
     }
 
-    <span class="doccomment">/// Gets the path in a &quot;lossy&quot; way, used for error reporting ONLY.
+    <span class="doccomment">/// Gets the path in a "lossy" way, used for error reporting ONLY.
     </span><span class="kw">fn </span>path_lossy(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
         String::from_utf8_lossy(<span class="kw-2">&amp;</span><span class="self">self</span>.path_bytes()).to_string()
     }
@@ -2616,7 +2617,7 @@
 
     <span class="kw">fn </span>_set_path(<span class="kw-2">&amp;mut </span><span class="self">self</span>, path: <span class="kw-2">&amp;</span>Path) -&gt; io::Result&lt;()&gt; {
         <span class="comment">// This can probably be optimized quite a bit more, but for now just do
-        // something that&#39;s relatively easy and readable.
+        // something that's relatively easy and readable.
         //
         // First up, if the path fits within `self.name` then we just shove it
         // in there. If not then we try to split it between some existing path
@@ -2629,7 +2630,7 @@
             copy_path_into(<span class="kw-2">&amp;mut </span><span class="self">self</span>.name, path, <span class="bool-val">false</span>).map_err(|err| {
                 io::Error::new(
                     err.kind(),
-                    <span class="macro">format!</span>(<span class="string">&quot;{} when setting path for {}&quot;</span>, err, <span class="self">self</span>.path_lossy()),
+                    <span class="macro">format!</span>(<span class="string">"{} when setting path for {}"</span>, err, <span class="self">self</span>.path_lossy()),
                 )
             })<span class="question-mark">?</span>;
         } <span class="kw">else </span>{
@@ -2640,7 +2641,7 @@
                     <span class="prelude-val">Some</span>(parent) =&gt; prefix = parent,
                     <span class="prelude-val">None </span>=&gt; {
                         <span class="kw">return </span><span class="prelude-val">Err</span>(other(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
-                            <span class="string">&quot;path cannot be split to be inserted into archive: {}&quot;</span>,
+                            <span class="string">"path cannot be split to be inserted into archive: {}"</span>,
                             path.display()
                         )));
                     }
@@ -2653,14 +2654,14 @@
             copy_path_into(<span class="kw-2">&amp;mut </span><span class="self">self</span>.prefix, prefix, <span class="bool-val">false</span>).map_err(|err| {
                 io::Error::new(
                     err.kind(),
-                    <span class="macro">format!</span>(<span class="string">&quot;{} when setting path for {}&quot;</span>, err, <span class="self">self</span>.path_lossy()),
+                    <span class="macro">format!</span>(<span class="string">"{} when setting path for {}"</span>, err, <span class="self">self</span>.path_lossy()),
                 )
             })<span class="question-mark">?</span>;
             <span class="kw">let </span>path = bytes2path(Cow::Borrowed(<span class="kw-2">&amp;</span>bytes[prefixlen + <span class="number">1</span>..]))<span class="question-mark">?</span>;
             copy_path_into(<span class="kw-2">&amp;mut </span><span class="self">self</span>.name, <span class="kw-2">&amp;</span>path, <span class="bool-val">false</span>).map_err(|err| {
                 io::Error::new(
                     err.kind(),
-                    <span class="macro">format!</span>(<span class="string">&quot;{} when setting path for {}&quot;</span>, err, <span class="self">self</span>.path_lossy()),
+                    <span class="macro">format!</span>(<span class="string">"{} when setting path for {}"</span>, err, <span class="self">self</span>.path_lossy()),
                 )
             })<span class="question-mark">?</span>;
         }
@@ -2677,7 +2678,7 @@
         copy_into(<span class="kw-2">&amp;mut </span><span class="self">self</span>.uname, name.as_bytes()).map_err(|err| {
             io::Error::new(
                 err.kind(),
-                <span class="macro">format!</span>(<span class="string">&quot;{} when setting username for {}&quot;</span>, err, <span class="self">self</span>.path_lossy()),
+                <span class="macro">format!</span>(<span class="string">"{} when setting username for {}"</span>, err, <span class="self">self</span>.path_lossy()),
             )
         })
     }
@@ -2692,7 +2693,7 @@
         copy_into(<span class="kw-2">&amp;mut </span><span class="self">self</span>.gname, name.as_bytes()).map_err(|err| {
             io::Error::new(
                 err.kind(),
-                <span class="macro">format!</span>(<span class="string">&quot;{} when setting groupname for {}&quot;</span>, err, <span class="self">self</span>.path_lossy()),
+                <span class="macro">format!</span>(<span class="string">"{} when setting groupname for {}"</span>, err, <span class="self">self</span>.path_lossy()),
             )
         })
     }
@@ -2705,7 +2706,7 @@
                 io::Error::new(
                     err.kind(),
                     <span class="macro">format!</span>(
-                        <span class="string">&quot;{} when getting device_major for {}&quot;</span>,
+                        <span class="string">"{} when getting device_major for {}"</span>,
                         err,
                         <span class="self">self</span>.path_lossy()
                     ),
@@ -2726,7 +2727,7 @@
                 io::Error::new(
                     err.kind(),
                     <span class="macro">format!</span>(
-                        <span class="string">&quot;{} when getting device_minor for {}&quot;</span>,
+                        <span class="string">"{} when getting device_minor for {}"</span>,
                         err,
                         <span class="self">self</span>.path_lossy()
                     ),
@@ -2752,7 +2753,7 @@
 
 <span class="kw">impl </span>fmt::Debug <span class="kw">for </span>UstarHeader {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
-        <span class="kw">let </span><span class="kw-2">mut </span>f = f.debug_struct(<span class="string">&quot;UstarHeader&quot;</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>f = f.debug_struct(<span class="string">"UstarHeader"</span>);
         <span class="self">self</span>.as_header().debug_fields(<span class="kw-2">&amp;mut </span>f);
         f.finish()
     }
@@ -2764,10 +2765,10 @@
         truncate(<span class="kw-2">&amp;</span><span class="self">self</span>.uname)
     }
 
-    <span class="doccomment">/// Gets the fullname (group:user) in a &quot;lossy&quot; way, used for error reporting ONLY.
+    <span class="doccomment">/// Gets the fullname (group:user) in a "lossy" way, used for error reporting ONLY.
     </span><span class="kw">fn </span>fullname_lossy(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
         <span class="macro">format!</span>(
-            <span class="string">&quot;{}:{}&quot;</span>,
+            <span class="string">"{}:{}"</span>,
             String::from_utf8_lossy(<span class="self">self</span>.groupname_bytes()),
             String::from_utf8_lossy(<span class="self">self</span>.username_bytes()),
         )
@@ -2779,7 +2780,7 @@
             io::Error::new(
                 err.kind(),
                 <span class="macro">format!</span>(
-                    <span class="string">&quot;{} when setting username for {}&quot;</span>,
+                    <span class="string">"{} when setting username for {}"</span>,
                     err,
                     <span class="self">self</span>.fullname_lossy()
                 ),
@@ -2798,7 +2799,7 @@
             io::Error::new(
                 err.kind(),
                 <span class="macro">format!</span>(
-                    <span class="string">&quot;{} when setting groupname for {}&quot;</span>,
+                    <span class="string">"{} when setting groupname for {}"</span>,
                     err,
                     <span class="self">self</span>.fullname_lossy()
                 ),
@@ -2814,7 +2815,7 @@
                 io::Error::new(
                     err.kind(),
                     <span class="macro">format!</span>(
-                        <span class="string">&quot;{} when getting device_major for {}&quot;</span>,
+                        <span class="string">"{} when getting device_major for {}"</span>,
                         err,
                         <span class="self">self</span>.fullname_lossy()
                     ),
@@ -2835,7 +2836,7 @@
                 io::Error::new(
                     err.kind(),
                     <span class="macro">format!</span>(
-                        <span class="string">&quot;{} when getting device_minor for {}&quot;</span>,
+                        <span class="string">"{} when getting device_minor for {}"</span>,
                         err,
                         <span class="self">self</span>.fullname_lossy()
                     ),
@@ -2853,7 +2854,7 @@
         num_field_wrapper_from(<span class="kw-2">&amp;</span><span class="self">self</span>.atime).map_err(|err| {
             io::Error::new(
                 err.kind(),
-                <span class="macro">format!</span>(<span class="string">&quot;{} when getting atime for {}&quot;</span>, err, <span class="self">self</span>.fullname_lossy()),
+                <span class="macro">format!</span>(<span class="string">"{} when getting atime for {}"</span>, err, <span class="self">self</span>.fullname_lossy()),
             )
         })
     }
@@ -2871,7 +2872,7 @@
         num_field_wrapper_from(<span class="kw-2">&amp;</span><span class="self">self</span>.ctime).map_err(|err| {
             io::Error::new(
                 err.kind(),
-                <span class="macro">format!</span>(<span class="string">&quot;{} when getting ctime for {}&quot;</span>, err, <span class="self">self</span>.fullname_lossy()),
+                <span class="macro">format!</span>(<span class="string">"{} when getting ctime for {}"</span>, err, <span class="self">self</span>.fullname_lossy()),
             )
         })
     }
@@ -2884,7 +2885,7 @@
         num_field_wrapper_into(<span class="kw-2">&amp;mut </span><span class="self">self</span>.ctime, ctime);
     }
 
-    <span class="doccomment">/// Returns the &quot;real size&quot; of the file this header represents.
+    <span class="doccomment">/// Returns the "real size" of the file this header represents.
     ///
     /// This is applicable for sparse files where the returned size here is the
     /// size of the entire file after the sparse regions have been filled in.
@@ -2893,7 +2894,7 @@
             io::Error::new(
                 err.kind(),
                 <span class="macro">format!</span>(
-                    <span class="string">&quot;{} when getting real_size for {}&quot;</span>,
+                    <span class="string">"{} when getting real_size for {}"</span>,
                     err,
                     <span class="self">self</span>.fullname_lossy()
                 ),
@@ -2923,23 +2924,23 @@
 
 <span class="kw">impl </span>fmt::Debug <span class="kw">for </span>GnuHeader {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
-        <span class="kw">let </span><span class="kw-2">mut </span>f = f.debug_struct(<span class="string">&quot;GnuHeader&quot;</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>f = f.debug_struct(<span class="string">"GnuHeader"</span>);
         <span class="self">self</span>.as_header().debug_fields(<span class="kw-2">&amp;mut </span>f);
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(atime) = <span class="self">self</span>.atime() {
-            f.field(<span class="string">&quot;atime&quot;</span>, <span class="kw-2">&amp;</span>atime);
+            f.field(<span class="string">"atime"</span>, <span class="kw-2">&amp;</span>atime);
         }
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(ctime) = <span class="self">self</span>.ctime() {
-            f.field(<span class="string">&quot;ctime&quot;</span>, <span class="kw-2">&amp;</span>ctime);
+            f.field(<span class="string">"ctime"</span>, <span class="kw-2">&amp;</span>ctime);
         }
-        f.field(<span class="string">&quot;is_extended&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.is_extended())
-            .field(<span class="string">&quot;sparse&quot;</span>, <span class="kw-2">&amp;</span>DebugSparseHeaders(<span class="kw-2">&amp;</span><span class="self">self</span>.sparse))
+        f.field(<span class="string">"is_extended"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.is_extended())
+            .field(<span class="string">"sparse"</span>, <span class="kw-2">&amp;</span>DebugSparseHeaders(<span class="kw-2">&amp;</span><span class="self">self</span>.sparse))
             .finish()
     }
 }
 
-<span class="kw">struct </span>DebugSparseHeaders&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[GnuSparseHeader]);
+<span class="kw">struct </span>DebugSparseHeaders&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'a </span>[GnuSparseHeader]);
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; fmt::Debug <span class="kw">for </span>DebugSparseHeaders&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; fmt::Debug <span class="kw">for </span>DebugSparseHeaders&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
         <span class="kw">let </span><span class="kw-2">mut </span>f = f.debug_list();
         <span class="kw">for </span>header <span class="kw">in </span><span class="self">self</span>.<span class="number">0 </span>{
@@ -2964,7 +2965,7 @@
         octal_from(<span class="kw-2">&amp;</span><span class="self">self</span>.offset).map_err(|err| {
             io::Error::new(
                 err.kind(),
-                <span class="macro">format!</span>(<span class="string">&quot;{} when getting offset from sparse header&quot;</span>, err),
+                <span class="macro">format!</span>(<span class="string">"{} when getting offset from sparse header"</span>, err),
             )
         })
     }
@@ -2976,7 +2977,7 @@
         octal_from(<span class="kw-2">&amp;</span><span class="self">self</span>.numbytes).map_err(|err| {
             io::Error::new(
                 err.kind(),
-                <span class="macro">format!</span>(<span class="string">&quot;{} when getting length from sparse header&quot;</span>, err),
+                <span class="macro">format!</span>(<span class="string">"{} when getting length from sparse header"</span>, err),
             )
         })
     }
@@ -2984,19 +2985,19 @@
 
 <span class="kw">impl </span>fmt::Debug <span class="kw">for </span>GnuSparseHeader {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
-        <span class="kw">let </span><span class="kw-2">mut </span>f = f.debug_struct(<span class="string">&quot;GnuSparseHeader&quot;</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>f = f.debug_struct(<span class="string">"GnuSparseHeader"</span>);
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(offset) = <span class="self">self</span>.offset() {
-            f.field(<span class="string">&quot;offset&quot;</span>, <span class="kw-2">&amp;</span>offset);
+            f.field(<span class="string">"offset"</span>, <span class="kw-2">&amp;</span>offset);
         }
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(length) = <span class="self">self</span>.length() {
-            f.field(<span class="string">&quot;length&quot;</span>, <span class="kw-2">&amp;</span>length);
+            f.field(<span class="string">"length"</span>, <span class="kw-2">&amp;</span>length);
         }
         f.finish()
     }
 }
 
 <span class="kw">impl </span>GnuExtSparseHeader {
-    <span class="doccomment">/// Crates a new zero&#39;d out sparse header entry.
+    <span class="doccomment">/// Crates a new zero'd out sparse header entry.
     </span><span class="kw">pub fn </span>new() -&gt; GnuExtSparseHeader {
         <span class="kw">unsafe </span>{ mem::zeroed() }
     }
@@ -3039,26 +3040,26 @@
         <span class="prelude-val">Ok</span>(n) =&gt; n,
         <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
             <span class="kw">return </span><span class="prelude-val">Err</span>(other(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
-                <span class="string">&quot;numeric field did not have utf-8 text: {}&quot;</span>,
+                <span class="string">"numeric field did not have utf-8 text: {}"</span>,
                 String::from_utf8_lossy(trun)
             )));
         }
     };
     <span class="kw">match </span>u64::from_str_radix(num.trim(), <span class="number">8</span>) {
         <span class="prelude-val">Ok</span>(n) =&gt; <span class="prelude-val">Ok</span>(n),
-        <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(other(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;numeric field was not a number: {}&quot;</span>, num))),
+        <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(other(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"numeric field was not a number: {}"</span>, num))),
     }
 }
 
 <span class="kw">fn </span>octal_into&lt;T: fmt::Octal&gt;(dst: <span class="kw-2">&amp;mut </span>[u8], val: T) {
-    <span class="kw">let </span>o = <span class="macro">format!</span>(<span class="string">&quot;{:o}&quot;</span>, val);
-    <span class="kw">let </span>value = o.bytes().rev().chain(repeat(<span class="string">b&#39;0&#39;</span>));
+    <span class="kw">let </span>o = <span class="macro">format!</span>(<span class="string">"{:o}"</span>, val);
+    <span class="kw">let </span>value = o.bytes().rev().chain(repeat(<span class="string">b'0'</span>));
     <span class="kw">for </span>(slot, value) <span class="kw">in </span>dst.iter_mut().rev().skip(<span class="number">1</span>).zip(value) {
         <span class="kw-2">*</span>slot = value;
     }
 }
 
-<span class="comment">// Wrapper to figure out if we should fill the header field using tar&#39;s numeric
+<span class="comment">// Wrapper to figure out if we should fill the header field using tar's numeric
 // extension (binary) or not (octal).
 </span><span class="kw">fn </span>num_field_wrapper_into(dst: <span class="kw-2">&amp;mut </span>[u8], src: u64) {
     <span class="kw">if </span>src &gt;= <span class="number">8589934592 </span>|| (src &gt;= <span class="number">2097152 </span>&amp;&amp; dst.len() == <span class="number">8</span>) {
@@ -3122,9 +3123,9 @@
 /// array is too long or if it contains any nul bytes.
 </span><span class="kw">fn </span>copy_into(slot: <span class="kw-2">&amp;mut </span>[u8], bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; io::Result&lt;()&gt; {
     <span class="kw">if </span>bytes.len() &gt; slot.len() {
-        <span class="prelude-val">Err</span>(other(<span class="string">&quot;provided value is too long&quot;</span>))
+        <span class="prelude-val">Err</span>(other(<span class="string">"provided value is too long"</span>))
     } <span class="kw">else if </span>bytes.iter().any(|b| <span class="kw-2">*</span>b == <span class="number">0</span>) {
-        <span class="prelude-val">Err</span>(other(<span class="string">&quot;provided value contains a nul byte&quot;</span>))
+        <span class="prelude-val">Err</span>(other(<span class="string">"provided value contains a nul byte"</span>))
     } <span class="kw">else </span>{
         <span class="kw">for </span>(slot, val) <span class="kw">in </span>slot.iter_mut().zip(bytes.iter().chain(<span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="number">0</span>))) {
             <span class="kw-2">*</span>slot = <span class="kw-2">*</span>val;
@@ -3148,35 +3149,35 @@
         <span class="kw">let </span>bytes = path2bytes(Path::new(component.as_os_str()))<span class="question-mark">?</span>;
         <span class="kw">match </span>(component, is_link_name) {
             (Component::Prefix(..), <span class="bool-val">false</span>) | (Component::RootDir, <span class="bool-val">false</span>) =&gt; {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(other(<span class="string">&quot;paths in archives must be relative&quot;</span>));
+                <span class="kw">return </span><span class="prelude-val">Err</span>(other(<span class="string">"paths in archives must be relative"</span>));
             }
             (Component::ParentDir, <span class="bool-val">false</span>) =&gt; {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(other(<span class="string">&quot;paths in archives must not have `..`&quot;</span>));
+                <span class="kw">return </span><span class="prelude-val">Err</span>(other(<span class="string">"paths in archives must not have `..`"</span>));
             }
-            <span class="comment">// Allow &quot;./&quot; as the path
+            <span class="comment">// Allow "./" as the path
             </span>(Component::CurDir, <span class="bool-val">false</span>) <span class="kw">if </span>path.components().count() == <span class="number">1 </span>=&gt; {}
             (Component::CurDir, <span class="bool-val">false</span>) =&gt; <span class="kw">continue</span>,
             (Component::Normal(<span class="kw">_</span>), <span class="kw">_</span>) | (<span class="kw">_</span>, <span class="bool-val">true</span>) =&gt; {}
         };
         <span class="kw">if </span>needs_slash {
-            copy(<span class="kw-2">&amp;mut </span>slot, <span class="string">b&quot;/&quot;</span>)<span class="question-mark">?</span>;
+            copy(<span class="kw-2">&amp;mut </span>slot, <span class="string">b"/"</span>)<span class="question-mark">?</span>;
         }
-        <span class="kw">if </span>bytes.contains(<span class="kw-2">&amp;</span><span class="string">b&#39;/&#39;</span>) {
+        <span class="kw">if </span>bytes.contains(<span class="kw-2">&amp;</span><span class="string">b'/'</span>) {
             <span class="kw">if let </span>Component::Normal(..) = component {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(other(<span class="string">&quot;path component in archive cannot contain `/`&quot;</span>));
+                <span class="kw">return </span><span class="prelude-val">Err</span>(other(<span class="string">"path component in archive cannot contain `/`"</span>));
             }
         }
         copy(<span class="kw-2">&amp;mut </span>slot, <span class="kw-2">&amp;*</span>bytes)<span class="question-mark">?</span>;
-        <span class="kw">if </span><span class="kw-2">&amp;*</span>bytes != <span class="string">b&quot;/&quot; </span>{
+        <span class="kw">if </span><span class="kw-2">&amp;*</span>bytes != <span class="string">b"/" </span>{
             needs_slash = <span class="bool-val">true</span>;
         }
         emitted = <span class="bool-val">true</span>;
     }
     <span class="kw">if </span>!emitted {
-        <span class="kw">return </span><span class="prelude-val">Err</span>(other(<span class="string">&quot;paths in archives must have at least one component&quot;</span>));
+        <span class="kw">return </span><span class="prelude-val">Err</span>(other(<span class="string">"paths in archives must have at least one component"</span>));
     }
     <span class="kw">if </span>ends_with_slash(path) {
-        copy(<span class="kw-2">&amp;mut </span>slot, <span class="kw-2">&amp;</span>[<span class="string">b&#39;/&#39;</span>])<span class="question-mark">?</span>;
+        copy(<span class="kw-2">&amp;mut </span>slot, <span class="kw-2">&amp;</span>[<span class="string">b'/'</span>])<span class="question-mark">?</span>;
     }
     <span class="kw">return </span><span class="prelude-val">Ok</span>(());
 
@@ -3188,35 +3189,35 @@
     }
 }
 
-<span class="attr">#[cfg(target_arch = <span class="string">&quot;wasm32&quot;</span>)]
+<span class="attr">#[cfg(target_arch = <span class="string">"wasm32"</span>)]
 </span><span class="kw">fn </span>ends_with_slash(p: <span class="kw-2">&amp;</span>Path) -&gt; bool {
-    p.to_string_lossy().ends_with(<span class="string">&#39;/&#39;</span>)
+    p.to_string_lossy().ends_with(<span class="string">'/'</span>)
 }
 
 <span class="attr">#[cfg(windows)]
 </span><span class="kw">fn </span>ends_with_slash(p: <span class="kw-2">&amp;</span>Path) -&gt; bool {
     <span class="kw">let </span>last = p.as_os_str().encode_wide().last();
-    last == <span class="prelude-val">Some</span>(<span class="string">b&#39;/&#39; </span><span class="kw">as </span>u16) || last == <span class="prelude-val">Some</span>(<span class="string">b&#39;\\&#39; </span><span class="kw">as </span>u16)
+    last == <span class="prelude-val">Some</span>(<span class="string">b'/' </span><span class="kw">as </span>u16) || last == <span class="prelude-val">Some</span>(<span class="string">b'\\' </span><span class="kw">as </span>u16)
 }
 
 <span class="attr">#[cfg(unix)]
 </span><span class="kw">fn </span>ends_with_slash(p: <span class="kw-2">&amp;</span>Path) -&gt; bool {
-    p.as_os_str().as_bytes().ends_with(<span class="kw-2">&amp;</span>[<span class="string">b&#39;/&#39;</span>])
+    p.as_os_str().as_bytes().ends_with(<span class="kw-2">&amp;</span>[<span class="string">b'/'</span>])
 }
 
-<span class="attr">#[cfg(any(windows, target_arch = <span class="string">&quot;wasm32&quot;</span>))]
+<span class="attr">#[cfg(any(windows, target_arch = <span class="string">"wasm32"</span>))]
 </span><span class="kw">pub fn </span>path2bytes(p: <span class="kw-2">&amp;</span>Path) -&gt; io::Result&lt;Cow&lt;[u8]&gt;&gt; {
     p.as_os_str()
         .to_str()
         .map(|s| s.as_bytes())
-        .ok_or_else(|| other(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;path {} was not valid Unicode&quot;</span>, p.display())))
+        .ok_or_else(|| other(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"path {} was not valid Unicode"</span>, p.display())))
         .map(|bytes| {
-            <span class="kw">if </span>bytes.contains(<span class="kw-2">&amp;</span><span class="string">b&#39;\\&#39;</span>) {
+            <span class="kw">if </span>bytes.contains(<span class="kw-2">&amp;</span><span class="string">b'\\'</span>) {
                 <span class="comment">// Normalize to Unix-style path separators
                 </span><span class="kw">let </span><span class="kw-2">mut </span>bytes = bytes.to_owned();
                 <span class="kw">for </span>b <span class="kw">in </span><span class="kw-2">&amp;mut </span>bytes {
-                    <span class="kw">if </span><span class="kw-2">*</span>b == <span class="string">b&#39;\\&#39; </span>{
-                        <span class="kw-2">*</span>b = <span class="string">b&#39;/&#39;</span>;
+                    <span class="kw">if </span><span class="kw-2">*</span>b == <span class="string">b'\\' </span>{
+                        <span class="kw-2">*</span>b = <span class="string">b'/'</span>;
                     }
                 }
                 Cow::Owned(bytes)
@@ -3249,7 +3250,7 @@
 
     <span class="kw">fn </span>not_unicode(v: <span class="kw-2">&amp;</span>[u8]) -&gt; io::Error {
         other(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
-            <span class="string">&quot;only Unicode paths are supported on Windows: {}&quot;</span>,
+            <span class="string">"only Unicode paths are supported on Windows: {}"</span>,
             String::from_utf8_lossy(v)
         ))
     }
@@ -3266,7 +3267,7 @@
     })
 }
 
-<span class="attr">#[cfg(target_arch = <span class="string">&quot;wasm32&quot;</span>)]
+<span class="attr">#[cfg(target_arch = <span class="string">"wasm32"</span>)]
 </span><span class="kw">pub fn </span>bytes2path(bytes: Cow&lt;[u8]&gt;) -&gt; io::Result&lt;Cow&lt;Path&gt;&gt; {
     <span class="prelude-val">Ok</span>(<span class="kw">match </span>bytes {
         Cow::Borrowed(bytes) =&gt; {
@@ -3278,8 +3279,8 @@
     })
 }
 
-<span class="attr">#[cfg(target_arch = <span class="string">&quot;wasm32&quot;</span>)]
+<span class="attr">#[cfg(target_arch = <span class="string">"wasm32"</span>)]
 </span><span class="kw">fn </span>invalid_utf8&lt;T&gt;(<span class="kw">_</span>: T) -&gt; io::Error {
-    io::Error::new(io::ErrorKind::InvalidData, <span class="string">&quot;Invalid utf-8&quot;</span>)
+    io::Error::new(io::ErrorKind::InvalidData, <span class="string">"Invalid utf-8"</span>)
 }
 </code></pre></div></section></main></body></html>

@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rustix-0.38.31/src/backend/libc/fs/syscalls.rs`."><title>syscalls.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="rustix" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rustix-0.38.31/src/backend/libc/fs/syscalls.rs`."><title>syscalls.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="rustix" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../../../src-files.js"></script><script defer src="../../../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2526,78 +2527,78 @@
 
 </span><span class="kw">use </span><span class="kw">crate</span>::backend::c;
 <span class="attr">#[cfg(any(
-    not(target_os = <span class="string">&quot;redox&quot;</span>),
-    feature = <span class="string">&quot;alloc&quot;</span>,
-    all(linux_kernel, feature = <span class="string">&quot;procfs&quot;</span>)
+    not(target_os = <span class="string">"redox"</span>),
+    feature = <span class="string">"alloc"</span>,
+    all(linux_kernel, feature = <span class="string">"procfs"</span>)
 ))]
 </span><span class="kw">use </span><span class="kw">crate</span>::backend::conv::ret_usize;
 <span class="kw">use </span><span class="kw">crate</span>::backend::conv::{borrowed_fd, c_str, ret, ret_c_int, ret_off_t, ret_owned_fd};
 <span class="kw">use </span><span class="kw">crate</span>::fd::{BorrowedFd, OwnedFd};
 <span class="kw">use </span><span class="kw">crate</span>::ffi::CStr;
-<span class="attr">#[cfg(all(apple, feature = <span class="string">&quot;alloc&quot;</span>))]
+<span class="attr">#[cfg(all(apple, feature = <span class="string">"alloc"</span>))]
 </span><span class="kw">use </span><span class="kw">crate</span>::ffi::CString;
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;vita&quot;</span>)))]
+<span class="attr">#[cfg(not(any(target_os = <span class="string">"espidf"</span>, target_os = <span class="string">"vita"</span>)))]
 </span><span class="kw">use </span><span class="kw">crate</span>::fs::Access;
 <span class="attr">#[cfg(not(any(
     apple,
     netbsdlike,
     solarish,
-    target_os = <span class="string">&quot;dragonfly&quot;</span>,
-    target_os = <span class="string">&quot;espidf&quot;</span>,
-    target_os = <span class="string">&quot;haiku&quot;</span>,
-    target_os = <span class="string">&quot;redox&quot;</span>,
-    target_os = <span class="string">&quot;vita&quot;</span>,
+    target_os = <span class="string">"dragonfly"</span>,
+    target_os = <span class="string">"espidf"</span>,
+    target_os = <span class="string">"haiku"</span>,
+    target_os = <span class="string">"redox"</span>,
+    target_os = <span class="string">"vita"</span>,
 )))]
 </span><span class="kw">use </span><span class="kw">crate</span>::fs::Advice;
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>)))]
+<span class="attr">#[cfg(not(any(target_os = <span class="string">"espidf"</span>, target_os = <span class="string">"redox"</span>)))]
 </span><span class="kw">use </span><span class="kw">crate</span>::fs::AtFlags;
 <span class="attr">#[cfg(not(any(
     netbsdlike,
     solarish,
-    target_os = <span class="string">&quot;aix&quot;</span>,
-    target_os = <span class="string">&quot;dragonfly&quot;</span>,
-    target_os = <span class="string">&quot;espidf&quot;</span>,
-    target_os = <span class="string">&quot;nto&quot;</span>,
-    target_os = <span class="string">&quot;redox&quot;</span>,
-    target_os = <span class="string">&quot;vita&quot;</span>,
+    target_os = <span class="string">"aix"</span>,
+    target_os = <span class="string">"dragonfly"</span>,
+    target_os = <span class="string">"espidf"</span>,
+    target_os = <span class="string">"nto"</span>,
+    target_os = <span class="string">"redox"</span>,
+    target_os = <span class="string">"vita"</span>,
 )))]
 </span><span class="kw">use </span><span class="kw">crate</span>::fs::FallocateFlags;
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;vita&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
+<span class="attr">#[cfg(not(any(target_os = <span class="string">"espidf"</span>, target_os = <span class="string">"vita"</span>, target_os = <span class="string">"wasi"</span>)))]
 </span><span class="kw">use </span><span class="kw">crate</span>::fs::FlockOperation;
-<span class="attr">#[cfg(any(linux_kernel, target_os = <span class="string">&quot;freebsd&quot;</span>))]
+<span class="attr">#[cfg(any(linux_kernel, target_os = <span class="string">"freebsd"</span>))]
 </span><span class="kw">use </span><span class="kw">crate</span>::fs::MemfdFlags;
-<span class="attr">#[cfg(any(linux_kernel, target_os = <span class="string">&quot;freebsd&quot;</span>, target_os = <span class="string">&quot;fuchsia&quot;</span>))]
+<span class="attr">#[cfg(any(linux_kernel, target_os = <span class="string">"freebsd"</span>, target_os = <span class="string">"fuchsia"</span>))]
 </span><span class="kw">use </span><span class="kw">crate</span>::fs::SealFlags;
 <span class="attr">#[cfg(not(any(
     solarish,
-    target_os = <span class="string">&quot;espidf&quot;</span>,
-    target_os = <span class="string">&quot;haiku&quot;</span>,
-    target_os = <span class="string">&quot;netbsd&quot;</span>,
-    target_os = <span class="string">&quot;nto&quot;</span>,
-    target_os = <span class="string">&quot;redox&quot;</span>,
-    target_os = <span class="string">&quot;vita&quot;</span>,
-    target_os = <span class="string">&quot;wasi&quot;</span>,
+    target_os = <span class="string">"espidf"</span>,
+    target_os = <span class="string">"haiku"</span>,
+    target_os = <span class="string">"netbsd"</span>,
+    target_os = <span class="string">"nto"</span>,
+    target_os = <span class="string">"redox"</span>,
+    target_os = <span class="string">"vita"</span>,
+    target_os = <span class="string">"wasi"</span>,
 )))]
 </span><span class="kw">use </span><span class="kw">crate</span>::fs::StatFs;
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;vita&quot;</span>)))]
+<span class="attr">#[cfg(not(any(target_os = <span class="string">"espidf"</span>, target_os = <span class="string">"vita"</span>)))]
 </span><span class="kw">use </span><span class="kw">crate</span>::fs::Timestamps;
 <span class="attr">#[cfg(not(any(
     apple,
-    target_os = <span class="string">&quot;espidf&quot;</span>,
-    target_os = <span class="string">&quot;redox&quot;</span>,
-    target_os = <span class="string">&quot;vita&quot;</span>,
-    target_os = <span class="string">&quot;wasi&quot;
+    target_os = <span class="string">"espidf"</span>,
+    target_os = <span class="string">"redox"</span>,
+    target_os = <span class="string">"vita"</span>,
+    target_os = <span class="string">"wasi"
 </span>)))]
 </span><span class="kw">use </span><span class="kw">crate</span>::fs::{Dev, FileType};
 <span class="kw">use </span><span class="kw">crate</span>::fs::{Mode, OFlags, SeekFrom, Stat};
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;haiku&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
+<span class="attr">#[cfg(not(any(target_os = <span class="string">"haiku"</span>, target_os = <span class="string">"redox"</span>, target_os = <span class="string">"wasi"</span>)))]
 </span><span class="kw">use </span><span class="kw">crate</span>::fs::{StatVfs, StatVfsMountFlags};
 <span class="kw">use </span><span class="kw">crate</span>::io;
-<span class="attr">#[cfg(all(target_env = <span class="string">&quot;gnu&quot;</span>, fix_y2038))]
+<span class="attr">#[cfg(all(target_env = <span class="string">"gnu"</span>, fix_y2038))]
 </span><span class="kw">use </span><span class="kw">crate</span>::timespec::LibcTimespec;
-<span class="attr">#[cfg(not(target_os = <span class="string">&quot;wasi&quot;</span>))]
+<span class="attr">#[cfg(not(target_os = <span class="string">"wasi"</span>))]
 </span><span class="kw">use </span><span class="kw">crate</span>::ugid::{Gid, Uid};
-<span class="attr">#[cfg(all(apple, feature = <span class="string">&quot;alloc&quot;</span>))]
+<span class="attr">#[cfg(all(apple, feature = <span class="string">"alloc"</span>))]
 </span><span class="kw">use </span>alloc::vec;
 <span class="kw">use </span>core::mem::MaybeUninit;
 <span class="attr">#[cfg(apple)]
@@ -2613,24 +2614,24 @@
     core::ptr::null,
 };
 
-<span class="attr">#[cfg(all(target_env = <span class="string">&quot;gnu&quot;</span>, fix_y2038))]
+<span class="attr">#[cfg(all(target_env = <span class="string">"gnu"</span>, fix_y2038))]
 </span><span class="macro">weak!</span>(<span class="kw">fn </span>__utimensat64(c::c_int, <span class="kw-2">*const </span>c::c_char, <span class="kw-2">*const </span>LibcTimespec, c::c_int) -&gt; c::c_int);
-<span class="attr">#[cfg(all(target_env = <span class="string">&quot;gnu&quot;</span>, fix_y2038))]
+<span class="attr">#[cfg(all(target_env = <span class="string">"gnu"</span>, fix_y2038))]
 </span><span class="macro">weak!</span>(<span class="kw">fn </span>__futimens64(c::c_int, <span class="kw-2">*const </span>LibcTimespec) -&gt; c::c_int);
 
 <span class="doccomment">/// Use a direct syscall (via libc) for `open`.
 ///
 /// This is only currently necessary as a workaround for old glibc; see below.
-</span><span class="attr">#[cfg(all(unix, target_env = <span class="string">&quot;gnu&quot;</span>))]
+</span><span class="attr">#[cfg(all(unix, target_env = <span class="string">"gnu"</span>))]
 </span><span class="kw">fn </span>open_via_syscall(path: <span class="kw-2">&amp;</span>CStr, oflags: OFlags, mode: Mode) -&gt; io::Result&lt;OwnedFd&gt; {
     <span class="comment">// Linux on aarch64, loongarch64 and riscv64 has no `open` syscall so use
     // `openat`.
     </span><span class="attr">#[cfg(any(
-        target_arch = <span class="string">&quot;aarch64&quot;</span>,
-        target_arch = <span class="string">&quot;riscv32&quot;</span>,
-        target_arch = <span class="string">&quot;riscv64&quot;</span>,
-        target_arch = <span class="string">&quot;csky&quot;</span>,
-        target_arch = <span class="string">&quot;loongarch64&quot;
+        target_arch = <span class="string">"aarch64"</span>,
+        target_arch = <span class="string">"riscv32"</span>,
+        target_arch = <span class="string">"riscv64"</span>,
+        target_arch = <span class="string">"csky"</span>,
+        target_arch = <span class="string">"loongarch64"
     </span>))]
     </span>{
         openat_via_syscall(CWD, path, oflags, mode)
@@ -2638,11 +2639,11 @@
 
     <span class="comment">// Use the `open` syscall.
     </span><span class="attr">#[cfg(not(any(
-        target_arch = <span class="string">&quot;aarch64&quot;</span>,
-        target_arch = <span class="string">&quot;riscv32&quot;</span>,
-        target_arch = <span class="string">&quot;riscv64&quot;</span>,
-        target_arch = <span class="string">&quot;csky&quot;</span>,
-        target_arch = <span class="string">&quot;loongarch64&quot;
+        target_arch = <span class="string">"aarch64"</span>,
+        target_arch = <span class="string">"riscv32"</span>,
+        target_arch = <span class="string">"riscv64"</span>,
+        target_arch = <span class="string">"csky"</span>,
+        target_arch = <span class="string">"loongarch64"
     </span>)))]
     </span><span class="kw">unsafe </span>{
         <span class="macro">syscall! </span>{
@@ -2663,26 +2664,26 @@
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>open(path: <span class="kw-2">&amp;</span>CStr, oflags: OFlags, mode: Mode) -&gt; io::Result&lt;OwnedFd&gt; {
     <span class="comment">// Work around &lt;https://sourceware.org/bugzilla/show_bug.cgi?id=17523&gt;.
-    // glibc versions before 2.25 don&#39;t handle `O_TMPFILE` correctly.
-    </span><span class="attr">#[cfg(all(unix, target_env = <span class="string">&quot;gnu&quot;</span>, not(target_os = <span class="string">&quot;hurd&quot;</span>)))]
+    // glibc versions before 2.25 don't handle `O_TMPFILE` correctly.
+    </span><span class="attr">#[cfg(all(unix, target_env = <span class="string">"gnu"</span>, not(target_os = <span class="string">"hurd"</span>)))]
     </span><span class="kw">if </span>oflags.contains(OFlags::TMPFILE) &amp;&amp; <span class="kw">crate</span>::backend::if_glibc_is_less_than_2_25() {
         <span class="kw">return </span>open_via_syscall(path, oflags, mode);
     }
 
-    <span class="comment">// On these platforms, `mode_t` is `u16` and can&#39;t be passed directly to a
+    <span class="comment">// On these platforms, `mode_t` is `u16` and can't be passed directly to a
     // variadic function.
     </span><span class="attr">#[cfg(any(
         apple,
         freebsdlike,
-        all(target_os = <span class="string">&quot;android&quot;</span>, target_pointer_width = <span class="string">&quot;32&quot;</span>)
+        all(target_os = <span class="string">"android"</span>, target_pointer_width = <span class="string">"32"</span>)
     ))]
     </span><span class="kw">let </span>mode: c::c_uint = mode.bits().into();
 
-    <span class="comment">// Otherwise, cast to `mode_t` as that&#39;s what `open` is documented to take.
+    <span class="comment">// Otherwise, cast to `mode_t` as that's what `open` is documented to take.
     </span><span class="attr">#[cfg(not(any(
         apple,
         freebsdlike,
-        all(target_os = <span class="string">&quot;android&quot;</span>, target_pointer_width = <span class="string">&quot;32&quot;</span>)
+        all(target_os = <span class="string">"android"</span>, target_pointer_width = <span class="string">"32"</span>)
     )))]
     </span><span class="kw">let </span>mode: c::mode_t = mode.bits() <span class="kw">as _</span>;
 
@@ -2692,9 +2693,9 @@
 <span class="doccomment">/// Use a direct syscall (via libc) for `openat`.
 ///
 /// This is only currently necessary as a workaround for old glibc; see below.
-</span><span class="attr">#[cfg(all(unix, target_env = <span class="string">&quot;gnu&quot;</span>, not(target_os = <span class="string">&quot;hurd&quot;</span>)))]
+</span><span class="attr">#[cfg(all(unix, target_env = <span class="string">"gnu"</span>, not(target_os = <span class="string">"hurd"</span>)))]
 </span><span class="kw">fn </span>openat_via_syscall(
-    dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     path: <span class="kw-2">&amp;</span>CStr,
     oflags: OFlags,
     mode: Mode,
@@ -2718,34 +2719,34 @@
     }
 }
 
-<span class="attr">#[cfg(not(target_os = <span class="string">&quot;redox&quot;</span>))]
+<span class="attr">#[cfg(not(target_os = <span class="string">"redox"</span>))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>openat(
-    dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     path: <span class="kw-2">&amp;</span>CStr,
     oflags: OFlags,
     mode: Mode,
 ) -&gt; io::Result&lt;OwnedFd&gt; {
     <span class="comment">// Work around &lt;https://sourceware.org/bugzilla/show_bug.cgi?id=17523&gt;.
-    // glibc versions before 2.25 don&#39;t handle `O_TMPFILE` correctly.
-    </span><span class="attr">#[cfg(all(unix, target_env = <span class="string">&quot;gnu&quot;</span>, not(target_os = <span class="string">&quot;hurd&quot;</span>)))]
+    // glibc versions before 2.25 don't handle `O_TMPFILE` correctly.
+    </span><span class="attr">#[cfg(all(unix, target_env = <span class="string">"gnu"</span>, not(target_os = <span class="string">"hurd"</span>)))]
     </span><span class="kw">if </span>oflags.contains(OFlags::TMPFILE) &amp;&amp; <span class="kw">crate</span>::backend::if_glibc_is_less_than_2_25() {
         <span class="kw">return </span>openat_via_syscall(dirfd, path, oflags, mode);
     }
 
-    <span class="comment">// On these platforms, `mode_t` is `u16` and can&#39;t be passed directly to a
+    <span class="comment">// On these platforms, `mode_t` is `u16` and can't be passed directly to a
     // variadic function.
     </span><span class="attr">#[cfg(any(
         apple,
         freebsdlike,
-        all(target_os = <span class="string">&quot;android&quot;</span>, target_pointer_width = <span class="string">&quot;32&quot;</span>)
+        all(target_os = <span class="string">"android"</span>, target_pointer_width = <span class="string">"32"</span>)
     ))]
     </span><span class="kw">let </span>mode: c::c_uint = mode.bits().into();
 
-    <span class="comment">// Otherwise, cast to `mode_t` as that&#39;s what `open` is documented to take.
+    <span class="comment">// Otherwise, cast to `mode_t` as that's what `open` is documented to take.
     </span><span class="attr">#[cfg(not(any(
         apple,
         freebsdlike,
-        all(target_os = <span class="string">&quot;android&quot;</span>, target_pointer_width = <span class="string">&quot;32&quot;</span>)
+        all(target_os = <span class="string">"android"</span>, target_pointer_width = <span class="string">"32"</span>)
     )))]
     </span><span class="kw">let </span>mode: c::mode_t = mode.bits() <span class="kw">as _</span>;
 
@@ -2761,13 +2762,13 @@
 
 <span class="attr">#[cfg(not(any(
     solarish,
-    target_os = <span class="string">&quot;espidf&quot;</span>,
-    target_os = <span class="string">&quot;haiku&quot;</span>,
-    target_os = <span class="string">&quot;netbsd&quot;</span>,
-    target_os = <span class="string">&quot;nto&quot;</span>,
-    target_os = <span class="string">&quot;redox&quot;</span>,
-    target_os = <span class="string">&quot;vita&quot;</span>,
-    target_os = <span class="string">&quot;wasi&quot;</span>,
+    target_os = <span class="string">"espidf"</span>,
+    target_os = <span class="string">"haiku"</span>,
+    target_os = <span class="string">"netbsd"</span>,
+    target_os = <span class="string">"nto"</span>,
+    target_os = <span class="string">"redox"</span>,
+    target_os = <span class="string">"vita"</span>,
+    target_os = <span class="string">"wasi"</span>,
 )))]
 #[inline]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>statfs(filename: <span class="kw-2">&amp;</span>CStr) -&gt; io::Result&lt;StatFs&gt; {
@@ -2778,7 +2779,7 @@
     }
 }
 
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;haiku&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
+<span class="attr">#[cfg(not(any(target_os = <span class="string">"haiku"</span>, target_os = <span class="string">"redox"</span>, target_os = <span class="string">"wasi"</span>)))]
 #[inline]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>statvfs(filename: <span class="kw-2">&amp;</span>CStr) -&gt; io::Result&lt;StatVfs&gt; {
     <span class="kw">unsafe </span>{
@@ -2788,7 +2789,7 @@
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;alloc&quot;</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"alloc"</span>)]
 #[inline]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>readlink(path: <span class="kw-2">&amp;</span>CStr, buf: <span class="kw-2">&amp;mut </span>[u8]) -&gt; io::Result&lt;usize&gt; {
     <span class="kw">unsafe </span>{
@@ -2798,10 +2799,10 @@
     }
 }
 
-<span class="attr">#[cfg(not(target_os = <span class="string">&quot;redox&quot;</span>))]
+<span class="attr">#[cfg(not(target_os = <span class="string">"redox"</span>))]
 #[inline]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>readlinkat(
-    dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     path: <span class="kw-2">&amp;</span>CStr,
     buf: <span class="kw-2">&amp;mut </span>[MaybeUninit&lt;u8&gt;],
 ) -&gt; io::Result&lt;usize&gt; {
@@ -2819,8 +2820,8 @@
     <span class="kw">unsafe </span>{ ret(c::mkdir(c_str(path), mode.bits() <span class="kw">as </span>c::mode_t)) }
 }
 
-<span class="attr">#[cfg(not(target_os = <span class="string">&quot;redox&quot;</span>))]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>mkdirat(dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, path: <span class="kw-2">&amp;</span>CStr, mode: Mode) -&gt; io::Result&lt;()&gt; {
+<span class="attr">#[cfg(not(target_os = <span class="string">"redox"</span>))]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>mkdirat(dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;, path: <span class="kw-2">&amp;</span>CStr, mode: Mode) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{
         ret(c::mkdirat(
             borrowed_fd(dirfd),
@@ -2832,7 +2833,7 @@
 
 <span class="attr">#[cfg(linux_kernel)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>getdents_uninit(
-    fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     buf: <span class="kw-2">&amp;mut </span>[MaybeUninit&lt;u8&gt;],
 ) -&gt; io::Result&lt;usize&gt; {
     <span class="macro">syscall! </span>{
@@ -2855,16 +2856,16 @@
     <span class="kw">unsafe </span>{ ret(c::link(c_str(old_path), c_str(new_path))) }
 }
 
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>)))]
+<span class="attr">#[cfg(not(any(target_os = <span class="string">"espidf"</span>, target_os = <span class="string">"redox"</span>)))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>linkat(
-    old_dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    old_dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     old_path: <span class="kw-2">&amp;</span>CStr,
-    new_dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    new_dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     new_path: <span class="kw-2">&amp;</span>CStr,
     flags: AtFlags,
 ) -&gt; io::Result&lt;()&gt; {
     <span class="comment">// macOS &lt;= 10.9 lacks `linkat`.
-    </span><span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+    </span><span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
     </span><span class="kw">unsafe </span>{
         <span class="macro">weak! </span>{
             <span class="kw">fn </span>linkat(
@@ -2898,7 +2899,7 @@
         ret(c::link(c_str(old_path), c_str(new_path)))
     }
 
-    <span class="attr">#[cfg(not(target_os = <span class="string">&quot;macos&quot;</span>))]
+    <span class="attr">#[cfg(not(target_os = <span class="string">"macos"</span>))]
     </span><span class="kw">unsafe </span>{
         ret(c::linkat(
             borrowed_fd(old_dirfd),
@@ -2918,10 +2919,10 @@
     <span class="kw">unsafe </span>{ ret(c::unlink(c_str(path))) }
 }
 
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>)))]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>unlinkat(dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, path: <span class="kw-2">&amp;</span>CStr, flags: AtFlags) -&gt; io::Result&lt;()&gt; {
+<span class="attr">#[cfg(not(any(target_os = <span class="string">"espidf"</span>, target_os = <span class="string">"redox"</span>)))]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>unlinkat(dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;, path: <span class="kw-2">&amp;</span>CStr, flags: AtFlags) -&gt; io::Result&lt;()&gt; {
     <span class="comment">// macOS &lt;= 10.9 lacks `unlinkat`.
-    </span><span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+    </span><span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
     </span><span class="kw">unsafe </span>{
         <span class="macro">weak! </span>{
             <span class="kw">fn </span>unlinkat(
@@ -2952,7 +2953,7 @@
         }
     }
 
-    <span class="attr">#[cfg(not(target_os = <span class="string">&quot;macos&quot;</span>))]
+    <span class="attr">#[cfg(not(target_os = <span class="string">"macos"</span>))]
     </span><span class="kw">unsafe </span>{
         ret(c::unlinkat(
             borrowed_fd(dirfd),
@@ -2966,15 +2967,15 @@
     <span class="kw">unsafe </span>{ ret(c::rename(c_str(old_path), c_str(new_path))) }
 }
 
-<span class="attr">#[cfg(not(target_os = <span class="string">&quot;redox&quot;</span>))]
+<span class="attr">#[cfg(not(target_os = <span class="string">"redox"</span>))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>renameat(
-    old_dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    old_dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     old_path: <span class="kw-2">&amp;</span>CStr,
-    new_dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    new_dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     new_path: <span class="kw-2">&amp;</span>CStr,
 ) -&gt; io::Result&lt;()&gt; {
     <span class="comment">// macOS &lt;= 10.9 lacks `renameat`.
-    </span><span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+    </span><span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
     </span><span class="kw">unsafe </span>{
         <span class="macro">weak! </span>{
             <span class="kw">fn </span>renameat(
@@ -3000,7 +3001,7 @@
         ret(c::rename(c_str(old_path), c_str(new_path)))
     }
 
-    <span class="attr">#[cfg(not(target_os = <span class="string">&quot;macos&quot;</span>))]
+    <span class="attr">#[cfg(not(target_os = <span class="string">"macos"</span>))]
     </span><span class="kw">unsafe </span>{
         ret(c::renameat(
             borrowed_fd(old_dirfd),
@@ -3011,15 +3012,15 @@
     }
 }
 
-<span class="attr">#[cfg(all(target_os = <span class="string">&quot;linux&quot;</span>, target_env = <span class="string">&quot;gnu&quot;</span>))]
+<span class="attr">#[cfg(all(target_os = <span class="string">"linux"</span>, target_env = <span class="string">"gnu"</span>))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>renameat2(
-    old_dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    old_dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     old_path: <span class="kw-2">&amp;</span>CStr,
-    new_dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    new_dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     new_path: <span class="kw-2">&amp;</span>CStr,
     flags: RenameFlags,
 ) -&gt; io::Result&lt;()&gt; {
-    <span class="comment">// `renameat2` wasn&#39;t supported in glibc until 2.28.
+    <span class="comment">// `renameat2` wasn't supported in glibc until 2.28.
     </span><span class="macro">weak_or_syscall! </span>{
         <span class="kw">fn </span>renameat2(
             olddirfd: c::c_int,
@@ -3042,14 +3043,14 @@
 }
 
 <span class="attr">#[cfg(any(
-    target_os = <span class="string">&quot;android&quot;</span>,
-    all(target_os = <span class="string">&quot;linux&quot;</span>, not(target_env = <span class="string">&quot;gnu&quot;</span>)),
+    target_os = <span class="string">"android"</span>,
+    all(target_os = <span class="string">"linux"</span>, not(target_env = <span class="string">"gnu"</span>)),
 ))]
 #[inline]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>renameat2(
-    old_dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    old_dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     old_path: <span class="kw-2">&amp;</span>CStr,
-    new_dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    new_dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     new_path: <span class="kw-2">&amp;</span>CStr,
     flags: RenameFlags,
 ) -&gt; io::Result&lt;()&gt; {
@@ -3085,10 +3086,10 @@
     <span class="kw">unsafe </span>{ ret(c::symlink(c_str(old_path), c_str(new_path))) }
 }
 
-<span class="attr">#[cfg(not(target_os = <span class="string">&quot;redox&quot;</span>))]
+<span class="attr">#[cfg(not(target_os = <span class="string">"redox"</span>))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>symlinkat(
     old_path: <span class="kw-2">&amp;</span>CStr,
-    new_dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    new_dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     new_path: <span class="kw-2">&amp;</span>CStr,
 ) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{
@@ -3105,9 +3106,9 @@
     </span><span class="attr">#[cfg(all(
         linux_kernel,
         any(
-            target_pointer_width = <span class="string">&quot;32&quot;</span>,
-            target_arch = <span class="string">&quot;mips64&quot;</span>,
-            target_arch = <span class="string">&quot;mips64r6&quot;
+            target_pointer_width = <span class="string">"32"</span>,
+            target_arch = <span class="string">"mips64"</span>,
+            target_arch = <span class="string">"mips64r6"
         </span>)
     ))]
     </span>{
@@ -3124,13 +3125,13 @@
     }
 
     <span class="comment">// Main version: libc is y2038 safe. Or, the platform is not y2038 safe and
-    // there&#39;s nothing practical we can do.
+    // there's nothing practical we can do.
     </span><span class="attr">#[cfg(not(all(
         linux_kernel,
         any(
-            target_pointer_width = <span class="string">&quot;32&quot;</span>,
-            target_arch = <span class="string">&quot;mips64&quot;</span>,
-            target_arch = <span class="string">&quot;mips64r6&quot;
+            target_pointer_width = <span class="string">"32"</span>,
+            target_arch = <span class="string">"mips64"</span>,
+            target_arch = <span class="string">"mips64r6"
         </span>)
     )))]
     </span><span class="kw">unsafe </span>{
@@ -3145,9 +3146,9 @@
     </span><span class="attr">#[cfg(all(
         linux_kernel,
         any(
-            target_pointer_width = <span class="string">&quot;32&quot;</span>,
-            target_arch = <span class="string">&quot;mips64&quot;</span>,
-            target_arch = <span class="string">&quot;mips64r6&quot;
+            target_pointer_width = <span class="string">"32"</span>,
+            target_arch = <span class="string">"mips64"</span>,
+            target_arch = <span class="string">"mips64r6"
         </span>)
     ))]
     </span>{
@@ -3164,13 +3165,13 @@
     }
 
     <span class="comment">// Main version: libc is y2038 safe. Or, the platform is not y2038 safe and
-    // there&#39;s nothing practical we can do.
+    // there's nothing practical we can do.
     </span><span class="attr">#[cfg(not(all(
         linux_kernel,
         any(
-            target_pointer_width = <span class="string">&quot;32&quot;</span>,
-            target_arch = <span class="string">&quot;mips64&quot;</span>,
-            target_arch = <span class="string">&quot;mips64r6&quot;
+            target_pointer_width = <span class="string">"32"</span>,
+            target_arch = <span class="string">"mips64"</span>,
+            target_arch = <span class="string">"mips64r6"
         </span>)
     )))]
     </span><span class="kw">unsafe </span>{
@@ -3180,15 +3181,15 @@
     }
 }
 
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>)))]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>statat(dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, path: <span class="kw-2">&amp;</span>CStr, flags: AtFlags) -&gt; io::Result&lt;Stat&gt; {
+<span class="attr">#[cfg(not(any(target_os = <span class="string">"espidf"</span>, target_os = <span class="string">"redox"</span>)))]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>statat(dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;, path: <span class="kw-2">&amp;</span>CStr, flags: AtFlags) -&gt; io::Result&lt;Stat&gt; {
     <span class="comment">// See the comments in `fstat` about using `crate::fs::statx` here.
     </span><span class="attr">#[cfg(all(
         linux_kernel,
         any(
-            target_pointer_width = <span class="string">&quot;32&quot;</span>,
-            target_arch = <span class="string">&quot;mips64&quot;</span>,
-            target_arch = <span class="string">&quot;mips64r6&quot;
+            target_pointer_width = <span class="string">"32"</span>,
+            target_arch = <span class="string">"mips64"</span>,
+            target_arch = <span class="string">"mips64r6"
         </span>)
     ))]
     </span>{
@@ -3200,13 +3201,13 @@
     }
 
     <span class="comment">// Main version: libc is y2038 safe. Or, the platform is not y2038 safe and
-    // there&#39;s nothing practical we can do.
+    // there's nothing practical we can do.
     </span><span class="attr">#[cfg(not(all(
         linux_kernel,
         any(
-            target_pointer_width = <span class="string">&quot;32&quot;</span>,
-            target_arch = <span class="string">&quot;mips64&quot;</span>,
-            target_arch = <span class="string">&quot;mips64r6&quot;
+            target_pointer_width = <span class="string">"32"</span>,
+            target_arch = <span class="string">"mips64"</span>,
+            target_arch = <span class="string">"mips64r6"
         </span>)
     )))]
     </span><span class="kw">unsafe </span>{
@@ -3224,12 +3225,12 @@
 <span class="attr">#[cfg(all(
     linux_kernel,
     any(
-        target_pointer_width = <span class="string">&quot;32&quot;</span>,
-        target_arch = <span class="string">&quot;mips64&quot;</span>,
-        target_arch = <span class="string">&quot;mips64r6&quot;
+        target_pointer_width = <span class="string">"32"</span>,
+        target_arch = <span class="string">"mips64"</span>,
+        target_arch = <span class="string">"mips64r6"
     </span>)
 ))]
-</span><span class="kw">fn </span>statat_old(dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, path: <span class="kw-2">&amp;</span>CStr, flags: AtFlags) -&gt; io::Result&lt;Stat&gt; {
+</span><span class="kw">fn </span>statat_old(dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;, path: <span class="kw-2">&amp;</span>CStr, flags: AtFlags) -&gt; io::Result&lt;Stat&gt; {
     <span class="kw">unsafe </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>result = MaybeUninit::&lt;c::stat64&gt;::uninit();
         ret(c::fstatat(
@@ -3242,25 +3243,25 @@
     }
 }
 
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;emscripten&quot;</span>, target_os = <span class="string">&quot;vita&quot;</span>)))]
+<span class="attr">#[cfg(not(any(target_os = <span class="string">"espidf"</span>, target_os = <span class="string">"emscripten"</span>, target_os = <span class="string">"vita"</span>)))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>access(path: <span class="kw-2">&amp;</span>CStr, access: Access) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{ ret(c::access(c_str(path), access.bits())) }
 }
 
 <span class="attr">#[cfg(not(any(
-    target_os = <span class="string">&quot;emscripten&quot;</span>,
-    target_os = <span class="string">&quot;espidf&quot;</span>,
-    target_os = <span class="string">&quot;redox&quot;</span>,
-    target_os = <span class="string">&quot;vita&quot;
+    target_os = <span class="string">"emscripten"</span>,
+    target_os = <span class="string">"espidf"</span>,
+    target_os = <span class="string">"redox"</span>,
+    target_os = <span class="string">"vita"
 </span>)))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>accessat(
-    dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     path: <span class="kw-2">&amp;</span>CStr,
     access: Access,
     flags: AtFlags,
 ) -&gt; io::Result&lt;()&gt; {
     <span class="comment">// macOS &lt;= 10.9 lacks `faccessat`.
-    </span><span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+    </span><span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
     </span><span class="kw">unsafe </span>{
         <span class="macro">weak! </span>{
             <span class="kw">fn </span>faccessat(
@@ -3292,7 +3293,7 @@
         ret(c::access(c_str(path), <span class="macro">bitflags_bits!</span>(access)))
     }
 
-    <span class="attr">#[cfg(not(target_os = <span class="string">&quot;macos&quot;</span>))]
+    <span class="attr">#[cfg(not(target_os = <span class="string">"macos"</span>))]
     </span><span class="kw">unsafe </span>{
         ret(c::faccessat(
             borrowed_fd(dirfd),
@@ -3303,14 +3304,14 @@
     }
 }
 
-<span class="attr">#[cfg(target_os = <span class="string">&quot;emscripten&quot;</span>)]
+<span class="attr">#[cfg(target_os = <span class="string">"emscripten"</span>)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>access(_path: <span class="kw-2">&amp;</span>CStr, _access: Access) -&gt; io::Result&lt;()&gt; {
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="attr">#[cfg(target_os = <span class="string">&quot;emscripten&quot;</span>)]
+<span class="attr">#[cfg(target_os = <span class="string">"emscripten"</span>)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>accessat(
-    _dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    _dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     _path: <span class="kw-2">&amp;</span>CStr,
     _access: Access,
     _flags: AtFlags,
@@ -3318,9 +3319,9 @@
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;vita&quot;</span>)))]
+<span class="attr">#[cfg(not(any(target_os = <span class="string">"espidf"</span>, target_os = <span class="string">"redox"</span>, target_os = <span class="string">"vita"</span>)))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>utimensat(
-    dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     path: <span class="kw-2">&amp;</span>CStr,
     times: <span class="kw-2">&amp;</span>Timestamps,
     flags: AtFlags,
@@ -3329,7 +3330,7 @@
     // default. But there may be a `__utimensat64` we can use.
     </span><span class="attr">#[cfg(all(fix_y2038, not(apple)))]
     </span>{
-        <span class="attr">#[cfg(target_env = <span class="string">&quot;gnu&quot;</span>)]
+        <span class="attr">#[cfg(target_env = <span class="string">"gnu"</span>)]
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(libc_utimensat) = __utimensat64.get() {
             <span class="kw">let </span>libc_times: [LibcTimespec; <span class="number">2</span>] = [
                 times.last_access.clone().into(),
@@ -3350,7 +3351,7 @@
     }
 
     <span class="comment">// Main version: libc is y2038 safe and has `utimensat`. Or, the platform
-    // is not y2038 safe and there&#39;s nothing practical we can do.
+    // is not y2038 safe and there's nothing practical we can do.
     </span><span class="attr">#[cfg(not(any(apple, fix_y2038)))]
     </span><span class="kw">unsafe </span>{
         <span class="kw">use </span><span class="kw">crate</span>::utils::as_ptr;
@@ -3377,7 +3378,7 @@
                 c::c_int
             ) -&gt; c::c_int
         }
-        <span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
+        <span class="kw">extern </span><span class="string">"C" </span>{
             <span class="kw">fn </span>setattrlist(
                 path: <span class="kw-2">*const </span>c::c_char,
                 attr_list: <span class="kw-2">*const </span>Attrlist,
@@ -3403,7 +3404,7 @@
         </span><span class="kw">let </span>(attrbuf_size, times, attrs) = times_to_attrlist(times)<span class="question-mark">?</span>;
 
         <span class="comment">// `setattrlistat` was introduced in 10.13 along with `utimensat`, so
-        // if we don&#39;t have `utimensat`, we don&#39;t have `setattrlistat` either.
+        // if we don't have `utimensat`, we don't have `setattrlistat` either.
         // Emulate it using `fork`, and `fchdir` and [`setattrlist`].
         //
         // [`setattrlist`]: https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/setattrlist.2.html
@@ -3482,7 +3483,7 @@
 
 <span class="attr">#[cfg(all(fix_y2038, not(apple)))]
 </span><span class="kw">fn </span>utimensat_old(
-    dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     path: <span class="kw-2">&amp;</span>CStr,
     times: <span class="kw-2">&amp;</span>Timestamps,
     flags: AtFlags,
@@ -3523,19 +3524,19 @@
     }
 }
 
-<span class="attr">#[cfg(not(target_os = <span class="string">&quot;wasi&quot;</span>))]
+<span class="attr">#[cfg(not(target_os = <span class="string">"wasi"</span>))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>chmod(path: <span class="kw-2">&amp;</span>CStr, mode: Mode) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{ ret(c::chmod(c_str(path), mode.bits() <span class="kw">as </span>c::mode_t)) }
 }
 
 <span class="attr">#[cfg(not(any(
     linux_kernel,
-    target_os = <span class="string">&quot;espidf&quot;</span>,
-    target_os = <span class="string">&quot;redox&quot;</span>,
-    target_os = <span class="string">&quot;wasi&quot;
+    target_os = <span class="string">"espidf"</span>,
+    target_os = <span class="string">"redox"</span>,
+    target_os = <span class="string">"wasi"
 </span>)))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>chmodat(
-    dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     path: <span class="kw-2">&amp;</span>CStr,
     mode: Mode,
     flags: AtFlags,
@@ -3552,12 +3553,12 @@
 
 <span class="attr">#[cfg(linux_kernel)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>chmodat(
-    dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     path: <span class="kw-2">&amp;</span>CStr,
     mode: Mode,
     flags: AtFlags,
 ) -&gt; io::Result&lt;()&gt; {
-    <span class="comment">// Linux&#39;s `fchmodat` does not have a flags argument.
+    <span class="comment">// Linux's `fchmodat` does not have a flags argument.
     //
     // Use `c::syscall` rather than `c::fchmodat` because some libc
     // implementations, such as musl, add extra logic to `fchmod` to emulate
@@ -3587,15 +3588,15 @@
 
 <span class="attr">#[cfg(apple)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fclonefileat(
-    srcfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
-    dst_dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    srcfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
+    dst_dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     dst: <span class="kw-2">&amp;</span>CStr,
     flags: CloneFlags,
 ) -&gt; io::Result&lt;()&gt; {
     <span class="macro">syscall! </span>{
         <span class="kw">fn </span>fclonefileat(
-            srcfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
-            dst_dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+            srcfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
+            dst_dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
             dst: <span class="kw-2">*const </span>c::c_char,
             flags: c::c_int
         ) via SYS_fclonefileat -&gt; c::c_int
@@ -3611,9 +3612,9 @@
     }
 }
 
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
+<span class="attr">#[cfg(not(any(target_os = <span class="string">"espidf"</span>, target_os = <span class="string">"redox"</span>, target_os = <span class="string">"wasi"</span>)))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>chownat(
-    dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     path: <span class="kw-2">&amp;</span>CStr,
     owner: <span class="prelude-ty">Option</span>&lt;Uid&gt;,
     group: <span class="prelude-ty">Option</span>&lt;Gid&gt;,
@@ -3633,13 +3634,13 @@
 
 <span class="attr">#[cfg(not(any(
     apple,
-    target_os = <span class="string">&quot;espidf&quot;</span>,
-    target_os = <span class="string">&quot;redox&quot;</span>,
-    target_os = <span class="string">&quot;vita&quot;</span>,
-    target_os = <span class="string">&quot;wasi&quot;
+    target_os = <span class="string">"espidf"</span>,
+    target_os = <span class="string">"redox"</span>,
+    target_os = <span class="string">"vita"</span>,
+    target_os = <span class="string">"wasi"
 </span>)))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>mknodat(
-    dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     path: <span class="kw-2">&amp;</span>CStr,
     file_type: FileType,
     mode: Mode,
@@ -3657,9 +3658,9 @@
 
 <span class="attr">#[cfg(linux_kernel)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>copy_file_range(
-    fd_in: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    fd_in: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     off_in: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>u64&gt;,
-    fd_out: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    fd_out: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     off_out: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>u64&gt;,
     len: usize,
 ) -&gt; io::Result&lt;usize&gt; {
@@ -3676,7 +3677,7 @@
 
     <span class="kw">let </span><span class="kw-2">mut </span>off_in_val: c::loff_t = <span class="number">0</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>off_out_val: c::loff_t = <span class="number">0</span>;
-    <span class="comment">// Silently cast; we&#39;ll get `EINVAL` if the value is negative.
+    <span class="comment">// Silently cast; we'll get `EINVAL` if the value is negative.
     </span><span class="kw">let </span>off_in_ptr = <span class="kw">if let </span><span class="prelude-val">Some</span>(off_in) = <span class="kw-2">&amp;</span>off_in {
         off_in_val = <span class="kw-2">**</span>off_in <span class="kw">as </span>i64;
         <span class="kw-2">&amp;mut </span>off_in_val
@@ -3712,18 +3713,18 @@
     apple,
     netbsdlike,
     solarish,
-    target_os = <span class="string">&quot;dragonfly&quot;</span>,
-    target_os = <span class="string">&quot;espidf&quot;</span>,
-    target_os = <span class="string">&quot;haiku&quot;</span>,
-    target_os = <span class="string">&quot;redox&quot;</span>,
-    target_os = <span class="string">&quot;vita&quot;</span>,
+    target_os = <span class="string">"dragonfly"</span>,
+    target_os = <span class="string">"espidf"</span>,
+    target_os = <span class="string">"haiku"</span>,
+    target_os = <span class="string">"redox"</span>,
+    target_os = <span class="string">"vita"</span>,
 )))]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fadvise(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, offset: u64, len: u64, advice: Advice) -&gt; io::Result&lt;()&gt; {
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fadvise(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;, offset: u64, len: u64, advice: Advice) -&gt; io::Result&lt;()&gt; {
     <span class="kw">let </span>offset = offset <span class="kw">as </span>i64;
     <span class="kw">let </span>len = len <span class="kw">as </span>i64;
 
     <span class="comment">// FreeBSD returns `EINVAL` on invalid offsets; emulate the POSIX behavior.
-    </span><span class="attr">#[cfg(target_os = <span class="string">&quot;freebsd&quot;</span>)]
+    </span><span class="attr">#[cfg(target_os = <span class="string">"freebsd"</span>)]
     </span><span class="kw">let </span>offset = <span class="kw">if </span>(offset <span class="kw">as </span>i64) &lt; <span class="number">0 </span>{
         i64::MAX
     } <span class="kw">else </span>{
@@ -3731,7 +3732,7 @@
     };
 
     <span class="comment">// FreeBSD returns `EINVAL` on overflow; emulate the POSIX behavior.
-    </span><span class="attr">#[cfg(target_os = <span class="string">&quot;freebsd&quot;</span>)]
+    </span><span class="attr">#[cfg(target_os = <span class="string">"freebsd"</span>)]
     </span><span class="kw">let </span>len = <span class="kw">if </span>len &gt; <span class="number">0 </span>&amp;&amp; offset.checked_add(len).is_none() {
         i64::MAX - offset
     } <span class="kw">else </span>{
@@ -3748,36 +3749,36 @@
     }
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fcntl_getfl(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; io::Result&lt;OFlags&gt; {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fcntl_getfl(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;) -&gt; io::Result&lt;OFlags&gt; {
     <span class="kw">let </span>flags = <span class="kw">unsafe </span>{ ret_c_int(c::fcntl(borrowed_fd(fd), c::F_GETFL))<span class="question-mark">? </span>};
     <span class="prelude-val">Ok</span>(OFlags::from_bits_retain(<span class="macro">bitcast!</span>(flags)))
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fcntl_setfl(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, flags: OFlags) -&gt; io::Result&lt;()&gt; {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fcntl_setfl(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;, flags: OFlags) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{ ret(c::fcntl(borrowed_fd(fd), c::F_SETFL, flags.bits())) }
 }
 
-<span class="attr">#[cfg(any(linux_kernel, target_os = <span class="string">&quot;freebsd&quot;</span>, target_os = <span class="string">&quot;fuchsia&quot;</span>))]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fcntl_get_seals(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; io::Result&lt;SealFlags&gt; {
+<span class="attr">#[cfg(any(linux_kernel, target_os = <span class="string">"freebsd"</span>, target_os = <span class="string">"fuchsia"</span>))]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fcntl_get_seals(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;) -&gt; io::Result&lt;SealFlags&gt; {
     <span class="kw">let </span>flags = <span class="kw">unsafe </span>{ ret_c_int(c::fcntl(borrowed_fd(fd), c::F_GET_SEALS))<span class="question-mark">? </span>};
     <span class="prelude-val">Ok</span>(SealFlags::from_bits_retain(<span class="macro">bitcast!</span>(flags)))
 }
 
-<span class="attr">#[cfg(any(linux_kernel, target_os = <span class="string">&quot;freebsd&quot;</span>, target_os = <span class="string">&quot;fuchsia&quot;</span>))]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fcntl_add_seals(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, seals: SealFlags) -&gt; io::Result&lt;()&gt; {
+<span class="attr">#[cfg(any(linux_kernel, target_os = <span class="string">"freebsd"</span>, target_os = <span class="string">"fuchsia"</span>))]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fcntl_add_seals(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;, seals: SealFlags) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{ ret(c::fcntl(borrowed_fd(fd), c::F_ADD_SEALS, seals.bits())) }
 }
 
 <span class="attr">#[cfg(not(any(
-    target_os = <span class="string">&quot;emscripten&quot;</span>,
-    target_os = <span class="string">&quot;espidf&quot;</span>,
-    target_os = <span class="string">&quot;fuchsia&quot;</span>,
-    target_os = <span class="string">&quot;redox&quot;</span>,
-    target_os = <span class="string">&quot;vita&quot;</span>,
-    target_os = <span class="string">&quot;wasi&quot;
+    target_os = <span class="string">"emscripten"</span>,
+    target_os = <span class="string">"espidf"</span>,
+    target_os = <span class="string">"fuchsia"</span>,
+    target_os = <span class="string">"redox"</span>,
+    target_os = <span class="string">"vita"</span>,
+    target_os = <span class="string">"wasi"
 </span>)))]
 #[inline]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fcntl_lock(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, operation: FlockOperation) -&gt; io::Result&lt;()&gt; {
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fcntl_lock(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;, operation: FlockOperation) -&gt; io::Result&lt;()&gt; {
     <span class="kw">use </span>c::{flock, F_RDLCK, F_SETLK, F_SETLKW, F_UNLCK, F_WRLCK, SEEK_SET};
 
     <span class="kw">let </span>(cmd, l_type) = <span class="kw">match </span>operation {
@@ -3804,11 +3805,11 @@
     }
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>seek(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, pos: SeekFrom) -&gt; io::Result&lt;u64&gt; {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>seek(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;, pos: SeekFrom) -&gt; io::Result&lt;u64&gt; {
     <span class="kw">let </span>(whence, offset) = <span class="kw">match </span>pos {
         SeekFrom::Start(pos) =&gt; {
             <span class="kw">let </span>pos: u64 = pos;
-            <span class="comment">// Silently cast; we&#39;ll get `EINVAL` if the value is negative.
+            <span class="comment">// Silently cast; we'll get `EINVAL` if the value is negative.
             </span>(c::SEEK_SET, pos <span class="kw">as </span>i64)
         }
         SeekFrom::End(offset) =&gt; (c::SEEK_END, offset),
@@ -3819,26 +3820,26 @@
         </span>SeekFrom::Hole(offset) =&gt; (c::SEEK_HOLE, offset),
     };
 
-    <span class="comment">// ESP-IDF and Vita don&#39;t support 64-bit offsets.
-    </span><span class="attr">#[cfg(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;vita&quot;</span>))]
+    <span class="comment">// ESP-IDF and Vita don't support 64-bit offsets.
+    </span><span class="attr">#[cfg(any(target_os = <span class="string">"espidf"</span>, target_os = <span class="string">"vita"</span>))]
     </span><span class="kw">let </span>offset: i32 = offset.try_into().map_err(|<span class="kw">_</span>| io::Errno::OVERFLOW)<span class="question-mark">?</span>;
 
     <span class="kw">let </span>offset = <span class="kw">unsafe </span>{ ret_off_t(c::lseek(borrowed_fd(fd), offset, whence))<span class="question-mark">? </span>};
     <span class="prelude-val">Ok</span>(offset <span class="kw">as </span>u64)
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>tell(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; io::Result&lt;u64&gt; {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>tell(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;) -&gt; io::Result&lt;u64&gt; {
     <span class="kw">let </span>offset = <span class="kw">unsafe </span>{ ret_off_t(c::lseek(borrowed_fd(fd), <span class="number">0</span>, c::SEEK_CUR))<span class="question-mark">? </span>};
     <span class="prelude-val">Ok</span>(offset <span class="kw">as </span>u64)
 }
 
-<span class="attr">#[cfg(not(any(linux_kernel, target_os = <span class="string">&quot;wasi&quot;</span>)))]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fchmod(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, mode: Mode) -&gt; io::Result&lt;()&gt; {
+<span class="attr">#[cfg(not(any(linux_kernel, target_os = <span class="string">"wasi"</span>)))]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fchmod(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;, mode: Mode) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{ ret(c::fchmod(borrowed_fd(fd), <span class="macro">bitflags_bits!</span>(mode))) }
 }
 
 <span class="attr">#[cfg(linux_kernel)]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fchmod(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, mode: Mode) -&gt; io::Result&lt;()&gt; {
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fchmod(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;, mode: Mode) -&gt; io::Result&lt;()&gt; {
     <span class="comment">// Use `c::syscall` rather than `c::fchmod` because some libc
     // implementations, such as musl, add extra logic to `fchmod` to emulate
     // support for `O_PATH`, which uses `/proc` outside our control and
@@ -3852,7 +3853,7 @@
     <span class="kw">unsafe </span>{ ret(fchmod(borrowed_fd(fd), mode.bits() <span class="kw">as </span>c::mode_t)) }
 }
 
-<span class="attr">#[cfg(not(target_os = <span class="string">&quot;wasi&quot;</span>))]
+<span class="attr">#[cfg(not(target_os = <span class="string">"wasi"</span>))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>chown(path: <span class="kw-2">&amp;</span>CStr, owner: <span class="prelude-ty">Option</span>&lt;Uid&gt;, group: <span class="prelude-ty">Option</span>&lt;Gid&gt;) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{
         <span class="kw">let </span>(ow, gr) = <span class="kw">crate</span>::ugid::translate_fchown_args(owner, group);
@@ -3861,7 +3862,7 @@
 }
 
 <span class="attr">#[cfg(linux_kernel)]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fchown(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, owner: <span class="prelude-ty">Option</span>&lt;Uid&gt;, group: <span class="prelude-ty">Option</span>&lt;Gid&gt;) -&gt; io::Result&lt;()&gt; {
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fchown(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;, owner: <span class="prelude-ty">Option</span>&lt;Uid&gt;, group: <span class="prelude-ty">Option</span>&lt;Gid&gt;) -&gt; io::Result&lt;()&gt; {
     <span class="comment">// Use `c::syscall` rather than `c::fchown` because some libc
     // implementations, such as musl, add extra logic to `fchown` to emulate
     // support for `O_PATH`, which uses `/proc` outside our control and
@@ -3879,8 +3880,8 @@
     }
 }
 
-<span class="attr">#[cfg(not(any(linux_kernel, target_os = <span class="string">&quot;wasi&quot;</span>)))]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fchown(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, owner: <span class="prelude-ty">Option</span>&lt;Uid&gt;, group: <span class="prelude-ty">Option</span>&lt;Gid&gt;) -&gt; io::Result&lt;()&gt; {
+<span class="attr">#[cfg(not(any(linux_kernel, target_os = <span class="string">"wasi"</span>)))]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fchown(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;, owner: <span class="prelude-ty">Option</span>&lt;Uid&gt;, group: <span class="prelude-ty">Option</span>&lt;Gid&gt;) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{
         <span class="kw">let </span>(ow, gr) = <span class="kw">crate</span>::ugid::translate_fchown_args(owner, group);
         ret(c::fchown(borrowed_fd(fd), ow, gr))
@@ -3888,25 +3889,25 @@
 }
 
 <span class="attr">#[cfg(not(any(
-    target_os = <span class="string">&quot;espidf&quot;</span>,
-    target_os = <span class="string">&quot;solaris&quot;</span>,
-    target_os = <span class="string">&quot;vita&quot;</span>,
-    target_os = <span class="string">&quot;wasi&quot;
+    target_os = <span class="string">"espidf"</span>,
+    target_os = <span class="string">"solaris"</span>,
+    target_os = <span class="string">"vita"</span>,
+    target_os = <span class="string">"wasi"
 </span>)))]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>flock(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, operation: FlockOperation) -&gt; io::Result&lt;()&gt; {
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>flock(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;, operation: FlockOperation) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{ ret(c::flock(borrowed_fd(fd), operation <span class="kw">as </span>c::c_int)) }
 }
 
 <span class="attr">#[cfg(linux_kernel)]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>syncfs(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; io::Result&lt;()&gt; {
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>syncfs(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;) -&gt; io::Result&lt;()&gt; {
     <span class="comment">// Some versions of Android libc lack a `syncfs` function.
-    </span><span class="attr">#[cfg(target_os = <span class="string">&quot;android&quot;</span>)]
+    </span><span class="attr">#[cfg(target_os = <span class="string">"android"</span>)]
     </span><span class="macro">syscall! </span>{
         <span class="kw">fn </span>syncfs(fd: c::c_int) via SYS_syncfs -&gt; c::c_int
     }
 
     <span class="comment">// `syncfs` was added to glibc in 2.20.
-    </span><span class="attr">#[cfg(not(target_os = <span class="string">&quot;android&quot;</span>))]
+    </span><span class="attr">#[cfg(not(target_os = <span class="string">"android"</span>))]
     </span><span class="macro">weak_or_syscall! </span>{
         <span class="kw">fn </span>syncfs(fd: c::c_int) via SYS_syncfs -&gt; c::c_int
     }
@@ -3915,32 +3916,32 @@
 }
 
 <span class="attr">#[cfg(not(any(
-    target_os = <span class="string">&quot;espidf&quot;</span>,
-    target_os = <span class="string">&quot;redox&quot;</span>,
-    target_os = <span class="string">&quot;vita&quot;</span>,
-    target_os = <span class="string">&quot;wasi&quot;
+    target_os = <span class="string">"espidf"</span>,
+    target_os = <span class="string">"redox"</span>,
+    target_os = <span class="string">"vita"</span>,
+    target_os = <span class="string">"wasi"
 </span>)))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>sync() {
     <span class="kw">unsafe </span>{ c::sync() }
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fstat(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; io::Result&lt;Stat&gt; {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fstat(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;) -&gt; io::Result&lt;Stat&gt; {
     <span class="comment">// 32-bit and mips64 Linux: `struct stat64` is not y2038 compatible; use
     // `statx`.
     //
-    // And, some old platforms don&#39;t support `statx`, and some fail with a
+    // And, some old platforms don't support `statx`, and some fail with a
     // confusing error code, so we call `crate::fs::statx` to handle that. If
-    // `statx` isn&#39;t available, fall back to the buggy system call.
+    // `statx` isn't available, fall back to the buggy system call.
     </span><span class="attr">#[cfg(all(
         linux_kernel,
         any(
-            target_pointer_width = <span class="string">&quot;32&quot;</span>,
-            target_arch = <span class="string">&quot;mips64&quot;</span>,
-            target_arch = <span class="string">&quot;mips64r6&quot;
+            target_pointer_width = <span class="string">"32"</span>,
+            target_arch = <span class="string">"mips64"</span>,
+            target_arch = <span class="string">"mips64r6"
         </span>)
     ))]
     </span>{
-        <span class="kw">match </span><span class="kw">crate</span>::fs::statx(fd, <span class="macro">cstr!</span>(<span class="string">&quot;&quot;</span>), AtFlags::EMPTY_PATH, StatxFlags::BASIC_STATS) {
+        <span class="kw">match </span><span class="kw">crate</span>::fs::statx(fd, <span class="macro">cstr!</span>(<span class="string">""</span>), AtFlags::EMPTY_PATH, StatxFlags::BASIC_STATS) {
             <span class="prelude-val">Ok</span>(x) =&gt; statx_to_stat(x),
             <span class="prelude-val">Err</span>(io::Errno::NOSYS) =&gt; fstat_old(fd),
             <span class="prelude-val">Err</span>(err) =&gt; <span class="prelude-val">Err</span>(err),
@@ -3948,13 +3949,13 @@
     }
 
     <span class="comment">// Main version: libc is y2038 safe. Or, the platform is not y2038 safe and
-    // there&#39;s nothing practical we can do.
+    // there's nothing practical we can do.
     </span><span class="attr">#[cfg(not(all(
         linux_kernel,
         any(
-            target_pointer_width = <span class="string">&quot;32&quot;</span>,
-            target_arch = <span class="string">&quot;mips64&quot;</span>,
-            target_arch = <span class="string">&quot;mips64r6&quot;
+            target_pointer_width = <span class="string">"32"</span>,
+            target_arch = <span class="string">"mips64"</span>,
+            target_arch = <span class="string">"mips64r6"
         </span>)
     )))]
     </span><span class="kw">unsafe </span>{
@@ -3967,12 +3968,12 @@
 <span class="attr">#[cfg(all(
     linux_kernel,
     any(
-        target_pointer_width = <span class="string">&quot;32&quot;</span>,
-        target_arch = <span class="string">&quot;mips64&quot;</span>,
-        target_arch = <span class="string">&quot;mips64r6&quot;
+        target_pointer_width = <span class="string">"32"</span>,
+        target_arch = <span class="string">"mips64"</span>,
+        target_arch = <span class="string">"mips64r6"
     </span>)
 ))]
-</span><span class="kw">fn </span>fstat_old(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; io::Result&lt;Stat&gt; {
+</span><span class="kw">fn </span>fstat_old(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;) -&gt; io::Result&lt;Stat&gt; {
     <span class="kw">unsafe </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>result = MaybeUninit::&lt;c::stat64&gt;::uninit();
         ret(c::fstat(borrowed_fd(fd), result.as_mut_ptr()))<span class="question-mark">?</span>;
@@ -3982,15 +3983,15 @@
 
 <span class="attr">#[cfg(not(any(
     solarish,
-    target_os = <span class="string">&quot;espidf&quot;</span>,
-    target_os = <span class="string">&quot;haiku&quot;</span>,
-    target_os = <span class="string">&quot;netbsd&quot;</span>,
-    target_os = <span class="string">&quot;nto&quot;</span>,
-    target_os = <span class="string">&quot;redox&quot;</span>,
-    target_os = <span class="string">&quot;vita&quot;</span>,
-    target_os = <span class="string">&quot;wasi&quot;</span>,
+    target_os = <span class="string">"espidf"</span>,
+    target_os = <span class="string">"haiku"</span>,
+    target_os = <span class="string">"netbsd"</span>,
+    target_os = <span class="string">"nto"</span>,
+    target_os = <span class="string">"redox"</span>,
+    target_os = <span class="string">"vita"</span>,
+    target_os = <span class="string">"wasi"</span>,
 )))]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fstatfs(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; io::Result&lt;StatFs&gt; {
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fstatfs(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;) -&gt; io::Result&lt;StatFs&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>statfs = MaybeUninit::&lt;StatFs&gt;::uninit();
     <span class="kw">unsafe </span>{
         ret(c::fstatfs(borrowed_fd(fd), statfs.as_mut_ptr()))<span class="question-mark">?</span>;
@@ -3998,8 +3999,8 @@
     }
 }
 
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;haiku&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fstatvfs(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; io::Result&lt;StatVfs&gt; {
+<span class="attr">#[cfg(not(any(target_os = <span class="string">"haiku"</span>, target_os = <span class="string">"redox"</span>, target_os = <span class="string">"wasi"</span>)))]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fstatvfs(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;) -&gt; io::Result&lt;StatVfs&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>statvfs = MaybeUninit::&lt;c::statvfs&gt;::uninit();
     <span class="kw">unsafe </span>{
         ret(c::fstatvfs(borrowed_fd(fd), statvfs.as_mut_ptr()))<span class="question-mark">?</span>;
@@ -4007,7 +4008,7 @@
     }
 }
 
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;haiku&quot;</span>, target_os = <span class="string">&quot;redox&quot;</span>, target_os = <span class="string">&quot;wasi&quot;</span>)))]
+<span class="attr">#[cfg(not(any(target_os = <span class="string">"haiku"</span>, target_os = <span class="string">"redox"</span>, target_os = <span class="string">"wasi"</span>)))]
 </span><span class="kw">fn </span>libc_statvfs_to_statvfs(from: c::statvfs) -&gt; StatVfs {
     StatVfs {
         f_bsize: from.f_bsize <span class="kw">as </span>u64,
@@ -4018,22 +4019,22 @@
         f_files: from.f_files <span class="kw">as </span>u64,
         f_ffree: from.f_ffree <span class="kw">as </span>u64,
         f_favail: from.f_ffree <span class="kw">as </span>u64,
-        <span class="attr">#[cfg(not(target_os = <span class="string">&quot;aix&quot;</span>))]
+        <span class="attr">#[cfg(not(target_os = <span class="string">"aix"</span>))]
         </span>f_fsid: from.f_fsid <span class="kw">as </span>u64,
-        <span class="attr">#[cfg(target_os = <span class="string">&quot;aix&quot;</span>)]
+        <span class="attr">#[cfg(target_os = <span class="string">"aix"</span>)]
         </span>f_fsid: ((from.f_fsid.val[<span class="number">0</span>] <span class="kw">as </span>u64) &lt;&lt; <span class="number">32</span>) | from.f_fsid.val[<span class="number">1</span>],
         f_flag: StatVfsMountFlags::from_bits_retain(from.f_flag <span class="kw">as </span>u64),
         f_namemax: from.f_namemax <span class="kw">as </span>u64,
     }
 }
 
-<span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;espidf&quot;</span>, target_os = <span class="string">&quot;vita&quot;</span>)))]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>futimens(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, times: <span class="kw-2">&amp;</span>Timestamps) -&gt; io::Result&lt;()&gt; {
+<span class="attr">#[cfg(not(any(target_os = <span class="string">"espidf"</span>, target_os = <span class="string">"vita"</span>)))]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>futimens(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;, times: <span class="kw-2">&amp;</span>Timestamps) -&gt; io::Result&lt;()&gt; {
     <span class="comment">// Old 32-bit version: libc has `futimens` but it is not y2038 safe by
     // default. But there may be a `__futimens64` we can use.
     </span><span class="attr">#[cfg(all(fix_y2038, not(apple)))]
     </span>{
-        <span class="attr">#[cfg(target_env = <span class="string">&quot;gnu&quot;</span>)]
+        <span class="attr">#[cfg(target_env = <span class="string">"gnu"</span>)]
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(libc_futimens) = __futimens64.get() {
             <span class="kw">let </span>libc_times: [LibcTimespec; <span class="number">2</span>] = [
                 times.last_access.clone().into(),
@@ -4049,7 +4050,7 @@
     }
 
     <span class="comment">// Main version: libc is y2038 safe and has `futimens`. Or, the platform
-    // is not y2038 safe and there&#39;s nothing practical we can do.
+    // is not y2038 safe and there's nothing practical we can do.
     </span><span class="attr">#[cfg(not(any(apple, fix_y2038)))]
     </span><span class="kw">unsafe </span>{
         <span class="kw">use </span><span class="kw">crate</span>::utils::as_ptr;
@@ -4066,7 +4067,7 @@
         </span><span class="macro">weak! </span>{
             <span class="kw">fn </span>futimens(c::c_int, <span class="kw-2">*const </span>c::timespec) -&gt; c::c_int
         }
-        <span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
+        <span class="kw">extern </span><span class="string">"C" </span>{
             <span class="kw">fn </span>fsetattrlist(
                 fd: c::c_int,
                 attr_list: <span class="kw-2">*const </span>Attrlist,
@@ -4095,7 +4096,7 @@
 }
 
 <span class="attr">#[cfg(all(fix_y2038, not(apple)))]
-</span><span class="kw">fn </span>futimens_old(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, times: <span class="kw-2">&amp;</span>Timestamps) -&gt; io::Result&lt;()&gt; {
+</span><span class="kw">fn </span>futimens_old(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;, times: <span class="kw-2">&amp;</span>Timestamps) -&gt; io::Result&lt;()&gt; {
     <span class="kw">let </span>old_times = [
         c::timespec {
             tv_sec: times
@@ -4130,24 +4131,24 @@
     apple,
     netbsdlike,
     solarish,
-    target_os = <span class="string">&quot;aix&quot;</span>,
-    target_os = <span class="string">&quot;dragonfly&quot;</span>,
-    target_os = <span class="string">&quot;espidf&quot;</span>,
-    target_os = <span class="string">&quot;nto&quot;</span>,
-    target_os = <span class="string">&quot;redox&quot;</span>,
-    target_os = <span class="string">&quot;vita&quot;</span>,
+    target_os = <span class="string">"aix"</span>,
+    target_os = <span class="string">"dragonfly"</span>,
+    target_os = <span class="string">"espidf"</span>,
+    target_os = <span class="string">"nto"</span>,
+    target_os = <span class="string">"redox"</span>,
+    target_os = <span class="string">"vita"</span>,
 )))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fallocate(
-    fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     mode: FallocateFlags,
     offset: u64,
     len: u64,
 ) -&gt; io::Result&lt;()&gt; {
-    <span class="comment">// Silently cast; we&#39;ll get `EINVAL` if the value is negative.
+    <span class="comment">// Silently cast; we'll get `EINVAL` if the value is negative.
     </span><span class="kw">let </span>offset = offset <span class="kw">as </span>i64;
     <span class="kw">let </span>len = len <span class="kw">as </span>i64;
 
-    <span class="attr">#[cfg(any(linux_kernel, target_os = <span class="string">&quot;fuchsia&quot;</span>))]
+    <span class="attr">#[cfg(any(linux_kernel, target_os = <span class="string">"fuchsia"</span>))]
     </span><span class="kw">unsafe </span>{
         ret(c::fallocate(
             borrowed_fd(fd),
@@ -4157,7 +4158,7 @@
         ))
     }
 
-    <span class="attr">#[cfg(not(any(linux_kernel, target_os = <span class="string">&quot;fuchsia&quot;</span>)))]
+    <span class="attr">#[cfg(not(any(linux_kernel, target_os = <span class="string">"fuchsia"</span>)))]
     </span>{
         <span class="macro">assert!</span>(mode.is_empty());
         <span class="kw">let </span>err = <span class="kw">unsafe </span>{ c::posix_fallocate(borrowed_fd(fd), offset, len) };
@@ -4174,7 +4175,7 @@
 
 <span class="attr">#[cfg(apple)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fallocate(
-    fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     mode: FallocateFlags,
     offset: u64,
     len: u64,
@@ -4203,30 +4204,30 @@
     }
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fsync(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; io::Result&lt;()&gt; {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fsync(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{ ret(c::fsync(borrowed_fd(fd))) }
 }
 
 <span class="attr">#[cfg(not(any(
     apple,
-    target_os = <span class="string">&quot;dragonfly&quot;</span>,
-    target_os = <span class="string">&quot;espidf&quot;</span>,
-    target_os = <span class="string">&quot;haiku&quot;</span>,
-    target_os = <span class="string">&quot;redox&quot;</span>,
-    target_os = <span class="string">&quot;vita&quot;</span>,
+    target_os = <span class="string">"dragonfly"</span>,
+    target_os = <span class="string">"espidf"</span>,
+    target_os = <span class="string">"haiku"</span>,
+    target_os = <span class="string">"redox"</span>,
+    target_os = <span class="string">"vita"</span>,
 )))]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fdatasync(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; io::Result&lt;()&gt; {
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fdatasync(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{ ret(c::fdatasync(borrowed_fd(fd))) }
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>ftruncate(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, length: u64) -&gt; io::Result&lt;()&gt; {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>ftruncate(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;, length: u64) -&gt; io::Result&lt;()&gt; {
     <span class="kw">let </span>length = length.try_into().map_err(|_overflow_err| io::Errno::FBIG)<span class="question-mark">?</span>;
     <span class="kw">unsafe </span>{ ret(c::ftruncate(borrowed_fd(fd), length)) }
 }
 
-<span class="attr">#[cfg(any(linux_kernel, target_os = <span class="string">&quot;freebsd&quot;</span>))]
+<span class="attr">#[cfg(any(linux_kernel, target_os = <span class="string">"freebsd"</span>))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>memfd_create(name: <span class="kw-2">&amp;</span>CStr, flags: MemfdFlags) -&gt; io::Result&lt;OwnedFd&gt; {
-    <span class="attr">#[cfg(target_os = <span class="string">&quot;freebsd&quot;</span>)]
+    <span class="attr">#[cfg(target_os = <span class="string">"freebsd"</span>)]
     </span><span class="macro">weakcall! </span>{
         <span class="kw">fn </span>memfd_create(
             name: <span class="kw-2">*const </span>c::c_char,
@@ -4247,7 +4248,7 @@
 
 <span class="attr">#[cfg(linux_kernel)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>openat2(
-    dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     path: <span class="kw-2">&amp;</span>CStr,
     oflags: OFlags,
     mode: Mode,
@@ -4280,15 +4281,15 @@
         ))
     }
 }
-<span class="attr">#[cfg(all(linux_kernel, target_pointer_width = <span class="string">&quot;32&quot;</span>))]
+<span class="attr">#[cfg(all(linux_kernel, target_pointer_width = <span class="string">"32"</span>))]
 </span><span class="kw">const </span>SYS_OPENAT2: i32 = <span class="number">437</span>;
-<span class="attr">#[cfg(all(linux_kernel, target_pointer_width = <span class="string">&quot;64&quot;</span>))]
+<span class="attr">#[cfg(all(linux_kernel, target_pointer_width = <span class="string">"64"</span>))]
 </span><span class="kw">const </span>SYS_OPENAT2: i64 = <span class="number">437</span>;
 
-<span class="attr">#[cfg(target_os = <span class="string">&quot;linux&quot;</span>)]
+<span class="attr">#[cfg(target_os = <span class="string">"linux"</span>)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>sendfile(
-    out_fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
-    in_fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    out_fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
+    in_fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     offset: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>u64&gt;,
     count: usize,
 ) -&gt; io::Result&lt;usize&gt; {
@@ -4302,8 +4303,8 @@
     }
 }
 
-<span class="doccomment">/// Convert from a Linux `statx` value to rustix&#39;s `Stat`.
-</span><span class="attr">#[cfg(all(linux_kernel, target_pointer_width = <span class="string">&quot;32&quot;</span>))]
+<span class="doccomment">/// Convert from a Linux `statx` value to rustix's `Stat`.
+</span><span class="attr">#[cfg(all(linux_kernel, target_pointer_width = <span class="string">"32"</span>))]
 #[allow(deprecated)] </span><span class="comment">// for `st_[amc]time` u64-&gt;i64 transition
 </span><span class="kw">fn </span>statx_to_stat(x: <span class="kw">crate</span>::fs::Statx) -&gt; io::Result&lt;Stat&gt; {
     <span class="prelude-val">Ok</span>(Stat {
@@ -4326,10 +4327,10 @@
     })
 }
 
-<span class="doccomment">/// Convert from a Linux `statx` value to rustix&#39;s `Stat`.
+<span class="doccomment">/// Convert from a Linux `statx` value to rustix's `Stat`.
 ///
-/// mips64&#39; `struct stat64` in libc has private fields, and `stx_blocks`
-</span><span class="attr">#[cfg(all(linux_kernel, any(target_arch = <span class="string">&quot;mips64&quot;</span>, target_arch = <span class="string">&quot;mips64r6&quot;</span>)))]
+/// mips64' `struct stat64` in libc has private fields, and `stx_blocks`
+</span><span class="attr">#[cfg(all(linux_kernel, any(target_arch = <span class="string">"mips64"</span>, target_arch = <span class="string">"mips64r6"</span>)))]
 </span><span class="kw">fn </span>statx_to_stat(x: <span class="kw">crate</span>::fs::Statx) -&gt; io::Result&lt;Stat&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>result: Stat = <span class="kw">unsafe </span>{ core::mem::zeroed() };
 
@@ -4353,8 +4354,8 @@
     <span class="prelude-val">Ok</span>(result)
 }
 
-<span class="doccomment">/// Convert from a Linux `stat64` value to rustix&#39;s `Stat`.
-</span><span class="attr">#[cfg(all(linux_kernel, target_pointer_width = <span class="string">&quot;32&quot;</span>))]
+<span class="doccomment">/// Convert from a Linux `stat64` value to rustix's `Stat`.
+</span><span class="attr">#[cfg(all(linux_kernel, target_pointer_width = <span class="string">"32"</span>))]
 #[allow(deprecated)] </span><span class="comment">// for `st_[amc]time` u64-&gt;i64 transition
 </span><span class="kw">fn </span>stat64_to_stat(s64: c::stat64) -&gt; io::Result&lt;Stat&gt; {
     <span class="prelude-val">Ok</span>(Stat {
@@ -4386,11 +4387,11 @@
     })
 }
 
-<span class="doccomment">/// Convert from a Linux `stat64` value to rustix&#39;s `Stat`.
+<span class="doccomment">/// Convert from a Linux `stat64` value to rustix's `Stat`.
 ///
-/// mips64&#39; `struct stat64` in libc has private fields, and `st_blocks` has
+/// mips64' `struct stat64` in libc has private fields, and `st_blocks` has
 /// type `i64`.
-</span><span class="attr">#[cfg(all(linux_kernel, any(target_arch = <span class="string">&quot;mips64&quot;</span>, target_arch = <span class="string">&quot;mips64r6&quot;</span>)))]
+</span><span class="attr">#[cfg(all(linux_kernel, any(target_arch = <span class="string">"mips64"</span>, target_arch = <span class="string">"mips64r6"</span>)))]
 </span><span class="kw">fn </span>stat64_to_stat(s64: c::stat64) -&gt; io::Result&lt;Stat&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>result: Stat = <span class="kw">unsafe </span>{ core::mem::zeroed() };
 
@@ -4430,7 +4431,7 @@
 
     <span class="macro">weak_or_syscall! </span>{
         <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>statx(
-            dirfd_: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+            dirfd_: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
             path: <span class="kw-2">*const </span>c::c_char,
             flags: c::c_int,
             mask: c::c_uint,
@@ -4442,7 +4443,7 @@
 <span class="attr">#[cfg(linux_kernel)]
 #[allow(non_upper_case_globals)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>statx(
-    dirfd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    dirfd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     path: <span class="kw-2">&amp;</span>CStr,
     flags: AtFlags,
     mask: StatxFlags,
@@ -4450,19 +4451,19 @@
     <span class="comment">// If a future Linux kernel adds more fields to `struct statx` and users
     // passing flags unknown to rustix in `StatxFlags`, we could end up
     // writing outside of the buffer. To prevent this possibility, we mask off
-    // any flags that we don&#39;t know about.
+    // any flags that we don't know about.
     //
     // This includes `STATX__RESERVED`, which has a value that we know, but
     // which could take on arbitrary new meaning in the future. Linux currently
     // rejects this flag with `EINVAL`, so we do the same.
     //
-    // This doesn&#39;t rely on `STATX_ALL` because [it&#39;s deprecated] and already
-    // doesn&#39;t represent all the known flags.
+    // This doesn't rely on `STATX_ALL` because [it's deprecated] and already
+    // doesn't represent all the known flags.
     //
-    // [it&#39;s deprecated]: https://patchwork.kernel.org/project/linux-fsdevel/patch/20200505095915.11275-7-mszeredi@redhat.com/
-    </span><span class="attr">#[cfg(not(any(target_os = <span class="string">&quot;android&quot;</span>, target_env = <span class="string">&quot;musl&quot;</span>)))]
+    // [it's deprecated]: https://patchwork.kernel.org/project/linux-fsdevel/patch/20200505095915.11275-7-mszeredi@redhat.com/
+    </span><span class="attr">#[cfg(not(any(target_os = <span class="string">"android"</span>, target_env = <span class="string">"musl"</span>)))]
     </span><span class="kw">const </span>STATX__RESERVED: u32 = c::STATX__RESERVED <span class="kw">as </span>u32;
-    <span class="attr">#[cfg(any(target_os = <span class="string">&quot;android&quot;</span>, target_env = <span class="string">&quot;musl&quot;</span>))]
+    <span class="attr">#[cfg(any(target_os = <span class="string">"android"</span>, target_env = <span class="string">"musl"</span>))]
     </span><span class="kw">const </span>STATX__RESERVED: u32 = linux_raw_sys::general::STATX__RESERVED;
     <span class="kw">if </span>(mask.bits() &amp; STATX__RESERVED) == STATX__RESERVED {
         <span class="kw">return </span><span class="prelude-val">Err</span>(io::Errno::INVAL);
@@ -4487,7 +4488,7 @@
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>is_statx_available() -&gt; bool {
     <span class="kw">unsafe </span>{
         <span class="comment">// Call `statx` with null pointers so that if it fails for any reason
-        // other than `EFAULT`, we know it&#39;s not supported.
+        // other than `EFAULT`, we know it's not supported.
         </span><span class="macro">matches!</span>(
             ret(sys::statx(CWD, null(), <span class="number">0</span>, <span class="number">0</span>, null_mut())),
             <span class="prelude-val">Err</span>(io::Errno::FAULT)
@@ -4497,12 +4498,12 @@
 
 <span class="attr">#[cfg(apple)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>fcopyfile(
-    from: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
-    to: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    from: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
+    to: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     state: copyfile_state_t,
     flags: CopyfileFlags,
 ) -&gt; io::Result&lt;()&gt; {
-    <span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
+    <span class="kw">extern </span><span class="string">"C" </span>{
         <span class="kw">fn </span>fcopyfile(
             from: c::c_int,
             to: c::c_int,
@@ -4521,7 +4522,7 @@
 
 <span class="attr">#[cfg(apple)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>copyfile_state_alloc() -&gt; io::Result&lt;copyfile_state_t&gt; {
-    <span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
+    <span class="kw">extern </span><span class="string">"C" </span>{
         <span class="kw">fn </span>copyfile_state_alloc() -&gt; copyfile_state_t;
     }
 
@@ -4535,7 +4536,7 @@
 
 <span class="attr">#[cfg(apple)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>copyfile_state_free(state: copyfile_state_t) -&gt; io::Result&lt;()&gt; {
-    <span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
+    <span class="kw">extern </span><span class="string">"C" </span>{
         <span class="kw">fn </span>copyfile_state_free(state: copyfile_state_t) -&gt; c::c_int;
     }
 
@@ -4558,15 +4559,15 @@
     flag: u32,
     dst: <span class="kw-2">*mut </span>c::c_void,
 ) -&gt; io::Result&lt;()&gt; {
-    <span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
+    <span class="kw">extern </span><span class="string">"C" </span>{
         <span class="kw">fn </span>copyfile_state_get(state: copyfile_state_t, flag: u32, dst: <span class="kw-2">*mut </span>c::c_void) -&gt; c::c_int;
     }
 
     nonnegative_ret(copyfile_state_get(state, flag, dst))
 }
 
-<span class="attr">#[cfg(all(apple, feature = <span class="string">&quot;alloc&quot;</span>))]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>getpath(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; io::Result&lt;CString&gt; {
+<span class="attr">#[cfg(all(apple, feature = <span class="string">"alloc"</span>))]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>getpath(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;) -&gt; io::Result&lt;CString&gt; {
     <span class="comment">// The use of `PATH_MAX` is generally not encouraged, but it
     // is inevitable in this case because macOS defines `fcntl` with
     // `F_GETPATH` in terms of `MAXPATHLEN`, and there are no
@@ -4591,7 +4592,7 @@
 }
 
 <span class="attr">#[cfg(apple)]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fcntl_rdadvise(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, offset: u64, len: u64) -&gt; io::Result&lt;()&gt; {
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fcntl_rdadvise(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;, offset: u64, len: u64) -&gt; io::Result&lt;()&gt; {
     <span class="comment">// From the [macOS `fcntl` manual page]:
     // `F_RDADVISE` - Issue an advisory read async with no copy to user.
     //
@@ -4628,17 +4629,17 @@
 }
 
 <span class="attr">#[cfg(apple)]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fcntl_fullfsync(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; io::Result&lt;()&gt; {
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fcntl_fullfsync(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{ ret(c::fcntl(borrowed_fd(fd), c::F_FULLFSYNC)) }
 }
 
 <span class="attr">#[cfg(apple)]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fcntl_nocache(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, value: bool) -&gt; io::Result&lt;()&gt; {
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fcntl_nocache(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;, value: bool) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{ ret(c::fcntl(borrowed_fd(fd), c::F_NOCACHE, value <span class="kw">as </span>c::c_int)) }
 }
 
 <span class="attr">#[cfg(apple)]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fcntl_global_nocache(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, value: bool) -&gt; io::Result&lt;()&gt; {
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fcntl_global_nocache(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;, value: bool) -&gt; io::Result&lt;()&gt; {
     <span class="kw">unsafe </span>{
         ret(c::fcntl(
             borrowed_fd(fd),
@@ -4819,7 +4820,7 @@
 }
 
 <span class="attr">#[cfg(any(apple, linux_kernel))]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fgetxattr(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, name: <span class="kw-2">&amp;</span>CStr, value: <span class="kw-2">&amp;mut </span>[u8]) -&gt; io::Result&lt;usize&gt; {
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fgetxattr(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;, name: <span class="kw-2">&amp;</span>CStr, value: <span class="kw-2">&amp;mut </span>[u8]) -&gt; io::Result&lt;usize&gt; {
     <span class="kw">let </span>value_ptr = value.as_mut_ptr();
 
     <span class="attr">#[cfg(not(apple))]
@@ -4909,7 +4910,7 @@
 
 <span class="attr">#[cfg(any(apple, linux_kernel))]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fsetxattr(
-    fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;,
+    fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;,
     name: <span class="kw-2">&amp;</span>CStr,
     value: <span class="kw-2">&amp;</span>[u8],
     flags: XattrFlags,
@@ -4975,7 +4976,7 @@
 }
 
 <span class="attr">#[cfg(any(apple, linux_kernel))]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>flistxattr(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, list: <span class="kw-2">&amp;mut </span>[c::c_char]) -&gt; io::Result&lt;usize&gt; {
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>flistxattr(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;, list: <span class="kw-2">&amp;mut </span>[c::c_char]) -&gt; io::Result&lt;usize&gt; {
     <span class="kw">let </span>fd = borrowed_fd(fd);
 
     <span class="attr">#[cfg(not(apple))]
@@ -5020,7 +5021,7 @@
 }
 
 <span class="attr">#[cfg(any(apple, linux_kernel))]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fremovexattr(fd: BorrowedFd&lt;<span class="lifetime">&#39;_</span>&gt;, name: <span class="kw-2">&amp;</span>CStr) -&gt; io::Result&lt;()&gt; {
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fremovexattr(fd: BorrowedFd&lt;<span class="lifetime">'_</span>&gt;, name: <span class="kw-2">&amp;</span>CStr) -&gt; io::Result&lt;()&gt; {
     <span class="kw">let </span>fd = borrowed_fd(fd);
 
     <span class="attr">#[cfg(not(apple))]
@@ -5039,8 +5040,8 @@
     <span class="attr">#[cfg(linux_kernel)]
     </span><span class="macro">assert_eq_size!</span>(c::loff_t, u64);
 
-    <span class="comment">// Assert that `Timestamps` has the expected layout. If we&#39;re not fixing
-    // y2038, libc&#39;s type should match ours. If we are, it&#39;s smaller.
+    <span class="comment">// Assert that `Timestamps` has the expected layout. If we're not fixing
+    // y2038, libc's type should match ours. If we are, it's smaller.
     </span><span class="attr">#[cfg(not(fix_y2038))]
     </span><span class="macro">assert_eq_size!</span>([c::timespec; <span class="number">2</span>], Timestamps);
     <span class="attr">#[cfg(fix_y2038)]

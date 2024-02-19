@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cssparser-0.27.2/src/serializer.rs`."><title>serializer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="cssparser" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cssparser-0.27.2/src/serializer.rs`."><title>serializer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="cssparser" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -588,12 +589,12 @@
 {
     <span class="comment">// `value.value &gt;= 0` is true for negative 0.
     </span><span class="kw">if </span>has_sign &amp;&amp; value.is_sign_positive() {
-        dest.write_str(<span class="string">&quot;+&quot;</span>)<span class="question-mark">?</span>;
+        dest.write_str(<span class="string">"+"</span>)<span class="question-mark">?</span>;
     }
 
     <span class="kw">let </span>notation = <span class="kw">if </span>value == <span class="number">0.0 </span>&amp;&amp; value.is_sign_negative() {
         <span class="comment">// Negative zero. Work around #20596.
-        </span>dest.write_str(<span class="string">&quot;-0&quot;</span>)<span class="question-mark">?</span>;
+        </span>dest.write_str(<span class="string">"-0"</span>)<span class="question-mark">?</span>;
         Notation {
             decimal_point: <span class="bool-val">false</span>,
             scientific: <span class="bool-val">false</span>,
@@ -604,13 +605,13 @@
 
     <span class="kw">if </span>int_value.is_none() &amp;&amp; value.fract() == <span class="number">0. </span>{
         <span class="kw">if </span>!notation.decimal_point &amp;&amp; !notation.scientific {
-            dest.write_str(<span class="string">&quot;.0&quot;</span>)<span class="question-mark">?</span>;
+            dest.write_str(<span class="string">".0"</span>)<span class="question-mark">?</span>;
         }
     }
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; ToCss <span class="kw">for </span>Token&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; ToCss <span class="kw">for </span>Token&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">fn </span>to_css&lt;W&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, dest: <span class="kw-2">&amp;mut </span>W) -&gt; fmt::Result
     <span class="kw">where
         </span>W: fmt::Write,
@@ -618,22 +619,22 @@
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
             Token::Ident(<span class="kw-2">ref </span>value) =&gt; serialize_identifier(<span class="kw-2">&amp;**</span>value, dest)<span class="question-mark">?</span>,
             Token::AtKeyword(<span class="kw-2">ref </span>value) =&gt; {
-                dest.write_str(<span class="string">&quot;@&quot;</span>)<span class="question-mark">?</span>;
+                dest.write_str(<span class="string">"@"</span>)<span class="question-mark">?</span>;
                 serialize_identifier(<span class="kw-2">&amp;**</span>value, dest)<span class="question-mark">?</span>;
             }
             Token::Hash(<span class="kw-2">ref </span>value) =&gt; {
-                dest.write_str(<span class="string">&quot;#&quot;</span>)<span class="question-mark">?</span>;
+                dest.write_str(<span class="string">"#"</span>)<span class="question-mark">?</span>;
                 serialize_name(value, dest)<span class="question-mark">?</span>;
             }
             Token::IDHash(<span class="kw-2">ref </span>value) =&gt; {
-                dest.write_str(<span class="string">&quot;#&quot;</span>)<span class="question-mark">?</span>;
+                dest.write_str(<span class="string">"#"</span>)<span class="question-mark">?</span>;
                 serialize_identifier(<span class="kw-2">&amp;**</span>value, dest)<span class="question-mark">?</span>;
             }
             Token::QuotedString(<span class="kw-2">ref </span>value) =&gt; serialize_string(<span class="kw-2">&amp;**</span>value, dest)<span class="question-mark">?</span>,
             Token::UnquotedUrl(<span class="kw-2">ref </span>value) =&gt; {
-                dest.write_str(<span class="string">&quot;url(&quot;</span>)<span class="question-mark">?</span>;
+                dest.write_str(<span class="string">"url("</span>)<span class="question-mark">?</span>;
                 serialize_unquoted_url(<span class="kw-2">&amp;**</span>value, dest)<span class="question-mark">?</span>;
-                dest.write_str(<span class="string">&quot;)&quot;</span>)<span class="question-mark">?</span>;
+                dest.write_str(<span class="string">")"</span>)<span class="question-mark">?</span>;
             }
             Token::Delim(value) =&gt; dest.write_char(value)<span class="question-mark">?</span>,
 
@@ -648,7 +649,7 @@
                 has_sign,
             } =&gt; {
                 write_numeric(unit_value * <span class="number">100.</span>, int_value, has_sign, dest)<span class="question-mark">?</span>;
-                dest.write_str(<span class="string">&quot;%&quot;</span>)<span class="question-mark">?</span>;
+                dest.write_str(<span class="string">"%"</span>)<span class="question-mark">?</span>;
             }
             Token::Dimension {
                 value,
@@ -659,8 +660,8 @@
                 write_numeric(value, int_value, has_sign, dest)<span class="question-mark">?</span>;
                 <span class="comment">// Disambiguate with scientific notation.
                 </span><span class="kw">let </span>unit = <span class="kw-2">&amp;**</span>unit;
-                <span class="kw">if </span>unit == <span class="string">&quot;e&quot; </span>|| unit == <span class="string">&quot;E&quot; </span>|| unit.starts_with(<span class="string">&quot;e-&quot;</span>) || unit.starts_with(<span class="string">&quot;E-&quot;</span>) {
-                    dest.write_str(<span class="string">&quot;\\65 &quot;</span>)<span class="question-mark">?</span>;
+                <span class="kw">if </span>unit == <span class="string">"e" </span>|| unit == <span class="string">"E" </span>|| unit.starts_with(<span class="string">"e-"</span>) || unit.starts_with(<span class="string">"E-"</span>) {
+                    dest.write_str(<span class="string">"\\65 "</span>)<span class="question-mark">?</span>;
                     serialize_name(<span class="kw-2">&amp;</span>unit[<span class="number">1</span>..], dest)<span class="question-mark">?</span>;
                 } <span class="kw">else </span>{
                     serialize_identifier(unit, dest)<span class="question-mark">?</span>;
@@ -669,33 +670,33 @@
 
             Token::WhiteSpace(content) =&gt; dest.write_str(content)<span class="question-mark">?</span>,
             Token::Comment(content) =&gt; {
-                dest.write_str(<span class="string">&quot;/*&quot;</span>)<span class="question-mark">?</span>;
+                dest.write_str(<span class="string">"/*"</span>)<span class="question-mark">?</span>;
                 dest.write_str(content)<span class="question-mark">?</span>;
-                dest.write_str(<span class="string">&quot;*/&quot;</span>)<span class="question-mark">?
+                dest.write_str(<span class="string">"*/"</span>)<span class="question-mark">?
             </span>}
-            Token::Colon =&gt; dest.write_str(<span class="string">&quot;:&quot;</span>)<span class="question-mark">?</span>,
-            Token::Semicolon =&gt; dest.write_str(<span class="string">&quot;;&quot;</span>)<span class="question-mark">?</span>,
-            Token::Comma =&gt; dest.write_str(<span class="string">&quot;,&quot;</span>)<span class="question-mark">?</span>,
-            Token::IncludeMatch =&gt; dest.write_str(<span class="string">&quot;~=&quot;</span>)<span class="question-mark">?</span>,
-            Token::DashMatch =&gt; dest.write_str(<span class="string">&quot;|=&quot;</span>)<span class="question-mark">?</span>,
-            Token::PrefixMatch =&gt; dest.write_str(<span class="string">&quot;^=&quot;</span>)<span class="question-mark">?</span>,
-            Token::SuffixMatch =&gt; dest.write_str(<span class="string">&quot;$=&quot;</span>)<span class="question-mark">?</span>,
-            Token::SubstringMatch =&gt; dest.write_str(<span class="string">&quot;*=&quot;</span>)<span class="question-mark">?</span>,
-            Token::CDO =&gt; dest.write_str(<span class="string">&quot;&lt;!--&quot;</span>)<span class="question-mark">?</span>,
-            Token::CDC =&gt; dest.write_str(<span class="string">&quot;--&gt;&quot;</span>)<span class="question-mark">?</span>,
+            Token::Colon =&gt; dest.write_str(<span class="string">":"</span>)<span class="question-mark">?</span>,
+            Token::Semicolon =&gt; dest.write_str(<span class="string">";"</span>)<span class="question-mark">?</span>,
+            Token::Comma =&gt; dest.write_str(<span class="string">","</span>)<span class="question-mark">?</span>,
+            Token::IncludeMatch =&gt; dest.write_str(<span class="string">"~="</span>)<span class="question-mark">?</span>,
+            Token::DashMatch =&gt; dest.write_str(<span class="string">"|="</span>)<span class="question-mark">?</span>,
+            Token::PrefixMatch =&gt; dest.write_str(<span class="string">"^="</span>)<span class="question-mark">?</span>,
+            Token::SuffixMatch =&gt; dest.write_str(<span class="string">"$="</span>)<span class="question-mark">?</span>,
+            Token::SubstringMatch =&gt; dest.write_str(<span class="string">"*="</span>)<span class="question-mark">?</span>,
+            Token::CDO =&gt; dest.write_str(<span class="string">"&lt;!--"</span>)<span class="question-mark">?</span>,
+            Token::CDC =&gt; dest.write_str(<span class="string">"--&gt;"</span>)<span class="question-mark">?</span>,
 
             Token::Function(<span class="kw-2">ref </span>name) =&gt; {
                 serialize_identifier(<span class="kw-2">&amp;**</span>name, dest)<span class="question-mark">?</span>;
-                dest.write_str(<span class="string">&quot;(&quot;</span>)<span class="question-mark">?</span>;
+                dest.write_str(<span class="string">"("</span>)<span class="question-mark">?</span>;
             }
-            Token::ParenthesisBlock =&gt; dest.write_str(<span class="string">&quot;(&quot;</span>)<span class="question-mark">?</span>,
-            Token::SquareBracketBlock =&gt; dest.write_str(<span class="string">&quot;[&quot;</span>)<span class="question-mark">?</span>,
-            Token::CurlyBracketBlock =&gt; dest.write_str(<span class="string">&quot;{&quot;</span>)<span class="question-mark">?</span>,
+            Token::ParenthesisBlock =&gt; dest.write_str(<span class="string">"("</span>)<span class="question-mark">?</span>,
+            Token::SquareBracketBlock =&gt; dest.write_str(<span class="string">"["</span>)<span class="question-mark">?</span>,
+            Token::CurlyBracketBlock =&gt; dest.write_str(<span class="string">"{"</span>)<span class="question-mark">?</span>,
 
             Token::BadUrl(<span class="kw-2">ref </span>contents) =&gt; {
-                dest.write_str(<span class="string">&quot;url(&quot;</span>)<span class="question-mark">?</span>;
+                dest.write_str(<span class="string">"url("</span>)<span class="question-mark">?</span>;
                 dest.write_str(contents)<span class="question-mark">?</span>;
-                dest.write_char(<span class="string">&#39;)&#39;</span>)<span class="question-mark">?</span>;
+                dest.write_char(<span class="string">')'</span>)<span class="question-mark">?</span>;
             }
             Token::BadString(<span class="kw-2">ref </span>value) =&gt; {
                 <span class="comment">// During tokenization, an unescaped newline after a quote causes
@@ -703,12 +704,12 @@
                 // The BadString token ends just before the newline
                 // (which is in a separate WhiteSpace token),
                 // and therefore does not have a closing quote.
-                </span>dest.write_char(<span class="string">&#39;&quot;&#39;</span>)<span class="question-mark">?</span>;
+                </span>dest.write_char(<span class="string">'"'</span>)<span class="question-mark">?</span>;
                 CssStringWriter::new(dest).write_str(value)<span class="question-mark">?</span>;
             }
-            Token::CloseParenthesis =&gt; dest.write_str(<span class="string">&quot;)&quot;</span>)<span class="question-mark">?</span>,
-            Token::CloseSquareBracket =&gt; dest.write_str(<span class="string">&quot;]&quot;</span>)<span class="question-mark">?</span>,
-            Token::CloseCurlyBracket =&gt; dest.write_str(<span class="string">&quot;}&quot;</span>)<span class="question-mark">?</span>,
+            Token::CloseParenthesis =&gt; dest.write_str(<span class="string">")"</span>)<span class="question-mark">?</span>,
+            Token::CloseSquareBracket =&gt; dest.write_str(<span class="string">"]"</span>)<span class="question-mark">?</span>,
+            Token::CloseCurlyBracket =&gt; dest.write_str(<span class="string">"}"</span>)<span class="question-mark">?</span>,
         }
         <span class="prelude-val">Ok</span>(())
     }
@@ -718,16 +719,16 @@
 <span class="kw">where
     </span>W: fmt::Write,
 {
-    <span class="kw">static </span>HEX_DIGITS: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[u8; <span class="number">16</span>] = <span class="string">b&quot;0123456789abcdef&quot;</span>;
+    <span class="kw">static </span>HEX_DIGITS: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>[u8; <span class="number">16</span>] = <span class="string">b"0123456789abcdef"</span>;
     <span class="kw">let </span>b3;
     <span class="kw">let </span>b4;
     <span class="kw">let </span>bytes = <span class="kw">if </span>ascii_byte &gt; <span class="number">0x0F </span>{
         <span class="kw">let </span>high = (ascii_byte &gt;&gt; <span class="number">4</span>) <span class="kw">as </span>usize;
         <span class="kw">let </span>low = (ascii_byte &amp; <span class="number">0x0F</span>) <span class="kw">as </span>usize;
-        b4 = [<span class="string">b&#39;\\&#39;</span>, HEX_DIGITS[high], HEX_DIGITS[low], <span class="string">b&#39; &#39;</span>];
+        b4 = [<span class="string">b'\\'</span>, HEX_DIGITS[high], HEX_DIGITS[low], <span class="string">b' '</span>];
         <span class="kw-2">&amp;</span>b4[..]
     } <span class="kw">else </span>{
-        b3 = [<span class="string">b&#39;\\&#39;</span>, HEX_DIGITS[ascii_byte <span class="kw">as </span>usize], <span class="string">b&#39; &#39;</span>];
+        b3 = [<span class="string">b'\\'</span>, HEX_DIGITS[ascii_byte <span class="kw">as </span>usize], <span class="string">b' '</span>];
         <span class="kw-2">&amp;</span>b3[..]
     };
     dest.write_str(<span class="kw">unsafe </span>{ str::from_utf8_unchecked(<span class="kw-2">&amp;</span>bytes) })
@@ -737,7 +738,7 @@
 <span class="kw">where
     </span>W: fmt::Write,
 {
-    <span class="kw">let </span>bytes = [<span class="string">b&#39;\\&#39;</span>, ascii_byte];
+    <span class="kw">let </span>bytes = [<span class="string">b'\\'</span>, ascii_byte];
     dest.write_str(<span class="kw">unsafe </span>{ str::from_utf8_unchecked(<span class="kw-2">&amp;</span>bytes) })
 }
 
@@ -750,17 +751,17 @@
         <span class="kw">return </span><span class="prelude-val">Ok</span>(());
     }
 
-    <span class="kw">if </span>value.starts_with(<span class="string">&quot;--&quot;</span>) {
-        dest.write_str(<span class="string">&quot;--&quot;</span>)<span class="question-mark">?</span>;
+    <span class="kw">if </span>value.starts_with(<span class="string">"--"</span>) {
+        dest.write_str(<span class="string">"--"</span>)<span class="question-mark">?</span>;
         serialize_name(<span class="kw-2">&amp;</span>value[<span class="number">2</span>..], dest)
-    } <span class="kw">else if </span>value == <span class="string">&quot;-&quot; </span>{
-        dest.write_str(<span class="string">&quot;\\-&quot;</span>)
+    } <span class="kw">else if </span>value == <span class="string">"-" </span>{
+        dest.write_str(<span class="string">"\\-"</span>)
     } <span class="kw">else </span>{
-        <span class="kw">if </span>value.as_bytes()[<span class="number">0</span>] == <span class="string">b&#39;-&#39; </span>{
-            dest.write_str(<span class="string">&quot;-&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">if </span>value.as_bytes()[<span class="number">0</span>] == <span class="string">b'-' </span>{
+            dest.write_str(<span class="string">"-"</span>)<span class="question-mark">?</span>;
             value = <span class="kw-2">&amp;</span>value[<span class="number">1</span>..];
         }
-        <span class="kw">if let </span>digit @ <span class="string">b&#39;0&#39;</span>..=<span class="string">b&#39;9&#39; </span>= value.as_bytes()[<span class="number">0</span>] {
+        <span class="kw">if let </span>digit @ <span class="string">b'0'</span>..=<span class="string">b'9' </span>= value.as_bytes()[<span class="number">0</span>] {
             hex_escape(digit, dest)<span class="question-mark">?</span>;
             value = <span class="kw-2">&amp;</span>value[<span class="number">1</span>..];
         }
@@ -770,7 +771,7 @@
 
 <span class="doccomment">/// Write a CSS name, like a custom property name.
 ///
-/// You should only use this when you know what you&#39;re doing, when in doubt,
+/// You should only use this when you know what you're doing, when in doubt,
 /// consider using `serialize_identifier`.
 </span><span class="kw">pub fn </span>serialize_name&lt;W&gt;(value: <span class="kw-2">&amp;</span>str, dest: <span class="kw-2">&amp;mut </span>W) -&gt; fmt::Result
 <span class="kw">where
@@ -779,15 +780,15 @@
     <span class="kw">let </span><span class="kw-2">mut </span>chunk_start = <span class="number">0</span>;
     <span class="kw">for </span>(i, b) <span class="kw">in </span>value.bytes().enumerate() {
         <span class="kw">let </span>escaped = <span class="kw">match </span>b {
-            <span class="string">b&#39;0&#39;</span>..=<span class="string">b&#39;9&#39; </span>| <span class="string">b&#39;A&#39;</span>..=<span class="string">b&#39;Z&#39; </span>| <span class="string">b&#39;a&#39;</span>..=<span class="string">b&#39;z&#39; </span>| <span class="string">b&#39;_&#39; </span>| <span class="string">b&#39;-&#39; </span>=&gt; <span class="kw">continue</span>,
+            <span class="string">b'0'</span>..=<span class="string">b'9' </span>| <span class="string">b'A'</span>..=<span class="string">b'Z' </span>| <span class="string">b'a'</span>..=<span class="string">b'z' </span>| <span class="string">b'_' </span>| <span class="string">b'-' </span>=&gt; <span class="kw">continue</span>,
             <span class="kw">_ if </span>!b.is_ascii() =&gt; <span class="kw">continue</span>,
-            <span class="string">b&#39;\0&#39; </span>=&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;\u{FFFD}&quot;</span>),
+            <span class="string">b'\0' </span>=&gt; <span class="prelude-val">Some</span>(<span class="string">"\u{FFFD}"</span>),
             <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
         };
         dest.write_str(<span class="kw-2">&amp;</span>value[chunk_start..i])<span class="question-mark">?</span>;
         <span class="kw">if let </span><span class="prelude-val">Some</span>(escaped) = escaped {
             dest.write_str(escaped)<span class="question-mark">?</span>;
-        } <span class="kw">else if </span>(b &gt;= <span class="string">b&#39;\x01&#39; </span>&amp;&amp; b &lt;= <span class="string">b&#39;\x1F&#39;</span>) || b == <span class="string">b&#39;\x7F&#39; </span>{
+        } <span class="kw">else if </span>(b &gt;= <span class="string">b'\x01' </span>&amp;&amp; b &lt;= <span class="string">b'\x1F'</span>) || b == <span class="string">b'\x7F' </span>{
             hex_escape(b, dest)<span class="question-mark">?</span>;
         } <span class="kw">else </span>{
             char_escape(b, dest)<span class="question-mark">?</span>;
@@ -804,8 +805,8 @@
     <span class="kw">let </span><span class="kw-2">mut </span>chunk_start = <span class="number">0</span>;
     <span class="kw">for </span>(i, b) <span class="kw">in </span>value.bytes().enumerate() {
         <span class="kw">let </span>hex = <span class="kw">match </span>b {
-            <span class="string">b&#39;\0&#39;</span>..=<span class="string">b&#39; &#39; </span>| <span class="string">b&#39;\x7F&#39; </span>=&gt; <span class="bool-val">true</span>,
-            <span class="string">b&#39;(&#39; </span>| <span class="string">b&#39;)&#39; </span>| <span class="string">b&#39;&quot;&#39; </span>| <span class="string">b&#39;\&#39;&#39; </span>| <span class="string">b&#39;\\&#39; </span>=&gt; <span class="bool-val">false</span>,
+            <span class="string">b'\0'</span>..=<span class="string">b' ' </span>| <span class="string">b'\x7F' </span>=&gt; <span class="bool-val">true</span>,
+            <span class="string">b'(' </span>| <span class="string">b')' </span>| <span class="string">b'"' </span>| <span class="string">b'\'' </span>| <span class="string">b'\\' </span>=&gt; <span class="bool-val">false</span>,
             <span class="kw">_ </span>=&gt; <span class="kw">continue</span>,
         };
         dest.write_str(<span class="kw-2">&amp;</span>value[chunk_start..i])<span class="question-mark">?</span>;
@@ -824,9 +825,9 @@
 <span class="kw">where
     </span>W: fmt::Write,
 {
-    dest.write_str(<span class="string">&quot;\&quot;&quot;</span>)<span class="question-mark">?</span>;
+    dest.write_str(<span class="string">"\""</span>)<span class="question-mark">?</span>;
     CssStringWriter::new(dest).write_str(value)<span class="question-mark">?</span>;
-    dest.write_str(<span class="string">&quot;\&quot;&quot;</span>)<span class="question-mark">?</span>;
+    dest.write_str(<span class="string">"\""</span>)<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>(())
 }
 
@@ -837,30 +838,30 @@
 ///
 /// ```{rust,ignore}
 /// fn write_foo&lt;W&gt;(foo: &amp;Foo, dest: &amp;mut W) -&gt; fmt::Result where W: fmt::Write {
-///     dest.write_str(&quot;\&quot;&quot;)?;
+///     dest.write_str("\"")?;
 ///     {
 ///         let mut string_dest = CssStringWriter::new(dest);
 ///         // Write into string_dest...
 ///     }
-///     dest.write_str(&quot;\&quot;&quot;)?;
+///     dest.write_str("\"")?;
 ///     Ok(())
 /// }
 /// ```
-</span><span class="kw">pub struct </span>CssStringWriter&lt;<span class="lifetime">&#39;a</span>, W&gt; {
-    inner: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>W,
+</span><span class="kw">pub struct </span>CssStringWriter&lt;<span class="lifetime">'a</span>, W&gt; {
+    inner: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>W,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, W&gt; CssStringWriter&lt;<span class="lifetime">&#39;a</span>, W&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, W&gt; CssStringWriter&lt;<span class="lifetime">'a</span>, W&gt;
 <span class="kw">where
     </span>W: fmt::Write,
 {
     <span class="doccomment">/// Wrap a text writer to create a `CssStringWriter`.
-    </span><span class="kw">pub fn </span>new(inner: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>W) -&gt; CssStringWriter&lt;<span class="lifetime">&#39;a</span>, W&gt; {
+    </span><span class="kw">pub fn </span>new(inner: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>W) -&gt; CssStringWriter&lt;<span class="lifetime">'a</span>, W&gt; {
         CssStringWriter { inner: inner }
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, W&gt; fmt::Write <span class="kw">for </span>CssStringWriter&lt;<span class="lifetime">&#39;a</span>, W&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, W&gt; fmt::Write <span class="kw">for </span>CssStringWriter&lt;<span class="lifetime">'a</span>, W&gt;
 <span class="kw">where
     </span>W: fmt::Write,
 {
@@ -868,10 +869,10 @@
         <span class="kw">let </span><span class="kw-2">mut </span>chunk_start = <span class="number">0</span>;
         <span class="kw">for </span>(i, b) <span class="kw">in </span>s.bytes().enumerate() {
             <span class="kw">let </span>escaped = <span class="kw">match </span>b {
-                <span class="string">b&#39;&quot;&#39; </span>=&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;\\\&quot;&quot;</span>),
-                <span class="string">b&#39;\\&#39; </span>=&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;\\\\&quot;</span>),
-                <span class="string">b&#39;\0&#39; </span>=&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;\u{FFFD}&quot;</span>),
-                <span class="string">b&#39;\x01&#39;</span>..=<span class="string">b&#39;\x1F&#39; </span>| <span class="string">b&#39;\x7F&#39; </span>=&gt; <span class="prelude-val">None</span>,
+                <span class="string">b'"' </span>=&gt; <span class="prelude-val">Some</span>(<span class="string">"\\\""</span>),
+                <span class="string">b'\\' </span>=&gt; <span class="prelude-val">Some</span>(<span class="string">"\\\\"</span>),
+                <span class="string">b'\0' </span>=&gt; <span class="prelude-val">Some</span>(<span class="string">"\u{FFFD}"</span>),
+                <span class="string">b'\x01'</span>..=<span class="string">b'\x1F' </span>| <span class="string">b'\x7F' </span>=&gt; <span class="prelude-val">None</span>,
                 <span class="kw">_ </span>=&gt; <span class="kw">continue</span>,
             };
             <span class="self">self</span>.inner.write_str(<span class="kw-2">&amp;</span>s[chunk_start..i])<span class="question-mark">?</span>;
@@ -887,7 +888,7 @@
 
 <span class="macro">macro_rules! </span>impl_tocss_for_int {
     (<span class="macro-nonterminal">$T</span>: ty) =&gt; {
-        <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; ToCss <span class="kw">for </span><span class="macro-nonterminal">$T </span>{
+        <span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; ToCss <span class="kw">for </span><span class="macro-nonterminal">$T </span>{
             <span class="kw">fn </span>to_css&lt;W&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, dest: <span class="kw-2">&amp;mut </span>W) -&gt; fmt::Result
             <span class="kw">where
                 </span>W: fmt::Write,
@@ -936,7 +937,7 @@
 
 <span class="macro">macro_rules! </span>impl_tocss_for_float {
     (<span class="macro-nonterminal">$T</span>: ty) =&gt; {
-        <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; ToCss <span class="kw">for </span><span class="macro-nonterminal">$T </span>{
+        <span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; ToCss <span class="kw">for </span><span class="macro-nonterminal">$T </span>{
             <span class="kw">fn </span>to_css&lt;W&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, dest: <span class="kw-2">&amp;mut </span>W) -&gt; fmt::Result
             <span class="kw">where
                 </span>W: fmt::Write,
@@ -1037,22 +1038,22 @@
     CDC,
     DashMatch,
     SubstringMatch,
-    OpenParen,      <span class="comment">// &#39;(&#39;
-    </span>DelimHash,      <span class="comment">// &#39;#&#39;
-    </span>DelimAt,        <span class="comment">// &#39;@&#39;
-    </span>DelimDotOrPlus, <span class="comment">// &#39;.&#39;, &#39;+&#39;
-    </span>DelimMinus,     <span class="comment">// &#39;-&#39;
-    </span>DelimQuestion,  <span class="comment">// &#39;?&#39;
-    </span>DelimAssorted,  <span class="comment">// &#39;$&#39;, &#39;^&#39;, &#39;~&#39;
-    </span>DelimEquals,    <span class="comment">// &#39;=&#39;
-    </span>DelimBar,       <span class="comment">// &#39;|&#39;
-    </span>DelimSlash,     <span class="comment">// &#39;/&#39;
-    </span>DelimAsterisk,  <span class="comment">// &#39;*&#39;
-    </span>DelimPercent,   <span class="comment">// &#39;%&#39;
+    OpenParen,      <span class="comment">// '('
+    </span>DelimHash,      <span class="comment">// '#'
+    </span>DelimAt,        <span class="comment">// '@'
+    </span>DelimDotOrPlus, <span class="comment">// '.', '+'
+    </span>DelimMinus,     <span class="comment">// '-'
+    </span>DelimQuestion,  <span class="comment">// '?'
+    </span>DelimAssorted,  <span class="comment">// '$', '^', '~'
+    </span>DelimEquals,    <span class="comment">// '='
+    </span>DelimBar,       <span class="comment">// '|'
+    </span>DelimSlash,     <span class="comment">// '/'
+    </span>DelimAsterisk,  <span class="comment">// '*'
+    </span>DelimPercent,   <span class="comment">// '%'
     </span>Other,          <span class="comment">// anything else
 </span>}
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Token&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Token&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// Categorize a token into a type that determines when `/**/` needs to be inserted
     /// between two tokens when serialized next to each other without whitespace in between.
     ///
@@ -1063,17 +1064,17 @@
             Token::Ident(<span class="kw">_</span>) =&gt; Ident,
             Token::AtKeyword(<span class="kw">_</span>) | Token::Hash(<span class="kw">_</span>) | Token::IDHash(<span class="kw">_</span>) =&gt; AtKeywordOrHash,
             Token::UnquotedUrl(<span class="kw">_</span>) | Token::BadUrl(<span class="kw">_</span>) =&gt; UrlOrBadUrl,
-            Token::Delim(<span class="string">&#39;#&#39;</span>) =&gt; DelimHash,
-            Token::Delim(<span class="string">&#39;@&#39;</span>) =&gt; DelimAt,
-            Token::Delim(<span class="string">&#39;.&#39;</span>) | Token::Delim(<span class="string">&#39;+&#39;</span>) =&gt; DelimDotOrPlus,
-            Token::Delim(<span class="string">&#39;-&#39;</span>) =&gt; DelimMinus,
-            Token::Delim(<span class="string">&#39;?&#39;</span>) =&gt; DelimQuestion,
-            Token::Delim(<span class="string">&#39;$&#39;</span>) | Token::Delim(<span class="string">&#39;^&#39;</span>) | Token::Delim(<span class="string">&#39;~&#39;</span>) =&gt; DelimAssorted,
-            Token::Delim(<span class="string">&#39;%&#39;</span>) =&gt; DelimPercent,
-            Token::Delim(<span class="string">&#39;=&#39;</span>) =&gt; DelimEquals,
-            Token::Delim(<span class="string">&#39;|&#39;</span>) =&gt; DelimBar,
-            Token::Delim(<span class="string">&#39;/&#39;</span>) =&gt; DelimSlash,
-            Token::Delim(<span class="string">&#39;*&#39;</span>) =&gt; DelimAsterisk,
+            Token::Delim(<span class="string">'#'</span>) =&gt; DelimHash,
+            Token::Delim(<span class="string">'@'</span>) =&gt; DelimAt,
+            Token::Delim(<span class="string">'.'</span>) | Token::Delim(<span class="string">'+'</span>) =&gt; DelimDotOrPlus,
+            Token::Delim(<span class="string">'-'</span>) =&gt; DelimMinus,
+            Token::Delim(<span class="string">'?'</span>) =&gt; DelimQuestion,
+            Token::Delim(<span class="string">'$'</span>) | Token::Delim(<span class="string">'^'</span>) | Token::Delim(<span class="string">'~'</span>) =&gt; DelimAssorted,
+            Token::Delim(<span class="string">'%'</span>) =&gt; DelimPercent,
+            Token::Delim(<span class="string">'='</span>) =&gt; DelimEquals,
+            Token::Delim(<span class="string">'|'</span>) =&gt; DelimBar,
+            Token::Delim(<span class="string">'/'</span>) =&gt; DelimSlash,
+            Token::Delim(<span class="string">'*'</span>) =&gt; DelimAsterisk,
             Token::Number { .. } =&gt; Number,
             Token::Percentage { .. } =&gt; Percentage,
             Token::Dimension { .. } =&gt; Dimension,

@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_with-3.6.0/src/key_value_map.rs`."><title>key_value_map.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="serde_with" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_with-3.6.1/src/key_value_map.rs`."><title>key_value_map.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="serde_with" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1312,7 +1313,7 @@
 ///
 /// The conversion supports structs, tuple structs, tuples, maps, and sequences.
 /// Structs need a field that is named `$key$` to be used as the map key.
-/// This can be done with the `#[serde(rename = &quot;$key$&quot;)]` attribute.
+/// This can be done with the `#[serde(rename = "$key$")]` attribute.
 /// Maps similarly need a map-key that is named `$key$`.
 /// For tuples, tuple structs, and sequences the first element is used as the map key.
 ///
@@ -1321,7 +1322,7 @@
 /// ## Struct with String key in JSON
 ///
 /// ```rust
-/// # #[cfg(feature = &quot;macros&quot;)] {
+/// # #[cfg(feature = "macros")] {
 /// # use serde::{Deserialize, Serialize};
 /// use serde_with::{serde_as, KeyValueMap};
 ///
@@ -1330,7 +1331,7 @@
 /// struct SimpleStruct {
 ///     b: bool,
 ///     // The field named `$key$` will become the map key
-///     #[serde(rename = &quot;$key$&quot;)]
+///     #[serde(rename = "$key$")]
 ///     id: String,
 ///     i: i32,
 /// }
@@ -1339,7 +1340,7 @@
 /// # #[derive(Debug, Clone, PartialEq, Eq)]
 /// #[derive(Serialize, Deserialize)]
 /// struct KVMap(
-///     #[serde_as(as = &quot;KeyValueMap&lt;_&gt;&quot;)]
+///     #[serde_as(as = "KeyValueMap&lt;_&gt;")]
 ///     Vec&lt;SimpleStruct&gt;,
 /// );
 ///
@@ -1349,37 +1350,37 @@
 /// let values = KVMap(vec![
 ///     SimpleStruct {
 ///         b: false,
-///         id: &quot;id-0000&quot;.to_string(),
+///         id: "id-0000".to_string(),
 ///         i: 123,
 ///     },
 ///     SimpleStruct {
 ///         b: true,
-///         id: &quot;id-0001&quot;.to_string(),
+///         id: "id-0001".to_string(),
 ///         i: 555,
 ///     },
 ///     SimpleStruct {
 ///         b: false,
-///         id: &quot;id-0002&quot;.to_string(),
+///         id: "id-0002".to_string(),
 ///         i: 987,
 ///     },
 /// ]);
 ///
 /// // into this JSON map
 /// let expected =
-/// r#&quot;{
-///   &quot;id-0000&quot;: {
-///     &quot;b&quot;: false,
-///     &quot;i&quot;: 123
+/// r#"{
+///   "id-0000": {
+///     "b": false,
+///     "i": 123
 ///   },
-///   &quot;id-0001&quot;: {
-///     &quot;b&quot;: true,
-///     &quot;i&quot;: 555
+///   "id-0001": {
+///     "b": true,
+///     "i": 555
 ///   },
-///   &quot;id-0002&quot;: {
-///     &quot;b&quot;: false,
-///     &quot;i&quot;: 987
+///   "id-0002": {
+///     "b": false,
+///     "i": 987
 ///   }
-/// }&quot;#;
+/// }"#;
 ///
 /// // Both serialization and deserialization work flawlessly.
 /// let serialized = serde_json::to_string_pretty(&amp;values).unwrap();
@@ -1392,7 +1393,7 @@
 /// ## Tuple struct with complex key in YAML
 ///
 /// ```rust
-/// # #[cfg(feature = &quot;macros&quot;)] {
+/// # #[cfg(feature = "macros")] {
 /// # use serde::{Deserialize, Serialize};
 /// use serde_with::{serde_as, KeyValueMap};
 /// use std::net::IpAddr;
@@ -1410,7 +1411,7 @@
 /// # #[derive(Debug, Clone, PartialEq, Eq)]
 /// #[derive(Serialize, Deserialize)]
 /// struct KVMap(
-///     #[serde_as(as = &quot;KeyValueMap&lt;_&gt;&quot;)]
+///     #[serde_as(as = "KeyValueMap&lt;_&gt;")]
 ///     Vec&lt;TupleStruct&gt;,
 /// );
 ///
@@ -1419,22 +1420,22 @@
 /// // This will serialize this list of values
 /// let values = KVMap(vec![
 ///     TupleStruct(
-///         (IpAddr::from_str(&quot;127.0.0.1&quot;).unwrap(), 8),
+///         (IpAddr::from_str("127.0.0.1").unwrap(), 8),
 ///         true
 ///     ),
 ///     TupleStruct(
-///         (IpAddr::from_str(&quot;::1&quot;).unwrap(), 128),
+///         (IpAddr::from_str("::1").unwrap(), 128),
 ///         true
 ///     ),
 ///     TupleStruct(
-///         (IpAddr::from_str(&quot;198.51.100.0&quot;).unwrap(), 24),
+///         (IpAddr::from_str("198.51.100.0").unwrap(), 24),
 ///         true
 ///     ),
 /// ]);
 ///
 /// // into this YAML
 /// let expected =
-/// r#&quot;? - 127.0.0.1
+/// r#"? - 127.0.0.1
 ///   - 8
 /// : - true
 /// ? - ::1
@@ -1443,7 +1444,7 @@
 /// ? - 198.51.100.0
 ///   - 24
 /// : - true
-/// &quot;#;
+/// "#;
 ///
 /// // Both serialization and deserialization work flawlessly.
 /// let serialized = serde_yaml::to_string(&amp;values).unwrap();
@@ -1466,30 +1467,30 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, T, TAs&gt; DeserializeAs&lt;<span class="lifetime">&#39;de</span>, Vec&lt;T&gt;&gt; <span class="kw">for </span>KeyValueMap&lt;TAs&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, T, TAs&gt; DeserializeAs&lt;<span class="lifetime">'de</span>, Vec&lt;T&gt;&gt; <span class="kw">for </span>KeyValueMap&lt;TAs&gt;
 <span class="kw">where
-    </span>TAs: DeserializeAs&lt;<span class="lifetime">&#39;de</span>, T&gt;,
+    </span>TAs: DeserializeAs&lt;<span class="lifetime">'de</span>, T&gt;,
 {
     <span class="kw">fn </span>deserialize_as&lt;D&gt;(deserializer: D) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;T&gt;, D::Error&gt;
     <span class="kw">where
-        </span>D: Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>D: Deserializer&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">struct </span>KeyValueMapVisitor&lt;T, TAs&gt; {
             is_human_readable: bool,
             phantom: PhantomData&lt;(T, TAs)&gt;,
         }
 
-        <span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, T, TAs&gt; Visitor&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>KeyValueMapVisitor&lt;T, TAs&gt;
+        <span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, T, TAs&gt; Visitor&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>KeyValueMapVisitor&lt;T, TAs&gt;
         <span class="kw">where
-            </span>TAs: DeserializeAs&lt;<span class="lifetime">&#39;de</span>, T&gt;,
+            </span>TAs: DeserializeAs&lt;<span class="lifetime">'de</span>, T&gt;,
         {
             <span class="kw">type </span>Value = Vec&lt;T&gt;;
 
-            <span class="kw">fn </span>expecting(<span class="kw-2">&amp;</span><span class="self">self</span>, formatter: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-                <span class="macro">write!</span>(formatter, <span class="string">&quot;a map&quot;</span>)
+            <span class="kw">fn </span>expecting(<span class="kw-2">&amp;</span><span class="self">self</span>, formatter: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
+                <span class="macro">write!</span>(formatter, <span class="string">"a map"</span>)
             }
 
-            <span class="kw">fn </span>visit_map&lt;A: MapAccess&lt;<span class="lifetime">&#39;de</span>&gt;&gt;(<span class="self">self</span>, map: A) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, A::Error&gt; {
+            <span class="kw">fn </span>visit_map&lt;A: MapAccess&lt;<span class="lifetime">'de</span>&gt;&gt;(<span class="self">self</span>, map: A) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, A::Error&gt; {
                 &lt;Vec&lt;TAs&gt;&gt;::deserialize_as(SeqDeserializer {
                     delegate: map,
                     is_human_readable: <span class="self">self</span>.is_human_readable,
@@ -1507,10 +1508,10 @@
 
 <span class="comment">// TODO Replace this with a const generic string once adt_const_params is stable.
 // This will allow something like this.
-// The `&quot;id&quot;` part is the field name, which gets converted to/from the map key.
-// #[serde_as(as = r#&quot;KeyValueMap&lt;&quot;id&quot;, _&gt;&quot;#)]
+// The `"id"` part is the field name, which gets converted to/from the map key.
+// #[serde_as(as = r#"KeyValueMap&lt;"id", _&gt;"#)]
 // Vec&lt;SimpleStruct&gt;,
-</span><span class="kw">static </span>MAP_KEY_IDENTIFIER: <span class="kw-2">&amp;</span>str = <span class="string">&quot;$key$&quot;</span>;
+</span><span class="kw">static </span>MAP_KEY_IDENTIFIER: <span class="kw-2">&amp;</span>str = <span class="string">"$key$"</span>;
 
 <span class="doccomment">/// Convert a sequence to a map during serialization.
 ///
@@ -1538,119 +1539,119 @@
     }
 
     <span class="kw">fn </span>serialize_bool(<span class="self">self</span>, _v: bool) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_i8(<span class="self">self</span>, _v: i8) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_i16(<span class="self">self</span>, _v: i16) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_i32(<span class="self">self</span>, _v: i32) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_i64(<span class="self">self</span>, _v: i64) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_i128(<span class="self">self</span>, _v: i128) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_u8(<span class="self">self</span>, _v: u8) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_u16(<span class="self">self</span>, _v: u16) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_u32(<span class="self">self</span>, _v: u32) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_u64(<span class="self">self</span>, _v: u64) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_u128(<span class="self">self</span>, _v: u128) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_f32(<span class="self">self</span>, _v: f32) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_f64(<span class="self">self</span>, _v: f64) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_char(<span class="self">self</span>, _v: char) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_str(<span class="self">self</span>, _v: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_bytes(<span class="self">self</span>, _v: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_none(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_some&lt;T: <span class="question-mark">?</span>Sized&gt;(<span class="self">self</span>, _value: <span class="kw-2">&amp;</span>T) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
         </span>T: Serialize,
     {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_unit(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
-    <span class="kw">fn </span>serialize_unit_struct(<span class="self">self</span>, _name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+    <span class="kw">fn </span>serialize_unit_struct(<span class="self">self</span>, _name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_unit_variant(
         <span class="self">self</span>,
-        _name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        _name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         _variant_index: u32,
-        _variant: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        _variant: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_newtype_struct&lt;T: <span class="question-mark">?</span>Sized&gt;(
         <span class="self">self</span>,
-        _name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        _name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         _value: <span class="kw-2">&amp;</span>T,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
         </span>T: Serialize,
     {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_newtype_variant&lt;T: <span class="question-mark">?</span>Sized&gt;(
         <span class="self">self</span>,
-        _name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        _name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         _variant_index: u32,
-        _variant: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        _variant: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         _value: <span class="kw-2">&amp;</span>T,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
         </span>T: Serialize,
     {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_seq(<span class="self">self</span>, len: <span class="prelude-ty">Option</span>&lt;usize&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::SerializeSeq, <span class="self">Self</span>::Error&gt; {
@@ -1664,47 +1665,47 @@
     }
 
     <span class="kw">fn </span>serialize_tuple(<span class="self">self</span>, _len: usize) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::SerializeTuple, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_tuple_struct(
         <span class="self">self</span>,
-        _name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        _name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         _len: usize,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::SerializeTupleStruct, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_tuple_variant(
         <span class="self">self</span>,
-        _name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        _name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         _variant_index: u32,
-        _variant: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        _variant: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         _len: usize,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::SerializeTupleVariant, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_map(<span class="self">self</span>, _len: <span class="prelude-ty">Option</span>&lt;usize&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::SerializeMap, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_struct(
         <span class="self">self</span>,
-        _name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        _name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         _len: usize,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::SerializeStruct, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_struct_variant(
         <span class="self">self</span>,
-        _name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        _name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         _variant_index: u32,
-        _variant: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        _variant: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         _len: usize,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::SerializeStructVariant, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 }
 
@@ -1742,24 +1743,24 @@
     }
 }
 
-<span class="kw">struct </span>ElementAsKeyValueSerializer&lt;<span class="lifetime">&#39;a</span>, M&gt; {
-    delegate: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>M,
+<span class="kw">struct </span>ElementAsKeyValueSerializer&lt;<span class="lifetime">'a</span>, M&gt; {
+    delegate: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>M,
     is_human_readable: bool,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, M&gt; Serializer <span class="kw">for </span>ElementAsKeyValueSerializer&lt;<span class="lifetime">&#39;a</span>, M&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, M&gt; Serializer <span class="kw">for </span>ElementAsKeyValueSerializer&lt;<span class="lifetime">'a</span>, M&gt;
 <span class="kw">where
     </span>M: SerializeMap,
 {
     <span class="kw">type </span><span class="prelude-val">Ok </span>= ();
     <span class="kw">type </span>Error = M::Error;
 
-    <span class="kw">type </span>SerializeSeq = KeyValueSeqSerializer&lt;<span class="lifetime">&#39;a</span>, M&gt;;
-    <span class="kw">type </span>SerializeTuple = KeyValueTupleSerializer&lt;<span class="lifetime">&#39;a</span>, M&gt;;
-    <span class="kw">type </span>SerializeTupleStruct = KeyValueTupleStructSerializer&lt;<span class="lifetime">&#39;a</span>, M&gt;;
+    <span class="kw">type </span>SerializeSeq = KeyValueSeqSerializer&lt;<span class="lifetime">'a</span>, M&gt;;
+    <span class="kw">type </span>SerializeTuple = KeyValueTupleSerializer&lt;<span class="lifetime">'a</span>, M&gt;;
+    <span class="kw">type </span>SerializeTupleStruct = KeyValueTupleStructSerializer&lt;<span class="lifetime">'a</span>, M&gt;;
     <span class="kw">type </span>SerializeTupleVariant = Impossible&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;;
-    <span class="kw">type </span>SerializeMap = KeyValueMapSerializer&lt;<span class="lifetime">&#39;a</span>, M&gt;;
-    <span class="kw">type </span>SerializeStruct = KeyValueStructSerializer&lt;<span class="lifetime">&#39;a</span>, M&gt;;
+    <span class="kw">type </span>SerializeMap = KeyValueMapSerializer&lt;<span class="lifetime">'a</span>, M&gt;;
+    <span class="kw">type </span>SerializeStruct = KeyValueStructSerializer&lt;<span class="lifetime">'a</span>, M&gt;;
     <span class="kw">type </span>SerializeStructVariant = Impossible&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;;
 
     <span class="kw">fn </span>is_human_readable(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
@@ -1767,119 +1768,119 @@
     }
 
     <span class="kw">fn </span>serialize_bool(<span class="self">self</span>, _v: bool) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_i8(<span class="self">self</span>, _v: i8) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_i16(<span class="self">self</span>, _v: i16) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_i32(<span class="self">self</span>, _v: i32) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_i64(<span class="self">self</span>, _v: i64) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_i128(<span class="self">self</span>, _v: i128) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_u8(<span class="self">self</span>, _v: u8) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_u16(<span class="self">self</span>, _v: u16) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_u32(<span class="self">self</span>, _v: u32) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_u64(<span class="self">self</span>, _v: u64) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_u128(<span class="self">self</span>, _v: u128) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_f32(<span class="self">self</span>, _v: f32) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_f64(<span class="self">self</span>, _v: f64) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_char(<span class="self">self</span>, _v: char) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_str(<span class="self">self</span>, _v: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_bytes(<span class="self">self</span>, _v: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_none(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_some&lt;T: <span class="question-mark">?</span>Sized&gt;(<span class="self">self</span>, _value: <span class="kw-2">&amp;</span>T) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
         </span>T: Serialize,
     {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_unit(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
-    <span class="kw">fn </span>serialize_unit_struct(<span class="self">self</span>, _name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+    <span class="kw">fn </span>serialize_unit_struct(<span class="self">self</span>, _name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_unit_variant(
         <span class="self">self</span>,
-        _name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        _name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         _variant_index: u32,
-        _variant: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        _variant: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_newtype_struct&lt;T: <span class="question-mark">?</span>Sized&gt;(
         <span class="self">self</span>,
-        _name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        _name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         _value: <span class="kw-2">&amp;</span>T,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
         </span>T: Serialize,
     {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_newtype_variant&lt;T: <span class="question-mark">?</span>Sized&gt;(
         <span class="self">self</span>,
-        _name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        _name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         _variant_index: u32,
-        _variant: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        _variant: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         _value: <span class="kw-2">&amp;</span>T,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Ok, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
         </span>T: Serialize,
     {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_seq(<span class="self">self</span>, len: <span class="prelude-ty">Option</span>&lt;usize&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::SerializeSeq, <span class="self">Self</span>::Error&gt; {
@@ -1902,7 +1903,7 @@
 
     <span class="kw">fn </span>serialize_tuple_struct(
         <span class="self">self</span>,
-        name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         len: usize,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::SerializeTupleStruct, <span class="self">Self</span>::Error&gt; {
         <span class="prelude-val">Ok</span>(KeyValueTupleStructSerializer {
@@ -1916,12 +1917,12 @@
 
     <span class="kw">fn </span>serialize_tuple_variant(
         <span class="self">self</span>,
-        _name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        _name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         _variant_index: u32,
-        _variant: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        _variant: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         _len: usize,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::SerializeTupleVariant, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 
     <span class="kw">fn </span>serialize_map(<span class="self">self</span>, len: <span class="prelude-ty">Option</span>&lt;usize&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::SerializeMap, <span class="self">Self</span>::Error&gt; {
@@ -1937,7 +1938,7 @@
 
     <span class="kw">fn </span>serialize_struct(
         <span class="self">self</span>,
-        name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         len: usize,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::SerializeStruct, <span class="self">Self</span>::Error&gt; {
         <span class="prelude-val">Ok</span>(KeyValueStructSerializer {
@@ -1951,26 +1952,26 @@
 
     <span class="kw">fn </span>serialize_struct_variant(
         <span class="self">self</span>,
-        _name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        _name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         _variant_index: u32,
-        _variant: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        _variant: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         _len: usize,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::SerializeStructVariant, <span class="self">Self</span>::Error&gt; {
-        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;wrong type for KeyValueMap&quot;</span>))
+        <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"wrong type for KeyValueMap"</span>))
     }
 }
 
 <span class="doccomment">/// Serialize a sequence to a key and value pair of a map.
 ///
 /// This requires that the sequence has at least one element.
-</span><span class="kw">struct </span>KeyValueSeqSerializer&lt;<span class="lifetime">&#39;a</span>, M&gt; {
-    delegate: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>M,
+</span><span class="kw">struct </span>KeyValueSeqSerializer&lt;<span class="lifetime">'a</span>, M&gt; {
+    delegate: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>M,
     is_human_readable: bool,
     content: Vec&lt;SerContent&gt;,
     key: <span class="prelude-ty">Option</span>&lt;SerContent&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, M&gt; SerializeSeq <span class="kw">for </span>KeyValueSeqSerializer&lt;<span class="lifetime">&#39;a</span>, M&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, M&gt; SerializeSeq <span class="kw">for </span>KeyValueSeqSerializer&lt;<span class="lifetime">'a</span>, M&gt;
 <span class="kw">where
     </span>M: SerializeMap,
 {
@@ -1996,7 +1997,7 @@
             <span class="self">self</span>.delegate
                 .serialize_entry(<span class="kw-2">&amp;</span>key, <span class="kw-2">&amp;</span>SerContent::Seq(<span class="self">self</span>.content))
         } <span class="kw">else </span>{
-            <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;missing value for `$key$` field&quot;</span>))
+            <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"missing value for `$key$` field"</span>))
         }
     }
 }
@@ -2004,14 +2005,14 @@
 <span class="doccomment">/// Serialize a tuple to a key and value pair of a map.
 ///
 /// This requires that the tuple has at least one element.
-</span><span class="kw">struct </span>KeyValueTupleSerializer&lt;<span class="lifetime">&#39;a</span>, M&gt; {
-    delegate: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>M,
+</span><span class="kw">struct </span>KeyValueTupleSerializer&lt;<span class="lifetime">'a</span>, M&gt; {
+    delegate: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>M,
     is_human_readable: bool,
     content: Vec&lt;SerContent&gt;,
     key: <span class="prelude-ty">Option</span>&lt;SerContent&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, M&gt; SerializeTuple <span class="kw">for </span>KeyValueTupleSerializer&lt;<span class="lifetime">&#39;a</span>, M&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, M&gt; SerializeTuple <span class="kw">for </span>KeyValueTupleSerializer&lt;<span class="lifetime">'a</span>, M&gt;
 <span class="kw">where
     </span>M: SerializeMap,
 {
@@ -2037,7 +2038,7 @@
             <span class="self">self</span>.delegate
                 .serialize_entry(<span class="kw-2">&amp;</span>key, <span class="kw-2">&amp;</span>SerContent::Tuple(<span class="self">self</span>.content))
         } <span class="kw">else </span>{
-            <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;missing value for `$key$` field&quot;</span>))
+            <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"missing value for `$key$` field"</span>))
         }
     }
 }
@@ -2045,15 +2046,15 @@
 <span class="doccomment">/// Serialize a tuple struct to a key and value pair of a map.
 ///
 /// This requires that the tuple struct has at least one element.
-</span><span class="kw">struct </span>KeyValueTupleStructSerializer&lt;<span class="lifetime">&#39;a</span>, M&gt; {
-    delegate: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>M,
+</span><span class="kw">struct </span>KeyValueTupleStructSerializer&lt;<span class="lifetime">'a</span>, M&gt; {
+    delegate: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>M,
     is_human_readable: bool,
-    name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+    name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
     content: Vec&lt;SerContent&gt;,
     key: <span class="prelude-ty">Option</span>&lt;SerContent&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, M&gt; SerializeTupleStruct <span class="kw">for </span>KeyValueTupleStructSerializer&lt;<span class="lifetime">&#39;a</span>, M&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, M&gt; SerializeTupleStruct <span class="kw">for </span>KeyValueTupleStructSerializer&lt;<span class="lifetime">'a</span>, M&gt;
 <span class="kw">where
     </span>M: SerializeMap,
 {
@@ -2078,7 +2079,7 @@
             <span class="self">self</span>.delegate
                 .serialize_entry(<span class="kw-2">&amp;</span>key, <span class="kw-2">&amp;</span>SerContent::TupleStruct(<span class="self">self</span>.name, <span class="self">self</span>.content))
         } <span class="kw">else </span>{
-            <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;missing value for `$key$` field&quot;</span>))
+            <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"missing value for `$key$` field"</span>))
         }
     }
 }
@@ -2086,8 +2087,8 @@
 <span class="doccomment">/// Serialize a map to a key and value pair of a map.
 ///
 /// This requires that the map has one element which serializes using the magic `$key$` key.
-</span><span class="kw">struct </span>KeyValueMapSerializer&lt;<span class="lifetime">&#39;a</span>, M&gt; {
-    delegate: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>M,
+</span><span class="kw">struct </span>KeyValueMapSerializer&lt;<span class="lifetime">'a</span>, M&gt; {
+    delegate: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>M,
     is_human_readable: bool,
     content: Vec&lt;(SerContent, SerContent)&gt;,
     next_is_magic_key: bool,
@@ -2095,7 +2096,7 @@
     tmp: <span class="prelude-ty">Option</span>&lt;SerContent&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, M&gt; SerializeMap <span class="kw">for </span>KeyValueMapSerializer&lt;<span class="lifetime">&#39;a</span>, M&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, M&gt; SerializeMap <span class="kw">for </span>KeyValueMapSerializer&lt;<span class="lifetime">'a</span>, M&gt;
 <span class="kw">where
     </span>M: SerializeMap,
 {
@@ -2129,7 +2130,7 @@
         <span class="self">self</span>.content.push((
             <span class="self">self</span>.tmp
                 .take()
-                .expect(<span class="string">&quot;serialize_value called before serialize_key&quot;</span>),
+                .expect(<span class="string">"serialize_value called before serialize_key"</span>),
             value,
         ));
         <span class="prelude-val">Ok</span>(())
@@ -2140,7 +2141,7 @@
             <span class="self">self</span>.delegate
                 .serialize_entry(<span class="kw-2">&amp;</span>key, <span class="kw-2">&amp;</span>SerContent::Map(<span class="self">self</span>.content))
         } <span class="kw">else </span>{
-            <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;missing value for `$key$` field&quot;</span>))
+            <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"missing value for `$key$` field"</span>))
         }
     }
 }
@@ -2148,15 +2149,15 @@
 <span class="doccomment">/// Serialize a struct to a key and value pair of a map.
 ///
 /// This requires that the struct has one field named `$key$`.
-</span><span class="kw">struct </span>KeyValueStructSerializer&lt;<span class="lifetime">&#39;a</span>, M&gt; {
-    delegate: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>M,
+</span><span class="kw">struct </span>KeyValueStructSerializer&lt;<span class="lifetime">'a</span>, M&gt; {
+    delegate: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>M,
     is_human_readable: bool,
-    name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
-    content: Vec&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str, SerContent)&gt;,
+    name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
+    content: Vec&lt;(<span class="kw-2">&amp;</span><span class="lifetime">'static </span>str, SerContent)&gt;,
     key: <span class="prelude-ty">Option</span>&lt;SerContent&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, M&gt; SerializeStruct <span class="kw">for </span>KeyValueStructSerializer&lt;<span class="lifetime">&#39;a</span>, M&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, M&gt; SerializeStruct <span class="kw">for </span>KeyValueStructSerializer&lt;<span class="lifetime">'a</span>, M&gt;
 <span class="kw">where
     </span>M: SerializeMap,
 {
@@ -2165,7 +2166,7 @@
 
     <span class="kw">fn </span>serialize_field&lt;T: <span class="question-mark">?</span>Sized&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        key: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        key: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         value: <span class="kw-2">&amp;</span>T,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), <span class="self">Self</span>::Error&gt;
     <span class="kw">where
@@ -2187,7 +2188,7 @@
             <span class="self">self</span>.delegate
                 .serialize_entry(<span class="kw-2">&amp;</span>key, <span class="kw-2">&amp;</span>SerContent::Struct(<span class="self">self</span>.name, <span class="self">self</span>.content))
         } <span class="kw">else </span>{
-            <span class="prelude-val">Err</span>(SerError::custom(<span class="string">&quot;missing value for `$key$` field&quot;</span>))
+            <span class="prelude-val">Err</span>(SerError::custom(<span class="string">"missing value for `$key$` field"</span>))
         }
     }
 }
@@ -2202,9 +2203,9 @@
     is_human_readable: bool,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, M&gt; Deserializer&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>SeqDeserializer&lt;M&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, M&gt; Deserializer&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>SeqDeserializer&lt;M&gt;
 <span class="kw">where
-    </span>M: MapAccess&lt;<span class="lifetime">&#39;de</span>&gt;,
+    </span>M: MapAccess&lt;<span class="lifetime">'de</span>&gt;,
 {
     <span class="kw">type </span>Error = M::Error;
 
@@ -2214,14 +2215,14 @@
 
     <span class="kw">fn </span>deserialize_seq&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         visitor.visit_seq(<span class="self">self</span>)
     }
 
     <span class="kw">fn </span>deserialize_any&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_seq(visitor)
     }
@@ -2233,17 +2234,17 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, M&gt; SeqAccess&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>SeqDeserializer&lt;M&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, M&gt; SeqAccess&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>SeqDeserializer&lt;M&gt;
 <span class="kw">where
-    </span>M: MapAccess&lt;<span class="lifetime">&#39;de</span>&gt;,
+    </span>M: MapAccess&lt;<span class="lifetime">'de</span>&gt;,
 {
     <span class="kw">type </span>Error = M::Error;
 
     <span class="kw">fn </span>next_element_seed&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, seed: T) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;T::Value&gt;, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>T: DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>T: DeserializeSeed&lt;<span class="lifetime">'de</span>&gt;,
     {
-        <span class="kw">let </span>key_value: <span class="prelude-ty">Option</span>&lt;DeContent&lt;<span class="lifetime">&#39;de</span>&gt;&gt; = <span class="self">self</span>.delegate.next_key()<span class="question-mark">?</span>;
+        <span class="kw">let </span>key_value: <span class="prelude-ty">Option</span>&lt;DeContent&lt;<span class="lifetime">'de</span>&gt;&gt; = <span class="self">self</span>.delegate.next_key()<span class="question-mark">?</span>;
         <span class="kw">if let </span><span class="prelude-val">Some</span>(key_value) = key_value {
             seed.deserialize(MapKeyDeserializer {
                 delegate: <span class="kw-2">&amp;mut </span><span class="self">self</span>.delegate,
@@ -2261,15 +2262,15 @@
     }
 }
 
-<span class="kw">struct </span>MapKeyDeserializer&lt;<span class="lifetime">&#39;de</span>, M&gt; {
+<span class="kw">struct </span>MapKeyDeserializer&lt;<span class="lifetime">'de</span>, M&gt; {
     delegate: M,
     is_human_readable: bool,
-    key_value: DeContent&lt;<span class="lifetime">&#39;de</span>&gt;,
+    key_value: DeContent&lt;<span class="lifetime">'de</span>&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, M&gt; Deserializer&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>MapKeyDeserializer&lt;<span class="lifetime">&#39;de</span>, M&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, M&gt; Deserializer&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>MapKeyDeserializer&lt;<span class="lifetime">'de</span>, M&gt;
 <span class="kw">where
-    </span>M: MapAccess&lt;<span class="lifetime">&#39;de</span>&gt;,
+    </span>M: MapAccess&lt;<span class="lifetime">'de</span>&gt;,
 {
     <span class="kw">type </span>Error = M::Error;
 
@@ -2279,14 +2280,14 @@
 
     <span class="kw">fn </span>deserialize_any&lt;V&gt;(<span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.deserialize_map(visitor)
     }
 
     <span class="kw">fn </span>deserialize_seq&lt;V&gt;(<span class="kw-2">mut </span><span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.delegate.next_value_seed(KeyValueSeqDeserialize {
             delegate: visitor,
@@ -2296,7 +2297,7 @@
 
     <span class="kw">fn </span>deserialize_tuple&lt;V&gt;(<span class="kw-2">mut </span><span class="self">self</span>, len: usize, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.delegate.next_value_seed(KeyValueTupleDeserialize {
             delegate: visitor,
@@ -2307,12 +2308,12 @@
 
     <span class="kw">fn </span>deserialize_tuple_struct&lt;V&gt;(
         <span class="kw-2">mut </span><span class="self">self</span>,
-        name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+        name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
         len: usize,
         visitor: V,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.delegate
             .next_value_seed(KeyValueTupleStructDeserialize {
@@ -2325,7 +2326,7 @@
 
     <span class="kw">fn </span>deserialize_map&lt;V&gt;(<span class="kw-2">mut </span><span class="self">self</span>, visitor: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.delegate.next_value_seed(KeyValueMapDeserialize {
             delegate: visitor,
@@ -2335,12 +2336,12 @@
 
     <span class="kw">fn </span>deserialize_struct&lt;V&gt;(
         <span class="kw-2">mut </span><span class="self">self</span>,
-        name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
-        fields: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str],
+        name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
+        fields: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>[<span class="kw-2">&amp;</span><span class="lifetime">'static </span>str],
         visitor: V,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.delegate.next_value_seed(KeyValueStructDeserialize {
             delegate: visitor,
@@ -2357,20 +2358,20 @@
     }
 }
 
-<span class="kw">struct </span>KeyValueSeqDeserialize&lt;<span class="lifetime">&#39;de</span>, V&gt; {
+<span class="kw">struct </span>KeyValueSeqDeserialize&lt;<span class="lifetime">'de</span>, V&gt; {
     delegate: V,
-    first: <span class="prelude-ty">Option</span>&lt;DeContent&lt;<span class="lifetime">&#39;de</span>&gt;&gt;,
+    first: <span class="prelude-ty">Option</span>&lt;DeContent&lt;<span class="lifetime">'de</span>&gt;&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, V&gt; DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>KeyValueSeqDeserialize&lt;<span class="lifetime">&#39;de</span>, V&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, V&gt; DeserializeSeed&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>KeyValueSeqDeserialize&lt;<span class="lifetime">'de</span>, V&gt;
 <span class="kw">where
-    </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+    </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
 {
     <span class="kw">type </span>Value = V::Value;
 
     <span class="kw">fn </span>deserialize&lt;D&gt;(<span class="kw-2">mut </span><span class="self">self</span>, deserializer: D) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, D::Error&gt;
     <span class="kw">where
-        </span>D: Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>D: Deserializer&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">let </span>is_human_readable = deserializer.is_human_readable();
         deserializer.deserialize_seq(VisitorWrapper {
@@ -2381,21 +2382,21 @@
     }
 }
 
-<span class="kw">struct </span>KeyValueTupleDeserialize&lt;<span class="lifetime">&#39;de</span>, V&gt; {
+<span class="kw">struct </span>KeyValueTupleDeserialize&lt;<span class="lifetime">'de</span>, V&gt; {
     delegate: V,
     len: usize,
-    first: <span class="prelude-ty">Option</span>&lt;DeContent&lt;<span class="lifetime">&#39;de</span>&gt;&gt;,
+    first: <span class="prelude-ty">Option</span>&lt;DeContent&lt;<span class="lifetime">'de</span>&gt;&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, V&gt; DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>KeyValueTupleDeserialize&lt;<span class="lifetime">&#39;de</span>, V&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, V&gt; DeserializeSeed&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>KeyValueTupleDeserialize&lt;<span class="lifetime">'de</span>, V&gt;
 <span class="kw">where
-    </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+    </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
 {
     <span class="kw">type </span>Value = V::Value;
 
     <span class="kw">fn </span>deserialize&lt;D&gt;(<span class="kw-2">mut </span><span class="self">self</span>, deserializer: D) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, D::Error&gt;
     <span class="kw">where
-        </span>D: Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>D: Deserializer&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">let </span>is_human_readable = deserializer.is_human_readable();
         deserializer.deserialize_tuple(
@@ -2409,22 +2410,22 @@
     }
 }
 
-<span class="kw">struct </span>KeyValueTupleStructDeserialize&lt;<span class="lifetime">&#39;de</span>, V&gt; {
+<span class="kw">struct </span>KeyValueTupleStructDeserialize&lt;<span class="lifetime">'de</span>, V&gt; {
     delegate: V,
-    name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
+    name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
     len: usize,
-    first: <span class="prelude-ty">Option</span>&lt;DeContent&lt;<span class="lifetime">&#39;de</span>&gt;&gt;,
+    first: <span class="prelude-ty">Option</span>&lt;DeContent&lt;<span class="lifetime">'de</span>&gt;&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, V&gt; DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>KeyValueTupleStructDeserialize&lt;<span class="lifetime">&#39;de</span>, V&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, V&gt; DeserializeSeed&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>KeyValueTupleStructDeserialize&lt;<span class="lifetime">'de</span>, V&gt;
 <span class="kw">where
-    </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+    </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
 {
     <span class="kw">type </span>Value = V::Value;
 
     <span class="kw">fn </span>deserialize&lt;D&gt;(<span class="kw-2">mut </span><span class="self">self</span>, deserializer: D) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, D::Error&gt;
     <span class="kw">where
-        </span>D: Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>D: Deserializer&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">let </span>is_human_readable = deserializer.is_human_readable();
         deserializer.deserialize_tuple_struct(
@@ -2439,20 +2440,20 @@
     }
 }
 
-<span class="kw">struct </span>KeyValueMapDeserialize&lt;<span class="lifetime">&#39;de</span>, V&gt; {
+<span class="kw">struct </span>KeyValueMapDeserialize&lt;<span class="lifetime">'de</span>, V&gt; {
     delegate: V,
-    first: <span class="prelude-ty">Option</span>&lt;DeContent&lt;<span class="lifetime">&#39;de</span>&gt;&gt;,
+    first: <span class="prelude-ty">Option</span>&lt;DeContent&lt;<span class="lifetime">'de</span>&gt;&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, V&gt; DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>KeyValueMapDeserialize&lt;<span class="lifetime">&#39;de</span>, V&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, V&gt; DeserializeSeed&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>KeyValueMapDeserialize&lt;<span class="lifetime">'de</span>, V&gt;
 <span class="kw">where
-    </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+    </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
 {
     <span class="kw">type </span>Value = V::Value;
 
     <span class="kw">fn </span>deserialize&lt;D&gt;(<span class="kw-2">mut </span><span class="self">self</span>, deserializer: D) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, D::Error&gt;
     <span class="kw">where
-        </span>D: Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>D: Deserializer&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">let </span>is_human_readable = deserializer.is_human_readable();
         deserializer.deserialize_map(VisitorWrapper {
@@ -2463,22 +2464,22 @@
     }
 }
 
-<span class="kw">struct </span>KeyValueStructDeserialize&lt;<span class="lifetime">&#39;de</span>, V&gt; {
+<span class="kw">struct </span>KeyValueStructDeserialize&lt;<span class="lifetime">'de</span>, V&gt; {
     delegate: V,
-    name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
-    fields: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str],
-    first: <span class="prelude-ty">Option</span>&lt;DeContent&lt;<span class="lifetime">&#39;de</span>&gt;&gt;,
+    name: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str,
+    fields: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>[<span class="kw-2">&amp;</span><span class="lifetime">'static </span>str],
+    first: <span class="prelude-ty">Option</span>&lt;DeContent&lt;<span class="lifetime">'de</span>&gt;&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, V&gt; DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>KeyValueStructDeserialize&lt;<span class="lifetime">&#39;de</span>, V&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, V&gt; DeserializeSeed&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>KeyValueStructDeserialize&lt;<span class="lifetime">'de</span>, V&gt;
 <span class="kw">where
-    </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+    </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
 {
     <span class="kw">type </span>Value = V::Value;
 
     <span class="kw">fn </span>deserialize&lt;D&gt;(<span class="kw-2">mut </span><span class="self">self</span>, deserializer: D) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, D::Error&gt;
     <span class="kw">where
-        </span>D: Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>D: Deserializer&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">let </span>is_human_readable = deserializer.is_human_readable();
         deserializer.deserialize_struct(
@@ -2493,25 +2494,25 @@
     }
 }
 
-<span class="kw">struct </span>VisitorWrapper&lt;<span class="lifetime">&#39;de</span>, V&gt; {
+<span class="kw">struct </span>VisitorWrapper&lt;<span class="lifetime">'de</span>, V&gt; {
     delegate: V,
     is_human_readable: bool,
-    first: <span class="prelude-ty">Option</span>&lt;DeContent&lt;<span class="lifetime">&#39;de</span>&gt;&gt;,
+    first: <span class="prelude-ty">Option</span>&lt;DeContent&lt;<span class="lifetime">'de</span>&gt;&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, V&gt; Visitor&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>VisitorWrapper&lt;<span class="lifetime">&#39;de</span>, V&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, V&gt; Visitor&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>VisitorWrapper&lt;<span class="lifetime">'de</span>, V&gt;
 <span class="kw">where
-    </span>V: Visitor&lt;<span class="lifetime">&#39;de</span>&gt;,
+    </span>V: Visitor&lt;<span class="lifetime">'de</span>&gt;,
 {
     <span class="kw">type </span>Value = V::Value;
 
-    <span class="kw">fn </span>expecting(<span class="kw-2">&amp;</span><span class="self">self</span>, formatter: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+    <span class="kw">fn </span>expecting(<span class="kw-2">&amp;</span><span class="self">self</span>, formatter: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
         <span class="self">self</span>.delegate.expecting(formatter)
     }
 
     <span class="kw">fn </span>visit_map&lt;A&gt;(<span class="self">self</span>, map: A) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, A::Error&gt;
     <span class="kw">where
-        </span>A: MapAccess&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>A: MapAccess&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.delegate.visit_map(MapAccessWrapper {
             delegate: map,
@@ -2522,7 +2523,7 @@
 
     <span class="kw">fn </span>visit_seq&lt;A&gt;(<span class="self">self</span>, seq: A) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Value, A::Error&gt;
     <span class="kw">where
-        </span>A: SeqAccess&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>A: SeqAccess&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="self">self</span>.delegate.visit_seq(SeqAccessWrapper {
             delegate: seq,
@@ -2532,21 +2533,21 @@
     }
 }
 
-<span class="kw">struct </span>MapAccessWrapper&lt;<span class="lifetime">&#39;de</span>, M&gt; {
+<span class="kw">struct </span>MapAccessWrapper&lt;<span class="lifetime">'de</span>, M&gt; {
     delegate: M,
     is_human_readable: bool,
-    first: <span class="prelude-ty">Option</span>&lt;DeContent&lt;<span class="lifetime">&#39;de</span>&gt;&gt;,
+    first: <span class="prelude-ty">Option</span>&lt;DeContent&lt;<span class="lifetime">'de</span>&gt;&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, M&gt; MapAccess&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>MapAccessWrapper&lt;<span class="lifetime">&#39;de</span>, M&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, M&gt; MapAccess&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>MapAccessWrapper&lt;<span class="lifetime">'de</span>, M&gt;
 <span class="kw">where
-    </span>M: MapAccess&lt;<span class="lifetime">&#39;de</span>&gt;,
+    </span>M: MapAccess&lt;<span class="lifetime">'de</span>&gt;,
 {
     <span class="kw">type </span>Error = M::Error;
 
     <span class="kw">fn </span>next_key_seed&lt;K&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, seed: K) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;K::Value&gt;, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>K: DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>K: DeserializeSeed&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">if </span><span class="self">self</span>.first.is_some() {
             seed.deserialize(serde::de::value::StringDeserializer::new(
@@ -2560,7 +2561,7 @@
 
     <span class="kw">fn </span>next_value_seed&lt;V&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, seed: V) -&gt; <span class="prelude-ty">Result</span>&lt;V::Value, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>V: DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>V: DeserializeSeed&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(first) = <span class="self">self</span>.first.take() {
             seed.deserialize(ContentDeserializer::new(first, <span class="self">self</span>.is_human_readable))
@@ -2570,21 +2571,21 @@
     }
 }
 
-<span class="kw">struct </span>SeqAccessWrapper&lt;<span class="lifetime">&#39;de</span>, M&gt; {
+<span class="kw">struct </span>SeqAccessWrapper&lt;<span class="lifetime">'de</span>, M&gt; {
     delegate: M,
     is_human_readable: bool,
-    first: <span class="prelude-ty">Option</span>&lt;DeContent&lt;<span class="lifetime">&#39;de</span>&gt;&gt;,
+    first: <span class="prelude-ty">Option</span>&lt;DeContent&lt;<span class="lifetime">'de</span>&gt;&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;de</span>, S&gt; SeqAccess&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>SeqAccessWrapper&lt;<span class="lifetime">&#39;de</span>, S&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'de</span>, S&gt; SeqAccess&lt;<span class="lifetime">'de</span>&gt; <span class="kw">for </span>SeqAccessWrapper&lt;<span class="lifetime">'de</span>, S&gt;
 <span class="kw">where
-    </span>S: SeqAccess&lt;<span class="lifetime">&#39;de</span>&gt;,
+    </span>S: SeqAccess&lt;<span class="lifetime">'de</span>&gt;,
 {
     <span class="kw">type </span>Error = S::Error;
 
     <span class="kw">fn </span>next_element_seed&lt;K&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, seed: K) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;K::Value&gt;, <span class="self">Self</span>::Error&gt;
     <span class="kw">where
-        </span>K: DeserializeSeed&lt;<span class="lifetime">&#39;de</span>&gt;,
+        </span>K: DeserializeSeed&lt;<span class="lifetime">'de</span>&gt;,
     {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(first) = <span class="self">self</span>.first.take() {
             seed.deserialize(ContentDeserializer::new(first, <span class="self">self</span>.is_human_readable))

@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/plist-1.6.0/src/stream/xml_writer.rs`."><title>xml_writer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="plist" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/plist-1.6.0/src/stream/xml_writer.rs`."><title>xml_writer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="plist" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -484,10 +485,10 @@
     Date, Integer, Uid,
 };
 
-<span class="kw">static </span>XML_PROLOGUE: <span class="kw-2">&amp;</span>[u8] = <span class="string">br#&quot;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;
-&lt;plist version=&quot;1.0&quot;&gt;
-&quot;#</span>;
+<span class="kw">static </span>XML_PROLOGUE: <span class="kw-2">&amp;</span>[u8] = <span class="string">br#"&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;
+&lt;plist version="1.0"&gt;
+"#</span>;
 
 <span class="attr">#[derive(PartialEq)]
 </span><span class="kw">enum </span>Element {
@@ -510,7 +511,7 @@
 }
 
 <span class="kw">impl</span>&lt;W: Write&gt; XmlWriter&lt;W&gt; {
-    <span class="attr">#[cfg(feature = <span class="string">&quot;enable_unstable_features_that_may_break_with_minor_version_bumps&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"enable_unstable_features_that_may_break_with_minor_version_bumps"</span>)]
     </span><span class="kw">pub fn </span>new(writer: W) -&gt; XmlWriter&lt;W&gt; {
         <span class="kw">let </span>opts = XmlWriteOptions::default();
         XmlWriter::new_with_options(writer, <span class="kw-2">&amp;</span>opts)
@@ -533,7 +534,7 @@
         }
     }
 
-    <span class="attr">#[cfg(feature = <span class="string">&quot;enable_unstable_features_that_may_break_with_minor_version_bumps&quot;</span>)]
+    <span class="attr">#[cfg(feature = <span class="string">"enable_unstable_features_that_may_break_with_minor_version_bumps"</span>)]
     </span><span class="kw">pub fn </span>into_inner(<span class="self">self</span>) -&gt; W {
         <span class="self">self</span>.xml_writer.into_inner()
     }
@@ -583,11 +584,11 @@
         <span class="comment">// If there are no more open tags then write the &lt;/plist&gt; element
         </span><span class="kw">if </span><span class="self">self</span>.stack.is_empty() {
             <span class="kw">if </span><span class="self">self</span>.write_root_element {
-                <span class="comment">// We didn&#39;t tell the xml_writer about the &lt;plist&gt; tag so we&#39;ll skip telling it
+                <span class="comment">// We didn't tell the xml_writer about the &lt;plist&gt; tag so we'll skip telling it
                 // about the &lt;/plist&gt; tag as well.
                 </span><span class="self">self</span>.xml_writer
                     .get_mut()
-                    .write_all(<span class="string">b&quot;\n&lt;/plist&gt;&quot;</span>)
+                    .write_all(<span class="string">b"\n&lt;/plist&gt;"</span>)
                     .map_err(error::from_io_without_position)<span class="question-mark">?</span>;
             }
 
@@ -625,7 +626,7 @@
             <span class="self">self</span>.pending_collection = <span class="prelude-val">None</span>;
 
             <span class="self">self</span>.write_value_event(EventKind::StartArray, |this| {
-                this.start_element(<span class="string">&quot;array&quot;</span>)<span class="question-mark">?</span>;
+                this.start_element(<span class="string">"array"</span>)<span class="question-mark">?</span>;
                 this.stack.push(Element::Array);
                 <span class="prelude-val">Ok</span>(())
             })
@@ -633,7 +634,7 @@
             <span class="self">self</span>.pending_collection = <span class="prelude-val">None</span>;
 
             <span class="self">self</span>.write_value_event(EventKind::StartDictionary, |this| {
-                this.start_element(<span class="string">&quot;dict&quot;</span>)<span class="question-mark">?</span>;
+                this.start_element(<span class="string">"dict"</span>)<span class="question-mark">?</span>;
                 this.stack.push(Element::Dictionary);
                 this.expecting_key = <span class="bool-val">true</span>;
                 <span class="prelude-val">Ok</span>(())
@@ -662,13 +663,13 @@
             <span class="kw">match </span>this.pending_collection.take() {
                 <span class="prelude-val">Some</span>(PendingCollection::Array) =&gt; {
                     this.xml_writer
-                        .write_event(XmlEvent::Empty(BytesStart::new(<span class="string">&quot;array&quot;</span>)))<span class="question-mark">?</span>;
+                        .write_event(XmlEvent::Empty(BytesStart::new(<span class="string">"array"</span>)))<span class="question-mark">?</span>;
                     this.expecting_key = this.stack.last() == <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>Element::Dictionary);
                     <span class="kw">return </span><span class="prelude-val">Ok</span>(());
                 }
                 <span class="prelude-val">Some</span>(PendingCollection::Dictionary) =&gt; {
                     this.xml_writer
-                        .write_event(XmlEvent::Empty(BytesStart::new(<span class="string">&quot;dict&quot;</span>)))<span class="question-mark">?</span>;
+                        .write_event(XmlEvent::Empty(BytesStart::new(<span class="string">"dict"</span>)))<span class="question-mark">?</span>;
                     this.expecting_key = this.stack.last() == <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>Element::Dictionary);
                     <span class="kw">return </span><span class="prelude-val">Ok</span>(());
                 }
@@ -676,10 +677,10 @@
             };
             <span class="kw">match </span>(this.stack.pop(), this.expecting_key) {
                 (<span class="prelude-val">Some</span>(Element::Dictionary), <span class="bool-val">true</span>) =&gt; {
-                    this.end_element(<span class="string">&quot;dict&quot;</span>)<span class="question-mark">?</span>;
+                    this.end_element(<span class="string">"dict"</span>)<span class="question-mark">?</span>;
                 }
                 (<span class="prelude-val">Some</span>(Element::Array), <span class="kw">_</span>) =&gt; {
-                    this.end_element(<span class="string">&quot;array&quot;</span>)<span class="question-mark">?</span>;
+                    this.end_element(<span class="string">"array"</span>)<span class="question-mark">?</span>;
                 }
                 (<span class="prelude-val">Some</span>(Element::Dictionary), <span class="bool-val">false</span>) | (<span class="prelude-val">None</span>, <span class="kw">_</span>) =&gt; {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(ErrorKind::UnexpectedEventType {
@@ -696,7 +697,7 @@
 
     <span class="kw">fn </span>write_boolean(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: bool) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
         <span class="self">self</span>.write_value_event(EventKind::Boolean, |this| {
-            <span class="kw">let </span>value = <span class="kw">if </span>value { <span class="string">&quot;true&quot; </span>} <span class="kw">else </span>{ <span class="string">&quot;false&quot; </span>};
+            <span class="kw">let </span>value = <span class="kw">if </span>value { <span class="string">"true" </span>} <span class="kw">else </span>{ <span class="string">"false" </span>};
             <span class="prelude-val">Ok</span>(this
                 .xml_writer
                 .write_event(XmlEvent::Empty(BytesStart::new(value)))<span class="question-mark">?</span>)
@@ -706,25 +707,25 @@
     <span class="kw">fn </span>write_data(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: Cow&lt;[u8]&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
         <span class="self">self</span>.write_value_event(EventKind::Data, |this| {
             <span class="kw">let </span>base64_data = base64_encode_plist(<span class="kw-2">&amp;</span>value, this.stack.len());
-            this.write_element_and_value(<span class="string">&quot;data&quot;</span>, <span class="kw-2">&amp;</span>base64_data)
+            this.write_element_and_value(<span class="string">"data"</span>, <span class="kw-2">&amp;</span>base64_data)
         })
     }
 
     <span class="kw">fn </span>write_date(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: Date) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
         <span class="self">self</span>.write_value_event(EventKind::Date, |this| {
-            this.write_element_and_value(<span class="string">&quot;date&quot;</span>, <span class="kw-2">&amp;</span>value.to_xml_format())
+            this.write_element_and_value(<span class="string">"date"</span>, <span class="kw-2">&amp;</span>value.to_xml_format())
         })
     }
 
     <span class="kw">fn </span>write_integer(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: Integer) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
         <span class="self">self</span>.write_value_event(EventKind::Integer, |this| {
-            this.write_element_and_value(<span class="string">&quot;integer&quot;</span>, <span class="kw-2">&amp;</span>value.to_string())
+            this.write_element_and_value(<span class="string">"integer"</span>, <span class="kw-2">&amp;</span>value.to_string())
         })
     }
 
     <span class="kw">fn </span>write_real(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: f64) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
         <span class="self">self</span>.write_value_event(EventKind::Real, |this| {
-            this.write_element_and_value(<span class="string">&quot;real&quot;</span>, <span class="kw-2">&amp;</span>value.to_string())
+            this.write_element_and_value(<span class="string">"real"</span>, <span class="kw-2">&amp;</span>value.to_string())
         })
     }
 
@@ -732,10 +733,10 @@
         <span class="self">self</span>.handle_pending_collection()<span class="question-mark">?</span>;
         <span class="self">self</span>.write_event(|this| {
             <span class="kw">if </span>this.expecting_key {
-                this.write_element_and_value(<span class="string">&quot;key&quot;</span>, <span class="kw-2">&amp;</span>value)<span class="question-mark">?</span>;
+                this.write_element_and_value(<span class="string">"key"</span>, <span class="kw-2">&amp;</span>value)<span class="question-mark">?</span>;
                 this.expecting_key = <span class="bool-val">false</span>;
             } <span class="kw">else </span>{
-                this.write_element_and_value(<span class="string">&quot;string&quot;</span>, <span class="kw-2">&amp;</span>value)<span class="question-mark">?</span>;
+                this.write_element_and_value(<span class="string">"string"</span>, <span class="kw-2">&amp;</span>value)<span class="question-mark">?</span>;
                 this.expecting_key = this.stack.last() == <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>Element::Dictionary);
             }
             <span class="prelude-val">Ok</span>(())
@@ -768,8 +769,8 @@
     // Allocate space for base 64 string and line endings up front
     </span><span class="kw">const </span>LINE_LEN: usize = <span class="number">68</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>line_ending = Vec::with_capacity(<span class="number">1 </span>+ indent);
-    line_ending.push(<span class="string">b&#39;\n&#39;</span>);
-    (<span class="number">0</span>..indent).for_each(|<span class="kw">_</span>| line_ending.push(<span class="string">b&#39;\t&#39;</span>));
+    line_ending.push(<span class="string">b'\n'</span>);
+    (<span class="number">0</span>..indent).for_each(|<span class="kw">_</span>| line_ending.push(<span class="string">b'\t'</span>));
 
     <span class="comment">// Find the max length of `data` encoded as a base 64 string with padding
     </span><span class="kw">let </span>base64_max_string_len = data.len() * <span class="number">4 </span>/ <span class="number">3 </span>+ <span class="number">4</span>;
@@ -787,7 +788,7 @@
     <span class="comment">// Encode `data` as a base 64 string
     </span><span class="kw">let </span>base64_string_len = base64_standard
         .encode_slice(data, <span class="kw-2">&amp;mut </span>output[line_ending.len()..])
-        .expect(<span class="string">&quot;encoding slice fits base64 buffer&quot;</span>);
+        .expect(<span class="string">"encoding slice fits base64 buffer"</span>);
 
     <span class="comment">// Line wrap the base 64 encoded string
     </span><span class="kw">let </span>line_wrap_len = line_wrap::line_wrap(
@@ -803,7 +804,7 @@
 
     <span class="comment">// Ensure output is the correct length
     </span>output.truncate(base64_string_len + line_wrap_len + <span class="number">2 </span>* line_ending.len());
-    String::from_utf8(output).expect(<span class="string">&quot;base 64 string must be valid utf8&quot;</span>)
+    String::from_utf8(output).expect(<span class="string">"base 64 string must be valid utf8"</span>)
 }
 
 <span class="attr">#[cfg(test)]
@@ -817,38 +818,38 @@
     </span><span class="kw">fn </span>streaming_parser() {
         <span class="kw">let </span>plist = [
             Event::StartDictionary(<span class="prelude-val">None</span>),
-            Event::String(<span class="string">&quot;Author&quot;</span>.into()),
-            Event::String(<span class="string">&quot;William Shakespeare&quot;</span>.into()),
-            Event::String(<span class="string">&quot;Lines&quot;</span>.into()),
+            Event::String(<span class="string">"Author"</span>.into()),
+            Event::String(<span class="string">"William Shakespeare"</span>.into()),
+            Event::String(<span class="string">"Lines"</span>.into()),
             Event::StartArray(<span class="prelude-val">None</span>),
-            Event::String(<span class="string">&quot;It is a tale told by an idiot,&quot;</span>.into()),
-            Event::String(<span class="string">&quot;Full of sound and fury, signifying nothing.&quot;</span>.into()),
+            Event::String(<span class="string">"It is a tale told by an idiot,"</span>.into()),
+            Event::String(<span class="string">"Full of sound and fury, signifying nothing."</span>.into()),
             Event::Data((<span class="number">0</span>..<span class="number">128</span>).collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;().into()),
             Event::EndCollection,
-            Event::String(<span class="string">&quot;Death&quot;</span>.into()),
+            Event::String(<span class="string">"Death"</span>.into()),
             Event::Integer(<span class="number">1564</span>.into()),
-            Event::String(<span class="string">&quot;Height&quot;</span>.into()),
+            Event::String(<span class="string">"Height"</span>.into()),
             Event::Real(<span class="number">1.60</span>),
-            Event::String(<span class="string">&quot;Data&quot;</span>.into()),
+            Event::String(<span class="string">"Data"</span>.into()),
             Event::Data(<span class="macro">vec!</span>[<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">190</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">3</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">30</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>].into()),
-            Event::String(<span class="string">&quot;Birthdate&quot;</span>.into()),
-            Event::Date(<span class="kw">super</span>::Date::from_xml_format(<span class="string">&quot;1981-05-16T11:32:06Z&quot;</span>).unwrap()),
-            Event::String(<span class="string">&quot;Comment&quot;</span>.into()),
-            Event::String(<span class="string">&quot;2 &lt; 3&quot;</span>.into()), <span class="comment">// make sure characters are escaped
-            </span>Event::String(<span class="string">&quot;BiggestNumber&quot;</span>.into()),
+            Event::String(<span class="string">"Birthdate"</span>.into()),
+            Event::Date(<span class="kw">super</span>::Date::from_xml_format(<span class="string">"1981-05-16T11:32:06Z"</span>).unwrap()),
+            Event::String(<span class="string">"Comment"</span>.into()),
+            Event::String(<span class="string">"2 &lt; 3"</span>.into()), <span class="comment">// make sure characters are escaped
+            </span>Event::String(<span class="string">"BiggestNumber"</span>.into()),
             Event::Integer(<span class="number">18446744073709551615u64</span>.into()),
-            Event::String(<span class="string">&quot;SmallestNumber&quot;</span>.into()),
+            Event::String(<span class="string">"SmallestNumber"</span>.into()),
             Event::Integer((-<span class="number">9223372036854775808i64</span>).into()),
-            Event::String(<span class="string">&quot;IsTrue&quot;</span>.into()),
+            Event::String(<span class="string">"IsTrue"</span>.into()),
             Event::Boolean(<span class="bool-val">true</span>),
-            Event::String(<span class="string">&quot;IsNotFalse&quot;</span>.into()),
+            Event::String(<span class="string">"IsNotFalse"</span>.into()),
             Event::Boolean(<span class="bool-val">false</span>),
             Event::EndCollection,
         ];
 
-        <span class="kw">let </span>expected = <span class="string">&quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;UTF-8\&quot;?&gt;
-&lt;!DOCTYPE plist PUBLIC \&quot;-//Apple//DTD PLIST 1.0//EN\&quot; \&quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd\&quot;&gt;
-&lt;plist version=\&quot;1.0\&quot;&gt;
+        <span class="kw">let </span>expected = <span class="string">"&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;
+&lt;!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\"&gt;
+&lt;plist version=\"1.0\"&gt;
 &lt;dict&gt;
 \t&lt;key&gt;Author&lt;/key&gt;
 \t&lt;string&gt;William Shakespeare&lt;/string&gt;
@@ -883,7 +884,7 @@
 \t&lt;key&gt;IsNotFalse&lt;/key&gt;
 \t&lt;false/&gt;
 &lt;/dict&gt;
-&lt;/plist&gt;&quot;</span>;
+&lt;/plist&gt;"</span>;
 
         <span class="kw">let </span>actual = events_to_xml(plist, XmlWriteOptions::default());
 
@@ -894,21 +895,21 @@
     </span><span class="kw">fn </span>custom_indent_string() {
         <span class="kw">let </span>plist = [
             Event::StartArray(<span class="prelude-val">None</span>),
-            Event::String(<span class="string">&quot;It is a tale told by an idiot,&quot;</span>.into()),
-            Event::String(<span class="string">&quot;Full of sound and fury, signifying nothing.&quot;</span>.into()),
+            Event::String(<span class="string">"It is a tale told by an idiot,"</span>.into()),
+            Event::String(<span class="string">"Full of sound and fury, signifying nothing."</span>.into()),
             Event::EndCollection,
         ];
 
-        <span class="kw">let </span>expected = <span class="string">&quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;UTF-8\&quot;?&gt;
-&lt;!DOCTYPE plist PUBLIC \&quot;-//Apple//DTD PLIST 1.0//EN\&quot; \&quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd\&quot;&gt;
-&lt;plist version=\&quot;1.0\&quot;&gt;
+        <span class="kw">let </span>expected = <span class="string">"&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;
+&lt;!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\"&gt;
+&lt;plist version=\"1.0\"&gt;
 &lt;array&gt;
 ...&lt;string&gt;It is a tale told by an idiot,&lt;/string&gt;
 ...&lt;string&gt;Full of sound and fury, signifying nothing.&lt;/string&gt;
 &lt;/array&gt;
-&lt;/plist&gt;&quot;</span>;
+&lt;/plist&gt;"</span>;
 
-        <span class="kw">let </span>actual = events_to_xml(plist, XmlWriteOptions::default().indent(<span class="string">b&#39;.&#39;</span>, <span class="number">3</span>));
+        <span class="kw">let </span>actual = events_to_xml(plist, XmlWriteOptions::default().indent(<span class="string">b'.'</span>, <span class="number">3</span>));
 
         <span class="macro">assert_eq!</span>(actual, expected);
     }
@@ -917,23 +918,23 @@
     </span><span class="kw">fn </span>no_root() {
         <span class="kw">let </span>plist = [
             Event::StartArray(<span class="prelude-val">None</span>),
-            Event::String(<span class="string">&quot;It is a tale told by an idiot,&quot;</span>.into()),
-            Event::String(<span class="string">&quot;Full of sound and fury, signifying nothing.&quot;</span>.into()),
+            Event::String(<span class="string">"It is a tale told by an idiot,"</span>.into()),
+            Event::String(<span class="string">"Full of sound and fury, signifying nothing."</span>.into()),
             Event::EndCollection,
         ];
 
-        <span class="kw">let </span>expected = <span class="string">&quot;&lt;array&gt;
+        <span class="kw">let </span>expected = <span class="string">"&lt;array&gt;
 \t&lt;string&gt;It is a tale told by an idiot,&lt;/string&gt;
 \t&lt;string&gt;Full of sound and fury, signifying nothing.&lt;/string&gt;
-&lt;/array&gt;&quot;</span>;
+&lt;/array&gt;"</span>;
 
         <span class="kw">let </span>actual = events_to_xml(plist, XmlWriteOptions::default().root_element(<span class="bool-val">false</span>));
 
         <span class="macro">assert_eq!</span>(actual, expected);
     }
 
-    <span class="kw">fn </span>events_to_xml&lt;<span class="lifetime">&#39;event</span>&gt;(
-        events: <span class="kw">impl </span>IntoIterator&lt;Item = Event&lt;<span class="lifetime">&#39;event</span>&gt;&gt;,
+    <span class="kw">fn </span>events_to_xml&lt;<span class="lifetime">'event</span>&gt;(
+        events: <span class="kw">impl </span>IntoIterator&lt;Item = Event&lt;<span class="lifetime">'event</span>&gt;&gt;,
         options: XmlWriteOptions,
     ) -&gt; String {
         <span class="kw">let </span><span class="kw-2">mut </span>cursor = Cursor::new(Vec::new());

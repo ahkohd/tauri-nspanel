@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/png-0.17.11/src/encoder.rs`."><title>encoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="png" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/png-0.17.13/src/encoder.rs`."><title>encoder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="png" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+    <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2464,7 +2465,7 @@
 }
 
 <span class="kw">impl </span>error::Error <span class="kw">for </span>EncodingError {
-    <span class="kw">fn </span>cause(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>(<span class="kw">dyn </span>error::Error + <span class="lifetime">&#39;static</span>)&gt; {
+    <span class="kw">fn </span>cause(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>(<span class="kw">dyn </span>error::Error + <span class="lifetime">'static</span>)&gt; {
         <span class="kw">match </span><span class="self">self </span>{
             EncodingError::IoError(err) =&gt; <span class="prelude-val">Some</span>(err),
             <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
@@ -2476,10 +2477,10 @@
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; result::Result&lt;(), fmt::Error&gt; {
         <span class="kw">use </span><span class="self">self</span>::EncodingError::<span class="kw-2">*</span>;
         <span class="kw">match </span><span class="self">self </span>{
-            IoError(err) =&gt; <span class="macro">write!</span>(fmt, <span class="string">&quot;{}&quot;</span>, err),
-            Format(desc) =&gt; <span class="macro">write!</span>(fmt, <span class="string">&quot;{}&quot;</span>, desc),
-            Parameter(desc) =&gt; <span class="macro">write!</span>(fmt, <span class="string">&quot;{}&quot;</span>, desc),
-            LimitsExceeded =&gt; <span class="macro">write!</span>(fmt, <span class="string">&quot;Limits are exceeded.&quot;</span>),
+            IoError(err) =&gt; <span class="macro">write!</span>(fmt, <span class="string">"{}"</span>, err),
+            Format(desc) =&gt; <span class="macro">write!</span>(fmt, <span class="string">"{}"</span>, desc),
+            Parameter(desc) =&gt; <span class="macro">write!</span>(fmt, <span class="string">"{}"</span>, desc),
+            LimitsExceeded =&gt; <span class="macro">write!</span>(fmt, <span class="string">"Limits are exceeded."</span>),
         }
     }
 }
@@ -2488,36 +2489,36 @@
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; result::Result&lt;(), fmt::Error&gt; {
         <span class="kw">use </span>FormatErrorKind::<span class="kw-2">*</span>;
         <span class="kw">match </span><span class="self">self</span>.inner {
-            ZeroWidth =&gt; <span class="macro">write!</span>(fmt, <span class="string">&quot;Zero width not allowed&quot;</span>),
-            ZeroHeight =&gt; <span class="macro">write!</span>(fmt, <span class="string">&quot;Zero height not allowed&quot;</span>),
-            ZeroFrames =&gt; <span class="macro">write!</span>(fmt, <span class="string">&quot;Zero frames not allowed&quot;</span>),
+            ZeroWidth =&gt; <span class="macro">write!</span>(fmt, <span class="string">"Zero width not allowed"</span>),
+            ZeroHeight =&gt; <span class="macro">write!</span>(fmt, <span class="string">"Zero height not allowed"</span>),
+            ZeroFrames =&gt; <span class="macro">write!</span>(fmt, <span class="string">"Zero frames not allowed"</span>),
             InvalidColorCombination(depth, color) =&gt; <span class="macro">write!</span>(
                 fmt,
-                <span class="string">&quot;Invalid combination of bit-depth &#39;{:?}&#39; and color-type &#39;{:?}&#39;&quot;</span>,
+                <span class="string">"Invalid combination of bit-depth '{:?}' and color-type '{:?}'"</span>,
                 depth, color
             ),
-            NoPalette =&gt; <span class="macro">write!</span>(fmt, <span class="string">&quot;can&#39;t write indexed image without palette&quot;</span>),
-            WrittenTooMuch(index) =&gt; <span class="macro">write!</span>(fmt, <span class="string">&quot;wrong data size, got {} bytes too many&quot;</span>, index),
-            NotAnimated =&gt; <span class="macro">write!</span>(fmt, <span class="string">&quot;not an animation&quot;</span>),
+            NoPalette =&gt; <span class="macro">write!</span>(fmt, <span class="string">"can't write indexed image without palette"</span>),
+            WrittenTooMuch(index) =&gt; <span class="macro">write!</span>(fmt, <span class="string">"wrong data size, got {} bytes too many"</span>, index),
+            NotAnimated =&gt; <span class="macro">write!</span>(fmt, <span class="string">"not an animation"</span>),
             OutOfBounds =&gt; <span class="macro">write!</span>(
                 fmt,
-                <span class="string">&quot;the dimension and position go over the frame boundaries&quot;
+                <span class="string">"the dimension and position go over the frame boundaries"
             </span>),
-            EndReached =&gt; <span class="macro">write!</span>(fmt, <span class="string">&quot;all the frames have been already written&quot;</span>),
-            MissingFrames =&gt; <span class="macro">write!</span>(fmt, <span class="string">&quot;there are still frames to be written&quot;</span>),
-            MissingData(n) =&gt; <span class="macro">write!</span>(fmt, <span class="string">&quot;there are still {} bytes to be written&quot;</span>, n),
+            EndReached =&gt; <span class="macro">write!</span>(fmt, <span class="string">"all the frames have been already written"</span>),
+            MissingFrames =&gt; <span class="macro">write!</span>(fmt, <span class="string">"there are still frames to be written"</span>),
+            MissingData(n) =&gt; <span class="macro">write!</span>(fmt, <span class="string">"there are still {} bytes to be written"</span>, n),
             Unrecoverable =&gt; <span class="macro">write!</span>(
                 fmt,
-                <span class="string">&quot;a previous error put the writer into an unrecoverable state&quot;
+                <span class="string">"a previous error put the writer into an unrecoverable state"
             </span>),
             BadTextEncoding(tee) =&gt; <span class="kw">match </span>tee {
                 TextEncodingError::Unrepresentable =&gt; <span class="macro">write!</span>(
                     fmt,
-                    <span class="string">&quot;The text metadata cannot be encoded into valid ISO 8859-1&quot;
+                    <span class="string">"The text metadata cannot be encoded into valid ISO 8859-1"
                 </span>),
-                TextEncodingError::InvalidKeywordSize =&gt; <span class="macro">write!</span>(fmt, <span class="string">&quot;Invalid keyword size&quot;</span>),
+                TextEncodingError::InvalidKeywordSize =&gt; <span class="macro">write!</span>(fmt, <span class="string">"Invalid keyword size"</span>),
                 TextEncodingError::CompressionError =&gt; {
-                    <span class="macro">write!</span>(fmt, <span class="string">&quot;Unable to compress text metadata&quot;</span>)
+                    <span class="macro">write!</span>(fmt, <span class="string">"Unable to compress text metadata"</span>)
                 }
             },
         }
@@ -2558,9 +2559,9 @@
 ///
 /// FIXME: Configuring APNG might be easier (less individual errors) if we had an _adapter_ which
 /// borrows this mutably but guarantees that `info.frame_control` is not `None`.
-</span><span class="kw">pub struct </span>Encoder&lt;<span class="lifetime">&#39;a</span>, W: Write&gt; {
+</span><span class="kw">pub struct </span>Encoder&lt;<span class="lifetime">'a</span>, W: Write&gt; {
     w: W,
-    info: Info&lt;<span class="lifetime">&#39;a</span>&gt;,
+    info: Info&lt;<span class="lifetime">'a</span>&gt;,
     options: Options,
 }
 
@@ -2573,8 +2574,8 @@
     validate_sequence: bool,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, W: Write&gt; Encoder&lt;<span class="lifetime">&#39;a</span>, W&gt; {
-    <span class="kw">pub fn </span>new(w: W, width: u32, height: u32) -&gt; Encoder&lt;<span class="lifetime">&#39;static</span>, W&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, W: Write&gt; Encoder&lt;<span class="lifetime">'a</span>, W&gt; {
+    <span class="kw">pub fn </span>new(w: W, width: u32, height: u32) -&gt; Encoder&lt;<span class="lifetime">'static</span>, W&gt; {
         Encoder {
             w,
             info: Info::with_size(width, height),
@@ -2582,7 +2583,7 @@
         }
     }
 
-    <span class="kw">pub fn </span>with_info(w: W, info: Info&lt;<span class="lifetime">&#39;a</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;Encoder&lt;<span class="lifetime">&#39;a</span>, W&gt;&gt; {
+    <span class="kw">pub fn </span>with_info(w: W, info: Info&lt;<span class="lifetime">'a</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;Encoder&lt;<span class="lifetime">'a</span>, W&gt;&gt; {
         <span class="kw">if </span>info.animation_control.is_some() != info.frame_control.is_some() {
             <span class="kw">return </span><span class="prelude-val">Err</span>(EncodingError::Format(FormatErrorKind::NotAnimated.into()));
         }
@@ -2604,7 +2605,7 @@
     ///
     /// `num_frames` controls how many frames the animation has, while
     /// `num_plays` controls how many times the animation should be
-    /// repeated until it stops, if it&#39;s zero then it will repeat
+    /// repeated until it stops, if it's zero then it will repeat
     /// infinitely.
     ///
     /// When this method is returns successfully then the images written will be encoded as fdAT
@@ -2634,9 +2635,9 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="doccomment">/// Mark the first animated frame as a &#39;separate default image&#39;.
+    <span class="doccomment">/// Mark the first animated frame as a 'separate default image'.
     ///
-    /// In APNG each animated frame is preceded by a special control chunk, `fcTL`. It&#39;s up to the
+    /// In APNG each animated frame is preceded by a special control chunk, `fcTL`. It's up to the
     /// encoder to decide if the first image, the standard `IDAT` data, should be part of the
     /// animation by emitting this chunk or by not doing so. A default image that is _not_ part of
     /// the animation is often interpreted as a thumbnail.
@@ -2654,13 +2655,13 @@
 
     <span class="doccomment">/// Sets the raw byte contents of the PLTE chunk. This method accepts
     /// both borrowed and owned byte data.
-    </span><span class="kw">pub fn </span>set_palette&lt;T: Into&lt;Cow&lt;<span class="lifetime">&#39;a</span>, [u8]&gt;&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, palette: T) {
+    </span><span class="kw">pub fn </span>set_palette&lt;T: Into&lt;Cow&lt;<span class="lifetime">'a</span>, [u8]&gt;&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, palette: T) {
         <span class="self">self</span>.info.palette = <span class="prelude-val">Some</span>(palette.into());
     }
 
     <span class="doccomment">/// Sets the raw byte contents of the tRNS chunk. This method accepts
     /// both borrowed and owned byte data.
-    </span><span class="kw">pub fn </span>set_trns&lt;T: Into&lt;Cow&lt;<span class="lifetime">&#39;a</span>, [u8]&gt;&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, trns: T) {
+    </span><span class="kw">pub fn </span>set_trns&lt;T: Into&lt;Cow&lt;<span class="lifetime">'a</span>, [u8]&gt;&gt;&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, trns: T) {
         <span class="self">self</span>.info.trns = <span class="prelude-val">Some</span>(trns.into());
     }
 
@@ -2669,7 +2670,7 @@
         <span class="self">self</span>.info.source_gamma = <span class="prelude-val">Some</span>(source_gamma);
     }
 
-    <span class="doccomment">/// Set the chromaticities for the source system&#39;s display channels (red, green, blue) and the whitepoint
+    <span class="doccomment">/// Set the chromaticities for the source system's display channels (red, green, blue) and the whitepoint
     /// of the source system on which the image was generated or last edited.
     </span><span class="kw">pub fn </span>set_source_chromaticities(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
@@ -2710,7 +2711,7 @@
     <span class="doccomment">/// Set compression parameters.
     ///
     /// Accepts a `Compression` or any type that can transform into a `Compression`. Notably `deflate::Compression` and
-    /// `deflate::CompressionOptions` which &quot;just work&quot;.
+    /// `deflate::CompressionOptions` which "just work".
     </span><span class="kw">pub fn </span>set_compression(<span class="kw-2">&amp;mut </span><span class="self">self</span>, compression: Compression) {
         <span class="self">self</span>.info.compression = compression;
     }
@@ -2863,14 +2864,14 @@
 
     <span class="doccomment">/// Validate the written image sequence.
     ///
-    /// When validation is turned on (it&#39;s turned off by default) then attempts to write more than
+    /// When validation is turned on (it's turned off by default) then attempts to write more than
     /// one `IDAT` image or images beyond the number of frames indicated in the animation control
     /// chunk will fail and return an error result instead. Attempts to [finish][finish] the image
     /// with missing frames will also return an error.
     ///
     /// [finish]: StreamWriter::finish
     ///
-    /// (It&#39;s possible to circumvent these checks by writing raw chunks instead.)
+    /// (It's possible to circumvent these checks by writing raw chunks instead.)
     </span><span class="kw">pub fn </span>validate_sequence(<span class="kw-2">&amp;mut </span><span class="self">self</span>, validate: bool) {
         <span class="self">self</span>.options.validate_sequence = validate;
     }
@@ -2883,7 +2884,7 @@
 ///
 /// FIXME: Writing of animated chunks might be clearer if we had an _adapter_ that you would call
 /// to guarantee the next image to be prefaced with a fcTL-chunk, and all other chunks would be
-/// guaranteed to be `IDAT`/not affected by APNG&#39;s frame control.
+/// guaranteed to be `IDAT`/not affected by APNG's frame control.
 </span><span class="kw">pub struct </span>Writer&lt;W: Write&gt; {
     <span class="doccomment">/// The underlying writer.
     </span>w: W,
@@ -2943,7 +2944,7 @@
 
     <span class="doccomment">/// Converts this partial info to an owned Info struct,
     /// setting missing values to their defaults
-    </span><span class="kw">fn </span>to_info(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Info&lt;<span class="lifetime">&#39;static</span>&gt; {
+    </span><span class="kw">fn </span>to_info(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Info&lt;<span class="lifetime">'static</span>&gt; {
         Info {
             width: <span class="self">self</span>.width,
             height: <span class="self">self</span>.height,
@@ -2982,7 +2983,7 @@
         }
     }
 
-    <span class="kw">fn </span>init(<span class="kw-2">mut </span><span class="self">self</span>, info: <span class="kw-2">&amp;</span>Info&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+    <span class="kw">fn </span>init(<span class="kw-2">mut </span><span class="self">self</span>, info: <span class="kw-2">&amp;</span>Info&lt;<span class="lifetime">'_</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
         <span class="kw">if </span><span class="self">self</span>.info.width == <span class="number">0 </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(EncodingError::Format(FormatErrorKind::ZeroWidth.into()));
         }
@@ -3182,7 +3183,7 @@
                 fctl.sequence_number = fctl.sequence_number.wrapping_add(<span class="number">1</span>);
                 <span class="self">self</span>.animation_written += <span class="number">1</span>;
 
-                <span class="comment">// If the default image is the first frame of an animation, it&#39;s still an IDAT.
+                <span class="comment">// If the default image is the first frame of an animation, it's still an IDAT.
                 </span><span class="kw">if </span><span class="self">self</span>.images_written == <span class="number">0 </span>{
                     <span class="self">self</span>.write_zlib_encoded_idat(<span class="kw-2">&amp;</span>zlib_encoded)<span class="question-mark">?</span>;
                 } <span class="kw">else </span>{
@@ -3208,7 +3209,7 @@
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(actl) = <span class="self">self</span>.info.animation_control {
             <span class="kw">if </span>actl.num_frames &lt;= <span class="self">self</span>.animation_written {
-                <span class="comment">// If we&#39;ve written all animation frames, all following will be normal image chunks.
+                <span class="comment">// If we've written all animation frames, all following will be normal image chunks.
                 </span><span class="self">self</span>.info.frame_control = <span class="prelude-val">None</span>;
             }
         }
@@ -3439,7 +3440,7 @@
     /// This allows you to create images that do not fit in memory. The default
     /// chunk size is 4K, use `stream_writer_with_size` to set another chunk
     /// size.
-    </span><span class="kw">pub fn </span>into_stream_writer(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;StreamWriter&lt;<span class="lifetime">&#39;static</span>, W&gt;&gt; {
+    </span><span class="kw">pub fn </span>into_stream_writer(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;StreamWriter&lt;<span class="lifetime">'static</span>, W&gt;&gt; {
         <span class="self">self</span>.into_stream_writer_with_size(DEFAULT_BUFFER_LENGTH)
     }
 
@@ -3448,7 +3449,7 @@
     /// See [`into_stream_writer`].
     ///
     /// [`into_stream_writer`]: #fn.into_stream_writer
-    </span><span class="kw">pub fn </span>into_stream_writer_with_size(<span class="self">self</span>, size: usize) -&gt; <span class="prelude-ty">Result</span>&lt;StreamWriter&lt;<span class="lifetime">&#39;static</span>, W&gt;&gt; {
+    </span><span class="kw">pub fn </span>into_stream_writer_with_size(<span class="self">self</span>, size: usize) -&gt; <span class="prelude-ty">Result</span>&lt;StreamWriter&lt;<span class="lifetime">'static</span>, W&gt;&gt; {
         StreamWriter::new(ChunkOutput::Owned(<span class="self">self</span>), size)
     }
 
@@ -3476,13 +3477,13 @@
     }
 }
 
-<span class="kw">enum </span>ChunkOutput&lt;<span class="lifetime">&#39;a</span>, W: Write&gt; {
-    Borrowed(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Writer&lt;W&gt;),
+<span class="kw">enum </span>ChunkOutput&lt;<span class="lifetime">'a</span>, W: Write&gt; {
+    Borrowed(<span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Writer&lt;W&gt;),
     Owned(Writer&lt;W&gt;),
 }
 
 <span class="comment">// opted for deref for practical reasons
-</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, W: Write&gt; Deref <span class="kw">for </span>ChunkOutput&lt;<span class="lifetime">&#39;a</span>, W&gt; {
+</span><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, W: Write&gt; Deref <span class="kw">for </span>ChunkOutput&lt;<span class="lifetime">'a</span>, W&gt; {
     <span class="kw">type </span>Target = Writer&lt;W&gt;;
 
     <span class="kw">fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="self">Self</span>::Target {
@@ -3493,7 +3494,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, W: Write&gt; DerefMut <span class="kw">for </span>ChunkOutput&lt;<span class="lifetime">&#39;a</span>, W&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, W: Write&gt; DerefMut <span class="kw">for </span>ChunkOutput&lt;<span class="lifetime">'a</span>, W&gt; {
     <span class="kw">fn </span>deref_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Target {
         <span class="kw">match </span><span class="self">self </span>{
             ChunkOutput::Borrowed(writer) =&gt; writer,
@@ -3516,16 +3517,16 @@
 ///
 /// When a chunk has to be flushed the length (that is now known)
 /// and the CRC will be written at the correct locations in the chunk.
-</span><span class="kw">struct </span>ChunkWriter&lt;<span class="lifetime">&#39;a</span>, W: Write&gt; {
-    writer: ChunkOutput&lt;<span class="lifetime">&#39;a</span>, W&gt;,
+</span><span class="kw">struct </span>ChunkWriter&lt;<span class="lifetime">'a</span>, W: Write&gt; {
+    writer: ChunkOutput&lt;<span class="lifetime">'a</span>, W&gt;,
     buffer: Vec&lt;u8&gt;,
     <span class="doccomment">/// keeps track of where the last byte was written
     </span>index: usize,
     curr_chunk: ChunkType,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, W: Write&gt; ChunkWriter&lt;<span class="lifetime">&#39;a</span>, W&gt; {
-    <span class="kw">fn </span>new(writer: ChunkOutput&lt;<span class="lifetime">&#39;a</span>, W&gt;, buf_len: usize) -&gt; ChunkWriter&lt;<span class="lifetime">&#39;a</span>, W&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, W: Write&gt; ChunkWriter&lt;<span class="lifetime">'a</span>, W&gt; {
+    <span class="kw">fn </span>new(writer: ChunkOutput&lt;<span class="lifetime">'a</span>, W&gt;, buf_len: usize) -&gt; ChunkWriter&lt;<span class="lifetime">'a</span>, W&gt; {
         <span class="comment">// currently buf_len will determine the size of each chunk
         // the len is capped to the maximum size every chunk can hold
         // (this wont ever overflow an u32)
@@ -3574,7 +3575,7 @@
     <span class="doccomment">/// NOTE: this bypasses the internal buffer so the flush method should be called before this
     ///       in the case there is some data left in the buffer when this is called, it will panic
     </span><span class="kw">fn </span>write_header(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-        <span class="macro">assert_eq!</span>(<span class="self">self</span>.index, <span class="number">0</span>, <span class="string">&quot;Called when not flushed&quot;</span>);
+        <span class="macro">assert_eq!</span>(<span class="self">self</span>.index, <span class="number">0</span>, <span class="string">"Called when not flushed"</span>);
         <span class="kw">let </span>wrt = <span class="self">self</span>.writer.deref_mut();
 
         <span class="self">self</span>.curr_chunk = <span class="kw">if </span>wrt.images_written == <span class="number">0 </span>{
@@ -3607,7 +3608,7 @@
                 ..f
             };
         } <span class="kw">else </span>{
-            <span class="macro">panic!</span>(<span class="string">&quot;This function must be called on an animated PNG&quot;</span>)
+            <span class="macro">panic!</span>(<span class="string">"This function must be called on an animated PNG"</span>)
         }
     }
 
@@ -3627,7 +3628,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, W: Write&gt; Write <span class="kw">for </span>ChunkWriter&lt;<span class="lifetime">&#39;a</span>, W&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, W: Write&gt; Write <span class="kw">for </span>ChunkWriter&lt;<span class="lifetime">'a</span>, W&gt; {
     <span class="kw">fn </span>write(<span class="kw-2">&amp;mut </span><span class="self">self</span>, <span class="kw-2">mut </span>data: <span class="kw-2">&amp;</span>[u8]) -&gt; io::Result&lt;usize&gt; {
         <span class="kw">if </span>data.is_empty() {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="number">0</span>);
@@ -3647,7 +3648,7 @@
             }
         }
 
-        <span class="comment">// Cap the buffer length to the maximum number of bytes that can&#39;t still
+        <span class="comment">// Cap the buffer length to the maximum number of bytes that can't still
         // be added to the current chunk
         </span><span class="kw">let </span>written = data.len().min(<span class="self">self</span>.buffer.len() - <span class="self">self</span>.index);
         data = <span class="kw-2">&amp;</span>data[..written];
@@ -3668,7 +3669,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;W: Write&gt; Drop <span class="kw">for </span>ChunkWriter&lt;<span class="lifetime">&#39;_</span>, W&gt; {
+<span class="kw">impl</span>&lt;W: Write&gt; Drop <span class="kw">for </span>ChunkWriter&lt;<span class="lifetime">'_</span>, W&gt; {
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="kw">let _ </span>= <span class="self">self</span>.flush();
     }
@@ -3684,25 +3685,25 @@
 /// This creates the problem of where to store the writer before
 /// exiting the function, and this is where `Wrapper` comes in.
 ///
-/// Unfortunately the `ZlibWriter` can&#39;t be used because on the
+/// Unfortunately the `ZlibWriter` can't be used because on the
 /// write following the error, `finish` would be called and that
 /// would write some data even if 0 bytes where compressed.
 ///
 /// If the `finish` function fails then there is nothing much to
 /// do as the `ChunkWriter` would get lost so the `Unrecoverable`
 /// variant is used to signal that.
-</span><span class="kw">enum </span>Wrapper&lt;<span class="lifetime">&#39;a</span>, W: Write&gt; {
-    Chunk(ChunkWriter&lt;<span class="lifetime">&#39;a</span>, W&gt;),
-    Zlib(ZlibEncoder&lt;ChunkWriter&lt;<span class="lifetime">&#39;a</span>, W&gt;&gt;),
+</span><span class="kw">enum </span>Wrapper&lt;<span class="lifetime">'a</span>, W: Write&gt; {
+    Chunk(ChunkWriter&lt;<span class="lifetime">'a</span>, W&gt;),
+    Zlib(ZlibEncoder&lt;ChunkWriter&lt;<span class="lifetime">'a</span>, W&gt;&gt;),
     Unrecoverable,
     <span class="doccomment">/// This is used in-between, should never be matched
     </span><span class="prelude-val">None</span>,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, W: Write&gt; Wrapper&lt;<span class="lifetime">&#39;a</span>, W&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, W: Write&gt; Wrapper&lt;<span class="lifetime">'a</span>, W&gt; {
     <span class="doccomment">/// Like `Option::take` this returns the `Wrapper` contained
     /// in `self` and replaces it with `Wrapper::None`
-    </span><span class="kw">fn </span>take(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Wrapper&lt;<span class="lifetime">&#39;a</span>, W&gt; {
+    </span><span class="kw">fn </span>take(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Wrapper&lt;<span class="lifetime">'a</span>, W&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>swap = Wrapper::None;
         mem::swap(<span class="self">self</span>, <span class="kw-2">&amp;mut </span>swap);
         swap
@@ -3715,10 +3716,10 @@
 /// [`finish`](#method.finish) or [`flush`] before dropping.
 ///
 /// [`flush`]: https://doc.rust-lang.org/stable/std/io/trait.Write.html#tymethod.flush
-</span><span class="kw">pub struct </span>StreamWriter&lt;<span class="lifetime">&#39;a</span>, W: Write&gt; {
+</span><span class="kw">pub struct </span>StreamWriter&lt;<span class="lifetime">'a</span>, W: Write&gt; {
     <span class="doccomment">/// The option here is needed in order to access the inner `ChunkWriter` in-between
     /// each frame, which is needed for writing the fcTL chunks between each frame
-    </span>writer: Wrapper&lt;<span class="lifetime">&#39;a</span>, W&gt;,
+    </span>writer: Wrapper&lt;<span class="lifetime">'a</span>, W&gt;,
     prev_buf: Vec&lt;u8&gt;,
     curr_buf: Vec&lt;u8&gt;,
     <span class="doccomment">/// Amount of data already written
@@ -3738,8 +3739,8 @@
     compression: Compression,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, W: Write&gt; StreamWriter&lt;<span class="lifetime">&#39;a</span>, W&gt; {
-    <span class="kw">fn </span>new(writer: ChunkOutput&lt;<span class="lifetime">&#39;a</span>, W&gt;, buf_len: usize) -&gt; <span class="prelude-ty">Result</span>&lt;StreamWriter&lt;<span class="lifetime">&#39;a</span>, W&gt;&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, W: Write&gt; StreamWriter&lt;<span class="lifetime">'a</span>, W&gt; {
+    <span class="kw">fn </span>new(writer: ChunkOutput&lt;<span class="lifetime">'a</span>, W&gt;, buf_len: usize) -&gt; <span class="prelude-ty">Result</span>&lt;StreamWriter&lt;<span class="lifetime">'a</span>, W&gt;&gt; {
         <span class="kw">let </span>PartialInfo {
             width,
             height,
@@ -3989,7 +3990,7 @@
                 <span class="kw">let </span>err = FormatErrorKind::Unrecoverable.into();
                 <span class="kw">return </span><span class="prelude-val">Err</span>(EncodingError::Format(err));
             }
-            Wrapper::Zlib(<span class="kw">_</span>) =&gt; <span class="macro">unreachable!</span>(<span class="string">&quot;never called on a half-finished frame&quot;</span>),
+            Wrapper::Zlib(<span class="kw">_</span>) =&gt; <span class="macro">unreachable!</span>(<span class="string">"never called on a half-finished frame"</span>),
             Wrapper::None =&gt; <span class="macro">unreachable!</span>(),
         };
         wrt.flush()<span class="question-mark">?</span>;
@@ -4018,7 +4019,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, W: Write&gt; Write <span class="kw">for </span>StreamWriter&lt;<span class="lifetime">&#39;a</span>, W&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, W: Write&gt; Write <span class="kw">for </span>StreamWriter&lt;<span class="lifetime">'a</span>, W&gt; {
     <span class="kw">fn </span>write(<span class="kw-2">&amp;mut </span><span class="self">self</span>, <span class="kw-2">mut </span>data: <span class="kw-2">&amp;</span>[u8]) -&gt; io::Result&lt;usize&gt; {
         <span class="kw">if let </span>Wrapper::Unrecoverable = <span class="self">self</span>.writer {
             <span class="kw">let </span>err = FormatErrorKind::Unrecoverable.into();
@@ -4062,7 +4063,7 @@
                 <span class="kw-2">&amp;</span><span class="self">self</span>.curr_buf,
                 <span class="kw-2">&amp;mut </span>filtered,
             );
-            <span class="comment">// This can&#39;t fail as the other variant is used only to allow the zlib encoder to finish
+            <span class="comment">// This can't fail as the other variant is used only to allow the zlib encoder to finish
             </span><span class="kw">let </span>wrt = <span class="kw">match </span><span class="kw-2">&amp;mut </span><span class="self">self</span>.writer {
                 Wrapper::Zlib(wrt) =&gt; wrt,
                 <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
@@ -4098,7 +4099,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;W: Write&gt; Drop <span class="kw">for </span>StreamWriter&lt;<span class="lifetime">&#39;_</span>, W&gt; {
+<span class="kw">impl</span>&lt;W: Write&gt; Drop <span class="kw">for </span>StreamWriter&lt;<span class="lifetime">'_</span>, W&gt; {
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="kw">let _ </span>= <span class="self">self</span>.flush();
     }
@@ -4137,15 +4138,15 @@
     </span><span class="kw">fn </span>roundtrip() {
         <span class="comment">// More loops = more random testing, but also more test wait time
         </span><span class="kw">for _ in </span><span class="number">0</span>..<span class="number">10 </span>{
-            <span class="kw">for </span>path <span class="kw">in </span>glob::glob(<span class="string">&quot;tests/pngsuite/*.png&quot;</span>)
+            <span class="kw">for </span>path <span class="kw">in </span>glob::glob(<span class="string">"tests/pngsuite/*.png"</span>)
                 .unwrap()
                 .map(|r| r.unwrap())
             {
-                <span class="kw">if </span>path.file_name().unwrap().to_str().unwrap().starts_with(<span class="string">&#39;x&#39;</span>) {
+                <span class="kw">if </span>path.file_name().unwrap().to_str().unwrap().starts_with(<span class="string">'x'</span>) {
                     <span class="comment">// x* files are expected to fail to decode
                     </span><span class="kw">continue</span>;
                 }
-                <span class="macro">eprintln!</span>(<span class="string">&quot;{}&quot;</span>, path.display());
+                <span class="macro">eprintln!</span>(<span class="string">"{}"</span>, path.display());
                 <span class="comment">// Decode image
                 </span><span class="kw">let </span>decoder = Decoder::new(File::open(path).unwrap());
                 <span class="kw">let </span><span class="kw-2">mut </span>reader = decoder.read_info().unwrap();
@@ -4183,11 +4184,11 @@
     </span><span class="kw">fn </span>roundtrip_stream() {
         <span class="comment">// More loops = more random testing, but also more test wait time
         </span><span class="kw">for _ in </span><span class="number">0</span>..<span class="number">10 </span>{
-            <span class="kw">for </span>path <span class="kw">in </span>glob::glob(<span class="string">&quot;tests/pngsuite/*.png&quot;</span>)
+            <span class="kw">for </span>path <span class="kw">in </span>glob::glob(<span class="string">"tests/pngsuite/*.png"</span>)
                 .unwrap()
                 .map(|r| r.unwrap())
             {
-                <span class="kw">if </span>path.file_name().unwrap().to_str().unwrap().starts_with(<span class="string">&#39;x&#39;</span>) {
+                <span class="kw">if </span>path.file_name().unwrap().to_str().unwrap().starts_with(<span class="string">'x'</span>) {
                     <span class="comment">// x* files are expected to fail to decode
                     </span><span class="kw">continue</span>;
                 }
@@ -4235,7 +4236,7 @@
     </span><span class="kw">fn </span>image_palette() -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">for </span><span class="kw-2">&amp;</span>bit_depth <span class="kw">in </span><span class="kw-2">&amp;</span>[<span class="number">1u8</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">8</span>] {
             <span class="comment">// Do a reference decoding, choose a fitting palette image from pngsuite
-            </span><span class="kw">let </span>path = <span class="macro">format!</span>(<span class="string">&quot;tests/pngsuite/basn3p0{}.png&quot;</span>, bit_depth);
+            </span><span class="kw">let </span>path = <span class="macro">format!</span>(<span class="string">"tests/pngsuite/basn3p0{}.png"</span>, bit_depth);
             <span class="kw">let </span>decoder = Decoder::new(File::open(<span class="kw-2">&amp;</span>path).unwrap());
             <span class="kw">let </span><span class="kw-2">mut </span>reader = decoder.read_info().unwrap();
 
@@ -4468,7 +4469,7 @@
             <span class="macro">assert_eq!</span>(info.height, <span class="number">4</span>);
             <span class="kw">let </span><span class="kw-2">mut </span>dest = <span class="macro">vec!</span>[<span class="number">0</span>; pixel.len()];
             reader.next_frame(<span class="kw-2">&amp;mut </span>dest)<span class="question-mark">?</span>;
-            <span class="macro">assert_eq!</span>(dest, pixel, <span class="string">&quot;Deviation with filter type {:?}&quot;</span>, filter);
+            <span class="macro">assert_eq!</span>(dest, pixel, <span class="string">"Deviation with filter type {:?}"</span>, filter);
 
             <span class="prelude-val">Ok</span>(())
         };
@@ -4502,7 +4503,7 @@
             <span class="macro">assert_eq!</span>(
                 reader.info().source_gamma,
                 gamma,
-                <span class="string">&quot;Deviation with gamma {:?}&quot;</span>,
+                <span class="string">"Deviation with gamma {:?}"</span>,
                 gamma
             );
             <span class="kw">let </span><span class="kw-2">mut </span>dest = <span class="macro">vec!</span>[<span class="number">0</span>; pixel.len()];
@@ -4699,9 +4700,9 @@
 
         {
             cursor.set_position(<span class="number">0</span>);
-            <span class="kw">let </span><span class="kw-2">mut </span>decoder = Decoder::new(cursor).read_info().expect(<span class="string">&quot;A valid image&quot;</span>);
+            <span class="kw">let </span><span class="kw-2">mut </span>decoder = Decoder::new(cursor).read_info().expect(<span class="string">"A valid image"</span>);
             <span class="kw">let </span><span class="kw-2">mut </span>buffer = [<span class="number">0u8</span>; <span class="number">1</span>];
-            decoder.next_frame(<span class="kw-2">&amp;mut </span>buffer[..]).expect(<span class="string">&quot;Valid read&quot;</span>);
+            decoder.next_frame(<span class="kw-2">&amp;mut </span>buffer[..]).expect(<span class="string">"Valid read"</span>);
             <span class="macro">assert_eq!</span>(buffer, [<span class="number">1</span>]);
         }
 
@@ -4728,9 +4729,9 @@
 
         {
             cursor.set_position(<span class="number">0</span>);
-            <span class="kw">let </span><span class="kw-2">mut </span>decoder = Decoder::new(cursor).read_info().expect(<span class="string">&quot;A valid image&quot;</span>);
+            <span class="kw">let </span><span class="kw-2">mut </span>decoder = Decoder::new(cursor).read_info().expect(<span class="string">"A valid image"</span>);
             <span class="kw">let </span><span class="kw-2">mut </span>buffer = [<span class="number">0u8</span>; <span class="number">256</span>];
-            decoder.next_frame(<span class="kw-2">&amp;mut </span>buffer[..]).expect(<span class="string">&quot;Valid read&quot;</span>);
+            decoder.next_frame(<span class="kw-2">&amp;mut </span>buffer[..]).expect(<span class="string">"Valid read"</span>);
             <span class="macro">assert_eq!</span>(buffer, [<span class="number">1</span>; <span class="number">256</span>]);
         }
 
@@ -4738,10 +4739,10 @@
     }
 
     <span class="attr">#[test]
-    #[cfg(all(unix, not(target_pointer_width = <span class="string">&quot;32&quot;</span>)))]
+    #[cfg(all(unix, not(target_pointer_width = <span class="string">"32"</span>)))]
     </span><span class="kw">fn </span>exper_error_on_huge_chunk() -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="comment">// Okay, so we want a proper 4 GB chunk but not actually spend the memory for reserving it.
-        // Let&#39;s rely on overcommit? Otherwise we got the rather dumb option of mmap-ing /dev/zero.
+        // Let's rely on overcommit? Otherwise we got the rather dumb option of mmap-ing /dev/zero.
         </span><span class="kw">let </span>empty = <span class="macro">vec!</span>[<span class="number">0</span>; <span class="number">1usize </span>&lt;&lt; <span class="number">31</span>];
         <span class="kw">let </span>writer = Cursor::new(<span class="macro">vec!</span>[<span class="number">0u8</span>; <span class="number">1024</span>]);
 
@@ -4755,10 +4756,10 @@
     }
 
     <span class="attr">#[test]
-    #[cfg(all(unix, not(target_pointer_width = <span class="string">&quot;32&quot;</span>)))]
+    #[cfg(all(unix, not(target_pointer_width = <span class="string">"32"</span>)))]
     </span><span class="kw">fn </span>exper_error_on_non_u32_chunk() -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="comment">// Okay, so we want a proper 4 GB chunk but not actually spend the memory for reserving it.
-        // Let&#39;s rely on overcommit? Otherwise we got the rather dumb option of mmap-ing /dev/zero.
+        // Let's rely on overcommit? Otherwise we got the rather dumb option of mmap-ing /dev/zero.
         </span><span class="kw">let </span>empty = <span class="macro">vec!</span>[<span class="number">0</span>; <span class="number">1usize </span>&lt;&lt; <span class="number">32</span>];
         <span class="kw">let </span>writer = Cursor::new(<span class="macro">vec!</span>[<span class="number">0u8</span>; <span class="number">1024</span>]);
 
@@ -4773,9 +4774,9 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>finish_drops_inner_writer() -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-        <span class="kw">struct </span>NoWriter&lt;<span class="lifetime">&#39;flag</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;flag </span><span class="kw-2">mut </span>bool);
+        <span class="kw">struct </span>NoWriter&lt;<span class="lifetime">'flag</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'flag </span><span class="kw-2">mut </span>bool);
 
-        <span class="kw">impl </span>Write <span class="kw">for </span>NoWriter&lt;<span class="lifetime">&#39;_</span>&gt; {
+        <span class="kw">impl </span>Write <span class="kw">for </span>NoWriter&lt;<span class="lifetime">'_</span>&gt; {
             <span class="kw">fn </span>write(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buf: <span class="kw-2">&amp;</span>[u8]) -&gt; io::Result&lt;usize&gt; {
                 <span class="prelude-val">Ok</span>(buf.len())
             }
@@ -4783,7 +4784,7 @@
                 <span class="prelude-val">Ok</span>(())
             }
         }
-        <span class="kw">impl </span>Drop <span class="kw">for </span>NoWriter&lt;<span class="lifetime">&#39;_</span>&gt; {
+        <span class="kw">impl </span>Drop <span class="kw">for </span>NoWriter&lt;<span class="lifetime">'_</span>&gt; {
             <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
                 <span class="kw-2">*</span><span class="self">self</span>.<span class="number">0 </span>= <span class="bool-val">true</span>;
             }
@@ -4801,7 +4802,7 @@
             writer.finish()<span class="question-mark">?</span>;
         }
 
-        <span class="macro">assert!</span>(flag, <span class="string">&quot;PNG finished but writer was not dropped&quot;</span>);
+        <span class="macro">assert!</span>(flag, <span class="string">"PNG finished but writer was not dropped"</span>);
         <span class="prelude-val">Ok</span>(())
     }
 
