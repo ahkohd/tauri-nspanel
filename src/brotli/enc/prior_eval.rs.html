@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-3.4.0/src/enc/prior_eval.rs`."><title>prior_eval.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-3.5.0/src/enc/prior_eval.rs`."><title>prior_eval.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -693,18 +693,214 @@
 <a href="#692" id="692">692</a>
 <a href="#693" id="693">693</a>
 <a href="#694" id="694">694</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>core;
-<span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::alloc;
-<span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::alloc::{SliceWrapper, SliceWrapperMut, Allocator};
-<span class="kw">use </span><span class="kw">super</span>::interface;
+<a href="#695" id="695">695</a>
+<a href="#696" id="696">696</a>
+<a href="#697" id="697">697</a>
+<a href="#698" id="698">698</a>
+<a href="#699" id="699">699</a>
+<a href="#700" id="700">700</a>
+<a href="#701" id="701">701</a>
+<a href="#702" id="702">702</a>
+<a href="#703" id="703">703</a>
+<a href="#704" id="704">704</a>
+<a href="#705" id="705">705</a>
+<a href="#706" id="706">706</a>
+<a href="#707" id="707">707</a>
+<a href="#708" id="708">708</a>
+<a href="#709" id="709">709</a>
+<a href="#710" id="710">710</a>
+<a href="#711" id="711">711</a>
+<a href="#712" id="712">712</a>
+<a href="#713" id="713">713</a>
+<a href="#714" id="714">714</a>
+<a href="#715" id="715">715</a>
+<a href="#716" id="716">716</a>
+<a href="#717" id="717">717</a>
+<a href="#718" id="718">718</a>
+<a href="#719" id="719">719</a>
+<a href="#720" id="720">720</a>
+<a href="#721" id="721">721</a>
+<a href="#722" id="722">722</a>
+<a href="#723" id="723">723</a>
+<a href="#724" id="724">724</a>
+<a href="#725" id="725">725</a>
+<a href="#726" id="726">726</a>
+<a href="#727" id="727">727</a>
+<a href="#728" id="728">728</a>
+<a href="#729" id="729">729</a>
+<a href="#730" id="730">730</a>
+<a href="#731" id="731">731</a>
+<a href="#732" id="732">732</a>
+<a href="#733" id="733">733</a>
+<a href="#734" id="734">734</a>
+<a href="#735" id="735">735</a>
+<a href="#736" id="736">736</a>
+<a href="#737" id="737">737</a>
+<a href="#738" id="738">738</a>
+<a href="#739" id="739">739</a>
+<a href="#740" id="740">740</a>
+<a href="#741" id="741">741</a>
+<a href="#742" id="742">742</a>
+<a href="#743" id="743">743</a>
+<a href="#744" id="744">744</a>
+<a href="#745" id="745">745</a>
+<a href="#746" id="746">746</a>
+<a href="#747" id="747">747</a>
+<a href="#748" id="748">748</a>
+<a href="#749" id="749">749</a>
+<a href="#750" id="750">750</a>
+<a href="#751" id="751">751</a>
+<a href="#752" id="752">752</a>
+<a href="#753" id="753">753</a>
+<a href="#754" id="754">754</a>
+<a href="#755" id="755">755</a>
+<a href="#756" id="756">756</a>
+<a href="#757" id="757">757</a>
+<a href="#758" id="758">758</a>
+<a href="#759" id="759">759</a>
+<a href="#760" id="760">760</a>
+<a href="#761" id="761">761</a>
+<a href="#762" id="762">762</a>
+<a href="#763" id="763">763</a>
+<a href="#764" id="764">764</a>
+<a href="#765" id="765">765</a>
+<a href="#766" id="766">766</a>
+<a href="#767" id="767">767</a>
+<a href="#768" id="768">768</a>
+<a href="#769" id="769">769</a>
+<a href="#770" id="770">770</a>
+<a href="#771" id="771">771</a>
+<a href="#772" id="772">772</a>
+<a href="#773" id="773">773</a>
+<a href="#774" id="774">774</a>
+<a href="#775" id="775">775</a>
+<a href="#776" id="776">776</a>
+<a href="#777" id="777">777</a>
+<a href="#778" id="778">778</a>
+<a href="#779" id="779">779</a>
+<a href="#780" id="780">780</a>
+<a href="#781" id="781">781</a>
+<a href="#782" id="782">782</a>
+<a href="#783" id="783">783</a>
+<a href="#784" id="784">784</a>
+<a href="#785" id="785">785</a>
+<a href="#786" id="786">786</a>
+<a href="#787" id="787">787</a>
+<a href="#788" id="788">788</a>
+<a href="#789" id="789">789</a>
+<a href="#790" id="790">790</a>
+<a href="#791" id="791">791</a>
+<a href="#792" id="792">792</a>
+<a href="#793" id="793">793</a>
+<a href="#794" id="794">794</a>
+<a href="#795" id="795">795</a>
+<a href="#796" id="796">796</a>
+<a href="#797" id="797">797</a>
+<a href="#798" id="798">798</a>
+<a href="#799" id="799">799</a>
+<a href="#800" id="800">800</a>
+<a href="#801" id="801">801</a>
+<a href="#802" id="802">802</a>
+<a href="#803" id="803">803</a>
+<a href="#804" id="804">804</a>
+<a href="#805" id="805">805</a>
+<a href="#806" id="806">806</a>
+<a href="#807" id="807">807</a>
+<a href="#808" id="808">808</a>
+<a href="#809" id="809">809</a>
+<a href="#810" id="810">810</a>
+<a href="#811" id="811">811</a>
+<a href="#812" id="812">812</a>
+<a href="#813" id="813">813</a>
+<a href="#814" id="814">814</a>
+<a href="#815" id="815">815</a>
+<a href="#816" id="816">816</a>
+<a href="#817" id="817">817</a>
+<a href="#818" id="818">818</a>
+<a href="#819" id="819">819</a>
+<a href="#820" id="820">820</a>
+<a href="#821" id="821">821</a>
+<a href="#822" id="822">822</a>
+<a href="#823" id="823">823</a>
+<a href="#824" id="824">824</a>
+<a href="#825" id="825">825</a>
+<a href="#826" id="826">826</a>
+<a href="#827" id="827">827</a>
+<a href="#828" id="828">828</a>
+<a href="#829" id="829">829</a>
+<a href="#830" id="830">830</a>
+<a href="#831" id="831">831</a>
+<a href="#832" id="832">832</a>
+<a href="#833" id="833">833</a>
+<a href="#834" id="834">834</a>
+<a href="#835" id="835">835</a>
+<a href="#836" id="836">836</a>
+<a href="#837" id="837">837</a>
+<a href="#838" id="838">838</a>
+<a href="#839" id="839">839</a>
+<a href="#840" id="840">840</a>
+<a href="#841" id="841">841</a>
+<a href="#842" id="842">842</a>
+<a href="#843" id="843">843</a>
+<a href="#844" id="844">844</a>
+<a href="#845" id="845">845</a>
+<a href="#846" id="846">846</a>
+<a href="#847" id="847">847</a>
+<a href="#848" id="848">848</a>
+<a href="#849" id="849">849</a>
+<a href="#850" id="850">850</a>
+<a href="#851" id="851">851</a>
+<a href="#852" id="852">852</a>
+<a href="#853" id="853">853</a>
+<a href="#854" id="854">854</a>
+<a href="#855" id="855">855</a>
+<a href="#856" id="856">856</a>
+<a href="#857" id="857">857</a>
+<a href="#858" id="858">858</a>
+<a href="#859" id="859">859</a>
+<a href="#860" id="860">860</a>
+<a href="#861" id="861">861</a>
+<a href="#862" id="862">862</a>
+<a href="#863" id="863">863</a>
+<a href="#864" id="864">864</a>
+<a href="#865" id="865">865</a>
+<a href="#866" id="866">866</a>
+<a href="#867" id="867">867</a>
+<a href="#868" id="868">868</a>
+<a href="#869" id="869">869</a>
+<a href="#870" id="870">870</a>
+<a href="#871" id="871">871</a>
+<a href="#872" id="872">872</a>
+<a href="#873" id="873">873</a>
+<a href="#874" id="874">874</a>
+<a href="#875" id="875">875</a>
+<a href="#876" id="876">876</a>
+<a href="#877" id="877">877</a>
+<a href="#878" id="878">878</a>
+<a href="#879" id="879">879</a>
+<a href="#880" id="880">880</a>
+<a href="#881" id="881">881</a>
+<a href="#882" id="882">882</a>
+<a href="#883" id="883">883</a>
+<a href="#884" id="884">884</a>
+<a href="#885" id="885">885</a>
+<a href="#886" id="886">886</a>
+<a href="#887" id="887">887</a>
+<a href="#888" id="888">888</a>
+<a href="#889" id="889">889</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::alloc;
+<span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::alloc::{Allocator, SliceWrapper, SliceWrapperMut};
 <span class="kw">use </span><span class="kw">super</span>::backward_references::BrotliEncoderParams;
-<span class="kw">use </span><span class="kw">super</span>::input_pair::{InputPair, InputReference, InputReferenceMut};
-<span class="kw">use </span><span class="kw">super</span>::ir_interpret::{IRInterpreter, push_base};
-<span class="kw">use </span><span class="kw">super</span>::util::{floatX, FastLog2u16};
 <span class="kw">use </span><span class="kw">super</span>::find_stride;
+<span class="kw">use </span><span class="kw">super</span>::input_pair::{InputPair, InputReference, InputReferenceMut};
+<span class="kw">use </span><span class="kw">super</span>::interface;
+<span class="kw">use </span><span class="kw">super</span>::ir_interpret::{push_base, IRInterpreter};
+<span class="kw">use </span><span class="kw">super</span>::util::{floatX, FastLog2u16};
 <span class="kw">use super</span>::{s16, v8};
-<span class="attr">#[cfg(feature=<span class="string">"simd"</span>)]
-</span><span class="kw">use </span>packed_simd_2::IntoBits;
+<span class="kw">use </span>core;
+<span class="attr">#[cfg(feature = <span class="string">"simd"</span>)]
+</span><span class="kw">use </span>core::simd::prelude::SimdPartialOrd;
+
 <span class="comment">// the high nibble, followed by the low nibbles
 </span><span class="kw">pub const </span>CONTEXT_MAP_PRIOR_SIZE: usize = <span class="number">256 </span>* <span class="number">17</span>;
 <span class="kw">pub const </span>STRIDE_PRIOR_SIZE: usize = <span class="number">256 </span>* <span class="number">256 </span>* <span class="number">2</span>;
@@ -720,35 +916,57 @@
     STRIDE2 = <span class="number">5</span>,
     STRIDE3 = <span class="number">6</span>,
     STRIDE4 = <span class="number">7</span>,
-<span class="comment">//    STRIDE8 = 8,
+    <span class="comment">//    STRIDE8 = 8,
     </span>NUM_PRIORS = <span class="number">8</span>,
     <span class="comment">// future ideas
 </span>}
 
 <span class="kw">pub trait </span>Prior {
-    <span class="kw">fn </span>lookup_lin(stride_byte: u8, selected_context:u8, actual_context:usize, high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;) -&gt; usize;
+    <span class="kw">fn </span>lookup_lin(
+        stride_byte: u8,
+        selected_context: u8,
+        actual_context: usize,
+        high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;,
+    ) -&gt; usize;
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>lookup_mut(data:<span class="kw-2">&amp;mut </span>[s16], stride_byte: u8, selected_context:u8, actual_context:usize, high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;) -&gt; CDF {
-        <span class="kw">let </span>index = <span class="self">Self</span>::lookup_lin(stride_byte, selected_context, actual_context,
-                             high_nibble);
+    </span><span class="kw">fn </span>lookup_mut(
+        data: <span class="kw-2">&amp;mut </span>[s16],
+        stride_byte: u8,
+        selected_context: u8,
+        actual_context: usize,
+        high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;,
+    ) -&gt; CDF {
+        <span class="kw">let </span>index = <span class="self">Self</span>::lookup_lin(stride_byte, selected_context, actual_context, high_nibble);
         CDF::from(<span class="kw-2">&amp;mut </span>data[index])
     }
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>lookup(data:<span class="kw-2">&amp;</span>[s16], stride_byte: u8, selected_context:u8, actual_context:usize, high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;) -&gt; <span class="kw-2">&amp;</span>s16 {
-        <span class="kw">let </span>index = <span class="self">Self</span>::lookup_lin(stride_byte, selected_context, actual_context,
-                             high_nibble);
+    </span><span class="kw">fn </span>lookup(
+        data: <span class="kw-2">&amp;</span>[s16],
+        stride_byte: u8,
+        selected_context: u8,
+        actual_context: usize,
+        high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;,
+    ) -&gt; <span class="kw-2">&amp;</span>s16 {
+        <span class="kw">let </span>index = <span class="self">Self</span>::lookup_lin(stride_byte, selected_context, actual_context, high_nibble);
         <span class="kw-2">&amp;</span>data[index]
     }
     <span class="attr">#[allow(unused_variables)]
     #[inline(always)]
-    </span><span class="kw">fn </span>score_index(stride_byte: u8, selected_context: u8, actual_context: usize, high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;) -&gt; usize {
+    </span><span class="kw">fn </span>score_index(
+        stride_byte: u8,
+        selected_context: u8,
+        actual_context: usize,
+        high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;,
+    ) -&gt; usize {
         <span class="kw">let </span>which = <span class="self">Self</span>::which();
         <span class="macro">assert!</span>(which &lt; WhichPrior::NUM_PRIORS <span class="kw">as </span>usize);
         <span class="macro">assert!</span>(actual_context &lt; <span class="number">256</span>);
         <span class="kw">if let </span><span class="prelude-val">Some</span>(nibble) = high_nibble {
-            WhichPrior::NUM_PRIORS <span class="kw">as </span>usize * (actual_context + <span class="number">4096 </span>+ <span class="number">256 </span>* nibble <span class="kw">as </span>usize) + which
+            WhichPrior::NUM_PRIORS <span class="kw">as </span>usize * (actual_context + <span class="number">4096 </span>+ <span class="number">256 </span>* nibble <span class="kw">as </span>usize)
+                + which
         } <span class="kw">else </span>{
-            WhichPrior::NUM_PRIORS <span class="kw">as </span>usize * (actual_context + <span class="number">256 </span>* (stride_byte &gt;&gt; <span class="number">4</span>) <span class="kw">as </span>usize) + which
+            WhichPrior::NUM_PRIORS <span class="kw">as </span>usize * (actual_context + <span class="number">256 </span>* (stride_byte &gt;&gt; <span class="number">4</span>) <span class="kw">as </span>usize)
+                + which
         }
     }
     <span class="kw">fn </span>which() -&gt; usize;
@@ -756,38 +974,50 @@
 
 <span class="attr">#[inline(always)]
 </span><span class="kw">fn </span>upper_score_index(stride_byte: u8, _selected_context: u8, actual_context: usize) -&gt; usize {
-  actual_context + <span class="number">256 </span>* (stride_byte &gt;&gt; <span class="number">4</span>) <span class="kw">as </span>usize
+    actual_context + <span class="number">256 </span>* (stride_byte &gt;&gt; <span class="number">4</span>) <span class="kw">as </span>usize
 }
 <span class="attr">#[inline(always)]
-</span><span class="kw">fn </span>lower_score_index(_stride_byte: u8, _selected_context: u8, actual_context: usize, high_nibble: u8) -&gt; usize {
-    <span class="macro">debug_assert!</span>(actual_context&lt; <span class="number">256</span>);
+</span><span class="kw">fn </span>lower_score_index(
+    _stride_byte: u8,
+    _selected_context: u8,
+    actual_context: usize,
+    high_nibble: u8,
+) -&gt; usize {
+    <span class="macro">debug_assert!</span>(actual_context &lt; <span class="number">256</span>);
     <span class="macro">debug_assert!</span>(high_nibble &lt; <span class="number">16</span>);
-  actual_context + <span class="number">4096 </span>+ <span class="number">256 </span>* high_nibble <span class="kw">as </span>usize
+    actual_context + <span class="number">4096 </span>+ <span class="number">256 </span>* high_nibble <span class="kw">as </span>usize
 }
 
 <span class="attr">#[allow(unused_variables)]
 #[inline(always)]
-</span><span class="kw">fn </span>stride_lookup_lin(stride_byte:u8, selected_context:u8, actual_context:usize, high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;) -&gt; usize {
+</span><span class="kw">fn </span>stride_lookup_lin(
+    stride_byte: u8,
+    selected_context: u8,
+    actual_context: usize,
+    high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;,
+) -&gt; usize {
     <span class="kw">if let </span><span class="prelude-val">Some</span>(nibble) = high_nibble {
-        <span class="number">1 </span>+ <span class="number">2 </span>* (actual_context <span class="kw">as </span>usize
-                 | ((stride_byte <span class="kw">as </span>usize &amp; <span class="number">0xf</span>) &lt;&lt; <span class="number">8</span>)
-                 | ((nibble <span class="kw">as </span>usize) &lt;&lt; <span class="number">12</span>))
+        <span class="number">1 </span>+ <span class="number">2 </span>* (actual_context | ((stride_byte <span class="kw">as </span>usize &amp; <span class="number">0xf</span>) &lt;&lt; <span class="number">8</span>) | ((nibble <span class="kw">as </span>usize) &lt;&lt; <span class="number">12</span>))
     } <span class="kw">else </span>{
-        <span class="number">2 </span>* (actual_context <span class="kw">as </span>usize | ((stride_byte <span class="kw">as </span>usize) &lt;&lt; <span class="number">8</span>))
+        <span class="number">2 </span>* (actual_context | ((stride_byte <span class="kw">as </span>usize) &lt;&lt; <span class="number">8</span>))
     }
 }
-<span class="kw">pub struct </span>Stride1Prior{
-}
+<span class="kw">pub struct </span>Stride1Prior {}
 <span class="kw">impl </span>Stride1Prior {
-  <span class="attr">#[inline(always)]
-  </span><span class="kw">pub fn </span>offset() -&gt; usize{
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">pub fn </span>offset() -&gt; usize {
         <span class="number">0
     </span>}
 }
 
 <span class="kw">impl </span>Prior <span class="kw">for </span>Stride1Prior {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>lookup_lin(stride_byte:u8, selected_context:u8, actual_context:usize, high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;) -&gt; usize {
+    </span><span class="kw">fn </span>lookup_lin(
+        stride_byte: u8,
+        selected_context: u8,
+        actual_context: usize,
+        high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;,
+    ) -&gt; usize {
         stride_lookup_lin(stride_byte, selected_context, actual_context, high_nibble)
     }
     <span class="attr">#[inline(always)]
@@ -798,18 +1028,22 @@
 <span class="comment">/*impl StridePrior for Stride1Prior {
     const STRIDE_OFFSET:usize = 0;
 }*/
-</span><span class="kw">pub struct </span>Stride2Prior{
-}
+</span><span class="kw">pub struct </span>Stride2Prior {}
 <span class="kw">impl </span>Stride2Prior {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">pub fn </span>offset() -&gt; usize{
+    </span><span class="kw">pub fn </span>offset() -&gt; usize {
         <span class="number">1
     </span>}
 }
 
 <span class="kw">impl </span>Prior <span class="kw">for </span>Stride2Prior {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>lookup_lin(stride_byte:u8, selected_context:u8, actual_context:usize, high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;) -&gt; usize {
+    </span><span class="kw">fn </span>lookup_lin(
+        stride_byte: u8,
+        selected_context: u8,
+        actual_context: usize,
+        high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;,
+    ) -&gt; usize {
         stride_lookup_lin(stride_byte, selected_context, actual_context, high_nibble)
     }
     <span class="attr">#[inline]
@@ -820,18 +1054,22 @@
 <span class="comment">/*impl StridePrior for Stride2Prior {
     const STRIDE_OFFSET:usize = 1;
 }*/
-</span><span class="kw">pub struct </span>Stride3Prior{
-}
+</span><span class="kw">pub struct </span>Stride3Prior {}
 <span class="kw">impl </span>Stride3Prior {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">pub fn </span>offset() -&gt; usize{
+    </span><span class="kw">pub fn </span>offset() -&gt; usize {
         <span class="number">2
     </span>}
 }
 
 <span class="kw">impl </span>Prior <span class="kw">for </span>Stride3Prior {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>lookup_lin(stride_byte:u8, selected_context:u8, actual_context:usize, high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;) -&gt; usize {
+    </span><span class="kw">fn </span>lookup_lin(
+        stride_byte: u8,
+        selected_context: u8,
+        actual_context: usize,
+        high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;,
+    ) -&gt; usize {
         stride_lookup_lin(stride_byte, selected_context, actual_context, high_nibble)
     }
     <span class="attr">#[inline(always)]
@@ -843,17 +1081,21 @@
 <span class="comment">/*impl StridePrior for Stride3Prior {
     const STRIDE_OFFSET:usize = 2;
 }*/
-</span><span class="kw">pub struct </span>Stride4Prior{
-}
+</span><span class="kw">pub struct </span>Stride4Prior {}
 <span class="kw">impl </span>Stride4Prior {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">pub fn </span>offset() -&gt; usize{
+    </span><span class="kw">pub fn </span>offset() -&gt; usize {
         <span class="number">3
     </span>}
 }
 <span class="kw">impl </span>Prior <span class="kw">for </span>Stride4Prior {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>lookup_lin(stride_byte:u8, selected_context:u8, actual_context:usize, high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;) -&gt; usize {
+    </span><span class="kw">fn </span>lookup_lin(
+        stride_byte: u8,
+        selected_context: u8,
+        actual_context: usize,
+        high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;,
+    ) -&gt; usize {
         stride_lookup_lin(stride_byte, selected_context, actual_context, high_nibble)
     }
     <span class="attr">#[inline]
@@ -886,16 +1128,20 @@ impl Prior for Stride8Prior {
     }
 }
 */
-</span><span class="kw">pub struct </span>CMPrior {
-}
+</span><span class="kw">pub struct </span>CMPrior {}
 <span class="kw">impl </span>Prior <span class="kw">for </span>CMPrior {
     <span class="attr">#[allow(unused_variables)]
     #[inline(always)]
-    </span><span class="kw">fn </span>lookup_lin(stride_byte: u8, selected_context:u8, actual_context:usize, high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;) -&gt; usize {
+    </span><span class="kw">fn </span>lookup_lin(
+        stride_byte: u8,
+        selected_context: u8,
+        actual_context: usize,
+        high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;,
+    ) -&gt; usize {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(nibble) = high_nibble {
             (nibble <span class="kw">as </span>usize + <span class="number">1</span>) + <span class="number">17 </span>* actual_context
         } <span class="kw">else </span>{
-            <span class="number">17 </span>* actual_context <span class="kw">as </span>usize
+            <span class="number">17 </span>* actual_context
         }
     }
     <span class="attr">#[inline(always)]
@@ -903,12 +1149,16 @@ impl Prior for Stride8Prior {
         WhichPrior::CM <span class="kw">as </span>usize
     }
 }
-<span class="kw">pub struct </span>FastCMPrior {
-}
+<span class="kw">pub struct </span>FastCMPrior {}
 <span class="kw">impl </span>Prior <span class="kw">for </span>FastCMPrior {
     <span class="attr">#[allow(unused_variables)]
     #[inline(always)]
-    </span><span class="kw">fn </span>lookup_lin(stride_byte: u8, selected_context:u8, actual_context:usize, high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;) -&gt; usize {
+    </span><span class="kw">fn </span>lookup_lin(
+        stride_byte: u8,
+        selected_context: u8,
+        actual_context: usize,
+        high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;,
+    ) -&gt; usize {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(nibble) = high_nibble {
             <span class="number">2 </span>* actual_context
         } <span class="kw">else </span>{
@@ -921,16 +1171,20 @@ impl Prior for Stride8Prior {
     }
 }
 
-<span class="kw">pub struct </span>SlowCMPrior {
-}
+<span class="kw">pub struct </span>SlowCMPrior {}
 <span class="kw">impl </span>Prior <span class="kw">for </span>SlowCMPrior {
     <span class="attr">#[allow(unused_variables)]
     #[inline(always)]
-    </span><span class="kw">fn </span>lookup_lin(stride_byte: u8, selected_context:u8, actual_context:usize, high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;) -&gt; usize {
+    </span><span class="kw">fn </span>lookup_lin(
+        stride_byte: u8,
+        selected_context: u8,
+        actual_context: usize,
+        high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;,
+    ) -&gt; usize {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(nibble) = high_nibble {
             (nibble <span class="kw">as </span>usize + <span class="number">1</span>) + <span class="number">17 </span>* actual_context
         } <span class="kw">else </span>{
-            <span class="number">17 </span>* actual_context <span class="kw">as </span>usize
+            <span class="number">17 </span>* actual_context
         }
     }
     <span class="attr">#[inline]
@@ -939,19 +1193,21 @@ impl Prior for Stride8Prior {
     }
 }
 
-<span class="kw">pub struct </span>AdvPrior {
-}
+<span class="kw">pub struct </span>AdvPrior {}
 <span class="kw">impl </span>Prior <span class="kw">for </span>AdvPrior {
     <span class="attr">#[allow(unused_variables)]
     #[inline(always)]
-    </span><span class="kw">fn </span>lookup_lin(stride_byte: u8, selected_context:u8, actual_context:usize, high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;) -&gt; usize {
+    </span><span class="kw">fn </span>lookup_lin(
+        stride_byte: u8,
+        selected_context: u8,
+        actual_context: usize,
+        high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;,
+    ) -&gt; usize {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(nibble) = high_nibble {
-            <span class="number">65536 </span>+ ((actual_context <span class="kw">as </span>usize)
-                  | ((stride_byte <span class="kw">as </span>usize) &lt;&lt; <span class="number">8</span>)
-                  | ((nibble <span class="kw">as </span>usize &amp; <span class="number">0xf</span>) &lt;&lt; <span class="number">16</span>))
+            <span class="number">65536
+                </span>+ (actual_context | ((stride_byte <span class="kw">as </span>usize) &lt;&lt; <span class="number">8</span>) | ((nibble <span class="kw">as </span>usize &amp; <span class="number">0xf</span>) &lt;&lt; <span class="number">16</span>))
         } <span class="kw">else </span>{
-            (actual_context <span class="kw">as </span>usize)
-             | ((stride_byte <span class="kw">as </span>usize &amp; <span class="number">0xf0</span>) &lt;&lt; <span class="number">8</span>)
+            actual_context | ((stride_byte <span class="kw">as </span>usize &amp; <span class="number">0xf0</span>) &lt;&lt; <span class="number">8</span>)
         }
     }
     <span class="attr">#[inline(always)]
@@ -961,27 +1217,27 @@ impl Prior for Stride8Prior {
 }
 
 <span class="kw">pub struct </span>CDF&lt;<span class="lifetime">'a</span>&gt; {
-    cdf:<span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>s16,
+    cdf: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>s16,
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; CDF&lt;<span class="lifetime">'a</span>&gt; {
     <span class="attr">#[inline(always)]
-    </span><span class="kw">pub fn </span>cost(<span class="kw-2">&amp;</span><span class="self">self</span>, nibble_u8:u8) -&gt; floatX {
+    </span><span class="kw">pub fn </span>cost(<span class="kw-2">&amp;</span><span class="self">self</span>, nibble_u8: u8) -&gt; floatX {
         <span class="kw">let </span>nibble = nibble_u8 <span class="kw">as </span>usize &amp; <span class="number">0xf</span>;
-        <span class="kw">let </span><span class="kw-2">mut </span>pdf = <span class="self">self</span>.cdf.extract(usize::from(nibble));
+        <span class="kw">let </span><span class="kw-2">mut </span>pdf = <span class="self">self</span>.cdf[nibble];
         <span class="kw">if </span>nibble_u8 != <span class="number">0 </span>{
-            pdf -= <span class="self">self</span>.cdf.extract(usize::from(nibble - <span class="number">1</span>));
+            pdf -= <span class="self">self</span>.cdf[(nibble - <span class="number">1</span>)];
         }
-        FastLog2u16(<span class="self">self</span>.cdf.extract(<span class="number">15</span>) <span class="kw">as </span>u16) - FastLog2u16(pdf <span class="kw">as </span>u16)
+        FastLog2u16(<span class="self">self</span>.cdf[<span class="number">15</span>] <span class="kw">as </span>u16) - FastLog2u16(pdf <span class="kw">as </span>u16)
     }
     <span class="attr">#[inline(always)]
-    </span><span class="kw">pub fn </span>update(<span class="kw-2">&amp;mut </span><span class="self">self</span>, nibble_u8:u8, speed: (u16, u16)) {
+    </span><span class="kw">pub fn </span>update(<span class="kw-2">&amp;mut </span><span class="self">self</span>, nibble_u8: u8, speed: (u16, u16)) {
         <span class="kw">let </span><span class="kw-2">mut </span>cdf = <span class="kw-2">*</span><span class="self">self</span>.cdf;
         <span class="kw">let </span>increment_v = s16::splat(speed.<span class="number">0 </span><span class="kw">as </span>i16);
-        <span class="kw">let </span>one_to_16 = s16::new(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>,<span class="number">10</span>,<span class="number">11</span>,<span class="number">12</span>,<span class="number">13</span>,<span class="number">14</span>,<span class="number">15</span>,<span class="number">16</span>);
-        <span class="kw">let </span>mask_v: s16 = one_to_16.gt(s16::splat(i16::from(nibble_u8))).into_bits();
+        <span class="kw">let </span>one_to_16 = s16::from([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">15</span>, <span class="number">16</span>]);
+        <span class="kw">let </span>mask_v: s16 = one_to_16.simd_gt(s16::splat(i16::from(nibble_u8))).to_int();
         cdf = cdf + (increment_v &amp; mask_v);
-        <span class="kw">if </span>cdf.extract(<span class="number">15</span>) &gt;= speed.<span class="number">1 </span><span class="kw">as </span>i16{
+        <span class="kw">if </span>cdf[<span class="number">15</span>] &gt;= speed.<span class="number">1 </span><span class="kw">as </span>i16 {
             <span class="kw">let </span>cdf_bias = one_to_16;
             cdf = cdf + cdf_bias - ((cdf + cdf_bias) &gt;&gt; <span class="number">2</span>);
         }
@@ -992,28 +1248,25 @@ impl Prior for Stride8Prior {
 <span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; From&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>s16&gt; <span class="kw">for </span>CDF&lt;<span class="lifetime">'a</span>&gt; {
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>from(cdf: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>s16) -&gt; CDF&lt;<span class="lifetime">'a</span>&gt; {
-        CDF {
-            cdf:cdf,
-        }
+        CDF { cdf }
     }
 }
 
-
 <span class="kw">pub fn </span>init_cdfs(cdfs: <span class="kw-2">&amp;mut </span>[s16]) {
-  <span class="kw">for </span>item <span class="kw">in </span>cdfs.iter_mut() {
-    <span class="kw-2">*</span>item = s16::new(<span class="number">4</span>, <span class="number">8</span>, <span class="number">12</span>, <span class="number">16</span>, <span class="number">20</span>, <span class="number">24</span>, <span class="number">28</span>, <span class="number">32</span>, <span class="number">36</span>, <span class="number">40</span>, <span class="number">44</span>, <span class="number">48</span>, <span class="number">52</span>, <span class="number">56</span>, <span class="number">60</span>, <span class="number">64</span>);
-   }
+    <span class="kw">for </span>item <span class="kw">in </span>cdfs.iter_mut() {
+        <span class="kw-2">*</span>item = s16::from([<span class="number">4</span>, <span class="number">8</span>, <span class="number">12</span>, <span class="number">16</span>, <span class="number">20</span>, <span class="number">24</span>, <span class="number">28</span>, <span class="number">32</span>, <span class="number">36</span>, <span class="number">40</span>, <span class="number">44</span>, <span class="number">48</span>, <span class="number">52</span>, <span class="number">56</span>, <span class="number">60</span>, <span class="number">64</span>]);
+    }
 }
 
-
-<span class="kw">pub struct </span>PriorEval&lt;<span class="lifetime">'a</span>,
-                     Alloc:alloc::Allocator&lt;s16&gt; + alloc::Allocator&lt;u32&gt; + alloc::Allocator&lt;v8&gt;,
-                     &gt; {
+<span class="kw">pub struct </span>PriorEval&lt;
+    <span class="lifetime">'a</span>,
+    Alloc: alloc::Allocator&lt;s16&gt; + alloc::Allocator&lt;u32&gt; + alloc::Allocator&lt;v8&gt;,
+&gt; {
     input: InputPair&lt;<span class="lifetime">'a</span>&gt;,
     context_map: interface::PredictionModeContextMap&lt;InputReferenceMut&lt;<span class="lifetime">'a</span>&gt;&gt;,
     block_type: u8,
     local_byte_offset: usize,
-    _nop: &lt;Alloc <span class="kw">as </span>Allocator&lt;u32&gt;&gt;::AllocatedMemory,    
+    _nop: &lt;Alloc <span class="kw">as </span>Allocator&lt;u32&gt;&gt;::AllocatedMemory,
     cm_priors: &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory,
     slow_cm_priors: &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory,
     fast_cm_priors: &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory,
@@ -1021,326 +1274,452 @@ impl Prior for Stride8Prior {
     adv_priors: &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory,
     _stride_pyramid_leaves: [u8; find_stride::NUM_LEAF_NODES],
     score: &lt;Alloc <span class="kw">as </span>Allocator&lt;v8&gt;&gt;::AllocatedMemory,
-    cm_speed: [(u16, u16);<span class="number">2</span>],
-    stride_speed: [(u16, u16);<span class="number">2</span>],
+    cm_speed: [(u16, u16); <span class="number">2</span>],
+    stride_speed: [(u16, u16); <span class="number">2</span>],
     cur_stride: u8,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>,
-     Alloc:alloc::Allocator&lt;s16&gt; + alloc::Allocator&lt;u32&gt; + alloc::Allocator&lt;v8&gt;,
-     &gt; PriorEval&lt;<span class="lifetime">'a</span>, Alloc&gt; {
-  <span class="kw">pub fn </span>new(alloc: <span class="kw-2">&amp;mut </span>Alloc,
-              input: InputPair&lt;<span class="lifetime">'a</span>&gt;,
-              stride: [u8; find_stride::NUM_LEAF_NODES],
-              prediction_mode: interface::PredictionModeContextMap&lt;InputReferenceMut&lt;<span class="lifetime">'a</span>&gt;&gt;,
-              params: <span class="kw-2">&amp;</span>BrotliEncoderParams,
-              ) -&gt; <span class="self">Self </span>{
-      <span class="kw">let </span>do_alloc = params.prior_bitmask_detection != <span class="number">0</span>;
-      <span class="kw">let </span><span class="kw-2">mut </span>cm_speed = prediction_mode.context_map_speed();
-      <span class="kw">let </span><span class="kw-2">mut </span>stride_speed = prediction_mode.stride_context_speed();
-      <span class="kw">if </span>cm_speed[<span class="number">0</span>] == (<span class="number">0</span>,<span class="number">0</span>) {
-          cm_speed[<span class="number">0</span>] = params.literal_adaptation[<span class="number">2</span>]
-      }
-      <span class="kw">if </span>cm_speed[<span class="number">0</span>] == (<span class="number">0</span>,<span class="number">0</span>) {
-          cm_speed[<span class="number">0</span>] = DEFAULT_SPEED;
-      }
-      <span class="kw">if </span>cm_speed[<span class="number">1</span>] == (<span class="number">0</span>,<span class="number">0</span>) {
-          cm_speed[<span class="number">1</span>] = params.literal_adaptation[<span class="number">3</span>]
-      }
-      <span class="kw">if </span>cm_speed[<span class="number">1</span>] == (<span class="number">0</span>,<span class="number">0</span>) {
-          cm_speed[<span class="number">1</span>] = cm_speed[<span class="number">0</span>];
-      }
-      <span class="kw">if </span>stride_speed[<span class="number">0</span>] == (<span class="number">0</span>, <span class="number">0</span>) {
-          stride_speed[<span class="number">0</span>] = params.literal_adaptation[<span class="number">0</span>]
-      }
-      <span class="kw">if </span>stride_speed[<span class="number">0</span>] == (<span class="number">0</span>, <span class="number">0</span>) {
-          stride_speed[<span class="number">0</span>] = DEFAULT_SPEED;
-      }
-      <span class="kw">if </span>stride_speed[<span class="number">1</span>] == (<span class="number">0</span>, <span class="number">0</span>) {
-          stride_speed[<span class="number">1</span>] = params.literal_adaptation[<span class="number">1</span>]
-      }
-      <span class="kw">if </span>stride_speed[<span class="number">1</span>] == (<span class="number">0</span>, <span class="number">0</span>) {
-          stride_speed[<span class="number">1</span>] = stride_speed[<span class="number">0</span>];
-      }
-      <span class="kw">let </span><span class="kw-2">mut </span>ret = PriorEval::&lt;Alloc&gt;{
-         input: input,
-         context_map: prediction_mode,
-         block_type: <span class="number">0</span>,
-         cur_stride: <span class="number">1</span>,
-         local_byte_offset: <span class="number">0</span>,
-         _nop: &lt;Alloc <span class="kw">as </span>Allocator&lt;u32&gt;&gt;::AllocatedMemory::default(),
-         cm_priors: <span class="kw">if </span>do_alloc {&lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::alloc_cell(alloc, CONTEXT_MAP_PRIOR_SIZE)} <span class="kw">else </span>{
-             &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()},
-         slow_cm_priors: <span class="kw">if </span>do_alloc {&lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::alloc_cell(alloc, CONTEXT_MAP_PRIOR_SIZE)} <span class="kw">else </span>{
-             &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()},
-         fast_cm_priors: <span class="kw">if </span>do_alloc {&lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::alloc_cell(alloc, CONTEXT_MAP_PRIOR_SIZE)} <span class="kw">else </span>{
-             &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()},
-         stride_priors: [
-             <span class="kw">if </span>do_alloc {&lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::alloc_cell(alloc, STRIDE_PRIOR_SIZE)} <span class="kw">else </span>{
-                 &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()},
-             <span class="kw">if </span>do_alloc {&lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::alloc_cell(alloc, STRIDE_PRIOR_SIZE)} <span class="kw">else </span>{
-                 &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()},
-             <span class="kw">if </span>do_alloc {&lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::alloc_cell(alloc, STRIDE_PRIOR_SIZE)} <span class="kw">else </span>{
-                 &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()},
-             <span class="kw">if </span>do_alloc {&lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::alloc_cell(alloc, STRIDE_PRIOR_SIZE)} <span class="kw">else </span>{
-                 &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()},
-             <span class="comment">/*if do_alloc {m16x16.alloc_cell(STRIDE_PRIOR_SIZE)} else {
-                 Alloc16x16::AllocatedMemory::default()},*/</span>],
-         adv_priors: <span class="kw">if </span>do_alloc {&lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::alloc_cell(alloc, ADV_PRIOR_SIZE)} <span class="kw">else </span>{
-             &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()},
-         _stride_pyramid_leaves: stride,
-         score: <span class="kw">if </span>do_alloc {&lt;Alloc <span class="kw">as </span>Allocator&lt;v8&gt;&gt;::alloc_cell(alloc, <span class="number">8192</span>)} <span class="kw">else </span>{
-             &lt;Alloc <span class="kw">as </span>Allocator&lt;v8&gt;&gt;::AllocatedMemory::default()},
-         cm_speed: cm_speed,
-         stride_speed: stride_speed,
-      };
-      init_cdfs(ret.cm_priors.slice_mut());
-      init_cdfs(ret.slow_cm_priors.slice_mut());
-      init_cdfs(ret.fast_cm_priors.slice_mut());
-      init_cdfs(ret.stride_priors[<span class="number">0</span>].slice_mut());
-      init_cdfs(ret.stride_priors[<span class="number">1</span>].slice_mut());
-      init_cdfs(ret.stride_priors[<span class="number">2</span>].slice_mut());
-      init_cdfs(ret.stride_priors[<span class="number">3</span>].slice_mut());
-      <span class="comment">//init_cdfs(ret.stride_priors[4].slice_mut());
-      </span>init_cdfs(ret.adv_priors.slice_mut());
-      ret
-   }
-   <span class="kw">pub fn </span>choose_bitmask(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-       <span class="kw">let </span>epsilon = <span class="number">6.0</span>;
-       <span class="kw">let </span><span class="kw-2">mut </span>max_popularity = <span class="number">0u32</span>;
-       <span class="kw">let </span><span class="kw-2">mut </span>max_popularity_index = <span class="number">0u8</span>;
-       <span class="macro">assert_eq!</span>(WhichPrior::NUM_PRIORS <span class="kw">as </span>usize, <span class="number">8</span>);
-       <span class="kw">let </span><span class="kw-2">mut </span>popularity = [<span class="number">0u32</span>; <span class="number">8</span>];
-       <span class="kw">let </span><span class="kw-2">mut </span>bitmask = [<span class="number">0u8</span>; <span class="kw">super</span>::interface::NUM_MIXING_VALUES];
-       <span class="kw">for </span>(i, score) <span class="kw">in </span><span class="self">self</span>.score.slice().iter().enumerate() {
-           <span class="kw">let </span>cm_score = score.extract(WhichPrior::CM <span class="kw">as </span>usize);
-           <span class="kw">let </span>slow_cm_score = score.extract(WhichPrior::SLOW_CM <span class="kw">as </span>usize);
-           <span class="kw">let </span>fast_cm_score = score.extract(WhichPrior::FAST_CM <span class="kw">as </span>usize) + <span class="number">16.0</span>;
-           <span class="kw">let </span>stride1_score = score.extract(WhichPrior::STRIDE1 <span class="kw">as </span>usize);
-           <span class="kw">let </span>stride2_score = score.extract(WhichPrior::STRIDE2 <span class="kw">as </span>usize);
-           <span class="kw">let </span>stride3_score = score.extract(WhichPrior::STRIDE3 <span class="kw">as </span>usize) + <span class="number">16.0</span>;
-           <span class="kw">let </span>stride4_score = score.extract(WhichPrior::STRIDE4 <span class="kw">as </span>usize);
-         <span class="comment">//let stride8_score = score.extract(WhichPrior::STRIDE8) * 1.125 + 16.0;
-           </span><span class="kw">let </span>stride8_score = stride4_score + <span class="number">1.0</span>; <span class="comment">// FIXME: never lowest -- ignore stride 8
-           </span><span class="kw">let </span>stride_score = core::cmp::min(stride1_score <span class="kw">as </span>u64,
-                                             core::cmp::min(stride2_score <span class="kw">as </span>u64,
-                                                            core::cmp::min(stride3_score <span class="kw">as </span>u64,
-                                                                           core::cmp::min(stride4_score <span class="kw">as </span>u64,
-                                                                                          stride8_score <span class="kw">as </span>u64))));
-                                  
-           <span class="kw">let </span>adv_score = score.extract(WhichPrior::ADV <span class="kw">as </span>usize);
-           <span class="kw">if </span>adv_score + epsilon &lt; stride_score <span class="kw">as </span>floatX &amp;&amp; adv_score + epsilon &lt; cm_score &amp;&amp; adv_score + epsilon &lt; slow_cm_score &amp;&amp; adv_score + epsilon &lt; fast_cm_score {
-               bitmask[i] = <span class="number">1</span>;
-           } <span class="kw">else if </span>slow_cm_score + epsilon &lt; stride_score <span class="kw">as </span>floatX &amp;&amp; slow_cm_score + epsilon &lt; cm_score &amp;&amp; slow_cm_score + epsilon &lt; fast_cm_score {
-               bitmask[i] = <span class="number">2</span>;
-           } <span class="kw">else if </span>fast_cm_score + epsilon &lt; stride_score <span class="kw">as </span>floatX &amp;&amp; fast_cm_score + epsilon &lt; cm_score {
-               bitmask[i] = <span class="number">3</span>;
-           } <span class="kw">else if </span>epsilon + (stride_score <span class="kw">as </span>floatX) &lt; cm_score {
-               bitmask[i] = WhichPrior::STRIDE1 <span class="kw">as </span>u8;
-               <span class="kw">if </span>stride_score == stride8_score <span class="kw">as </span>u64 {
-                   <span class="comment">//bitmask[i] = WhichPrior::STRIDE8 as u8;
-               </span>}
-               <span class="kw">if </span>stride_score == stride4_score <span class="kw">as </span>u64 {
-                   bitmask[i] = WhichPrior::STRIDE4 <span class="kw">as </span>u8;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Alloc: alloc::Allocator&lt;s16&gt; + alloc::Allocator&lt;u32&gt; + alloc::Allocator&lt;v8&gt;&gt;
+    PriorEval&lt;<span class="lifetime">'a</span>, Alloc&gt;
+{
+    <span class="kw">pub fn </span>new(
+        alloc: <span class="kw-2">&amp;mut </span>Alloc,
+        input: InputPair&lt;<span class="lifetime">'a</span>&gt;,
+        stride: [u8; find_stride::NUM_LEAF_NODES],
+        prediction_mode: interface::PredictionModeContextMap&lt;InputReferenceMut&lt;<span class="lifetime">'a</span>&gt;&gt;,
+        params: <span class="kw-2">&amp;</span>BrotliEncoderParams,
+    ) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>do_alloc = params.prior_bitmask_detection != <span class="number">0</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>cm_speed = prediction_mode.context_map_speed();
+        <span class="kw">let </span><span class="kw-2">mut </span>stride_speed = prediction_mode.stride_context_speed();
+        <span class="kw">if </span>cm_speed[<span class="number">0</span>] == (<span class="number">0</span>, <span class="number">0</span>) {
+            cm_speed[<span class="number">0</span>] = params.literal_adaptation[<span class="number">2</span>]
+        }
+        <span class="kw">if </span>cm_speed[<span class="number">0</span>] == (<span class="number">0</span>, <span class="number">0</span>) {
+            cm_speed[<span class="number">0</span>] = DEFAULT_SPEED;
+        }
+        <span class="kw">if </span>cm_speed[<span class="number">1</span>] == (<span class="number">0</span>, <span class="number">0</span>) {
+            cm_speed[<span class="number">1</span>] = params.literal_adaptation[<span class="number">3</span>]
+        }
+        <span class="kw">if </span>cm_speed[<span class="number">1</span>] == (<span class="number">0</span>, <span class="number">0</span>) {
+            cm_speed[<span class="number">1</span>] = cm_speed[<span class="number">0</span>];
+        }
+        <span class="kw">if </span>stride_speed[<span class="number">0</span>] == (<span class="number">0</span>, <span class="number">0</span>) {
+            stride_speed[<span class="number">0</span>] = params.literal_adaptation[<span class="number">0</span>]
+        }
+        <span class="kw">if </span>stride_speed[<span class="number">0</span>] == (<span class="number">0</span>, <span class="number">0</span>) {
+            stride_speed[<span class="number">0</span>] = DEFAULT_SPEED;
+        }
+        <span class="kw">if </span>stride_speed[<span class="number">1</span>] == (<span class="number">0</span>, <span class="number">0</span>) {
+            stride_speed[<span class="number">1</span>] = params.literal_adaptation[<span class="number">1</span>]
+        }
+        <span class="kw">if </span>stride_speed[<span class="number">1</span>] == (<span class="number">0</span>, <span class="number">0</span>) {
+            stride_speed[<span class="number">1</span>] = stride_speed[<span class="number">0</span>];
+        }
+        <span class="kw">let </span><span class="kw-2">mut </span>ret = PriorEval::&lt;Alloc&gt; {
+            input,
+            context_map: prediction_mode,
+            block_type: <span class="number">0</span>,
+            cur_stride: <span class="number">1</span>,
+            local_byte_offset: <span class="number">0</span>,
+            _nop: &lt;Alloc <span class="kw">as </span>Allocator&lt;u32&gt;&gt;::AllocatedMemory::default(),
+            cm_priors: <span class="kw">if </span>do_alloc {
+                &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::alloc_cell(alloc, CONTEXT_MAP_PRIOR_SIZE)
+            } <span class="kw">else </span>{
+                &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()
+            },
+            slow_cm_priors: <span class="kw">if </span>do_alloc {
+                &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::alloc_cell(alloc, CONTEXT_MAP_PRIOR_SIZE)
+            } <span class="kw">else </span>{
+                &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()
+            },
+            fast_cm_priors: <span class="kw">if </span>do_alloc {
+                &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::alloc_cell(alloc, CONTEXT_MAP_PRIOR_SIZE)
+            } <span class="kw">else </span>{
+                &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()
+            },
+            stride_priors: [
+                <span class="kw">if </span>do_alloc {
+                    &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::alloc_cell(alloc, STRIDE_PRIOR_SIZE)
+                } <span class="kw">else </span>{
+                    &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()
+                },
+                <span class="kw">if </span>do_alloc {
+                    &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::alloc_cell(alloc, STRIDE_PRIOR_SIZE)
+                } <span class="kw">else </span>{
+                    &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()
+                },
+                <span class="kw">if </span>do_alloc {
+                    &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::alloc_cell(alloc, STRIDE_PRIOR_SIZE)
+                } <span class="kw">else </span>{
+                    &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()
+                },
+                <span class="kw">if </span>do_alloc {
+                    &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::alloc_cell(alloc, STRIDE_PRIOR_SIZE)
+                } <span class="kw">else </span>{
+                    &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()
+                },
+                <span class="comment">/*if do_alloc {m16x16.alloc_cell(STRIDE_PRIOR_SIZE)} else {
+                Alloc16x16::AllocatedMemory::default()},*/
+            </span>],
+            adv_priors: <span class="kw">if </span>do_alloc {
+                &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::alloc_cell(alloc, ADV_PRIOR_SIZE)
+            } <span class="kw">else </span>{
+                &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()
+            },
+            _stride_pyramid_leaves: stride,
+            score: <span class="kw">if </span>do_alloc {
+                &lt;Alloc <span class="kw">as </span>Allocator&lt;v8&gt;&gt;::alloc_cell(alloc, <span class="number">8192</span>)
+            } <span class="kw">else </span>{
+                &lt;Alloc <span class="kw">as </span>Allocator&lt;v8&gt;&gt;::AllocatedMemory::default()
+            },
+            cm_speed,
+            stride_speed,
+        };
+        init_cdfs(ret.cm_priors.slice_mut());
+        init_cdfs(ret.slow_cm_priors.slice_mut());
+        init_cdfs(ret.fast_cm_priors.slice_mut());
+        init_cdfs(ret.stride_priors[<span class="number">0</span>].slice_mut());
+        init_cdfs(ret.stride_priors[<span class="number">1</span>].slice_mut());
+        init_cdfs(ret.stride_priors[<span class="number">2</span>].slice_mut());
+        init_cdfs(ret.stride_priors[<span class="number">3</span>].slice_mut());
+        <span class="comment">//init_cdfs(ret.stride_priors[4].slice_mut());
+        </span>init_cdfs(ret.adv_priors.slice_mut());
+        ret
+    }
+    <span class="kw">pub fn </span>choose_bitmask(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="kw">let </span>epsilon = <span class="number">6.0</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>max_popularity = <span class="number">0u32</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>max_popularity_index = <span class="number">0u8</span>;
+        <span class="macro">assert_eq!</span>(WhichPrior::NUM_PRIORS <span class="kw">as </span>usize, <span class="number">8</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>popularity = [<span class="number">0u32</span>; <span class="number">8</span>];
+        <span class="kw">let </span><span class="kw-2">mut </span>bitmask = [<span class="number">0u8</span>; <span class="kw">super</span>::interface::NUM_MIXING_VALUES];
+        <span class="kw">for </span>(i, score) <span class="kw">in </span><span class="self">self</span>.score.slice().iter().enumerate() {
+            <span class="kw">let </span>cm_score = score[WhichPrior::CM <span class="kw">as </span>usize];
+            <span class="kw">let </span>slow_cm_score = score[WhichPrior::SLOW_CM <span class="kw">as </span>usize];
+            <span class="kw">let </span>fast_cm_score = score[WhichPrior::FAST_CM <span class="kw">as </span>usize] + <span class="number">16.0</span>;
+            <span class="kw">let </span>stride1_score = score[WhichPrior::STRIDE1 <span class="kw">as </span>usize];
+            <span class="kw">let </span>stride2_score = score[WhichPrior::STRIDE2 <span class="kw">as </span>usize];
+            <span class="kw">let </span>stride3_score = score[WhichPrior::STRIDE3 <span class="kw">as </span>usize] + <span class="number">16.0</span>;
+            <span class="kw">let </span>stride4_score = score[WhichPrior::STRIDE4 <span class="kw">as </span>usize];
+            <span class="comment">//let stride8_score = score[WhichPrior::STRIDE8] * 1.125 + 16.0;
+            </span><span class="kw">let </span>stride8_score = stride4_score + <span class="number">1.0</span>; <span class="comment">// FIXME: never lowest -- ignore stride 8
+            </span><span class="kw">let </span>stride_score = core::cmp::min(
+                stride1_score <span class="kw">as </span>u64,
+                core::cmp::min(
+                    stride2_score <span class="kw">as </span>u64,
+                    core::cmp::min(
+                        stride3_score <span class="kw">as </span>u64,
+                        core::cmp::min(stride4_score <span class="kw">as </span>u64, stride8_score <span class="kw">as </span>u64),
+                    ),
+                ),
+            );
+
+            <span class="kw">let </span>adv_score = score[WhichPrior::ADV <span class="kw">as </span>usize];
+            <span class="kw">if </span>adv_score + epsilon &lt; stride_score <span class="kw">as </span>floatX
+                &amp;&amp; adv_score + epsilon &lt; cm_score
+                &amp;&amp; adv_score + epsilon &lt; slow_cm_score
+                &amp;&amp; adv_score + epsilon &lt; fast_cm_score
+            {
+                bitmask[i] = <span class="number">1</span>;
+            } <span class="kw">else if </span>slow_cm_score + epsilon &lt; stride_score <span class="kw">as </span>floatX
+                &amp;&amp; slow_cm_score + epsilon &lt; cm_score
+                &amp;&amp; slow_cm_score + epsilon &lt; fast_cm_score
+            {
+                bitmask[i] = <span class="number">2</span>;
+            } <span class="kw">else if </span>fast_cm_score + epsilon &lt; stride_score <span class="kw">as </span>floatX
+                &amp;&amp; fast_cm_score + epsilon &lt; cm_score
+            {
+                bitmask[i] = <span class="number">3</span>;
+            } <span class="kw">else if </span>epsilon + (stride_score <span class="kw">as </span>floatX) &lt; cm_score {
+                bitmask[i] = WhichPrior::STRIDE1 <span class="kw">as </span>u8;
+                <span class="kw">if </span>stride_score == stride8_score <span class="kw">as </span>u64 {
+                    <span class="comment">//bitmask[i] = WhichPrior::STRIDE8 as u8;
+                </span>}
+                <span class="kw">if </span>stride_score == stride4_score <span class="kw">as </span>u64 {
+                    bitmask[i] = WhichPrior::STRIDE4 <span class="kw">as </span>u8;
+                }
+                <span class="kw">if </span>stride_score == stride3_score <span class="kw">as </span>u64 {
+                    bitmask[i] = WhichPrior::STRIDE3 <span class="kw">as </span>u8;
+                }
+                <span class="kw">if </span>stride_score == stride2_score <span class="kw">as </span>u64 {
+                    bitmask[i] = WhichPrior::STRIDE2 <span class="kw">as </span>u8;
+                }
+                <span class="kw">if </span>stride_score == stride1_score <span class="kw">as </span>u64 {
+                    bitmask[i] = WhichPrior::STRIDE1 <span class="kw">as </span>u8;
+                }
+            } <span class="kw">else </span>{
+                bitmask[i] = <span class="number">0</span>;
+            }
+            <span class="kw">if </span>stride_score == <span class="number">0 </span>{
+                bitmask[i] = max_popularity_index;
+                <span class="comment">//eprintln!("Miss {}[{}] ~ {}", bitmask[i], i, max_popularity_index);
+            </span>} <span class="kw">else </span>{
+                popularity[bitmask[i] <span class="kw">as </span>usize] += <span class="number">1</span>;
+                <span class="kw">if </span>popularity[bitmask[i] <span class="kw">as </span>usize] &gt; max_popularity {
+                    max_popularity = popularity[bitmask[i] <span class="kw">as </span>usize];
+                    max_popularity_index = bitmask[i];
+                }
+                <span class="comment">//eprintln!("Score {} {} {} {} {}: {}[{}] max={},{}", cm_score, adv_score, slow_cm_score, fast_cm_score, stride_score, bitmask[i], i, max_popularity, max_popularity_index);
+            </span>}
+        }
+        <span class="self">self</span>.context_map.set_mixing_values(<span class="kw-2">&amp;</span>bitmask);
+    }
+    <span class="kw">pub fn </span>free(<span class="kw-2">&amp;mut </span><span class="self">self</span>, alloc: <span class="kw-2">&amp;mut </span>Alloc) {
+        &lt;Alloc <span class="kw">as </span>Allocator&lt;v8&gt;&gt;::free_cell(alloc, core::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.score));
+        &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::free_cell(alloc, core::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.cm_priors));
+        &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::free_cell(alloc, core::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.slow_cm_priors));
+        &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::free_cell(alloc, core::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.fast_cm_priors));
+        &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::free_cell(alloc, core::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.stride_priors[<span class="number">0</span>]));
+        &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::free_cell(alloc, core::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.stride_priors[<span class="number">1</span>]));
+        &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::free_cell(alloc, core::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.stride_priors[<span class="number">2</span>]));
+        &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::free_cell(alloc, core::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.stride_priors[<span class="number">3</span>]));
+        <span class="comment">//&lt;Alloc as Allocator&lt;s16&gt;&gt;::free_cell(alloc, core::mem::replace(&amp;mut self.stride_priors[4], &lt;Alloc as Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()));
+        </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::free_cell(alloc, core::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.adv_priors));
+    }
+
+    <span class="kw">pub fn </span>take_prediction_mode(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+    ) -&gt; interface::PredictionModeContextMap&lt;InputReferenceMut&lt;<span class="lifetime">'a</span>&gt;&gt; {
+        core::mem::replace(
+            <span class="kw-2">&amp;mut </span><span class="self">self</span>.context_map,
+            interface::PredictionModeContextMap::&lt;InputReferenceMut&lt;<span class="lifetime">'a</span>&gt;&gt; {
+                literal_context_map: InputReferenceMut::default(),
+                predmode_speed_and_distance_context_map: InputReferenceMut::default(),
+            },
+        )
+    }
+    <span class="kw">fn </span>update_cost_base(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        stride_prior: [u8; <span class="number">8</span>],
+        stride_prior_offset: usize,
+        selected_bits: u8,
+        cm_prior: usize,
+        literal: u8,
+    ) {
+        <span class="kw">let </span><span class="kw-2">mut </span>l_score = v8::splat(<span class="number">0.0</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>h_score = v8::splat(<span class="number">0.0</span>);
+        <span class="kw">let </span>base_stride_prior =
+            stride_prior[stride_prior_offset.wrapping_sub(<span class="self">self</span>.cur_stride <span class="kw">as </span>usize) &amp; <span class="number">7</span>];
+        <span class="kw">let </span>hscore_index = upper_score_index(base_stride_prior, selected_bits, cm_prior);
+        <span class="kw">let </span>lscore_index =
+            lower_score_index(base_stride_prior, selected_bits, cm_prior, literal &gt;&gt; <span class="number">4</span>);
+        {
+            <span class="kw">type </span>CurPrior = CMPrior;
+            <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(
+                <span class="self">self</span>.cm_priors.slice_mut(),
+                base_stride_prior,
+                selected_bits,
+                cm_prior,
+                <span class="prelude-val">None</span>,
+            );
+            h_score[CurPrior::which()] = cdf.cost(literal &gt;&gt; <span class="number">4</span>);
+            cdf.update(literal &gt;&gt; <span class="number">4</span>, <span class="self">self</span>.cm_speed[<span class="number">1</span>]);
+        }
+        {
+            <span class="kw">type </span>CurPrior = CMPrior;
+            <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(
+                <span class="self">self</span>.cm_priors.slice_mut(),
+                base_stride_prior,
+                selected_bits,
+                cm_prior,
+                <span class="prelude-val">Some</span>(literal &gt;&gt; <span class="number">4</span>),
+            );
+            l_score[CurPrior::which()] = cdf.cost(literal &amp; <span class="number">0xf</span>);
+            cdf.update(literal &amp; <span class="number">0xf</span>, <span class="self">self</span>.cm_speed[<span class="number">0</span>]);
+        }
+        {
+            <span class="kw">type </span>CurPrior = SlowCMPrior;
+            <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(
+                <span class="self">self</span>.slow_cm_priors.slice_mut(),
+                base_stride_prior,
+                selected_bits,
+                cm_prior,
+                <span class="prelude-val">None</span>,
+            );
+            h_score[CurPrior::which()] = cdf.cost(literal &gt;&gt; <span class="number">4</span>);
+            cdf.update(literal &gt;&gt; <span class="number">4</span>, (<span class="number">0</span>, <span class="number">1024</span>));
+        }
+        {
+            <span class="kw">type </span>CurPrior = SlowCMPrior;
+            <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(
+                <span class="self">self</span>.slow_cm_priors.slice_mut(),
+                base_stride_prior,
+                selected_bits,
+                cm_prior,
+                <span class="prelude-val">Some</span>(literal &gt;&gt; <span class="number">4</span>),
+            );
+            l_score[CurPrior::which()] = cdf.cost(literal &amp; <span class="number">0xf</span>);
+            cdf.update(literal &amp; <span class="number">0xf</span>, (<span class="number">0</span>, <span class="number">1024</span>));
+        }
+        {
+            <span class="kw">type </span>CurPrior = FastCMPrior;
+            <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(
+                <span class="self">self</span>.fast_cm_priors.slice_mut(),
+                base_stride_prior,
+                selected_bits,
+                cm_prior,
+                <span class="prelude-val">None</span>,
+            );
+            h_score[CurPrior::which()] = cdf.cost(literal &gt;&gt; <span class="number">4</span>);
+            cdf.update(literal &gt;&gt; <span class="number">4</span>, <span class="self">self</span>.cm_speed[<span class="number">0</span>]);
+        }
+        {
+            <span class="kw">type </span>CurPrior = FastCMPrior;
+            <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(
+                <span class="self">self</span>.fast_cm_priors.slice_mut(),
+                base_stride_prior,
+                selected_bits,
+                cm_prior,
+                <span class="prelude-val">Some</span>(literal &gt;&gt; <span class="number">4</span>),
+            );
+            l_score[CurPrior::which()] = cdf.cost(literal &amp; <span class="number">0xf</span>);
+            cdf.update(literal &amp; <span class="number">0xf</span>, <span class="self">self</span>.cm_speed[<span class="number">0</span>]);
+        }
+        {
+            <span class="kw">type </span>CurPrior = Stride1Prior;
+            <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(
+                <span class="self">self</span>.stride_priors[<span class="number">0</span>].slice_mut(),
+                stride_prior[stride_prior_offset.wrapping_sub(CurPrior::offset()) &amp; <span class="number">7</span>],
+                selected_bits,
+                cm_prior,
+                <span class="prelude-val">None</span>,
+            );
+            h_score[CurPrior::which()] = cdf.cost(literal &gt;&gt; <span class="number">4</span>);
+            cdf.update(literal &gt;&gt; <span class="number">4</span>, <span class="self">self</span>.stride_speed[<span class="number">1</span>]);
+        }
+        {
+            <span class="kw">type </span>CurPrior = Stride1Prior;
+            <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(
+                <span class="self">self</span>.stride_priors[<span class="number">0</span>].slice_mut(),
+                stride_prior[stride_prior_offset.wrapping_sub(CurPrior::offset()) &amp; <span class="number">7</span>],
+                selected_bits,
+                cm_prior,
+                <span class="prelude-val">Some</span>(literal &gt;&gt; <span class="number">4</span>),
+            );
+            l_score[CurPrior::which()] = cdf.cost(literal &amp; <span class="number">0xf</span>);
+            cdf.update(literal &amp; <span class="number">0xf</span>, <span class="self">self</span>.stride_speed[<span class="number">0</span>]);
+        }
+        {
+            <span class="kw">type </span>CurPrior = Stride2Prior;
+            <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(
+                <span class="self">self</span>.stride_priors[<span class="number">1</span>].slice_mut(),
+                stride_prior[stride_prior_offset.wrapping_sub(CurPrior::offset()) &amp; <span class="number">7</span>],
+                selected_bits,
+                cm_prior,
+                <span class="prelude-val">None</span>,
+            );
+            h_score[CurPrior::which()] = cdf.cost(literal &gt;&gt; <span class="number">4</span>);
+            cdf.update(literal &gt;&gt; <span class="number">4</span>, <span class="self">self</span>.stride_speed[<span class="number">1</span>]);
+        }
+        {
+            <span class="kw">type </span>CurPrior = Stride2Prior;
+            <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(
+                <span class="self">self</span>.stride_priors[<span class="number">1</span>].slice_mut(),
+                stride_prior[stride_prior_offset.wrapping_sub(CurPrior::offset()) &amp; <span class="number">7</span>],
+                selected_bits,
+                cm_prior,
+                <span class="prelude-val">Some</span>(literal &gt;&gt; <span class="number">4</span>),
+            );
+            l_score[CurPrior::which()] = cdf.cost(literal &amp; <span class="number">0xf</span>);
+            cdf.update(literal &amp; <span class="number">0xf</span>, <span class="self">self</span>.stride_speed[<span class="number">0</span>]);
+        }
+        {
+            <span class="kw">type </span>CurPrior = Stride3Prior;
+            <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(
+                <span class="self">self</span>.stride_priors[<span class="number">2</span>].slice_mut(),
+                stride_prior[stride_prior_offset.wrapping_sub(CurPrior::offset()) &amp; <span class="number">7</span>],
+                selected_bits,
+                cm_prior,
+                <span class="prelude-val">None</span>,
+            );
+            h_score[CurPrior::which()] = cdf.cost(literal &gt;&gt; <span class="number">4</span>);
+            cdf.update(literal &gt;&gt; <span class="number">4</span>, <span class="self">self</span>.stride_speed[<span class="number">1</span>]);
+        }
+        {
+            <span class="kw">type </span>CurPrior = Stride3Prior;
+            <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(
+                <span class="self">self</span>.stride_priors[<span class="number">2</span>].slice_mut(),
+                stride_prior[stride_prior_offset.wrapping_sub(CurPrior::offset()) &amp; <span class="number">7</span>],
+                selected_bits,
+                cm_prior,
+                <span class="prelude-val">Some</span>(literal &gt;&gt; <span class="number">4</span>),
+            );
+            l_score[CurPrior::which()] = cdf.cost(literal &amp; <span class="number">0xf</span>);
+            cdf.update(literal &amp; <span class="number">0xf</span>, <span class="self">self</span>.stride_speed[<span class="number">0</span>]);
+        }
+        {
+            <span class="kw">type </span>CurPrior = Stride4Prior;
+            <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(
+                <span class="self">self</span>.stride_priors[<span class="number">3</span>].slice_mut(),
+                stride_prior[stride_prior_offset.wrapping_sub(CurPrior::offset()) &amp; <span class="number">7</span>],
+                selected_bits,
+                cm_prior,
+                <span class="prelude-val">None</span>,
+            );
+            h_score[CurPrior::which()] = cdf.cost(literal &gt;&gt; <span class="number">4</span>);
+            cdf.update(literal &gt;&gt; <span class="number">4</span>, <span class="self">self</span>.stride_speed[<span class="number">1</span>]);
+        }
+        {
+            <span class="kw">type </span>CurPrior = Stride4Prior;
+            <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(
+                <span class="self">self</span>.stride_priors[<span class="number">3</span>].slice_mut(),
+                stride_prior[stride_prior_offset.wrapping_sub(CurPrior::offset()) &amp; <span class="number">7</span>],
+                selected_bits,
+                cm_prior,
+                <span class="prelude-val">Some</span>(literal &gt;&gt; <span class="number">4</span>),
+            );
+            l_score[CurPrior::which()] = cdf.cost(literal &amp; <span class="number">0xf</span>);
+            cdf.update(literal &amp; <span class="number">0xf</span>, <span class="self">self</span>.stride_speed[<span class="number">0</span>]);
+        }
+        <span class="comment">/*       {
+                   type CurPrior = Stride8Prior;
+                   let mut cdf = CurPrior::lookup_mut(self.stride_priors[4].slice_mut(),
+                                                      stride_prior[stride_prior_offset.wrapping_sub(CurPrior::offset())&amp;7], selected_bits, cm_prior, None);
+                   h_score[CurPrior::which()] = cdf.cost(literal&gt;&gt;4);
+                   cdf.update(literal &gt;&gt; 4, self.stride_speed[1]);
                }
-               <span class="kw">if </span>stride_score == stride3_score <span class="kw">as </span>u64 {
-                   bitmask[i] = WhichPrior::STRIDE3 <span class="kw">as </span>u8;
+               {
+                   type CurPrior = Stride8Prior;
+                   let mut cdf = CurPrior::lookup_mut(self.stride_priors[4].slice_mut(),
+                                                      stride_prior[stride_prior_offset.wrapping_sub(CurPrior::offset()) &amp; 7],
+                                                      selected_bits,
+                                                      cm_prior,
+                                                      Some(literal &gt;&gt; 4));
+                   l_score[CurPrior::which()] = cdf.cost(literal&amp;0xf);
+                   cdf.update(literal&amp;0xf, self.stride_speed[0]);
                }
-               <span class="kw">if </span>stride_score == stride2_score <span class="kw">as </span>u64 {
-                   bitmask[i] = WhichPrior::STRIDE2 <span class="kw">as </span>u8;
-               }
-               <span class="kw">if </span>stride_score == stride1_score <span class="kw">as </span>u64 {
-                   bitmask[i] = WhichPrior::STRIDE1 <span class="kw">as </span>u8;
-               }
-           } <span class="kw">else </span>{
-               bitmask[i] = <span class="number">0</span>;
-           }
-           <span class="kw">if </span>stride_score == <span class="number">0 </span>{
-               bitmask[i] = max_popularity_index;
-               <span class="comment">//eprintln!("Miss {}[{}] ~ {}", bitmask[i], i, max_popularity_index);
-           </span>} <span class="kw">else </span>{
-               popularity[bitmask[i] <span class="kw">as </span>usize] += <span class="number">1</span>;
-               <span class="kw">if </span>popularity[bitmask[i] <span class="kw">as </span>usize] &gt; max_popularity {
-                   max_popularity = popularity[bitmask[i] <span class="kw">as </span>usize];
-                   max_popularity_index = bitmask[i];
-               }
-               <span class="comment">//eprintln!("Score {} {} {} {} {}: {}[{}] max={},{}", cm_score, adv_score, slow_cm_score, fast_cm_score, stride_score, bitmask[i], i, max_popularity, max_popularity_index);
-           </span>}
-       }
-       <span class="self">self</span>.context_map.set_mixing_values(<span class="kw-2">&amp;</span>bitmask);
-   }
-   <span class="kw">pub fn </span>free(<span class="kw-2">&amp;mut </span><span class="self">self</span>,
-               alloc: <span class="kw-2">&amp;mut </span>Alloc) {
-       &lt;Alloc <span class="kw">as </span>Allocator&lt;v8&gt;&gt;::free_cell(alloc, core::mem::replace(<span class="kw-2">&amp;mut </span><span class="self">self</span>.score, &lt;Alloc <span class="kw">as </span>Allocator&lt;v8&gt;&gt;::AllocatedMemory::default()));
-       &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::free_cell(alloc, core::mem::replace(<span class="kw-2">&amp;mut </span><span class="self">self</span>.cm_priors, &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()));
-       &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::free_cell(alloc, core::mem::replace(<span class="kw-2">&amp;mut </span><span class="self">self</span>.slow_cm_priors, &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()));
-       &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::free_cell(alloc, core::mem::replace(<span class="kw-2">&amp;mut </span><span class="self">self</span>.fast_cm_priors, &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()));
-      &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::free_cell(alloc, core::mem::replace(<span class="kw-2">&amp;mut </span><span class="self">self</span>.stride_priors[<span class="number">0</span>], &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()));
-       &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::free_cell(alloc, core::mem::replace(<span class="kw-2">&amp;mut </span><span class="self">self</span>.stride_priors[<span class="number">1</span>], &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()));
-       &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::free_cell(alloc, core::mem::replace(<span class="kw-2">&amp;mut </span><span class="self">self</span>.stride_priors[<span class="number">2</span>], &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()));
-       &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::free_cell(alloc, core::mem::replace(<span class="kw-2">&amp;mut </span><span class="self">self</span>.stride_priors[<span class="number">3</span>], &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()));
-       <span class="comment">//&lt;Alloc as Allocator&lt;s16&gt;&gt;::free_cell(alloc, core::mem::replace(&amp;mut self.stride_priors[4], &lt;Alloc as Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()));
-       </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::free_cell(alloc, core::mem::replace(<span class="kw-2">&amp;mut </span><span class="self">self</span>.adv_priors, &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()));
-   }
-                
-   <span class="kw">pub fn </span>take_prediction_mode(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; interface::PredictionModeContextMap&lt;InputReferenceMut&lt;<span class="lifetime">'a</span>&gt;&gt; {
-       core::mem::replace(<span class="kw-2">&amp;mut </span><span class="self">self</span>.context_map, interface::PredictionModeContextMap::&lt;InputReferenceMut&lt;<span class="lifetime">'a</span>&gt;&gt;{
-          literal_context_map:InputReferenceMut::default(),
-          predmode_speed_and_distance_context_map:InputReferenceMut::default(),
-       })
-   }
-  <span class="kw">fn </span>update_cost_base(<span class="kw-2">&amp;mut </span><span class="self">self</span>, stride_prior: [u8;<span class="number">8</span>], stride_prior_offset:usize, selected_bits: u8, cm_prior: usize, literal: u8) {
-      <span class="kw">let </span><span class="kw-2">mut </span>l_score = v8::splat(<span class="number">0.0</span>);
-      <span class="kw">let </span><span class="kw-2">mut </span>h_score = v8::splat(<span class="number">0.0</span>);
-      <span class="kw">let </span>base_stride_prior = stride_prior[stride_prior_offset.wrapping_sub(<span class="self">self</span>.cur_stride <span class="kw">as </span>usize) &amp; <span class="number">7</span>];
-      <span class="kw">let </span>hscore_index = upper_score_index(base_stride_prior, selected_bits, cm_prior);
-      <span class="kw">let </span>lscore_index = lower_score_index(base_stride_prior, selected_bits, cm_prior, literal&gt;&gt;<span class="number">4</span>);
-       {
-           <span class="kw">type </span>CurPrior = CMPrior;
-           <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(<span class="self">self</span>.cm_priors.slice_mut(),
-                                              base_stride_prior, selected_bits, cm_prior, <span class="prelude-val">None</span>);
-           h_score = h_score.replace(CurPrior::which(), cdf.cost(literal&gt;&gt;<span class="number">4</span>));
-           cdf.update(literal &gt;&gt; <span class="number">4</span>, <span class="self">self</span>.cm_speed[<span class="number">1</span>]);
-       }
-       {
-           <span class="kw">type </span>CurPrior = CMPrior;
-           <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(<span class="self">self</span>.cm_priors.slice_mut(),
-                                              base_stride_prior, selected_bits, cm_prior, <span class="prelude-val">Some</span>(literal &gt;&gt; <span class="number">4</span>));
-           l_score = l_score.replace(CurPrior::which(), cdf.cost(literal<span class="kw-2">&amp;</span><span class="number">0xf</span>));
-           cdf.update(literal<span class="kw-2">&amp;</span><span class="number">0xf</span>, <span class="self">self</span>.cm_speed[<span class="number">0</span>]);
-       }
-       {
-           <span class="kw">type </span>CurPrior = SlowCMPrior;
-           <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(<span class="self">self</span>.slow_cm_priors.slice_mut(),
-                                              base_stride_prior, selected_bits, cm_prior, <span class="prelude-val">None</span>);
-           h_score = h_score.replace(CurPrior::which(), cdf.cost(literal&gt;&gt;<span class="number">4</span>));
-           cdf.update(literal &gt;&gt; <span class="number">4</span>, (<span class="number">0</span>,<span class="number">1024</span>));
-       }
-       {
-           <span class="kw">type </span>CurPrior = SlowCMPrior;
-           <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(<span class="self">self</span>.slow_cm_priors.slice_mut(),
-                                              base_stride_prior, selected_bits, cm_prior, <span class="prelude-val">Some</span>(literal &gt;&gt; <span class="number">4</span>));
-           l_score = l_score.replace(CurPrior::which(), cdf.cost(literal<span class="kw-2">&amp;</span><span class="number">0xf</span>));
-           cdf.update(literal<span class="kw-2">&amp;</span><span class="number">0xf</span>, (<span class="number">0</span>,<span class="number">1024</span>));
-       }
-       {
-           <span class="kw">type </span>CurPrior = FastCMPrior;
-           <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(<span class="self">self</span>.fast_cm_priors.slice_mut(),
-                                              base_stride_prior, selected_bits, cm_prior, <span class="prelude-val">None</span>);
-           h_score = h_score.replace(CurPrior::which(), cdf.cost(literal&gt;&gt;<span class="number">4</span>));
-           cdf.update(literal &gt;&gt; <span class="number">4</span>, <span class="self">self</span>.cm_speed[<span class="number">0</span>]);
-       }
-       {
-           <span class="kw">type </span>CurPrior = FastCMPrior;
-           <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(<span class="self">self</span>.fast_cm_priors.slice_mut(),
-                                              base_stride_prior, selected_bits, cm_prior, <span class="prelude-val">Some</span>(literal &gt;&gt; <span class="number">4</span>));
-           l_score = l_score.replace(CurPrior::which(), cdf.cost(literal<span class="kw-2">&amp;</span><span class="number">0xf</span>));
-           cdf.update(literal<span class="kw-2">&amp;</span><span class="number">0xf</span>, <span class="self">self</span>.cm_speed[<span class="number">0</span>]);
-       }
-       {
-           <span class="kw">type </span>CurPrior = Stride1Prior;
-           <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(<span class="self">self</span>.stride_priors[<span class="number">0</span>].slice_mut(),
-                                              stride_prior[stride_prior_offset.wrapping_sub(CurPrior::offset())<span class="kw-2">&amp;</span><span class="number">7</span>], selected_bits, cm_prior, <span class="prelude-val">None</span>);
-           h_score = h_score.replace(CurPrior::which(), cdf.cost(literal&gt;&gt;<span class="number">4</span>));
-           cdf.update(literal &gt;&gt; <span class="number">4</span>, <span class="self">self</span>.stride_speed[<span class="number">1</span>]);
-       }
-       {
-           <span class="kw">type </span>CurPrior = Stride1Prior;
-           <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(<span class="self">self</span>.stride_priors[<span class="number">0</span>].slice_mut(),
-                                              stride_prior[stride_prior_offset.wrapping_sub(CurPrior::offset())<span class="kw-2">&amp;</span><span class="number">7</span>],
-                                              selected_bits,
-                                              cm_prior,
-                                              <span class="prelude-val">Some</span>(literal &gt;&gt; <span class="number">4</span>));
-           l_score = l_score.replace(CurPrior::which(), cdf.cost(literal<span class="kw-2">&amp;</span><span class="number">0xf</span>));
-           cdf.update(literal<span class="kw-2">&amp;</span><span class="number">0xf</span>, <span class="self">self</span>.stride_speed[<span class="number">0</span>]);
-       }
-       {
-           <span class="kw">type </span>CurPrior = Stride2Prior;
-           <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(<span class="self">self</span>.stride_priors[<span class="number">1</span>].slice_mut(),
-                                              stride_prior[stride_prior_offset.wrapping_sub(CurPrior::offset())<span class="kw-2">&amp;</span><span class="number">7</span>], selected_bits, cm_prior, <span class="prelude-val">None</span>);
-           h_score = h_score.replace(CurPrior::which(), cdf.cost(literal&gt;&gt;<span class="number">4</span>));
-           cdf.update(literal &gt;&gt; <span class="number">4</span>, <span class="self">self</span>.stride_speed[<span class="number">1</span>]);
-       }
-       {
-           <span class="kw">type </span>CurPrior = Stride2Prior;
-           <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(<span class="self">self</span>.stride_priors[<span class="number">1</span>].slice_mut(),
-                                              stride_prior[stride_prior_offset.wrapping_sub(CurPrior::offset())<span class="kw-2">&amp;</span><span class="number">7</span>],
-                                              selected_bits,
-                                              cm_prior,
-                                              <span class="prelude-val">Some</span>(literal &gt;&gt; <span class="number">4</span>));
-           l_score = l_score.replace(CurPrior::which(), cdf.cost(literal<span class="kw-2">&amp;</span><span class="number">0xf</span>));
-           cdf.update(literal<span class="kw-2">&amp;</span><span class="number">0xf</span>, <span class="self">self</span>.stride_speed[<span class="number">0</span>]);
-       }
-       {
-           <span class="kw">type </span>CurPrior = Stride3Prior;
-           <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(<span class="self">self</span>.stride_priors[<span class="number">2</span>].slice_mut(),
-                                              stride_prior[stride_prior_offset.wrapping_sub(CurPrior::offset())<span class="kw-2">&amp;</span><span class="number">7</span>], selected_bits, cm_prior, <span class="prelude-val">None</span>);
-           h_score = h_score.replace(CurPrior::which(), cdf.cost(literal&gt;&gt;<span class="number">4</span>));
-           cdf.update(literal &gt;&gt; <span class="number">4</span>, <span class="self">self</span>.stride_speed[<span class="number">1</span>]);
-       }
-       {
-           <span class="kw">type </span>CurPrior = Stride3Prior;
-           <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(<span class="self">self</span>.stride_priors[<span class="number">2</span>].slice_mut(),
-                                              stride_prior[stride_prior_offset.wrapping_sub(CurPrior::offset())<span class="kw-2">&amp;</span><span class="number">7</span>],
-                                              selected_bits,
-                                              cm_prior,
-                                              <span class="prelude-val">Some</span>(literal &gt;&gt; <span class="number">4</span>));
-           l_score = l_score.replace(CurPrior::which(), cdf.cost(literal<span class="kw-2">&amp;</span><span class="number">0xf</span>));
-           cdf.update(literal<span class="kw-2">&amp;</span><span class="number">0xf</span>, <span class="self">self</span>.stride_speed[<span class="number">0</span>]);
-       }
-       {
-           <span class="kw">type </span>CurPrior = Stride4Prior;
-           <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(<span class="self">self</span>.stride_priors[<span class="number">3</span>].slice_mut(),
-                                              stride_prior[stride_prior_offset.wrapping_sub(CurPrior::offset())<span class="kw-2">&amp;</span><span class="number">7</span>], selected_bits, cm_prior, <span class="prelude-val">None</span>);
-           h_score = h_score.replace(CurPrior::which(), cdf.cost(literal&gt;&gt;<span class="number">4</span>));
-           cdf.update(literal &gt;&gt; <span class="number">4</span>, <span class="self">self</span>.stride_speed[<span class="number">1</span>]);
-       }
-       {
-           <span class="kw">type </span>CurPrior = Stride4Prior;
-           <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(<span class="self">self</span>.stride_priors[<span class="number">3</span>].slice_mut(),
-                                              stride_prior[stride_prior_offset.wrapping_sub(CurPrior::offset())<span class="kw-2">&amp;</span><span class="number">7</span>],
-                                              selected_bits,
-                                              cm_prior,
-                                              <span class="prelude-val">Some</span>(literal &gt;&gt; <span class="number">4</span>));
-           l_score = l_score.replace(CurPrior::which(), cdf.cost(literal<span class="kw-2">&amp;</span><span class="number">0xf</span>));
-           cdf.update(literal<span class="kw-2">&amp;</span><span class="number">0xf</span>, <span class="self">self</span>.stride_speed[<span class="number">0</span>]);
-       }
-<span class="comment">/*       {
-           type CurPrior = Stride8Prior;
-           let mut cdf = CurPrior::lookup_mut(self.stride_priors[4].slice_mut(),
-                                              stride_prior[stride_prior_offset.wrapping_sub(CurPrior::offset())&amp;7], selected_bits, cm_prior, None);
-           h_score = h_score.replace(CurPrior::which(), cdf.cost(literal&gt;&gt;4));
-           cdf.update(literal &gt;&gt; 4, self.stride_speed[1]);
-       }
-       {
-           type CurPrior = Stride8Prior;
-           let mut cdf = CurPrior::lookup_mut(self.stride_priors[4].slice_mut(),
-                                              stride_prior[stride_prior_offset.wrapping_sub(CurPrior::offset()) &amp; 7],
-                                              selected_bits,
-                                              cm_prior,
-                                              Some(literal &gt;&gt; 4));
-           l_score = l_score.replace(CurPrior::which(), cdf.cost(literal&amp;0xf));
-           cdf.update(literal&amp;0xf, self.stride_speed[0]);
-       }
-*/
-       </span><span class="kw">type </span>CurPrior = AdvPrior;
-       {
-           <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(<span class="self">self</span>.adv_priors.slice_mut(),
-                                              base_stride_prior, selected_bits, cm_prior, <span class="prelude-val">None</span>);
-           h_score = h_score.replace(CurPrior::which(), cdf.cost(literal&gt;&gt;<span class="number">4</span>));
-           cdf.update(literal &gt;&gt; <span class="number">4</span>, <span class="self">self</span>.stride_speed[<span class="number">1</span>]);
-       }
-       {
-           <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(<span class="self">self</span>.adv_priors.slice_mut(),
-                                              base_stride_prior, selected_bits, cm_prior, <span class="prelude-val">Some</span>(literal &gt;&gt; <span class="number">4</span>));
-           l_score = l_score.replace(CurPrior::which(), cdf.cost(literal<span class="kw-2">&amp;</span><span class="number">0xf</span>));
-           cdf.update(literal<span class="kw-2">&amp;</span><span class="number">0xf</span>, <span class="self">self</span>.stride_speed[<span class="number">0</span>]);
-       }
-       <span class="self">self</span>.score.slice_mut()[lscore_index] += l_score;
-       <span class="self">self</span>.score.slice_mut()[hscore_index] += h_score;
-  }
+        */
+        </span><span class="kw">type </span>CurPrior = AdvPrior;
+        {
+            <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(
+                <span class="self">self</span>.adv_priors.slice_mut(),
+                base_stride_prior,
+                selected_bits,
+                cm_prior,
+                <span class="prelude-val">None</span>,
+            );
+            h_score[CurPrior::which()] = cdf.cost(literal &gt;&gt; <span class="number">4</span>);
+            cdf.update(literal &gt;&gt; <span class="number">4</span>, <span class="self">self</span>.stride_speed[<span class="number">1</span>]);
+        }
+        {
+            <span class="kw">let </span><span class="kw-2">mut </span>cdf = CurPrior::lookup_mut(
+                <span class="self">self</span>.adv_priors.slice_mut(),
+                base_stride_prior,
+                selected_bits,
+                cm_prior,
+                <span class="prelude-val">Some</span>(literal &gt;&gt; <span class="number">4</span>),
+            );
+            l_score[CurPrior::which()] = cdf.cost(literal &amp; <span class="number">0xf</span>);
+            cdf.update(literal &amp; <span class="number">0xf</span>, <span class="self">self</span>.stride_speed[<span class="number">0</span>]);
+        }
+        <span class="self">self</span>.score.slice_mut()[lscore_index] += l_score;
+        <span class="self">self</span>.score.slice_mut()[hscore_index] += h_score;
+    }
 }
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Alloc: alloc::Allocator&lt;s16&gt; + alloc::Allocator&lt;u32&gt; + alloc::Allocator&lt;v8&gt;&gt; IRInterpreter <span class="kw">for </span>PriorEval&lt;<span class="lifetime">'a</span>, Alloc&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, Alloc: alloc::Allocator&lt;s16&gt; + alloc::Allocator&lt;u32&gt; + alloc::Allocator&lt;v8&gt;&gt; IRInterpreter
+    <span class="kw">for </span>PriorEval&lt;<span class="lifetime">'a</span>, Alloc&gt;
+{
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>inc_local_byte_offset(<span class="kw-2">&amp;mut </span><span class="self">self</span>, inc: usize) {
         <span class="self">self</span>.local_byte_offset += inc;
@@ -1359,7 +1738,7 @@ impl Prior for Stride8Prior {
         <span class="self">self</span>.block_type
     }
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>literal_data_at_offset(<span class="kw-2">&amp;</span><span class="self">self</span>, index:usize) -&gt; u8 {
+    </span><span class="kw">fn </span>literal_data_at_offset(<span class="kw-2">&amp;</span><span class="self">self</span>, index: usize) -&gt; u8 {
         <span class="self">self</span>.input[index]
     }
     <span class="attr">#[inline]
@@ -1371,20 +1750,31 @@ impl Prior for Stride8Prior {
         <span class="self">self</span>.context_map.literal_prediction_mode()
     }
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>update_cost(<span class="kw-2">&amp;mut </span><span class="self">self</span>, stride_prior: [u8;<span class="number">8</span>], stride_prior_offset: usize, selected_bits: u8, cm_prior: usize, literal: u8) {
+    </span><span class="kw">fn </span>update_cost(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        stride_prior: [u8; <span class="number">8</span>],
+        stride_prior_offset: usize,
+        selected_bits: u8,
+        cm_prior: usize,
+        literal: u8,
+    ) {
         <span class="comment">//let stride = self.cur_stride as usize;
-        </span><span class="self">self</span>.update_cost_base(stride_prior, stride_prior_offset, selected_bits, cm_prior, literal)
+        </span><span class="self">self</span>.update_cost_base(
+            stride_prior,
+            stride_prior_offset,
+            selected_bits,
+            cm_prior,
+            literal,
+        )
     }
 }
 
-
-
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'b</span>, Alloc: alloc::Allocator&lt;s16&gt; + alloc::Allocator&lt;u32&gt; + alloc::Allocator&lt;v8&gt;&gt;  interface::CommandProcessor&lt;<span class="lifetime">'b</span>&gt; <span class="kw">for </span>PriorEval&lt;<span class="lifetime">'a</span>, Alloc&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'b</span>, Alloc: alloc::Allocator&lt;s16&gt; + alloc::Allocator&lt;u32&gt; + alloc::Allocator&lt;v8&gt;&gt;
+    interface::CommandProcessor&lt;<span class="lifetime">'b</span>&gt; <span class="kw">for </span>PriorEval&lt;<span class="lifetime">'a</span>, Alloc&gt;
+{
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>push(<span class="kw-2">&amp;mut </span><span class="self">self</span>,
-            val: interface::Command&lt;InputReference&lt;<span class="lifetime">'b</span>&gt;&gt;) {
+    </span><span class="kw">fn </span>push(<span class="kw-2">&amp;mut </span><span class="self">self</span>, val: interface::Command&lt;InputReference&lt;<span class="lifetime">'b</span>&gt;&gt;) {
         push_base(<span class="self">self</span>, val)
     }
 }
-
 </code></pre></div></section></main></body></html>

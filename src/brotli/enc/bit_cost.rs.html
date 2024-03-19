@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-3.4.0/src/enc/bit_cost.rs`."><title>bit_cost.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-3.5.0/src/enc/bit_cost.rs`."><title>bit_cost.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -403,58 +403,70 @@
 <a href="#402" id="402">402</a>
 <a href="#403" id="403">403</a>
 <a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
+<a href="#411" id="411">411</a>
+<a href="#412" id="412">412</a>
 </pre></div><pre class="rust"><code><span class="attr">#![allow(dead_code)]
-</span><span class="kw">use </span>core;
+</span><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::alloc::SliceWrapper;
 <span class="kw">use </span><span class="kw">super</span>::histogram::CostAccessors;
-<span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::alloc::SliceWrapper;
+<span class="kw">use </span>core;
+<span class="attr">#[cfg(feature = <span class="string">"simd"</span>)]
+</span><span class="kw">use </span>core::simd::prelude::SimdPartialOrd;
 
-<span class="kw">use </span><span class="kw">super</span>::util::{brotli_max_uint32_t, FastLog2, floatX, FastLog2u16};
-<span class="attr">#[cfg(feature=<span class="string">"simd"</span>)]
-</span><span class="kw">use </span>packed_simd_2::IntoBits;
-<span class="kw">use </span><span class="kw">super</span>::vectorization::{v256,v256i, Mem256i, sum8, cast_f32_to_i32, cast_i32_to_f32, log2i};
+<span class="kw">use </span><span class="kw">super</span>::util::{brotli_max_uint32_t, floatX, FastLog2, FastLog2u16};
+<span class="kw">use </span><span class="kw">super</span>::vectorization::{cast_f32_to_i32, cast_i32_to_f32, log2i, sum8, v256, v256i, Mem256i};
 
-<span class="kw">static </span>kCopyBase: [u32; <span class="number">24</span>] = [<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>, <span class="number">12</span>, <span class="number">14</span>, <span class="number">18</span>, <span class="number">22</span>, <span class="number">30</span>, <span class="number">38</span>, <span class="number">54</span>, <span class="number">70</span>,
-                                   <span class="number">102</span>, <span class="number">134</span>, <span class="number">198</span>, <span class="number">326</span>, <span class="number">582</span>, <span class="number">1094</span>, <span class="number">2118</span>];
+<span class="kw">static </span>kCopyBase: [u32; <span class="number">24</span>] = [
+    <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>, <span class="number">12</span>, <span class="number">14</span>, <span class="number">18</span>, <span class="number">22</span>, <span class="number">30</span>, <span class="number">38</span>, <span class="number">54</span>, <span class="number">70</span>, <span class="number">102</span>, <span class="number">134</span>, <span class="number">198</span>, <span class="number">326</span>, <span class="number">582</span>, <span class="number">1094</span>, <span class="number">2118</span>,
+];
 
-<span class="kw">static </span>kCopyExtra: [u32; <span class="number">24</span>] = [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>,
-                                    <span class="number">9</span>, <span class="number">10</span>, <span class="number">24</span>];
+<span class="kw">static </span>kCopyExtra: [u32; <span class="number">24</span>] = [
+    <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>, <span class="number">24</span>,
+];
 
 <span class="kw">static </span>kBrotliMinWindowBits: i32 = <span class="number">10i32</span>;
 
 <span class="kw">static </span>kBrotliMaxWindowBits: i32 = <span class="number">24i32</span>;
 
-
-
-<span class="kw">pub fn </span>ShannonEntropy(<span class="kw-2">mut </span>population: <span class="kw-2">&amp;</span>[u32], size: usize, total: <span class="kw-2">&amp;mut </span>usize) -&gt; <span class="kw">super</span>::util::floatX {
-  <span class="kw">let </span><span class="kw-2">mut </span>sum: usize = <span class="number">0usize</span>;
-  <span class="kw">let </span><span class="kw-2">mut </span>retval: <span class="kw">super</span>::util::floatX = <span class="number">0i32 </span><span class="kw">as </span><span class="kw">super</span>::util::floatX;
-  <span class="kw">let </span><span class="kw-2">mut </span>p: usize;
-  <span class="kw">if </span>size &amp; <span class="number">1usize </span>!= <span class="number">0 </span>&amp;&amp; population.len() != <span class="number">0 </span>{
-    p = population[<span class="number">0</span>] <span class="kw">as </span>usize;
-    population = population.split_at(<span class="number">1</span>).<span class="number">1</span>;
-    sum = sum.wrapping_add(p);
-    retval = retval - p <span class="kw">as </span><span class="kw">super</span>::util::floatX * FastLog2u16(p <span class="kw">as </span>u16);
-  }
-  <span class="kw">for </span>pop_iter <span class="kw">in </span>population.split_at((size &gt;&gt; <span class="number">1</span>) &lt;&lt; <span class="number">1</span>).<span class="number">0 </span>{
-    p = <span class="kw-2">*</span>pop_iter <span class="kw">as </span>usize;
-    sum = sum.wrapping_add(p);
-    retval = retval - p <span class="kw">as </span><span class="kw">super</span>::util::floatX * FastLog2u16(p <span class="kw">as </span>u16);
-  }
-  <span class="kw">if </span>sum != <span class="number">0 </span>{
-    retval = retval + sum <span class="kw">as </span><span class="kw">super</span>::util::floatX * FastLog2(sum <span class="kw">as </span>u64); <span class="comment">// not sure it's 16 bit
-  </span>}
-  <span class="kw-2">*</span>total = sum;
-  retval
+<span class="kw">pub fn </span>ShannonEntropy(
+    <span class="kw-2">mut </span>population: <span class="kw-2">&amp;</span>[u32],
+    size: usize,
+    total: <span class="kw-2">&amp;mut </span>usize,
+) -&gt; <span class="kw">super</span>::util::floatX {
+    <span class="kw">let </span><span class="kw-2">mut </span>sum: usize = <span class="number">0usize</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>retval: <span class="kw">super</span>::util::floatX = <span class="number">0i32 </span><span class="kw">as </span><span class="kw">super</span>::util::floatX;
+    <span class="kw">let </span><span class="kw-2">mut </span>p: usize;
+    <span class="kw">if </span>size &amp; <span class="number">1 </span>!= <span class="number">0 </span>&amp;&amp; !population.is_empty() {
+        p = population[<span class="number">0</span>] <span class="kw">as </span>usize;
+        population = population.split_at(<span class="number">1</span>).<span class="number">1</span>;
+        sum = sum.wrapping_add(p);
+        retval -= p <span class="kw">as </span><span class="kw">super</span>::util::floatX * FastLog2u16(p <span class="kw">as </span>u16);
+    }
+    <span class="kw">for </span>pop_iter <span class="kw">in </span>population.split_at((size &gt;&gt; <span class="number">1</span>) &lt;&lt; <span class="number">1</span>).<span class="number">0 </span>{
+        p = <span class="kw-2">*</span>pop_iter <span class="kw">as </span>usize;
+        sum = sum.wrapping_add(p);
+        retval -= p <span class="kw">as </span><span class="kw">super</span>::util::floatX * FastLog2u16(p <span class="kw">as </span>u16);
+    }
+    <span class="kw">if </span>sum != <span class="number">0 </span>{
+        retval += sum <span class="kw">as </span><span class="kw">super</span>::util::floatX * FastLog2(sum <span class="kw">as </span>u64); <span class="comment">// not sure it's 16 bit
+    </span>}
+    <span class="kw-2">*</span>total = sum;
+    retval
 }
 
 <span class="attr">#[inline(always)]
 </span><span class="kw">pub fn </span>BitsEntropy(population: <span class="kw-2">&amp;</span>[u32], size: usize) -&gt; <span class="kw">super</span>::util::floatX {
-  <span class="kw">let </span><span class="kw-2">mut </span>sum: usize = <span class="number">0</span>;
-  <span class="kw">let </span><span class="kw-2">mut </span>retval: <span class="kw">super</span>::util::floatX = ShannonEntropy(population, size, <span class="kw-2">&amp;mut </span>sum);
-  <span class="kw">if </span>retval &lt; sum <span class="kw">as </span><span class="kw">super</span>::util::floatX {
-    retval = sum <span class="kw">as </span><span class="kw">super</span>::util::floatX;
-  }
-  retval
+    <span class="kw">let </span><span class="kw-2">mut </span>sum: usize = <span class="number">0</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>retval: <span class="kw">super</span>::util::floatX = ShannonEntropy(population, size, <span class="kw-2">&amp;mut </span>sum);
+    <span class="kw">if </span>retval &lt; sum <span class="kw">as </span><span class="kw">super</span>::util::floatX {
+        retval = sum <span class="kw">as </span><span class="kw">super</span>::util::floatX;
+    }
+    retval
 }
 
 <span class="kw">const </span>BROTLI_REPEAT_ZERO_CODE_LENGTH: usize = <span class="number">17</span>;
@@ -469,342 +481,346 @@ macro_rules! println_stderr(
 );
 */
 
-</span><span class="attr">#[cfg(feature=<span class="string">"vector_scratch_space"</span>)]
-</span><span class="kw">const </span>vectorize_population_cost : bool = <span class="bool-val">true</span>;
+</span><span class="attr">#[cfg(feature = <span class="string">"vector_scratch_space"</span>)]
+</span><span class="kw">const </span>vectorize_population_cost: bool = <span class="bool-val">true</span>;
 
-<span class="attr">#[cfg(not(feature=<span class="string">"vector_scratch_space"</span>))]
-</span><span class="kw">const </span>vectorize_population_cost : bool = <span class="bool-val">false</span>;
+<span class="attr">#[cfg(not(feature = <span class="string">"vector_scratch_space"</span>))]
+</span><span class="kw">const </span>vectorize_population_cost: bool = <span class="bool-val">false</span>;
 
-
-
-<span class="kw">fn </span>CostComputation&lt;T:SliceWrapper&lt;Mem256i&gt; &gt;(depth_histo: <span class="kw-2">&amp;mut </span>[u32;BROTLI_CODE_LENGTH_CODES],
-                   nnz_data: <span class="kw-2">&amp;</span>T,
-                   nnz: usize,
-                   total_count: <span class="kw">super</span>::util::floatX,
-                   log2total: <span class="kw">super</span>::util::floatX) -&gt; <span class="kw">super</span>::util::floatX {
-    <span class="kw">let </span><span class="kw-2">mut </span>bits : <span class="kw">super</span>::util::floatX = <span class="number">0.0 </span><span class="kw">as </span><span class="kw">super</span>::util::floatX;
+<span class="attr">#[allow(clippy::excessive_precision)]
+</span><span class="kw">fn </span>CostComputation&lt;T: SliceWrapper&lt;Mem256i&gt;&gt;(
+    depth_histo: <span class="kw-2">&amp;mut </span>[u32; BROTLI_CODE_LENGTH_CODES],
+    nnz_data: <span class="kw-2">&amp;</span>T,
+    nnz: usize,
+    total_count: <span class="kw">super</span>::util::floatX,
+    log2total: <span class="kw">super</span>::util::floatX,
+) -&gt; <span class="kw">super</span>::util::floatX {
+    <span class="kw">let </span><span class="kw-2">mut </span>bits: <span class="kw">super</span>::util::floatX = <span class="number">0.0 </span><span class="kw">as </span><span class="kw">super</span>::util::floatX;
     <span class="kw">if </span><span class="bool-val">true </span>{
-      <span class="kw">let </span><span class="kw-2">mut </span>max_depth : usize = <span class="number">1</span>;
-      <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..nnz {
-          <span class="comment">// Compute -log2(P(symbol)) = -log2(count(symbol)/total_count) =
-          //                            = log2(total_count) - log2(count(symbol))
-         </span><span class="kw">let </span>element = nnz_data.slice()[i&gt;&gt;<span class="number">3</span>].extract(i<span class="kw-2">&amp;</span><span class="number">7</span>);
-         <span class="kw">let </span>log2p = log2total - FastLog2u16(element <span class="kw">as </span>u16);
-         <span class="comment">// Approximate the bit depth by round(-log2(P(symbol)))
-         </span><span class="kw">let </span>depth = core::cmp::min((log2p + <span class="number">0.5</span>) <span class="kw">as </span>u8, <span class="number">15u8</span>);
-         bits += element <span class="kw">as </span><span class="kw">super</span>::util::floatX * log2p;
-         <span class="kw">if </span>(depth <span class="kw">as </span>usize &gt; max_depth) {
-            max_depth = depth <span class="kw">as </span>usize;
-         }
-         depth_histo[depth <span class="kw">as </span>usize] += <span class="number">1</span>;
-      }
+        <span class="kw">let </span><span class="kw-2">mut </span>max_depth: usize = <span class="number">1</span>;
+        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..nnz {
+            <span class="comment">// Compute -log2(P(symbol)) = -log2(count(symbol)/total_count) =
+            //                            = log2(total_count) - log2(count(symbol))
+            </span><span class="kw">let </span>element = nnz_data.slice()[i &gt;&gt; <span class="number">3</span>][i &amp; <span class="number">7</span>];
+            <span class="kw">let </span>log2p = log2total - FastLog2u16(element <span class="kw">as </span>u16);
+            <span class="comment">// Approximate the bit depth by round(-log2(P(symbol)))
+            </span><span class="kw">let </span>depth = core::cmp::min((log2p + <span class="number">0.5</span>) <span class="kw">as </span>u8, <span class="number">15u8</span>);
+            bits += element <span class="kw">as </span><span class="kw">super</span>::util::floatX * log2p;
+            <span class="kw">if </span>(depth <span class="kw">as </span>usize &gt; max_depth) {
+                max_depth = depth <span class="kw">as </span>usize;
+            }
+            depth_histo[depth <span class="kw">as </span>usize] += <span class="number">1</span>;
+        }
 
-      <span class="comment">// Add the estimated encoding cost of the code length code histogram.
-      </span>bits += (<span class="number">18 </span>+ <span class="number">2 </span>* max_depth) <span class="kw">as </span><span class="kw">super</span>::util::floatX;
-      <span class="comment">// Add the entropy of the code length code histogram.
-      </span>bits += BitsEntropy(depth_histo, BROTLI_CODE_LENGTH_CODES);
-      <span class="comment">//println_stderr!("{:?} {:?}", &amp;depth_histo[..], bits);
-      </span><span class="kw">return </span>bits;
+        <span class="comment">// Add the estimated encoding cost of the code length code histogram.
+        </span>bits += (<span class="number">18 </span>+ <span class="number">2 </span>* max_depth) <span class="kw">as </span><span class="kw">super</span>::util::floatX;
+        <span class="comment">// Add the entropy of the code length code histogram.
+        </span>bits += BitsEntropy(depth_histo, BROTLI_CODE_LENGTH_CODES);
+        <span class="comment">//println_stderr!("{:?} {:?}", &amp;depth_histo[..], bits);
+        </span><span class="kw">return </span>bits;
     }
     <span class="kw">let </span>rem = nnz &amp; <span class="number">7</span>;
     <span class="kw">let </span>nnz_srl_3 = nnz &gt;&gt; <span class="number">3</span>;
     <span class="kw">if </span><span class="bool-val">true </span>{
-      <span class="kw">let </span><span class="kw-2">mut </span>vec_max_depth :[i32;<span class="number">8</span>] = [<span class="number">1</span>;<span class="number">8</span>];
-      <span class="kw">let </span><span class="kw-2">mut </span>depth_histo_vec = [[<span class="number">0i32</span>;BROTLI_CODE_LENGTH_CODES]; <span class="number">8</span>];
-      <span class="kw">for </span>nnz_data_vec <span class="kw">in </span>nnz_data.slice().split_at(nnz_srl_3).<span class="number">0</span>.iter() {
-         <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="number">8 </span>{
-            <span class="comment">// Compute -log2(P(symbol)) = -log2(count(symbol)/total_count) =
-             //                            = log2(total_count) - log2(count(symbol))
-            </span><span class="kw">let </span>ele = nnz_data_vec.extract(i);
-            <span class="kw">let </span>log2p = log2total - FastLog2u16(ele <span class="kw">as </span>u16);
-            <span class="comment">// Approximate the bit depth by round(-log2(P(symbol)))
-            </span><span class="kw">let </span>depth = core::cmp::min((log2p + <span class="number">0.5</span>) <span class="kw">as </span>i32, <span class="number">15</span>) <span class="kw">as </span>i32;
-            bits += ele <span class="kw">as </span><span class="kw">super</span>::util::floatX * log2p;
-            vec_max_depth[i] = core::cmp::max(vec_max_depth[i], depth);
-            depth_histo_vec[i][depth <span class="kw">as </span>usize] += <span class="number">1</span>;
-         }
-      }
-      <span class="kw">let </span><span class="kw-2">mut </span>max_depth = vec_max_depth[<span class="number">7</span>];
-      <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="number">8 </span>{
-        <span class="kw">for </span>j <span class="kw">in </span><span class="number">0</span>..BROTLI_CODE_LENGTH_CODES {
-          depth_histo[j] += depth_histo_vec[i][j] <span class="kw">as </span>u32;
+        <span class="kw">let </span><span class="kw-2">mut </span>vec_max_depth: [i32; <span class="number">8</span>] = [<span class="number">1</span>; <span class="number">8</span>];
+        <span class="kw">let </span><span class="kw-2">mut </span>depth_histo_vec = [[<span class="number">0i32</span>; BROTLI_CODE_LENGTH_CODES]; <span class="number">8</span>];
+        <span class="kw">for </span>nnz_data_vec <span class="kw">in </span>nnz_data.slice().split_at(nnz_srl_3).<span class="number">0</span>.iter() {
+            <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="number">8 </span>{
+                <span class="comment">// Compute -log2(P(symbol)) = -log2(count(symbol)/total_count) =
+                //                            = log2(total_count) - log2(count(symbol))
+                </span><span class="kw">let </span>ele = nnz_data_vec[i];
+                <span class="kw">let </span>log2p = log2total - FastLog2u16(ele <span class="kw">as </span>u16);
+                <span class="comment">// Approximate the bit depth by round(-log2(P(symbol)))
+                </span><span class="kw">let </span>depth = core::cmp::min((log2p + <span class="number">0.5</span>) <span class="kw">as </span>i32, <span class="number">15</span>) <span class="kw">as </span>i32;
+                bits += ele <span class="kw">as </span><span class="kw">super</span>::util::floatX * log2p;
+                vec_max_depth[i] = core::cmp::max(vec_max_depth[i], depth);
+                depth_histo_vec[i][depth <span class="kw">as </span>usize] += <span class="number">1</span>;
+            }
         }
-        max_depth = core::cmp::max(vec_max_depth[i], max_depth);
-      }
-      <span class="kw">if </span>rem != <span class="number">0 </span>{
+        <span class="kw">let </span><span class="kw-2">mut </span>max_depth = vec_max_depth[<span class="number">7</span>];
+        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="number">8 </span>{
+            <span class="kw">for </span>j <span class="kw">in </span><span class="number">0</span>..BROTLI_CODE_LENGTH_CODES {
+                depth_histo[j] += depth_histo_vec[i][j] <span class="kw">as </span>u32;
+            }
+            max_depth = core::cmp::max(vec_max_depth[i], max_depth);
+        }
+        <span class="kw">if </span>rem != <span class="number">0 </span>{
+            <span class="kw">let </span>last_vec = nnz_data.slice()[nnz_srl_3];
+            <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..rem {
+                <span class="comment">// remainder won't have last element for sure
+                </span><span class="kw">let </span>element = last_vec[i];
+                <span class="kw">let </span>log2p = log2total - FastLog2u16(element <span class="kw">as </span>u16);
+                <span class="comment">// Approximate the bit depth by round(-log2(P(symbol)))
+                </span><span class="kw">let </span>depth = core::cmp::min((log2p + <span class="number">0.5</span>) <span class="kw">as </span>i32, <span class="number">15</span>);
+                bits += element <span class="kw">as </span><span class="kw">super</span>::util::floatX * log2p;
+                max_depth = core::cmp::max(depth, max_depth);
+                depth_histo[depth <span class="kw">as </span>usize] += <span class="number">1</span>;
+            }
+        }
+        <span class="comment">// Add the estimated encoding cost of the code length code histogram.
+        </span>bits += (<span class="number">18 </span>+ <span class="number">2 </span>* max_depth) <span class="kw">as </span><span class="kw">super</span>::util::floatX;
+        <span class="comment">// Add the entropy of the code length code histogram.
+        </span>bits += BitsEntropy(depth_histo, BROTLI_CODE_LENGTH_CODES);
+        <span class="comment">//println_stderr!("{:?} {:?}", &amp;depth_histo[..], bits);
+        </span><span class="kw">return </span>bits;
+    }
+    <span class="kw">let </span>pow2l: v256 = [
+        <span class="number">1.0</span><span class="comment">/*0.7071067811865476*/ </span><span class="kw">as </span>floatX,
+        <span class="number">0.3535533905932738 </span><span class="kw">as </span>floatX,
+        <span class="number">0.1767766952966369 </span><span class="kw">as </span>floatX,
+        <span class="number">0.0883883476483184 </span><span class="kw">as </span>floatX,
+        <span class="number">0.0441941738241592 </span><span class="kw">as </span>floatX,
+        <span class="number">0.0220970869120796 </span><span class="kw">as </span>floatX,
+        <span class="number">0.0110485434560398 </span><span class="kw">as </span>floatX,
+        <span class="number">0.0055242717280199 </span><span class="kw">as </span>floatX,
+    ]
+    .into();
+    <span class="kw">let </span>pow2h: v256 = [
+        <span class="comment">//FIXME: setr
+        </span><span class="number">0.0027621358640100 </span><span class="kw">as </span>floatX,
+        <span class="number">0.0013810679320050 </span><span class="kw">as </span>floatX,
+        <span class="number">0.0006905339660025 </span><span class="kw">as </span>floatX,
+        <span class="number">0.0003452669830012 </span><span class="kw">as </span>floatX,
+        <span class="number">0.0001726334915006 </span><span class="kw">as </span>floatX,
+        <span class="number">0.0000863167457503 </span><span class="kw">as </span>floatX,
+        <span class="number">0.0000431583728752 </span><span class="kw">as </span>floatX,
+        <span class="comment">/*0.0000215791864376f*/ </span><span class="number">0.0 </span><span class="kw">as </span>floatX,
+    ]
+    .into();
+    <span class="kw">let </span>ymm_tc = v256::splat(total_count <span class="kw">as </span>floatX);
+    <span class="kw">let </span>search_depthl = cast_f32_to_i32(pow2l * ymm_tc);
+    <span class="kw">let </span>search_depthh = cast_f32_to_i32(pow2h * ymm_tc);
+    <span class="kw">let </span><span class="kw-2">mut </span>suml = v256i::splat(<span class="number">0</span>);
+    <span class="kw">let </span><span class="kw-2">mut </span>sumh = v256i::splat(<span class="number">0</span>);
+    <span class="kw">for </span>nnz_data_vec <span class="kw">in </span>nnz_data.slice().split_at(nnz_srl_3).<span class="number">0</span>.iter() {
+        <span class="kw">for </span>sub_data_item_index <span class="kw">in </span><span class="number">0</span>..<span class="number">8 </span>{
+            <span class="kw">let </span>count = v256i::splat(nnz_data_vec[sub_data_item_index]);
+            <span class="kw">let </span>cmpl: v256i = count.simd_gt(search_depthl).to_int();
+            <span class="kw">let </span>cmph: v256i = count.simd_gt(search_depthh).to_int();
+            suml = suml + cmpl;
+            sumh = sumh + cmph;
+        }
+    }
+    <span class="kw">if </span>rem != <span class="number">0 </span>{
+        <span class="kw">let </span>last_element = nnz_data.slice()[nnz &gt;&gt; <span class="number">3</span>];
+        <span class="kw">for </span>sub_index <span class="kw">in </span><span class="number">0</span>..rem {
+            <span class="kw">let </span>count = v256i::splat(last_element[sub_index &amp; <span class="number">7</span>]);
+            <span class="kw">let </span>cmpl: v256i = count.simd_gt(search_depthl).to_int();
+            <span class="kw">let </span>cmph: v256i = count.simd_gt(search_depthh).to_int();
+            suml = suml + cmpl;
+            sumh = sumh + cmph;
+        }
+    }
+    <span class="kw">let </span><span class="kw-2">mut </span>max_depth: usize = <span class="number">1</span>;
+    <span class="comment">// Deal with depth_histo and max_depth
+    </span>{
+        <span class="kw">let </span>cumulative_sum: [Mem256i; <span class="number">2</span>] = [suml, sumh];
+        <span class="kw">let </span><span class="kw-2">mut </span>prev = cumulative_sum[<span class="number">0</span>][<span class="number">0</span>];
+        <span class="kw">for </span>j <span class="kw">in </span><span class="number">1</span>..<span class="number">16 </span>{
+            <span class="kw">let </span>cur = cumulative_sum[(j &amp; <span class="number">8</span>) &gt;&gt; <span class="number">3</span>][j &amp; <span class="number">7</span>];
+            <span class="kw">let </span>delta = cur - prev;
+            prev = cur;
+            <span class="kw">let </span>cur = <span class="kw-2">&amp;mut </span>depth_histo[j];
+            <span class="kw-2">*</span>cur = (<span class="kw-2">*</span>cur <span class="kw">as </span>i32 + delta) <span class="kw">as </span>u32; <span class="comment">// depth_histo[j] += delta
+            </span><span class="kw">if </span>delta != <span class="number">0 </span>{
+                max_depth = j;
+            }
+        }
+    }
+    <span class="kw">let </span>ymm_log2total = v256::splat(log2total);
+    <span class="kw">let </span><span class="kw-2">mut </span>bits_cumulative = v256::splat(<span class="number">0.0 </span><span class="kw">as </span>floatX);
+    <span class="kw">for </span>nnz_data_item <span class="kw">in </span>nnz_data.slice().split_at(nnz_srl_3).<span class="number">0</span>.iter() {
+        <span class="kw">let </span>counts = cast_i32_to_f32(<span class="kw-2">*</span>nnz_data_item);
+        <span class="kw">let </span>log_counts = log2i(<span class="kw-2">*</span>nnz_data_item);
+        <span class="kw">let </span>log2p = ymm_log2total - log_counts;
+        <span class="kw">let </span>tmp = counts * log2p;
+        bits_cumulative += tmp;
+    }
+    bits += sum8(bits_cumulative);
+    <span class="kw">if </span>rem != <span class="number">0 </span>{
         <span class="kw">let </span>last_vec = nnz_data.slice()[nnz_srl_3];
-        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..rem { <span class="comment">// remainder won't have last element for sure
-          </span><span class="kw">let </span>element = last_vec.extract(i);
-          <span class="kw">let </span>log2p = log2total - FastLog2u16(element <span class="kw">as </span>u16);
-          <span class="comment">// Approximate the bit depth by round(-log2(P(symbol)))
-          </span><span class="kw">let </span>depth = core::cmp::min((log2p + <span class="number">0.5</span>) <span class="kw">as </span>i32, <span class="number">15</span>);
-          bits += element <span class="kw">as </span><span class="kw">super</span>::util::floatX * log2p;
-          max_depth = core::cmp::max(depth, max_depth);
-          depth_histo[depth <span class="kw">as </span>usize] += <span class="number">1</span>;     
+        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..rem {
+            <span class="kw">let </span>last_item = last_vec[i];
+            <span class="kw">let </span>log2p = log2total - FastLog2u16(last_item <span class="kw">as </span>u16);
+            bits += last_item <span class="kw">as </span><span class="kw">super</span>::util::floatX * log2p;
         }
-      }
-      <span class="comment">// Add the estimated encoding cost of the code length code histogram.
-      </span>bits += (<span class="number">18 </span>+ <span class="number">2 </span>* max_depth) <span class="kw">as </span><span class="kw">super</span>::util::floatX;
-      <span class="comment">// Add the entropy of the code length code histogram.
-      </span>bits += BitsEntropy(depth_histo, BROTLI_CODE_LENGTH_CODES);
-      <span class="comment">//println_stderr!("{:?} {:?}", &amp;depth_histo[..], bits);
-      </span><span class="kw">return </span>bits;
     }
-  <span class="kw">let </span>pow2l = v256::new(
-      <span class="number">1.0</span><span class="comment">/*0.7071067811865476*/ </span><span class="kw">as </span>floatX,
-      <span class="number">0.3535533905932738 </span><span class="kw">as </span>floatX,
-      <span class="number">0.1767766952966369 </span><span class="kw">as </span>floatX,
-      <span class="number">0.0883883476483184 </span><span class="kw">as </span>floatX,
-      <span class="number">0.0441941738241592 </span><span class="kw">as </span>floatX,
-      <span class="number">0.0220970869120796 </span><span class="kw">as </span>floatX,
-      <span class="number">0.0110485434560398 </span><span class="kw">as </span>floatX,
-      <span class="number">0.0055242717280199 </span><span class="kw">as </span>floatX);
-  <span class="kw">let </span>pow2h = v256::new(<span class="comment">//FIXME: setr
-      </span><span class="number">0.0027621358640100 </span><span class="kw">as </span>floatX,
-      <span class="number">0.0013810679320050 </span><span class="kw">as </span>floatX,
-      <span class="number">0.0006905339660025 </span><span class="kw">as </span>floatX,
-      <span class="number">0.0003452669830012 </span><span class="kw">as </span>floatX,
-      <span class="number">0.0001726334915006 </span><span class="kw">as </span>floatX,
-      <span class="number">0.0000863167457503 </span><span class="kw">as </span>floatX,
-      <span class="number">0.0000431583728752 </span><span class="kw">as </span>floatX,
-      <span class="comment">/*0.0000215791864376f*/</span><span class="number">0.0 </span><span class="kw">as </span>floatX);
-  <span class="kw">let </span>ymm_tc = v256::splat(total_count <span class="kw">as </span>floatX);
-  <span class="kw">let </span>search_depthl = cast_f32_to_i32(pow2l * ymm_tc);
-  <span class="kw">let </span>search_depthh = cast_f32_to_i32(pow2h * ymm_tc);
-  <span class="kw">let </span><span class="kw-2">mut </span>suml = v256i::splat(<span class="number">0</span>);
-  <span class="kw">let </span><span class="kw-2">mut </span>sumh = v256i::splat(<span class="number">0</span>);
-  <span class="kw">for </span>nnz_data_vec <span class="kw">in </span>nnz_data.slice().split_at(nnz_srl_3).<span class="number">0</span>.iter() {
-      <span class="kw">for </span>sub_data_item_index <span class="kw">in </span><span class="number">0</span>..<span class="number">8 </span>{
-          <span class="kw">let </span>count = v256i::splat(nnz_data_vec.extract(sub_data_item_index));
-          <span class="kw">let </span>cmpl:v256i = count.gt(search_depthl).into_bits();
-          <span class="kw">let </span>cmph:v256i = count.gt(search_depthh).into_bits();
-          suml = suml + (cmpl &amp; v256i::splat(<span class="number">1</span>));
-          sumh = sumh + (cmph &amp; v256i::splat(<span class="number">1</span>));
-      }
-  }
-  <span class="kw">if </span>rem != <span class="number">0 </span>{
-    <span class="kw">let </span>last_element = nnz_data.slice()[nnz&gt;&gt;<span class="number">3</span>];
-    <span class="kw">for </span>sub_index <span class="kw">in </span><span class="number">0</span>..rem {
-      <span class="kw">let </span>count = v256i::splat(last_element.extract(sub_index &amp; <span class="number">7</span>));
-      <span class="kw">let </span>cmpl:v256i = count.gt(search_depthl).into_bits();
-      <span class="kw">let </span>cmph:v256i = count.gt(search_depthh).into_bits();
-      suml = suml + (cmpl &amp; v256i::splat(<span class="number">1</span>));
-      sumh = sumh + (cmph &amp; v256i::splat(<span class="number">1</span>));
-    }
-  }
-    <span class="kw">let </span><span class="kw-2">mut </span>max_depth : usize = <span class="number">1</span>;
-  <span class="comment">// Deal with depth_histo and max_depth
-  </span>{
-    <span class="kw">let </span>cumulative_sum:[Mem256i;<span class="number">2</span>] = [suml,
-                                      sumh];
-    <span class="kw">let </span><span class="kw-2">mut </span>prev = cumulative_sum[<span class="number">0</span>].extract(<span class="number">0</span>);
-    <span class="kw">for </span>j <span class="kw">in </span><span class="number">1</span>..<span class="number">16 </span>{
-      <span class="kw">let </span>cur = cumulative_sum[(j<span class="kw-2">&amp;</span><span class="number">8</span>) &gt;&gt; <span class="number">3</span>].extract(j &amp; <span class="number">7</span>);
-      <span class="kw">let </span>delta = cur - prev;
-      prev = cur;
-      <span class="kw">let </span>cur = <span class="kw-2">&amp;mut </span>depth_histo[j];
-      <span class="kw-2">*</span>cur = (<span class="kw-2">*</span>cur <span class="kw">as </span>i32 + delta) <span class="kw">as </span>u32; <span class="comment">// depth_histo[j] += delta
-      </span><span class="kw">if </span>delta != <span class="number">0 </span>{
-         max_depth = j;
-      }
-    }
-  }
-  <span class="kw">let </span>ymm_log2total = v256::splat(log2total);
-  <span class="kw">let </span><span class="kw-2">mut </span>bits_cumulative = v256::splat(<span class="number">0.0 </span><span class="kw">as </span>floatX);
-  <span class="kw">for </span>nnz_data_item <span class="kw">in </span>nnz_data.slice().split_at(nnz_srl_3).<span class="number">0</span>.iter() {
-      <span class="kw">let </span>counts = cast_i32_to_f32(<span class="kw-2">*</span>nnz_data_item);
-      <span class="kw">let </span>log_counts = log2i(<span class="kw-2">*</span>nnz_data_item);
-      <span class="kw">let </span>log2p = ymm_log2total - log_counts;
-      <span class="kw">let </span>tmp = counts * log2p;
-      bits_cumulative = bits_cumulative + tmp;
-  }
-  bits += sum8(bits_cumulative);
-  <span class="kw">if </span>rem != <span class="number">0 </span>{
-    <span class="kw">let </span>last_vec = nnz_data.slice()[nnz_srl_3];
-    <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..rem {
-      <span class="kw">let </span>last_item = last_vec.extract(i);
-      <span class="kw">let </span>log2p = log2total - FastLog2u16(last_item <span class="kw">as </span>u16);
-      bits += last_item <span class="kw">as </span><span class="kw">super</span>::util::floatX * log2p;
-    }
-  }
 
-  <span class="comment">// Add the estimated encoding cost of the code length code histogram.
-  </span>bits += (<span class="number">18 </span>+ <span class="number">2 </span>* max_depth) <span class="kw">as </span><span class="kw">super</span>::util::floatX;
-  <span class="comment">// Add the entropy of the code length code histogram.
-  </span>bits += BitsEntropy(depth_histo, BROTLI_CODE_LENGTH_CODES);
-  <span class="comment">//println_stderr!("{:?} {:?}", depth_histo, bits);
-  </span><span class="kw">return </span>bits;
+    <span class="comment">// Add the estimated encoding cost of the code length code histogram.
+    </span>bits += (<span class="number">18 </span>+ <span class="number">2 </span>* max_depth) <span class="kw">as </span><span class="kw">super</span>::util::floatX;
+    <span class="comment">// Add the entropy of the code length code histogram.
+    </span>bits += BitsEntropy(depth_histo, BROTLI_CODE_LENGTH_CODES);
+    <span class="comment">//println_stderr!("{:?} {:?}", depth_histo, bits);
+    </span>bits
 }
 <span class="kw">use </span>alloc::SliceWrapperMut;
 
-<span class="kw">pub fn </span>BrotliPopulationCost&lt;HistogramType:SliceWrapper&lt;u32&gt;+CostAccessors&gt;(
-    histogram : <span class="kw-2">&amp;</span>HistogramType,
-    nnz_data : <span class="kw-2">&amp;mut </span>HistogramType::i32vec
-) -&gt; <span class="kw">super</span>::util::floatX{
-  <span class="kw">static </span>kOneSymbolHistogramCost: <span class="kw">super</span>::util::floatX = <span class="number">12i32 </span><span class="kw">as </span><span class="kw">super</span>::util::floatX;
-  <span class="kw">static </span>kTwoSymbolHistogramCost: <span class="kw">super</span>::util::floatX = <span class="number">20i32 </span><span class="kw">as </span><span class="kw">super</span>::util::floatX;
-  <span class="kw">static </span>kThreeSymbolHistogramCost: <span class="kw">super</span>::util::floatX = <span class="number">28i32 </span><span class="kw">as </span><span class="kw">super</span>::util::floatX;
-  <span class="kw">static </span>kFourSymbolHistogramCost: <span class="kw">super</span>::util::floatX = <span class="number">37i32 </span><span class="kw">as </span><span class="kw">super</span>::util::floatX;
-  <span class="kw">let </span>data_size: usize = (<span class="kw-2">*</span>histogram).slice().len();
-  <span class="kw">let </span><span class="kw-2">mut </span>count: i32 = <span class="number">0i32</span>;
-  <span class="kw">let </span><span class="kw-2">mut </span>s: [usize; <span class="number">5</span>] = [<span class="number">0</span>; <span class="number">5</span>];
+<span class="kw">pub fn </span>BrotliPopulationCost&lt;HistogramType: SliceWrapper&lt;u32&gt; + CostAccessors&gt;(
+    histogram: <span class="kw-2">&amp;</span>HistogramType,
+    nnz_data: <span class="kw-2">&amp;mut </span>HistogramType::i32vec,
+) -&gt; <span class="kw">super</span>::util::floatX {
+    <span class="kw">static </span>kOneSymbolHistogramCost: <span class="kw">super</span>::util::floatX = <span class="number">12i32 </span><span class="kw">as </span><span class="kw">super</span>::util::floatX;
+    <span class="kw">static </span>kTwoSymbolHistogramCost: <span class="kw">super</span>::util::floatX = <span class="number">20i32 </span><span class="kw">as </span><span class="kw">super</span>::util::floatX;
+    <span class="kw">static </span>kThreeSymbolHistogramCost: <span class="kw">super</span>::util::floatX = <span class="number">28i32 </span><span class="kw">as </span><span class="kw">super</span>::util::floatX;
+    <span class="kw">static </span>kFourSymbolHistogramCost: <span class="kw">super</span>::util::floatX = <span class="number">37i32 </span><span class="kw">as </span><span class="kw">super</span>::util::floatX;
+    <span class="kw">let </span>data_size: usize = histogram.slice().len();
+    <span class="kw">let </span><span class="kw-2">mut </span>count: i32 = <span class="number">0i32</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>s: [usize; <span class="number">5</span>] = [<span class="number">0</span>; <span class="number">5</span>];
 
-  <span class="kw">let </span><span class="kw-2">mut </span>bits: <span class="kw">super</span>::util::floatX = <span class="number">0.0 </span><span class="kw">as </span><span class="kw">super</span>::util::floatX;
-  <span class="kw">let </span><span class="kw-2">mut </span>i: usize;
-  <span class="kw">if </span>(<span class="kw-2">*</span>histogram).total_count() == <span class="number">0usize </span>{
-    <span class="kw">return </span>kOneSymbolHistogramCost;
-  }
-  i = <span class="number">0usize</span>;
-  <span class="lifetime">'break1</span>: <span class="kw">while </span>i &lt; data_size {
-    {
-      <span class="kw">if </span>(<span class="kw-2">*</span>histogram).slice()[i] &gt; <span class="number">0u32 </span>{
-        s[count <span class="kw">as </span>(usize)] = i;
-        count = count + <span class="number">1</span>;
-        <span class="kw">if </span>count &gt; <span class="number">4i32 </span>{
-          {
-            <span class="kw">break </span><span class="lifetime">'break1</span>;
-          }
-        }
-      }
-    }
-    i = i.wrapping_add(<span class="number">1 </span><span class="kw">as </span>(usize));
-  }
-  <span class="kw">if </span>count == <span class="number">1i32 </span>{
-    <span class="kw">return </span>kOneSymbolHistogramCost;
-  }
-  <span class="kw">if </span>count == <span class="number">2i32 </span>{
-    <span class="kw">return </span>kTwoSymbolHistogramCost + (<span class="kw-2">*</span>histogram).total_count() <span class="kw">as </span><span class="kw">super</span>::util::floatX;
-  }
-  <span class="kw">if </span>count == <span class="number">3i32 </span>{
-    <span class="kw">let </span>histo0: u32 = (<span class="kw-2">*</span>histogram).slice()[s[<span class="number">0usize</span>]];
-    <span class="kw">let </span>histo1: u32 = (<span class="kw-2">*</span>histogram).slice()[s[<span class="number">1usize</span>]];
-    <span class="kw">let </span>histo2: u32 = (<span class="kw-2">*</span>histogram).slice()[s[<span class="number">2usize</span>]];
-    <span class="kw">let </span>histomax: u32 = brotli_max_uint32_t(histo0, brotli_max_uint32_t(histo1, histo2));
-    <span class="kw">return </span>kThreeSymbolHistogramCost +
-           (<span class="number">2u32</span>).wrapping_mul(histo0.wrapping_add(histo1).wrapping_add(histo2)) <span class="kw">as </span><span class="kw">super</span>::util::floatX -
-           histomax <span class="kw">as </span><span class="kw">super</span>::util::floatX;
-  }
-  <span class="kw">if </span>count == <span class="number">4i32 </span>{
-    <span class="kw">let </span><span class="kw-2">mut </span>histo: [u32; <span class="number">4</span>] = [<span class="number">0</span>; <span class="number">4</span>];
-    <span class="kw">let </span>h23: u32;
-    <span class="kw">let </span>histomax: u32;
-    i = <span class="number">0usize</span>;
-    <span class="kw">while </span>i &lt; <span class="number">4usize </span>{
-      {
-        histo[i] = (<span class="kw-2">*</span>histogram).slice()[s[i]];
-      }
-      i = i.wrapping_add(<span class="number">1 </span><span class="kw">as </span>(usize));
+    <span class="kw">let </span><span class="kw-2">mut </span>bits: <span class="kw">super</span>::util::floatX = <span class="number">0.0 </span><span class="kw">as </span><span class="kw">super</span>::util::floatX;
+    <span class="kw">let </span><span class="kw-2">mut </span>i: usize;
+    <span class="kw">if </span>histogram.total_count() == <span class="number">0usize </span>{
+        <span class="kw">return </span>kOneSymbolHistogramCost;
     }
     i = <span class="number">0usize</span>;
-    <span class="kw">while </span>i &lt; <span class="number">4usize </span>{
-      {
-        <span class="kw">let </span><span class="kw-2">mut </span>j: usize;
-        j = i.wrapping_add(<span class="number">1usize</span>);
-        <span class="kw">while </span>j &lt; <span class="number">4usize </span>{
-          {
-            <span class="kw">if </span>histo[j] &gt; histo[i] {
-              <span class="kw">let </span><span class="kw-2">mut </span>__brotli_swap_tmp: u32 = histo[j];
-              histo[j] = histo[i];
-              histo[i] = __brotli_swap_tmp;
-            }
-          }
-          j = j.wrapping_add(<span class="number">1 </span><span class="kw">as </span>(usize));
-        }
-      }
-      i = i.wrapping_add(<span class="number">1 </span><span class="kw">as </span>(usize));
-    }
-    h23 = histo[<span class="number">2usize</span>].wrapping_add(histo[<span class="number">3usize</span>]);
-    histomax = brotli_max_uint32_t(h23, histo[<span class="number">0usize</span>]);
-    <span class="kw">return </span>kFourSymbolHistogramCost + (<span class="number">3u32</span>).wrapping_mul(h23) <span class="kw">as </span><span class="kw">super</span>::util::floatX +
-           (<span class="number">2u32</span>).wrapping_mul(histo[<span class="number">0usize</span>].wrapping_add(histo[<span class="number">1usize</span>])) <span class="kw">as </span><span class="kw">super</span>::util::floatX -
-           histomax <span class="kw">as </span><span class="kw">super</span>::util::floatX;
-  }
-  <span class="kw">if </span>vectorize_population_cost { <span class="comment">// vectorization failed: it's faster to do things inline than split into two loops
-    </span><span class="kw">let </span><span class="kw-2">mut </span>nnz: usize = <span class="number">0</span>;
-    <span class="kw">let </span><span class="kw-2">mut </span>depth_histo: [u32; <span class="number">18</span>] = [<span class="number">0u32</span>; <span class="number">18</span>];
-    <span class="kw">let </span>total_count = (<span class="kw-2">*</span>histogram).total_count() <span class="kw">as </span><span class="kw">super</span>::util::floatX;
-    <span class="kw">let </span>log2total = FastLog2((<span class="kw-2">*</span>histogram).total_count() <span class="kw">as </span>u64);
-    i = <span class="number">0usize</span>;
-    <span class="kw">while </span>i &lt; data_size {
-      <span class="kw">if </span>(<span class="kw-2">*</span>histogram).slice()[i] &gt; <span class="number">0u32 </span>{
-        <span class="kw">let </span>nnz_val = <span class="kw-2">&amp;mut </span>nnz_data.slice_mut()[nnz&gt;&gt;<span class="number">3</span>];
-        <span class="kw-2">*</span>nnz_val = nnz_val.replace(nnz<span class="kw-2">&amp;</span><span class="number">7</span>, histogram.slice()[i] <span class="kw">as </span>i32);
-        i += <span class="number">1</span>;
-        nnz += <span class="number">1</span>;
-      } <span class="kw">else </span>{
-        <span class="kw">let </span><span class="kw-2">mut </span>reps: u32 = <span class="number">1</span>;
-        <span class="kw">for </span>hd <span class="kw">in </span>(<span class="kw-2">*</span>histogram).slice()[i+<span class="number">1</span>..(data_size <span class="kw">as </span>usize)].iter() {
-            <span class="kw">if </span><span class="kw-2">*</span>hd != <span class="number">0 </span>{
-               <span class="kw">break
-            </span>}
-            reps += <span class="number">1
-        </span>}
-        i += reps <span class="kw">as </span>usize;
-        <span class="kw">if </span>i == data_size {
-          {
-            <span class="kw">break</span>;
-          }
-        }
-        <span class="kw">if </span>reps &lt; <span class="number">3 </span>{
-          depth_histo[<span class="number">0</span>] += reps
-        } <span class="kw">else </span>{
-          reps -= <span class="number">2</span>;
-          <span class="kw">let </span><span class="kw-2">mut </span>depth_histo_adds : u32 = <span class="number">0</span>;
-          <span class="kw">while </span>reps &gt; <span class="number">0u32 </span>{
-            depth_histo_adds += <span class="number">1</span>;
-            bits = bits + <span class="number">3i32 </span><span class="kw">as </span><span class="kw">super</span>::util::floatX;
-            reps = reps &gt;&gt; <span class="number">3i32</span>;
-          }
-          depth_histo[BROTLI_REPEAT_ZERO_CODE_LENGTH] += depth_histo_adds;
-        }
-      }
-    }
-    bits += CostComputation(<span class="kw-2">&amp;mut </span>depth_histo, nnz_data, nnz, total_count, log2total);
-  } <span class="kw">else </span>{
-    <span class="kw">let </span><span class="kw-2">mut </span>max_depth: usize = <span class="number">1usize</span>;
-    <span class="kw">let </span><span class="kw-2">mut </span>depth_histo: [u32; <span class="number">18</span>] = [<span class="number">0u32</span>, <span class="number">0u32</span>, <span class="number">0u32</span>, <span class="number">0u32</span>, <span class="number">0u32</span>, <span class="number">0u32</span>, <span class="number">0u32</span>, <span class="number">0u32</span>, <span class="number">0u32</span>, <span class="number">0u32</span>,
-                                      <span class="number">0u32</span>, <span class="number">0u32</span>, <span class="number">0u32</span>, <span class="number">0u32</span>, <span class="number">0u32</span>, <span class="number">0u32</span>, <span class="number">0u32</span>, <span class="number">0u32</span>];
-    <span class="kw">let </span>log2total: <span class="kw">super</span>::util::floatX = FastLog2((<span class="kw-2">*</span>histogram).total_count() <span class="kw">as </span>u64); <span class="comment">// 64 bit here
-    </span><span class="kw">let </span><span class="kw-2">mut </span>reps : u32 = <span class="number">0</span>;
-    <span class="kw">for </span>histo <span class="kw">in </span>histogram.slice()[..data_size].iter() {
-        <span class="kw">if </span><span class="kw-2">*</span>histo != <span class="number">0 </span>{
-            <span class="kw">if </span>reps != <span class="number">0 </span>{
-                <span class="kw">if </span>reps &lt; <span class="number">3 </span>{
-                    depth_histo[<span class="number">0</span>] += reps;
-                } <span class="kw">else </span>{
-                    reps -= <span class="number">2</span>;
-                    <span class="kw">while </span>reps &gt; <span class="number">0u32 </span>{
-                        depth_histo[<span class="number">17</span>] += <span class="number">1</span>;
-                        bits = bits + <span class="number">3 </span><span class="kw">as </span><span class="kw">super</span>::util::floatX;
-                        reps = reps &gt;&gt; <span class="number">3</span>;
+    <span class="lifetime">'break1</span>: <span class="kw">while </span>i &lt; data_size {
+        {
+            <span class="kw">if </span>histogram.slice()[i] &gt; <span class="number">0u32 </span>{
+                s[count <span class="kw">as </span>usize] = i;
+                count += <span class="number">1</span>;
+                <span class="kw">if </span>count &gt; <span class="number">4i32 </span>{
+                    {
+                        <span class="kw">break </span><span class="lifetime">'break1</span>;
                     }
                 }
-                reps = <span class="number">0</span>;
             }
-            <span class="kw">let </span>log2p: <span class="kw">super</span>::util::floatX = log2total - FastLog2u16(<span class="kw-2">*</span>histo <span class="kw">as </span>(u16));
-            <span class="kw">let </span><span class="kw-2">mut </span>depth: usize = (log2p + <span class="number">0.5 </span><span class="kw">as </span><span class="kw">super</span>::util::floatX) <span class="kw">as </span>(usize);
-            bits = bits + <span class="kw-2">*</span>histo <span class="kw">as </span><span class="kw">super</span>::util::floatX * log2p;
-            depth = core::cmp::min(depth, <span class="number">15</span>);
-            max_depth = core::cmp::max(depth, max_depth);
-            depth_histo[depth] += <span class="number">1</span>;
-        } <span class="kw">else </span>{
-            reps += <span class="number">1</span>;
         }
+        i = i.wrapping_add(<span class="number">1</span>);
     }
-    bits = bits + (<span class="number">18usize</span>).wrapping_add((<span class="number">2usize</span>).wrapping_mul(max_depth)) <span class="kw">as </span><span class="kw">super</span>::util::floatX;
-    bits = bits + BitsEntropy(<span class="kw-2">&amp;</span>depth_histo[..], <span class="number">18usize</span>);
-  }
-  bits
+    <span class="kw">if </span>count == <span class="number">1i32 </span>{
+        <span class="kw">return </span>kOneSymbolHistogramCost;
+    }
+    <span class="kw">if </span>count == <span class="number">2i32 </span>{
+        <span class="kw">return </span>kTwoSymbolHistogramCost + histogram.total_count() <span class="kw">as </span><span class="kw">super</span>::util::floatX;
+    }
+    <span class="kw">if </span>count == <span class="number">3i32 </span>{
+        <span class="kw">let </span>histo0: u32 = histogram.slice()[s[<span class="number">0</span>]];
+        <span class="kw">let </span>histo1: u32 = histogram.slice()[s[<span class="number">1</span>]];
+        <span class="kw">let </span>histo2: u32 = histogram.slice()[s[<span class="number">2</span>]];
+        <span class="kw">let </span>histomax: u32 = brotli_max_uint32_t(histo0, brotli_max_uint32_t(histo1, histo2));
+        <span class="kw">return </span>kThreeSymbolHistogramCost
+            + (<span class="number">2u32</span>).wrapping_mul(histo0.wrapping_add(histo1).wrapping_add(histo2))
+                <span class="kw">as </span><span class="kw">super</span>::util::floatX
+            - histomax <span class="kw">as </span><span class="kw">super</span>::util::floatX;
+    }
+    <span class="kw">if </span>count == <span class="number">4i32 </span>{
+        <span class="kw">let </span><span class="kw-2">mut </span>histo: [u32; <span class="number">4</span>] = [<span class="number">0</span>; <span class="number">4</span>];
+
+        i = <span class="number">0usize</span>;
+        <span class="kw">while </span>i &lt; <span class="number">4usize </span>{
+            {
+                histo[i] = histogram.slice()[s[i]];
+            }
+            i = i.wrapping_add(<span class="number">1</span>);
+        }
+        i = <span class="number">0usize</span>;
+        <span class="kw">while </span>i &lt; <span class="number">4usize </span>{
+            {
+                <span class="kw">let </span><span class="kw-2">mut </span>j: usize;
+                j = i.wrapping_add(<span class="number">1</span>);
+                <span class="kw">while </span>j &lt; <span class="number">4usize </span>{
+                    {
+                        <span class="kw">if </span>histo[j] &gt; histo[i] {
+                            histo.swap(j, i);
+                        }
+                    }
+                    j = j.wrapping_add(<span class="number">1</span>);
+                }
+            }
+            i = i.wrapping_add(<span class="number">1</span>);
+        }
+        <span class="kw">let </span>h23: u32 = histo[<span class="number">2</span>].wrapping_add(histo[<span class="number">3</span>]);
+        <span class="kw">let </span>histomax: u32 = brotli_max_uint32_t(h23, histo[<span class="number">0</span>]);
+        <span class="kw">return </span>kFourSymbolHistogramCost
+            + (<span class="number">3u32</span>).wrapping_mul(h23) <span class="kw">as </span><span class="kw">super</span>::util::floatX
+            + (<span class="number">2u32</span>).wrapping_mul(histo[<span class="number">0</span>].wrapping_add(histo[<span class="number">1</span>])) <span class="kw">as </span><span class="kw">super</span>::util::floatX
+            - histomax <span class="kw">as </span><span class="kw">super</span>::util::floatX;
+    }
+    <span class="kw">if </span>vectorize_population_cost {
+        <span class="comment">// vectorization failed: it's faster to do things inline than split into two loops
+        </span><span class="kw">let </span><span class="kw-2">mut </span>nnz: usize = <span class="number">0</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>depth_histo = [<span class="number">0u32</span>; <span class="number">18</span>];
+        <span class="kw">let </span>total_count = histogram.total_count() <span class="kw">as </span><span class="kw">super</span>::util::floatX;
+        <span class="kw">let </span>log2total = FastLog2(histogram.total_count() <span class="kw">as </span>u64);
+        i = <span class="number">0usize</span>;
+        <span class="kw">while </span>i &lt; data_size {
+            <span class="kw">if </span>histogram.slice()[i] &gt; <span class="number">0u32 </span>{
+                <span class="kw">let </span>nnz_val = <span class="kw-2">&amp;mut </span>nnz_data.slice_mut()[nnz &gt;&gt; <span class="number">3</span>];
+                nnz_val[nnz &amp; <span class="number">7</span>] = histogram.slice()[i] <span class="kw">as </span>i32;
+                i += <span class="number">1</span>;
+                nnz += <span class="number">1</span>;
+            } <span class="kw">else </span>{
+                <span class="kw">let </span><span class="kw-2">mut </span>reps: u32 = <span class="number">1</span>;
+                <span class="kw">for </span>hd <span class="kw">in </span>histogram.slice()[i + <span class="number">1</span>..data_size].iter() {
+                    <span class="kw">if </span><span class="kw-2">*</span>hd != <span class="number">0 </span>{
+                        <span class="kw">break</span>;
+                    }
+                    reps += <span class="number">1
+                </span>}
+                i += reps <span class="kw">as </span>usize;
+                <span class="kw">if </span>i == data_size {
+                    {
+                        <span class="kw">break</span>;
+                    }
+                }
+                <span class="kw">if </span>reps &lt; <span class="number">3 </span>{
+                    depth_histo[<span class="number">0</span>] += reps
+                } <span class="kw">else </span>{
+                    reps -= <span class="number">2</span>;
+                    <span class="kw">let </span><span class="kw-2">mut </span>depth_histo_adds: u32 = <span class="number">0</span>;
+                    <span class="kw">while </span>reps &gt; <span class="number">0u32 </span>{
+                        depth_histo_adds += <span class="number">1</span>;
+                        bits += <span class="number">3i32 </span><span class="kw">as </span><span class="kw">super</span>::util::floatX;
+                        reps &gt;&gt;= <span class="number">3i32</span>;
+                    }
+                    depth_histo[BROTLI_REPEAT_ZERO_CODE_LENGTH] += depth_histo_adds;
+                }
+            }
+        }
+        bits += CostComputation(<span class="kw-2">&amp;mut </span>depth_histo, nnz_data, nnz, total_count, log2total);
+    } <span class="kw">else </span>{
+        <span class="kw">let </span><span class="kw-2">mut </span>max_depth: usize = <span class="number">1</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>depth_histo = [<span class="number">0u32</span>; <span class="number">18</span>];
+        <span class="kw">let </span>log2total: <span class="kw">super</span>::util::floatX = FastLog2(histogram.total_count() <span class="kw">as </span>u64); <span class="comment">// 64 bit here
+        </span><span class="kw">let </span><span class="kw-2">mut </span>reps: u32 = <span class="number">0</span>;
+        <span class="kw">for </span>histo <span class="kw">in </span>histogram.slice()[..data_size].iter() {
+            <span class="kw">if </span><span class="kw-2">*</span>histo != <span class="number">0 </span>{
+                <span class="kw">if </span>reps != <span class="number">0 </span>{
+                    <span class="kw">if </span>reps &lt; <span class="number">3 </span>{
+                        depth_histo[<span class="number">0</span>] += reps;
+                    } <span class="kw">else </span>{
+                        reps -= <span class="number">2</span>;
+                        <span class="kw">while </span>reps &gt; <span class="number">0u32 </span>{
+                            depth_histo[<span class="number">17</span>] += <span class="number">1</span>;
+                            bits += <span class="number">3 </span><span class="kw">as </span><span class="kw">super</span>::util::floatX;
+                            reps &gt;&gt;= <span class="number">3</span>;
+                        }
+                    }
+                    reps = <span class="number">0</span>;
+                }
+                <span class="kw">let </span>log2p: <span class="kw">super</span>::util::floatX = log2total - FastLog2u16(<span class="kw-2">*</span>histo <span class="kw">as </span>u16);
+                <span class="kw">let </span><span class="kw-2">mut </span>depth: usize = (log2p + <span class="number">0.5 </span><span class="kw">as </span><span class="kw">super</span>::util::floatX) <span class="kw">as </span>usize;
+                bits += <span class="kw-2">*</span>histo <span class="kw">as </span><span class="kw">super</span>::util::floatX * log2p;
+                depth = core::cmp::min(depth, <span class="number">15</span>);
+                max_depth = core::cmp::max(depth, max_depth);
+                depth_histo[depth] += <span class="number">1</span>;
+            } <span class="kw">else </span>{
+                reps += <span class="number">1</span>;
+            }
+        }
+        bits += (<span class="number">18usize</span>).wrapping_add((<span class="number">2usize</span>).wrapping_mul(max_depth)) <span class="kw">as </span><span class="kw">super</span>::util::floatX;
+        bits += BitsEntropy(<span class="kw-2">&amp;</span>depth_histo[..], <span class="number">18usize</span>);
+    }
+    bits
 }
 <span class="comment">/*
 fn HistogramDataSizeCommand() -&gt; usize {
-    704i32 as (usize)
+    704usize
 }*/
-
 
 /*
 fn HistogramDataSizeDistance() -&gt; usize {
-    520i32 as (usize)
+    520usize
 }
 */
 </span></code></pre></div></section></main></body></html>

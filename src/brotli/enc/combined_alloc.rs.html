@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-3.4.0/src/enc/combined_alloc.rs`."><title>combined_alloc.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-3.5.0/src/enc/combined_alloc.rs`."><title>combined_alloc.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -438,24 +438,102 @@
 <a href="#437" id="437">437</a>
 <a href="#438" id="438">438</a>
 <a href="#439" id="439">439</a>
-</pre></div><pre class="rust"><code><span class="kw">pub use </span>alloc::Allocator;
+<a href="#440" id="440">440</a>
+<a href="#441" id="441">441</a>
+<a href="#442" id="442">442</a>
+<a href="#443" id="443">443</a>
+<a href="#444" id="444">444</a>
+<a href="#445" id="445">445</a>
+<a href="#446" id="446">446</a>
+<a href="#447" id="447">447</a>
+<a href="#448" id="448">448</a>
+<a href="#449" id="449">449</a>
+<a href="#450" id="450">450</a>
+<a href="#451" id="451">451</a>
+<a href="#452" id="452">452</a>
+<a href="#453" id="453">453</a>
+<a href="#454" id="454">454</a>
+<a href="#455" id="455">455</a>
+<a href="#456" id="456">456</a>
+<a href="#457" id="457">457</a>
+<a href="#458" id="458">458</a>
+<a href="#459" id="459">459</a>
+<a href="#460" id="460">460</a>
+<a href="#461" id="461">461</a>
+<a href="#462" id="462">462</a>
+<a href="#463" id="463">463</a>
+<a href="#464" id="464">464</a>
+<a href="#465" id="465">465</a>
+<a href="#466" id="466">466</a>
+<a href="#467" id="467">467</a>
+<a href="#468" id="468">468</a>
+<a href="#469" id="469">469</a>
+<a href="#470" id="470">470</a>
+<a href="#471" id="471">471</a>
+<a href="#472" id="472">472</a>
+<a href="#473" id="473">473</a>
+<a href="#474" id="474">474</a>
+<a href="#475" id="475">475</a>
+<a href="#476" id="476">476</a>
+<a href="#477" id="477">477</a>
+<a href="#478" id="478">478</a>
+<a href="#479" id="479">479</a>
+<a href="#480" id="480">480</a>
+<a href="#481" id="481">481</a>
+<a href="#482" id="482">482</a>
+<a href="#483" id="483">483</a>
+<a href="#484" id="484">484</a>
+<a href="#485" id="485">485</a>
+<a href="#486" id="486">486</a>
+<a href="#487" id="487">487</a>
+<a href="#488" id="488">488</a>
+<a href="#489" id="489">489</a>
+<a href="#490" id="490">490</a>
+<a href="#491" id="491">491</a>
+<a href="#492" id="492">492</a>
+<a href="#493" id="493">493</a>
+<a href="#494" id="494">494</a>
+<a href="#495" id="495">495</a>
+<a href="#496" id="496">496</a>
+<a href="#497" id="497">497</a>
+<a href="#498" id="498">498</a>
+<a href="#499" id="499">499</a>
+<a href="#500" id="500">500</a>
+<a href="#501" id="501">501</a>
+<a href="#502" id="502">502</a>
+<a href="#503" id="503">503</a>
+<a href="#504" id="504">504</a>
+<a href="#505" id="505">505</a>
+<a href="#506" id="506">506</a>
+<a href="#507" id="507">507</a>
+<a href="#508" id="508">508</a>
+<a href="#509" id="509">509</a>
+<a href="#510" id="510">510</a>
+<a href="#511" id="511">511</a>
+<a href="#512" id="512">512</a>
+<a href="#513" id="513">513</a>
+<a href="#514" id="514">514</a>
+<a href="#515" id="515">515</a>
+<a href="#516" id="516">516</a>
+<a href="#517" id="517">517</a>
+<a href="#518" id="518">518</a>
+<a href="#519" id="519">519</a>
+<a href="#520" id="520">520</a>
+<a href="#521" id="521">521</a>
+<a href="#522" id="522">522</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::cluster::HistogramPair;
 <span class="kw">use </span><span class="kw">super</span>::command::Command;
+<span class="kw">use </span><span class="kw">super</span>::histogram::{ContextType, HistogramCommand, HistogramDistance, HistogramLiteral};
+<span class="kw">use </span><span class="kw">super</span>::interface::StaticCommand;
+<span class="kw">use </span><span class="kw">super</span>::s16;
 <span class="kw">use </span><span class="kw">super</span>::util::floatX;
 <span class="kw">use </span><span class="kw">super</span>::v8;
-<span class="kw">use </span><span class="kw">super</span>::s16;
 <span class="kw">use </span><span class="kw">super</span>::PDF;
-<span class="kw">use </span><span class="kw">super</span>::interface::StaticCommand;
-<span class="kw">use </span><span class="kw">super</span>::histogram::{
-  HistogramLiteral,
-  HistogramCommand,
-  HistogramDistance,
-  ContextType,
-};
-<span class="kw">use </span><span class="kw">super</span>::cluster::HistogramPair;
+<span class="kw">pub use </span>alloc::Allocator;
 
 <span class="kw">use </span><span class="kw">super</span>::entropy_encode::HuffmanTree;
 <span class="kw">use </span><span class="kw">super</span>::hash_to_binary_tree::ZopfliNode;
-<span class="attr">#[cfg(feature=<span class="string">"std"</span>)]
+<span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
 </span><span class="kw">use </span>alloc_stdlib::StandardAlloc;
 <span class="comment">/*
 struct CombiningAllocator&lt;T1, T2, AllocT1:Allocator&lt;T1&gt;, AllocT2:Allocator&lt;T2&gt;&gt;(AllocT1, AllocT2);
@@ -467,393 +545,438 @@ impl &lt;T1, T2, AllocT1:Allocator&lt;T1&gt;, AllocT2:Allocator&lt;T2&gt;&gt; Co
 }
 
 impl &lt;T1, T2, AllocT1:Allocator&lt;T1&gt;, AllocT2:Allocator&lt;T2&gt;&gt; Allocator&lt;T1&gt; for CombiningAllocator&lt;T1, T2, AllocT1, AllocT2&gt; {
-  
+
 }
 
-      
+
 impl &lt;T1, T2, AllocT1:Allocator&lt;T1&gt;, AllocT2:Allocator&lt;T2&gt;&gt; Allocator&lt;T2&gt; for CombiningAllocator&lt;T1, T2, AllocT1, AllocT2&gt; {
-  
+
 }
 */
 
-</span><span class="kw">pub trait </span>BrotliAlloc:Allocator&lt;u8&gt; + Allocator&lt;u16&gt; + Allocator&lt;i32&gt; + Allocator&lt;u32&gt; + Allocator&lt;u64&gt; + Allocator&lt;Command&gt; + Allocator&lt;<span class="kw">super</span>::util::floatX&gt; + Allocator&lt;v8&gt; + Allocator&lt;s16&gt; + Allocator&lt;PDF&gt; + Allocator&lt;StaticCommand&gt; + Allocator&lt;HistogramLiteral&gt; + Allocator&lt;HistogramCommand&gt; + Allocator&lt;HistogramDistance&gt; + Allocator&lt;HistogramPair&gt; + Allocator&lt;ContextType&gt; + Allocator&lt;HuffmanTree&gt; + Allocator&lt;ZopfliNode&gt;{
+</span><span class="kw">pub trait </span>BrotliAlloc:
+    Allocator&lt;u8&gt;
+    + Allocator&lt;u16&gt;
+    + Allocator&lt;i32&gt;
+    + Allocator&lt;u32&gt;
+    + Allocator&lt;u64&gt;
+    + Allocator&lt;Command&gt;
+    + Allocator&lt;<span class="kw">super</span>::util::floatX&gt;
+    + Allocator&lt;v8&gt;
+    + Allocator&lt;s16&gt;
+    + Allocator&lt;PDF&gt;
+    + Allocator&lt;StaticCommand&gt;
+    + Allocator&lt;HistogramLiteral&gt;
+    + Allocator&lt;HistogramCommand&gt;
+    + Allocator&lt;HistogramDistance&gt;
+    + Allocator&lt;HistogramPair&gt;
+    + Allocator&lt;ContextType&gt;
+    + Allocator&lt;HuffmanTree&gt;
+    + Allocator&lt;ZopfliNode&gt;
+{
 }
 
-<span class="attr">#[cfg(feature=<span class="string">"std"</span>)]
-</span><span class="kw">impl </span>BrotliAlloc <span class="kw">for </span>StandardAlloc{}
+<span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
+</span><span class="kw">impl </span>BrotliAlloc <span class="kw">for </span>StandardAlloc {}
 
-<span class="kw">pub struct </span>CombiningAllocator&lt;AllocU8:Allocator&lt;u8&gt;,
-                          AllocU16:Allocator&lt;u16&gt;,
-                          AllocI32:Allocator&lt;i32&gt;,
-                          AllocU32:Allocator&lt;u32&gt;,
-                          AllocU64:Allocator&lt;u64&gt;,
-                          AllocCommand:Allocator&lt;Command&gt;,
-                          AllocFloatX:Allocator&lt;floatX&gt;,
-                          AllocV8:Allocator&lt;v8&gt;,
-                          AllocS16:Allocator&lt;s16&gt;,
-                          AllocPDF:Allocator&lt;PDF&gt;,
-                          AllocStaticCommand:Allocator&lt;StaticCommand&gt;,
-                          AllocHistogramLiteral:Allocator&lt;HistogramLiteral&gt;,
-                          AllocHistogramCommand:Allocator&lt;HistogramCommand&gt;,
-                          AllocHistogramDistance:Allocator&lt;HistogramDistance&gt;,
-                          AllocHistogramPair:Allocator&lt;HistogramPair&gt;,
-                          AllocContextType:Allocator&lt;ContextType&gt;,
-                          AllocHuffmanTree:Allocator&lt;HuffmanTree&gt;,
-                          AllocZopfliNode:Allocator&lt;ZopfliNode&gt;,
-                          &gt;{
-  alloc_u8: AllocU8,
-  alloc_u16: AllocU16,
-  alloc_i32: AllocI32,
-  alloc_u32: AllocU32,
-  alloc_u64: AllocU64,
-  alloc_c: AllocCommand,
-  alloc_f: AllocFloatX,
-  alloc_f32x8: AllocV8,
-  alloc_i16x16: AllocS16,
-  alloc_pdf: AllocPDF,
-  alloc_sc: AllocStaticCommand,
-  alloc_hl: AllocHistogramLiteral,
-  alloc_hc: AllocHistogramCommand,
-  alloc_hd: AllocHistogramDistance,
-  alloc_hp: AllocHistogramPair,
-  alloc_ct: AllocContextType,
-  alloc_ht: AllocHuffmanTree,
-  alloc_zn: AllocZopfliNode,
+<span class="kw">pub struct </span>CombiningAllocator&lt;
+    AllocU8: Allocator&lt;u8&gt;,
+    AllocU16: Allocator&lt;u16&gt;,
+    AllocI32: Allocator&lt;i32&gt;,
+    AllocU32: Allocator&lt;u32&gt;,
+    AllocU64: Allocator&lt;u64&gt;,
+    AllocCommand: Allocator&lt;Command&gt;,
+    AllocFloatX: Allocator&lt;floatX&gt;,
+    AllocV8: Allocator&lt;v8&gt;,
+    AllocS16: Allocator&lt;s16&gt;,
+    AllocPDF: Allocator&lt;PDF&gt;,
+    AllocStaticCommand: Allocator&lt;StaticCommand&gt;,
+    AllocHistogramLiteral: Allocator&lt;HistogramLiteral&gt;,
+    AllocHistogramCommand: Allocator&lt;HistogramCommand&gt;,
+    AllocHistogramDistance: Allocator&lt;HistogramDistance&gt;,
+    AllocHistogramPair: Allocator&lt;HistogramPair&gt;,
+    AllocContextType: Allocator&lt;ContextType&gt;,
+    AllocHuffmanTree: Allocator&lt;HuffmanTree&gt;,
+    AllocZopfliNode: Allocator&lt;ZopfliNode&gt;,
+&gt; {
+    alloc_u8: AllocU8,
+    alloc_u16: AllocU16,
+    alloc_i32: AllocI32,
+    alloc_u32: AllocU32,
+    alloc_u64: AllocU64,
+    alloc_c: AllocCommand,
+    alloc_f: AllocFloatX,
+    alloc_f32x8: AllocV8,
+    alloc_i16x16: AllocS16,
+    alloc_pdf: AllocPDF,
+    alloc_sc: AllocStaticCommand,
+    alloc_hl: AllocHistogramLiteral,
+    alloc_hc: AllocHistogramCommand,
+    alloc_hd: AllocHistogramDistance,
+    alloc_hp: AllocHistogramPair,
+    alloc_ct: AllocContextType,
+    alloc_ht: AllocHuffmanTree,
+    alloc_zn: AllocZopfliNode,
 }
 
-<span class="kw">impl</span>&lt;AllocU8:Allocator&lt;u8&gt;,
-     AllocU16:Allocator&lt;u16&gt;,
-     AllocI32:Allocator&lt;i32&gt;,
-     AllocU32:Allocator&lt;u32&gt;,
-     AllocU64:Allocator&lt;u64&gt;,
-     AllocCommand:Allocator&lt;Command&gt;,
-     AllocFloatX:Allocator&lt;floatX&gt;,
-     AllocV8:Allocator&lt;v8&gt;,
-     AllocS16:Allocator&lt;s16&gt;,
-     AllocPDF:Allocator&lt;PDF&gt;,
-     AllocStaticCommand:Allocator&lt;StaticCommand&gt;,
-     AllocHistogramLiteral:Allocator&lt;HistogramLiteral&gt;,
-     AllocHistogramCommand:Allocator&lt;HistogramCommand&gt;,
-     AllocHistogramDistance:Allocator&lt;HistogramDistance&gt;,
-     AllocHistogramPair:Allocator&lt;HistogramPair&gt;,
-     AllocContextType:Allocator&lt;ContextType&gt;,
-     AllocHuffmanTree:Allocator&lt;HuffmanTree&gt;,
-     AllocZopfliNode:Allocator&lt;ZopfliNode&gt;,
-     &gt; CombiningAllocator&lt;AllocU8,
-                          AllocU16,
-                          AllocI32,
-                          AllocU32,
-                          AllocU64,
-                          AllocCommand,
-                          AllocFloatX,
-                          AllocV8,
-                          AllocS16,
-                          AllocPDF,
-                          AllocStaticCommand,
-                          AllocHistogramLiteral,
-                          AllocHistogramCommand,
-                          AllocHistogramDistance,
-                          AllocHistogramPair,
-                          AllocContextType,
-                          AllocHuffmanTree,
-                          AllocZopfliNode,
-                          &gt; {
-  <span class="kw">pub fn </span>new(alloc_u8: AllocU8,
-         alloc_u16: AllocU16,
-         alloc_i32: AllocI32,
-         alloc_u32: AllocU32,
-         alloc_u64: AllocU64,
-         alloc_c: AllocCommand,
-         alloc_f: AllocFloatX,
-         alloc_f32x8: AllocV8,
-         alloc_i16x16: AllocS16,
-         alloc_pdf: AllocPDF,
-         alloc_sc: AllocStaticCommand,
-         alloc_hl: AllocHistogramLiteral,
-         alloc_hc: AllocHistogramCommand,
-         alloc_hd: AllocHistogramDistance,
-         alloc_hp: AllocHistogramPair,
-         alloc_ct: AllocContextType,
-         alloc_ht: AllocHuffmanTree,
-         alloc_zn: AllocZopfliNode) -&gt; <span class="self">Self </span>{
-    CombiningAllocator{
-      alloc_u8:     alloc_u8,
-      alloc_u16:    alloc_u16,  
-      alloc_i32:   alloc_i32,
-      alloc_u32:   alloc_u32, 
-      alloc_u64:   alloc_u64, 
-      alloc_c:   alloc_c,
-      alloc_f:   alloc_f, 
-      alloc_f32x8:   alloc_f32x8,
-      alloc_i16x16:  alloc_i16x16,
-      alloc_pdf:   alloc_pdf,
-      alloc_sc:   alloc_sc,
-      alloc_hl:   alloc_hl, 
-      alloc_hc:   alloc_hc, 
-      alloc_hd:   alloc_hd,
-      alloc_hp:   alloc_hp, 
-      alloc_ct:   alloc_ct, 
-      alloc_ht:   alloc_ht,
-      alloc_zn:   alloc_zn,
+<span class="kw">impl</span>&lt;
+        AllocU8: Allocator&lt;u8&gt;,
+        AllocU16: Allocator&lt;u16&gt;,
+        AllocI32: Allocator&lt;i32&gt;,
+        AllocU32: Allocator&lt;u32&gt;,
+        AllocU64: Allocator&lt;u64&gt;,
+        AllocCommand: Allocator&lt;Command&gt;,
+        AllocFloatX: Allocator&lt;floatX&gt;,
+        AllocV8: Allocator&lt;v8&gt;,
+        AllocS16: Allocator&lt;s16&gt;,
+        AllocPDF: Allocator&lt;PDF&gt;,
+        AllocStaticCommand: Allocator&lt;StaticCommand&gt;,
+        AllocHistogramLiteral: Allocator&lt;HistogramLiteral&gt;,
+        AllocHistogramCommand: Allocator&lt;HistogramCommand&gt;,
+        AllocHistogramDistance: Allocator&lt;HistogramDistance&gt;,
+        AllocHistogramPair: Allocator&lt;HistogramPair&gt;,
+        AllocContextType: Allocator&lt;ContextType&gt;,
+        AllocHuffmanTree: Allocator&lt;HuffmanTree&gt;,
+        AllocZopfliNode: Allocator&lt;ZopfliNode&gt;,
+    &gt;
+    CombiningAllocator&lt;
+        AllocU8,
+        AllocU16,
+        AllocI32,
+        AllocU32,
+        AllocU64,
+        AllocCommand,
+        AllocFloatX,
+        AllocV8,
+        AllocS16,
+        AllocPDF,
+        AllocStaticCommand,
+        AllocHistogramLiteral,
+        AllocHistogramCommand,
+        AllocHistogramDistance,
+        AllocHistogramPair,
+        AllocContextType,
+        AllocHuffmanTree,
+        AllocZopfliNode,
+    &gt;
+{
+    <span class="kw">pub fn </span>new(
+        alloc_u8: AllocU8,
+        alloc_u16: AllocU16,
+        alloc_i32: AllocI32,
+        alloc_u32: AllocU32,
+        alloc_u64: AllocU64,
+        alloc_c: AllocCommand,
+        alloc_f: AllocFloatX,
+        alloc_f32x8: AllocV8,
+        alloc_i16x16: AllocS16,
+        alloc_pdf: AllocPDF,
+        alloc_sc: AllocStaticCommand,
+        alloc_hl: AllocHistogramLiteral,
+        alloc_hc: AllocHistogramCommand,
+        alloc_hd: AllocHistogramDistance,
+        alloc_hp: AllocHistogramPair,
+        alloc_ct: AllocContextType,
+        alloc_ht: AllocHuffmanTree,
+        alloc_zn: AllocZopfliNode,
+    ) -&gt; <span class="self">Self </span>{
+        CombiningAllocator {
+            alloc_u8,
+            alloc_u16,
+            alloc_i32,
+            alloc_u32,
+            alloc_u64,
+            alloc_c,
+            alloc_f,
+            alloc_f32x8,
+            alloc_i16x16,
+            alloc_pdf,
+            alloc_sc,
+            alloc_hl,
+            alloc_hc,
+            alloc_hd,
+            alloc_hp,
+            alloc_ct,
+            alloc_ht,
+            alloc_zn,
+        }
     }
-  }
 }
 
-  
-<span class="kw">impl</span>&lt;AllocU8:Allocator&lt;u8&gt;,
-     AllocU16:Allocator&lt;u16&gt;,
-     AllocI32:Allocator&lt;i32&gt;,
-     AllocU32:Allocator&lt;u32&gt;,
-     AllocU64:Allocator&lt;u64&gt;,
-     AllocCommand:Allocator&lt;Command&gt;,
-     AllocFloatX:Allocator&lt;floatX&gt;,
-     AllocV8:Allocator&lt;v8&gt;,
-     AllocS16:Allocator&lt;s16&gt;,
-     AllocPDF:Allocator&lt;PDF&gt;,
-     AllocStaticCommand:Allocator&lt;StaticCommand&gt;,
-     AllocHistogramLiteral:Allocator&lt;HistogramLiteral&gt;,
-     AllocHistogramCommand:Allocator&lt;HistogramCommand&gt;,
-     AllocHistogramDistance:Allocator&lt;HistogramDistance&gt;,
-     AllocHistogramPair:Allocator&lt;HistogramPair&gt;,
-     AllocContextType:Allocator&lt;ContextType&gt;,
-     AllocHuffmanTree:Allocator&lt;HuffmanTree&gt;,
-     AllocZopfliNode:Allocator&lt;ZopfliNode&gt;,
-     &gt; BrotliAlloc <span class="kw">for </span>CombiningAllocator&lt;AllocU8,
-                                            AllocU16,
-                                            AllocI32,
-                                            AllocU32,
-                                            AllocU64,
-                                            AllocCommand,
-                                            AllocFloatX,
-                                            AllocV8,
-                                            AllocS16,
-                                            AllocPDF,
-                                            AllocStaticCommand,
-                                            AllocHistogramLiteral,
-                                            AllocHistogramCommand,
-                                            AllocHistogramDistance,
-                                            AllocHistogramPair,
-                                            AllocContextType,
-                                            AllocHuffmanTree,
-                                            AllocZopfliNode,
-                                            &gt; {
+<span class="kw">impl</span>&lt;
+        AllocU8: Allocator&lt;u8&gt;,
+        AllocU16: Allocator&lt;u16&gt;,
+        AllocI32: Allocator&lt;i32&gt;,
+        AllocU32: Allocator&lt;u32&gt;,
+        AllocU64: Allocator&lt;u64&gt;,
+        AllocCommand: Allocator&lt;Command&gt;,
+        AllocFloatX: Allocator&lt;floatX&gt;,
+        AllocV8: Allocator&lt;v8&gt;,
+        AllocS16: Allocator&lt;s16&gt;,
+        AllocPDF: Allocator&lt;PDF&gt;,
+        AllocStaticCommand: Allocator&lt;StaticCommand&gt;,
+        AllocHistogramLiteral: Allocator&lt;HistogramLiteral&gt;,
+        AllocHistogramCommand: Allocator&lt;HistogramCommand&gt;,
+        AllocHistogramDistance: Allocator&lt;HistogramDistance&gt;,
+        AllocHistogramPair: Allocator&lt;HistogramPair&gt;,
+        AllocContextType: Allocator&lt;ContextType&gt;,
+        AllocHuffmanTree: Allocator&lt;HuffmanTree&gt;,
+        AllocZopfliNode: Allocator&lt;ZopfliNode&gt;,
+    &gt; BrotliAlloc
+    <span class="kw">for </span>CombiningAllocator&lt;
+        AllocU8,
+        AllocU16,
+        AllocI32,
+        AllocU32,
+        AllocU64,
+        AllocCommand,
+        AllocFloatX,
+        AllocV8,
+        AllocS16,
+        AllocPDF,
+        AllocStaticCommand,
+        AllocHistogramLiteral,
+        AllocHistogramCommand,
+        AllocHistogramDistance,
+        AllocHistogramPair,
+        AllocContextType,
+        AllocHuffmanTree,
+        AllocZopfliNode,
+    &gt;
+{
 }
 
-
-<span class="kw">impl</span>&lt;AllocU8:Allocator&lt;u8&gt;+Default,
-     AllocU16:Allocator&lt;u16&gt;+Default,
-     AllocI32:Allocator&lt;i32&gt;+Default,
-     AllocU32:Allocator&lt;u32&gt;+Default,
-     AllocU64:Allocator&lt;u64&gt;+Default,
-     AllocCommand:Allocator&lt;Command&gt;+Default,
-     AllocFloatX:Allocator&lt;floatX&gt;+Default,
-     AllocV8:Allocator&lt;v8&gt;+Default,
-     AllocS16:Allocator&lt;s16&gt;+Default,
-     AllocPDF:Allocator&lt;PDF&gt;+Default,
-     AllocStaticCommand:Allocator&lt;StaticCommand&gt;+Default,
-     AllocHistogramLiteral:Allocator&lt;HistogramLiteral&gt;+Default,
-     AllocHistogramCommand:Allocator&lt;HistogramCommand&gt;+Default,
-     AllocHistogramDistance:Allocator&lt;HistogramDistance&gt;+Default,
-     AllocHistogramPair:Allocator&lt;HistogramPair&gt;+Default,
-     AllocContextType:Allocator&lt;ContextType&gt;+Default,
-     AllocHuffmanTree:Allocator&lt;HuffmanTree&gt;+Default,
-     AllocZopfliNode:Allocator&lt;ZopfliNode&gt;+Default,
-     &gt; Default <span class="kw">for </span>CombiningAllocator&lt;AllocU8,
-                          AllocU16,
-                          AllocI32,
-                          AllocU32,
-                          AllocU64,
-                          AllocCommand,
-                          AllocFloatX,
-                          AllocV8,
-                          AllocS16,
-                          AllocPDF,
-                          AllocStaticCommand,
-                          AllocHistogramLiteral,
-                          AllocHistogramCommand,
-                          AllocHistogramDistance,
-                          AllocHistogramPair,
-                          AllocContextType,
-                          AllocHuffmanTree,
-                          AllocZopfliNode,
-                          &gt; {
+<span class="kw">impl</span>&lt;
+        AllocU8: Allocator&lt;u8&gt; + Default,
+        AllocU16: Allocator&lt;u16&gt; + Default,
+        AllocI32: Allocator&lt;i32&gt; + Default,
+        AllocU32: Allocator&lt;u32&gt; + Default,
+        AllocU64: Allocator&lt;u64&gt; + Default,
+        AllocCommand: Allocator&lt;Command&gt; + Default,
+        AllocFloatX: Allocator&lt;floatX&gt; + Default,
+        AllocV8: Allocator&lt;v8&gt; + Default,
+        AllocS16: Allocator&lt;s16&gt; + Default,
+        AllocPDF: Allocator&lt;PDF&gt; + Default,
+        AllocStaticCommand: Allocator&lt;StaticCommand&gt; + Default,
+        AllocHistogramLiteral: Allocator&lt;HistogramLiteral&gt; + Default,
+        AllocHistogramCommand: Allocator&lt;HistogramCommand&gt; + Default,
+        AllocHistogramDistance: Allocator&lt;HistogramDistance&gt; + Default,
+        AllocHistogramPair: Allocator&lt;HistogramPair&gt; + Default,
+        AllocContextType: Allocator&lt;ContextType&gt; + Default,
+        AllocHuffmanTree: Allocator&lt;HuffmanTree&gt; + Default,
+        AllocZopfliNode: Allocator&lt;ZopfliNode&gt; + Default,
+    &gt; Default
+    <span class="kw">for </span>CombiningAllocator&lt;
+        AllocU8,
+        AllocU16,
+        AllocI32,
+        AllocU32,
+        AllocU64,
+        AllocCommand,
+        AllocFloatX,
+        AllocV8,
+        AllocS16,
+        AllocPDF,
+        AllocStaticCommand,
+        AllocHistogramLiteral,
+        AllocHistogramCommand,
+        AllocHistogramDistance,
+        AllocHistogramPair,
+        AllocContextType,
+        AllocHuffmanTree,
+        AllocZopfliNode,
+    &gt;
+{
     <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
-    CombiningAllocator{
-      alloc_u8:  AllocU8::default(),
-      alloc_u16: AllocU16::default(),  
-      alloc_i32: AllocI32::default(),
-      alloc_u32: AllocU32::default(), 
-      alloc_u64: AllocU64::default(), 
-      alloc_c:   AllocCommand::default(),
-      alloc_f:   AllocFloatX::default(), 
-      alloc_f32x8:AllocV8::default(),
-      alloc_i16x16:AllocS16::default(),
-      alloc_pdf: AllocPDF::default(),
-      alloc_sc:  AllocStaticCommand::default(),
-      alloc_hl:  AllocHistogramLiteral::default(), 
-      alloc_hc:  AllocHistogramCommand::default(), 
-      alloc_hd:  AllocHistogramDistance::default(),
-      alloc_hp:  AllocHistogramPair::default(), 
-      alloc_ct:  AllocContextType::default(), 
-      alloc_ht:  AllocHuffmanTree::default(),
-      alloc_zn:  AllocZopfliNode::default(),
-    }
-        
+        CombiningAllocator {
+            alloc_u8: AllocU8::default(),
+            alloc_u16: AllocU16::default(),
+            alloc_i32: AllocI32::default(),
+            alloc_u32: AllocU32::default(),
+            alloc_u64: AllocU64::default(),
+            alloc_c: AllocCommand::default(),
+            alloc_f: AllocFloatX::default(),
+            alloc_f32x8: AllocV8::default(),
+            alloc_i16x16: AllocS16::default(),
+            alloc_pdf: AllocPDF::default(),
+            alloc_sc: AllocStaticCommand::default(),
+            alloc_hl: AllocHistogramLiteral::default(),
+            alloc_hc: AllocHistogramCommand::default(),
+            alloc_hd: AllocHistogramDistance::default(),
+            alloc_hp: AllocHistogramPair::default(),
+            alloc_ct: AllocContextType::default(),
+            alloc_ht: AllocHuffmanTree::default(),
+            alloc_zn: AllocZopfliNode::default(),
+        }
     }
 }
 
-<span class="kw">impl</span>&lt;AllocU8:Allocator&lt;u8&gt;+Clone,
-     AllocU16:Allocator&lt;u16&gt;+Clone,
-     AllocI32:Allocator&lt;i32&gt;+Clone,
-     AllocU32:Allocator&lt;u32&gt;+Clone,
-     AllocU64:Allocator&lt;u64&gt;+Clone,
-     AllocCommand:Allocator&lt;Command&gt;+Clone,
-     AllocFloatX:Allocator&lt;floatX&gt;+Clone,
-     AllocV8:Allocator&lt;v8&gt;+Clone,
-     AllocS16:Allocator&lt;s16&gt;+Clone,
-     AllocPDF:Allocator&lt;PDF&gt;+Clone,
-     AllocStaticCommand:Allocator&lt;StaticCommand&gt;+Clone,
-     AllocHistogramLiteral:Allocator&lt;HistogramLiteral&gt;+Clone,
-     AllocHistogramCommand:Allocator&lt;HistogramCommand&gt;+Clone,
-     AllocHistogramDistance:Allocator&lt;HistogramDistance&gt;+Clone,
-     AllocHistogramPair:Allocator&lt;HistogramPair&gt;+Clone,
-     AllocContextType:Allocator&lt;ContextType&gt;+Clone,
-     AllocHuffmanTree:Allocator&lt;HuffmanTree&gt;+Clone,
-     AllocZopfliNode:Allocator&lt;ZopfliNode&gt;+Clone,
-     &gt; Clone <span class="kw">for </span>CombiningAllocator&lt;AllocU8,
-                          AllocU16,
-                          AllocI32,
-                          AllocU32,
-                          AllocU64,
-                          AllocCommand,
-                          AllocFloatX,
-                          AllocV8,
-                          AllocS16,
-                          AllocPDF,
-                          AllocStaticCommand,
-                          AllocHistogramLiteral,
-                          AllocHistogramCommand,
-                          AllocHistogramDistance,
-                          AllocHistogramPair,
-                          AllocContextType,
-                          AllocHuffmanTree,
-                          AllocZopfliNode,
-                                    &gt; {
+<span class="kw">impl</span>&lt;
+        AllocU8: Allocator&lt;u8&gt; + Clone,
+        AllocU16: Allocator&lt;u16&gt; + Clone,
+        AllocI32: Allocator&lt;i32&gt; + Clone,
+        AllocU32: Allocator&lt;u32&gt; + Clone,
+        AllocU64: Allocator&lt;u64&gt; + Clone,
+        AllocCommand: Allocator&lt;Command&gt; + Clone,
+        AllocFloatX: Allocator&lt;floatX&gt; + Clone,
+        AllocV8: Allocator&lt;v8&gt; + Clone,
+        AllocS16: Allocator&lt;s16&gt; + Clone,
+        AllocPDF: Allocator&lt;PDF&gt; + Clone,
+        AllocStaticCommand: Allocator&lt;StaticCommand&gt; + Clone,
+        AllocHistogramLiteral: Allocator&lt;HistogramLiteral&gt; + Clone,
+        AllocHistogramCommand: Allocator&lt;HistogramCommand&gt; + Clone,
+        AllocHistogramDistance: Allocator&lt;HistogramDistance&gt; + Clone,
+        AllocHistogramPair: Allocator&lt;HistogramPair&gt; + Clone,
+        AllocContextType: Allocator&lt;ContextType&gt; + Clone,
+        AllocHuffmanTree: Allocator&lt;HuffmanTree&gt; + Clone,
+        AllocZopfliNode: Allocator&lt;ZopfliNode&gt; + Clone,
+    &gt; Clone
+    <span class="kw">for </span>CombiningAllocator&lt;
+        AllocU8,
+        AllocU16,
+        AllocI32,
+        AllocU32,
+        AllocU64,
+        AllocCommand,
+        AllocFloatX,
+        AllocV8,
+        AllocS16,
+        AllocPDF,
+        AllocStaticCommand,
+        AllocHistogramLiteral,
+        AllocHistogramCommand,
+        AllocHistogramDistance,
+        AllocHistogramPair,
+        AllocContextType,
+        AllocHuffmanTree,
+        AllocZopfliNode,
+    &gt;
+{
     <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
-    CombiningAllocator{
-      alloc_u8:  <span class="self">self</span>.alloc_u8.clone(),
-      alloc_u16: <span class="self">self</span>.alloc_u16.clone(),  
-      alloc_i32: <span class="self">self</span>.alloc_i32.clone(),
-      alloc_u32: <span class="self">self</span>.alloc_u32.clone(), 
-      alloc_u64: <span class="self">self</span>.alloc_u64.clone(), 
-      alloc_c:   <span class="self">self</span>.alloc_c.clone(),
-      alloc_f:   <span class="self">self</span>.alloc_f.clone(), 
-      alloc_f32x8:<span class="self">self</span>.alloc_f32x8.clone(),
-      alloc_i16x16:<span class="self">self</span>.alloc_i16x16.clone(),
-      alloc_pdf: <span class="self">self</span>.alloc_pdf.clone(),
-      alloc_sc:  <span class="self">self</span>.alloc_sc.clone(),
-      alloc_hl:  <span class="self">self</span>.alloc_hl.clone(), 
-      alloc_hc:  <span class="self">self</span>.alloc_hc.clone(), 
-      alloc_hd:  <span class="self">self</span>.alloc_hd.clone(),
-      alloc_hp:  <span class="self">self</span>.alloc_hp.clone(), 
-      alloc_ct:  <span class="self">self</span>.alloc_ct.clone(), 
-      alloc_ht:  <span class="self">self</span>.alloc_ht.clone(),
-      alloc_zn:  <span class="self">self</span>.alloc_zn.clone(),
-    }
-        
+        CombiningAllocator {
+            alloc_u8: <span class="self">self</span>.alloc_u8.clone(),
+            alloc_u16: <span class="self">self</span>.alloc_u16.clone(),
+            alloc_i32: <span class="self">self</span>.alloc_i32.clone(),
+            alloc_u32: <span class="self">self</span>.alloc_u32.clone(),
+            alloc_u64: <span class="self">self</span>.alloc_u64.clone(),
+            alloc_c: <span class="self">self</span>.alloc_c.clone(),
+            alloc_f: <span class="self">self</span>.alloc_f.clone(),
+            alloc_f32x8: <span class="self">self</span>.alloc_f32x8.clone(),
+            alloc_i16x16: <span class="self">self</span>.alloc_i16x16.clone(),
+            alloc_pdf: <span class="self">self</span>.alloc_pdf.clone(),
+            alloc_sc: <span class="self">self</span>.alloc_sc.clone(),
+            alloc_hl: <span class="self">self</span>.alloc_hl.clone(),
+            alloc_hc: <span class="self">self</span>.alloc_hc.clone(),
+            alloc_hd: <span class="self">self</span>.alloc_hd.clone(),
+            alloc_hp: <span class="self">self</span>.alloc_hp.clone(),
+            alloc_ct: <span class="self">self</span>.alloc_ct.clone(),
+            alloc_ht: <span class="self">self</span>.alloc_ht.clone(),
+            alloc_zn: <span class="self">self</span>.alloc_zn.clone(),
+        }
     }
 }
 
-<span class="kw">impl</span>&lt;AllocU8:Allocator&lt;u8&gt;+Copy,
-     AllocU16:Allocator&lt;u16&gt;+Copy,
-     AllocI32:Allocator&lt;i32&gt;+Copy,
-     AllocU32:Allocator&lt;u32&gt;+Copy,
-     AllocU64:Allocator&lt;u64&gt;+Copy,
-     AllocCommand:Allocator&lt;Command&gt;+Copy,
-     AllocFloatX:Allocator&lt;floatX&gt;+Copy,
-     AllocV8:Allocator&lt;v8&gt;+Copy,
-     AllocS16:Allocator&lt;s16&gt;+Copy,
-     AllocPDF:Allocator&lt;PDF&gt;+Copy,
-     AllocStaticCommand:Allocator&lt;StaticCommand&gt;+Copy,
-     AllocHistogramLiteral:Allocator&lt;HistogramLiteral&gt;+Copy,
-     AllocHistogramCommand:Allocator&lt;HistogramCommand&gt;+Copy,
-     AllocHistogramDistance:Allocator&lt;HistogramDistance&gt;+Copy,
-     AllocHistogramPair:Allocator&lt;HistogramPair&gt;+Copy,
-     AllocContextType:Allocator&lt;ContextType&gt;+Copy,
-     AllocHuffmanTree:Allocator&lt;HuffmanTree&gt;+Copy,
-     AllocZopfliNode:Allocator&lt;ZopfliNode&gt;+Copy,
-     &gt; Copy <span class="kw">for </span>CombiningAllocator&lt;AllocU8,
-                          AllocU16,
-                          AllocI32,
-                          AllocU32,
-                          AllocU64,
-                          AllocCommand,
-                          AllocFloatX,
-                          AllocV8,
-                          AllocS16,
-                          AllocPDF,
-                          AllocStaticCommand,
-                          AllocHistogramLiteral,
-                          AllocHistogramCommand,
-                          AllocHistogramDistance,
-                          AllocHistogramPair,
-                          AllocContextType,
-                          AllocHuffmanTree,
-                          AllocZopfliNode,
-                                    &gt; {
+<span class="kw">impl</span>&lt;
+        AllocU8: Allocator&lt;u8&gt; + Copy,
+        AllocU16: Allocator&lt;u16&gt; + Copy,
+        AllocI32: Allocator&lt;i32&gt; + Copy,
+        AllocU32: Allocator&lt;u32&gt; + Copy,
+        AllocU64: Allocator&lt;u64&gt; + Copy,
+        AllocCommand: Allocator&lt;Command&gt; + Copy,
+        AllocFloatX: Allocator&lt;floatX&gt; + Copy,
+        AllocV8: Allocator&lt;v8&gt; + Copy,
+        AllocS16: Allocator&lt;s16&gt; + Copy,
+        AllocPDF: Allocator&lt;PDF&gt; + Copy,
+        AllocStaticCommand: Allocator&lt;StaticCommand&gt; + Copy,
+        AllocHistogramLiteral: Allocator&lt;HistogramLiteral&gt; + Copy,
+        AllocHistogramCommand: Allocator&lt;HistogramCommand&gt; + Copy,
+        AllocHistogramDistance: Allocator&lt;HistogramDistance&gt; + Copy,
+        AllocHistogramPair: Allocator&lt;HistogramPair&gt; + Copy,
+        AllocContextType: Allocator&lt;ContextType&gt; + Copy,
+        AllocHuffmanTree: Allocator&lt;HuffmanTree&gt; + Copy,
+        AllocZopfliNode: Allocator&lt;ZopfliNode&gt; + Copy,
+    &gt; Copy
+    <span class="kw">for </span>CombiningAllocator&lt;
+        AllocU8,
+        AllocU16,
+        AllocI32,
+        AllocU32,
+        AllocU64,
+        AllocCommand,
+        AllocFloatX,
+        AllocV8,
+        AllocS16,
+        AllocPDF,
+        AllocStaticCommand,
+        AllocHistogramLiteral,
+        AllocHistogramCommand,
+        AllocHistogramDistance,
+        AllocHistogramPair,
+        AllocContextType,
+        AllocHuffmanTree,
+        AllocZopfliNode,
+    &gt;
+{
 }
 
 <span class="macro">macro_rules! </span>implement_allocator {
-  (<span class="macro-nonterminal">$bound_name</span>: ty,
+    (<span class="macro-nonterminal">$bound_name</span>: ty,
    <span class="macro-nonterminal">$type_name</span>: ty,
    <span class="macro-nonterminal">$sub_type_name</span>: ty,
    <span class="macro-nonterminal">$local_name</span>: ident) =&gt; {
-    <span class="kw">impl</span>&lt;AllocU8:Allocator&lt;u8&gt;,
-         AllocU16:Allocator&lt;u16&gt;,
-         AllocI32:Allocator&lt;i32&gt;,
-         AllocU32:Allocator&lt;u32&gt;,
-         AllocU64:Allocator&lt;u64&gt;,
-         AllocCommand:Allocator&lt;Command&gt;,
-         AllocFloatX:Allocator&lt;floatX&gt;,
-         AllocV8:Allocator&lt;v8&gt;,
-         AllocS16:Allocator&lt;s16&gt;,
-         AllocPDF:Allocator&lt;PDF&gt;,
-         AllocStaticCommand:Allocator&lt;StaticCommand&gt;,
-         AllocHistogramLiteral:Allocator&lt;HistogramLiteral&gt;,
-         AllocHistogramCommand:Allocator&lt;HistogramCommand&gt;,
-         AllocHistogramDistance:Allocator&lt;HistogramDistance&gt;,
-         AllocHistogramPair:Allocator&lt;HistogramPair&gt;,
-         AllocContextType:Allocator&lt;ContextType&gt;,
-         AllocHuffmanTree:Allocator&lt;HuffmanTree&gt;,
-         AllocZopfliNode:Allocator&lt;ZopfliNode&gt;,
-         &gt; Allocator&lt;<span class="macro-nonterminal">$type_name</span>&gt; <span class="kw">for </span>CombiningAllocator&lt;AllocU8,
-                                                 AllocU16,
-                                                 AllocI32,
-                                                 AllocU32,
-                                                 AllocU64,
-                                                 AllocCommand,
-                                                 AllocFloatX,
-                                                 AllocV8,
-                                                 AllocS16,
-                                                 AllocPDF,
-                                                 AllocStaticCommand,
-                                                 AllocHistogramLiteral,
-                                                 AllocHistogramCommand,
-                                                 AllocHistogramDistance,
-                                                 AllocHistogramPair,
-                                                 AllocContextType,
-                                                 AllocHuffmanTree,
-                                                 AllocZopfliNode,
-                                                 &gt; {
-      <span class="kw">type </span>AllocatedMemory = <span class="macro-nonterminal">$sub_type_name</span>;
-      <span class="kw">fn </span>alloc_cell(<span class="kw-2">&amp;mut </span><span class="self">self</span>, size: usize) -&gt; &lt;<span class="self">Self </span><span class="kw">as </span>Allocator&lt;<span class="macro-nonterminal">$type_name</span>&gt;&gt;::AllocatedMemory {
-        <span class="self">self</span>.<span class="macro-nonterminal">$local_name</span>.alloc_cell(size)
-      }
-      <span class="kw">fn </span>free_cell(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: &lt;<span class="self">Self </span><span class="kw">as </span>Allocator&lt;<span class="macro-nonterminal">$type_name</span>&gt;&gt;::AllocatedMemory) {
-        <span class="self">self</span>.<span class="macro-nonterminal">$local_name</span>.free_cell(data)
-      }
-    }
-};
+        <span class="kw">impl</span>&lt;
+                AllocU8: Allocator&lt;u8&gt;,
+                AllocU16: Allocator&lt;u16&gt;,
+                AllocI32: Allocator&lt;i32&gt;,
+                AllocU32: Allocator&lt;u32&gt;,
+                AllocU64: Allocator&lt;u64&gt;,
+                AllocCommand: Allocator&lt;Command&gt;,
+                AllocFloatX: Allocator&lt;floatX&gt;,
+                AllocV8: Allocator&lt;v8&gt;,
+                AllocS16: Allocator&lt;s16&gt;,
+                AllocPDF: Allocator&lt;PDF&gt;,
+                AllocStaticCommand: Allocator&lt;StaticCommand&gt;,
+                AllocHistogramLiteral: Allocator&lt;HistogramLiteral&gt;,
+                AllocHistogramCommand: Allocator&lt;HistogramCommand&gt;,
+                AllocHistogramDistance: Allocator&lt;HistogramDistance&gt;,
+                AllocHistogramPair: Allocator&lt;HistogramPair&gt;,
+                AllocContextType: Allocator&lt;ContextType&gt;,
+                AllocHuffmanTree: Allocator&lt;HuffmanTree&gt;,
+                AllocZopfliNode: Allocator&lt;ZopfliNode&gt;,
+            &gt; Allocator&lt;<span class="macro-nonterminal">$type_name</span>&gt;
+            <span class="kw">for </span>CombiningAllocator&lt;
+                AllocU8,
+                AllocU16,
+                AllocI32,
+                AllocU32,
+                AllocU64,
+                AllocCommand,
+                AllocFloatX,
+                AllocV8,
+                AllocS16,
+                AllocPDF,
+                AllocStaticCommand,
+                AllocHistogramLiteral,
+                AllocHistogramCommand,
+                AllocHistogramDistance,
+                AllocHistogramPair,
+                AllocContextType,
+                AllocHuffmanTree,
+                AllocZopfliNode,
+            &gt;
+        {
+            <span class="kw">type </span>AllocatedMemory = <span class="macro-nonterminal">$sub_type_name</span>;
+            <span class="kw">fn </span>alloc_cell(
+                <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+                size: usize,
+            ) -&gt; &lt;<span class="self">Self </span><span class="kw">as </span>Allocator&lt;<span class="macro-nonterminal">$type_name</span>&gt;&gt;::AllocatedMemory {
+                <span class="self">self</span>.<span class="macro-nonterminal">$local_name</span>.alloc_cell(size)
+            }
+            <span class="kw">fn </span>free_cell(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: &lt;<span class="self">Self </span><span class="kw">as </span>Allocator&lt;<span class="macro-nonterminal">$type_name</span>&gt;&gt;::AllocatedMemory) {
+                <span class="self">self</span>.<span class="macro-nonterminal">$local_name</span>.free_cell(data)
+            }
+        }
+    };
 }
 
 <span class="macro">implement_allocator!</span>(AllocU8, u8, AllocU8::AllocatedMemory, alloc_u8);
@@ -862,19 +985,62 @@ impl &lt;T1, T2, AllocT1:Allocator&lt;T1&gt;, AllocT2:Allocator&lt;T2&gt;&gt; Al
 <span class="macro">implement_allocator!</span>(AllocI32, i32, AllocI32::AllocatedMemory, alloc_i32);
 <span class="macro">implement_allocator!</span>(AllocU32, u32, AllocU32::AllocatedMemory, alloc_u32);
 <span class="macro">implement_allocator!</span>(AllocU64, u64, AllocU64::AllocatedMemory, alloc_u64);
-<span class="macro">implement_allocator!</span>(AllocCommand, Command, AllocCommand::AllocatedMemory, alloc_c);
+<span class="macro">implement_allocator!</span>(
+    AllocCommand,
+    Command,
+    AllocCommand::AllocatedMemory,
+    alloc_c
+);
 <span class="macro">implement_allocator!</span>(AllocFloatX, floatX, AllocFloatX::AllocatedMemory, alloc_f);
 <span class="macro">implement_allocator!</span>(AllocV8, v8, AllocV8::AllocatedMemory, alloc_f32x8);
 <span class="macro">implement_allocator!</span>(AllocS16, s16, AllocS16::AllocatedMemory, alloc_i16x16);
 <span class="macro">implement_allocator!</span>(AllocPDF, PDF, AllocPDF::AllocatedMemory, alloc_pdf);
-<span class="macro">implement_allocator!</span>(AllocStaticCommand, StaticCommand, AllocStaticCommand::AllocatedMemory, alloc_sc);
-<span class="macro">implement_allocator!</span>(AllocHistogramLiteral, HistogramLiteral, AllocHistogramLiteral::AllocatedMemory, alloc_hl);
-<span class="macro">implement_allocator!</span>(AllocHistogramCommand, HistogramCommand, AllocHistogramCommand::AllocatedMemory, alloc_hc);
-<span class="macro">implement_allocator!</span>(AllocHistogramDistance, HistogramDistance, AllocHistogramDistance::AllocatedMemory, alloc_hd);
-<span class="macro">implement_allocator!</span>(AllocHistogramPair, HistogramPair, AllocHistogramPair::AllocatedMemory, alloc_hp);
-<span class="macro">implement_allocator!</span>(AllocContextType, ContextType, AllocContextType::AllocatedMemory, alloc_ct);
-<span class="macro">implement_allocator!</span>(AllocHuffmanTree, HuffmanTree, AllocHuffmanTree::AllocatedMemory, alloc_ht);
-<span class="macro">implement_allocator!</span>(AllocZopfliNode, ZopfliNode, AllocZopfliNode::AllocatedMemory, alloc_zn);
-
-
+<span class="macro">implement_allocator!</span>(
+    AllocStaticCommand,
+    StaticCommand,
+    AllocStaticCommand::AllocatedMemory,
+    alloc_sc
+);
+<span class="macro">implement_allocator!</span>(
+    AllocHistogramLiteral,
+    HistogramLiteral,
+    AllocHistogramLiteral::AllocatedMemory,
+    alloc_hl
+);
+<span class="macro">implement_allocator!</span>(
+    AllocHistogramCommand,
+    HistogramCommand,
+    AllocHistogramCommand::AllocatedMemory,
+    alloc_hc
+);
+<span class="macro">implement_allocator!</span>(
+    AllocHistogramDistance,
+    HistogramDistance,
+    AllocHistogramDistance::AllocatedMemory,
+    alloc_hd
+);
+<span class="macro">implement_allocator!</span>(
+    AllocHistogramPair,
+    HistogramPair,
+    AllocHistogramPair::AllocatedMemory,
+    alloc_hp
+);
+<span class="macro">implement_allocator!</span>(
+    AllocContextType,
+    ContextType,
+    AllocContextType::AllocatedMemory,
+    alloc_ct
+);
+<span class="macro">implement_allocator!</span>(
+    AllocHuffmanTree,
+    HuffmanTree,
+    AllocHuffmanTree::AllocatedMemory,
+    alloc_ht
+);
+<span class="macro">implement_allocator!</span>(
+    AllocZopfliNode,
+    ZopfliNode,
+    AllocZopfliNode::AllocatedMemory,
+    alloc_zn
+);
 </code></pre></div></section></main></body></html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-3.4.0/src/enc/multithreading.rs`."><title>multithreading.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-3.5.0/src/enc/multithreading.rs`."><title>multithreading.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-ac92e1bbe349e143.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0 (07dca489a 2024-02-04)" data-channel="1.76.0" data-search-js="search-2b6ce74ff89ae146.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-f2adc0d6ca4d09fb.js"></script><script defer src="../../../static.files/src-script-39ed315d46fb705f.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-305769736d49e732.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-feafe1bb7466e4bd.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -147,152 +147,228 @@
 <a href="#146" id="146">146</a>
 <a href="#147" id="147">147</a>
 <a href="#148" id="148">148</a>
-</pre></div><pre class="rust"><code><span class="attr">#![cfg(feature=<span class="string">"std"</span>)]
-</span><span class="kw">use </span>core::mem;
-<span class="kw">use </span>std;
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+</pre></div><pre class="rust"><code><span class="attr">#![cfg(feature = <span class="string">"std"</span>)]
+</span><span class="kw">use </span>alloc::{Allocator, SliceWrapper};
 <span class="kw">use </span>core::marker::PhantomData;
-<span class="kw">use </span>std::thread::{
-    JoinHandle,
-};
-<span class="kw">use </span>alloc::{SliceWrapper, Allocator};
-<span class="kw">use </span>enc::BrotliAlloc;
-<span class="kw">use </span>enc::BrotliEncoderParams;
+<span class="kw">use </span>core::mem;
 <span class="kw">use </span>enc::backward_references::UnionHasher;
 <span class="kw">use </span>enc::threading::{
-  CompressMulti,
-  SendAlloc,
-  InternalSendAlloc,
-  BatchSpawnable,
-  BatchSpawnableLite,
-  Joinable,
-  Owned,
-  OwnedRetriever,
-  CompressionThreadResult,
-  InternalOwned,
-  BrotliEncoderThreadError,
-  AnyBoxConstructor,
-  PoisonedThreadError,
+    AnyBoxConstructor, BatchSpawnable, BatchSpawnableLite, BrotliEncoderThreadError, CompressMulti,
+    CompressionThreadResult, InternalOwned, InternalSendAlloc, Joinable, Owned, OwnedRetriever,
+    PoisonedThreadError, SendAlloc,
 };
+<span class="kw">use </span>enc::BrotliAlloc;
+<span class="kw">use </span>enc::BrotliEncoderParams;
+<span class="kw">use </span>std;
+<span class="kw">use </span>std::thread::JoinHandle;
 
 <span class="comment">// in-place thread create
 
 </span><span class="kw">use </span>std::sync::RwLock;
 
+<span class="kw">pub struct </span>MultiThreadedJoinable&lt;T: Send + <span class="lifetime">'static</span>, U: Send + <span class="lifetime">'static</span>&gt;(
+    JoinHandle&lt;T&gt;,
+    PhantomData&lt;U&gt;,
+);
 
-<span class="kw">pub struct </span>MultiThreadedJoinable&lt;T:Send+<span class="lifetime">'static</span>, U:Send+<span class="lifetime">'static</span>&gt;(JoinHandle&lt;T&gt;, PhantomData&lt;U&gt;);
-
-<span class="kw">impl</span>&lt;T:Send+<span class="lifetime">'static</span>, U:Send+<span class="lifetime">'static</span>+AnyBoxConstructor&gt; Joinable&lt;T, U&gt; <span class="kw">for </span>MultiThreadedJoinable&lt;T, U&gt; {
-  <span class="kw">fn </span>join(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;T, U&gt; {
-      <span class="kw">match </span><span class="self">self</span>.<span class="number">0</span>.join() {
-          <span class="prelude-val">Ok</span>(t) =&gt; <span class="prelude-val">Ok</span>(t),
-          <span class="prelude-val">Err</span>(e) =&gt; <span class="prelude-val">Err</span>(&lt;U <span class="kw">as </span>AnyBoxConstructor&gt;::new(e)),
-      }
-  }
+<span class="kw">impl</span>&lt;T: Send + <span class="lifetime">'static</span>, U: Send + <span class="lifetime">'static </span>+ AnyBoxConstructor&gt; Joinable&lt;T, U&gt;
+    <span class="kw">for </span>MultiThreadedJoinable&lt;T, U&gt;
+{
+    <span class="kw">fn </span>join(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;T, U&gt; {
+        <span class="kw">match </span><span class="self">self</span>.<span class="number">0</span>.join() {
+            <span class="prelude-val">Ok</span>(t) =&gt; <span class="prelude-val">Ok</span>(t),
+            <span class="prelude-val">Err</span>(e) =&gt; <span class="prelude-val">Err</span>(&lt;U <span class="kw">as </span>AnyBoxConstructor&gt;::new(e)),
+        }
+    }
 }
-<span class="kw">pub struct </span>MultiThreadedOwnedRetriever&lt;U:Send+<span class="lifetime">'static</span>&gt;(RwLock&lt;U&gt;);
+<span class="kw">pub struct </span>MultiThreadedOwnedRetriever&lt;U: Send + <span class="lifetime">'static</span>&gt;(RwLock&lt;U&gt;);
 
-<span class="kw">impl</span>&lt;U:Send+<span class="lifetime">'static</span>&gt; OwnedRetriever&lt;U&gt; <span class="kw">for </span>MultiThreadedOwnedRetriever&lt;U&gt; {
-  <span class="kw">fn </span>view&lt;T, F:FnOnce(<span class="kw-2">&amp;</span>U)-&gt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, f:F) -&gt; <span class="prelude-ty">Result</span>&lt;T, PoisonedThreadError&gt; {
-      <span class="kw">match </span><span class="self">self</span>.<span class="number">0</span>.read() {
-          <span class="prelude-val">Ok</span>(u) =&gt; <span class="prelude-val">Ok</span>(f(<span class="kw-2">&amp;*</span>u)),
-          <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(PoisonedThreadError::default()),
-      }
-  }
-  <span class="kw">fn </span>unwrap(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;U, PoisonedThreadError&gt; {
-      <span class="kw">match </span><span class="self">self</span>.<span class="number">0</span>.into_inner() {
-          <span class="prelude-val">Ok</span>(u) =&gt; <span class="prelude-val">Ok</span>(u),
-          <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(PoisonedThreadError::default()),
-      }
-  }
+<span class="kw">impl</span>&lt;U: Send + <span class="lifetime">'static</span>&gt; OwnedRetriever&lt;U&gt; <span class="kw">for </span>MultiThreadedOwnedRetriever&lt;U&gt; {
+    <span class="kw">fn </span>view&lt;T, F: FnOnce(<span class="kw-2">&amp;</span>U) -&gt; T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, f: F) -&gt; <span class="prelude-ty">Result</span>&lt;T, PoisonedThreadError&gt; {
+        <span class="kw">match </span><span class="self">self</span>.<span class="number">0</span>.read() {
+            <span class="prelude-val">Ok</span>(u) =&gt; <span class="prelude-val">Ok</span>(f(<span class="kw-2">&amp;*</span>u)),
+            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(PoisonedThreadError::default()),
+        }
+    }
+    <span class="kw">fn </span>unwrap(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;U, PoisonedThreadError&gt; {
+        <span class="kw">match </span><span class="self">self</span>.<span class="number">0</span>.into_inner() {
+            <span class="prelude-val">Ok</span>(u) =&gt; <span class="prelude-val">Ok</span>(u),
+            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(PoisonedThreadError::default()),
+        }
+    }
 }
-
 
 <span class="attr">#[derive(Default)]
-</span><span class="kw">pub struct </span>MultiThreadedSpawner{}
+</span><span class="kw">pub struct </span>MultiThreadedSpawner {}
 
-
-<span class="kw">fn </span>spawn_work&lt;ReturnValue:Send+<span class="lifetime">'static</span>,
-              ExtraInput:Send+<span class="lifetime">'static</span>,
-              F: Fn(ExtraInput, usize, usize, <span class="kw-2">&amp;</span>U, Alloc) -&gt; ReturnValue+Send+<span class="lifetime">'static</span>,
-              Alloc:BrotliAlloc+Send+<span class="lifetime">'static</span>,
-              U:Send+<span class="lifetime">'static</span>+Sync&gt;(
-  extra_input: ExtraInput,
-  index: usize, num_threads:
-  usize, locked_input:std::sync::Arc&lt;RwLock&lt;U&gt;&gt;,
-  alloc:Alloc, f:F,
-) -&gt; std::thread::JoinHandle&lt;ReturnValue&gt; <span class="kw">where </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory:Send+<span class="lifetime">'static </span>{
-  std::thread::spawn(<span class="kw">move </span>|| {
-      <span class="kw">let </span>t:ReturnValue = locked_input.view(<span class="kw">move </span>|guard:<span class="kw-2">&amp;</span>U|-&gt;ReturnValue {
-          f(extra_input, index, num_threads, guard, alloc)
-      }).unwrap();
-      t
-  })
-}
-
-<span class="kw">impl</span>&lt;ReturnValue:Send+<span class="lifetime">'static</span>, ExtraInput:Send+<span class="lifetime">'static</span>, Alloc:BrotliAlloc+Send+<span class="lifetime">'static</span>, U:Send+<span class="lifetime">'static</span>+Sync&gt; BatchSpawnable&lt;ReturnValue, ExtraInput, Alloc, U&gt; <span class="kw">for </span>MultiThreadedSpawner
-<span class="kw">where </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory:Send+<span class="lifetime">'static </span>{
-  <span class="kw">type </span>JoinHandle = MultiThreadedJoinable&lt;ReturnValue, BrotliEncoderThreadError&gt;;
-  <span class="kw">type </span>FinalJoinHandle = std::sync::Arc&lt;RwLock&lt;U&gt;&gt;;
-    <span class="kw">fn </span>make_spawner(
-    <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-    input: <span class="kw-2">&amp;mut </span>Owned&lt;U&gt;,
-    ) -&gt; <span class="self">Self</span>::FinalJoinHandle {
-      std::sync::Arc::&lt;RwLock&lt;U&gt;&gt;::new(RwLock::new(mem::replace(input, Owned(InternalOwned::Borrowed)).unwrap()))
-    }
-    <span class="kw">fn </span>spawn&lt;F: Fn(ExtraInput, usize, usize, <span class="kw-2">&amp;</span>U, Alloc) -&gt; ReturnValue+Send+<span class="lifetime">'static</span>+Copy&gt;(
-    <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-    input: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::FinalJoinHandle,
-    work:<span class="kw-2">&amp;mut </span>SendAlloc&lt;ReturnValue, ExtraInput, Alloc, <span class="self">Self</span>::JoinHandle&gt;,
+<span class="kw">fn </span>spawn_work&lt;
+    ReturnValue: Send + <span class="lifetime">'static</span>,
+    ExtraInput: Send + <span class="lifetime">'static</span>,
+    F: Fn(ExtraInput, usize, usize, <span class="kw-2">&amp;</span>U, Alloc) -&gt; ReturnValue + Send + <span class="lifetime">'static</span>,
+    Alloc: BrotliAlloc + Send + <span class="lifetime">'static</span>,
+    U: Send + <span class="lifetime">'static </span>+ Sync,
+&gt;(
+    extra_input: ExtraInput,
     index: usize,
     num_threads: usize,
+    locked_input: std::sync::Arc&lt;RwLock&lt;U&gt;&gt;,
+    alloc: Alloc,
     f: F,
+) -&gt; std::thread::JoinHandle&lt;ReturnValue&gt;
+<span class="kw">where
+    </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory: Send + <span class="lifetime">'static</span>,
+{
+    std::thread::spawn(<span class="kw">move </span>|| {
+        <span class="kw">let </span>t: ReturnValue = locked_input
+            .view(<span class="kw">move </span>|guard: <span class="kw-2">&amp;</span>U| -&gt; ReturnValue {
+                f(extra_input, index, num_threads, guard, alloc)
+            })
+            .unwrap();
+        t
+    })
+}
+
+<span class="kw">impl</span>&lt;
+        ReturnValue: Send + <span class="lifetime">'static</span>,
+        ExtraInput: Send + <span class="lifetime">'static</span>,
+        Alloc: BrotliAlloc + Send + <span class="lifetime">'static</span>,
+        U: Send + <span class="lifetime">'static </span>+ Sync,
+    &gt; BatchSpawnable&lt;ReturnValue, ExtraInput, Alloc, U&gt; <span class="kw">for </span>MultiThreadedSpawner
+<span class="kw">where
+    </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory: Send + <span class="lifetime">'static</span>,
+{
+    <span class="kw">type </span>JoinHandle = MultiThreadedJoinable&lt;ReturnValue, BrotliEncoderThreadError&gt;;
+    <span class="kw">type </span>FinalJoinHandle = std::sync::Arc&lt;RwLock&lt;U&gt;&gt;;
+    <span class="kw">fn </span>make_spawner(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>Owned&lt;U&gt;) -&gt; <span class="self">Self</span>::FinalJoinHandle {
+        std::sync::Arc::&lt;RwLock&lt;U&gt;&gt;::new(RwLock::new(
+            mem::replace(input, Owned(InternalOwned::Borrowed)).unwrap(),
+        ))
+    }
+    <span class="kw">fn </span>spawn&lt;F: Fn(ExtraInput, usize, usize, <span class="kw-2">&amp;</span>U, Alloc) -&gt; ReturnValue + Send + <span class="lifetime">'static </span>+ Copy&gt;(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        input: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::FinalJoinHandle,
+        work: <span class="kw-2">&amp;mut </span>SendAlloc&lt;ReturnValue, ExtraInput, Alloc, <span class="self">Self</span>::JoinHandle&gt;,
+        index: usize,
+        num_threads: usize,
+        f: F,
     ) {
-     <span class="kw">let </span>(alloc, extra_input) = work.replace_with_default();
-     <span class="kw">let </span>ret = spawn_work(extra_input, index, num_threads, input.clone(), alloc, f);
-     <span class="kw-2">*</span>work = SendAlloc(InternalSendAlloc::Join(MultiThreadedJoinable(ret, PhantomData::default())));
+        <span class="kw">let </span>(alloc, extra_input) = work.replace_with_default();
+        <span class="kw">let </span>ret = spawn_work(extra_input, index, num_threads, input.clone(), alloc, f);
+        <span class="kw-2">*</span>work = SendAlloc(InternalSendAlloc::Join(MultiThreadedJoinable(
+            ret,
+            PhantomData,
+        )));
     }
 }
-<span class="kw">impl</span>&lt;ReturnValue:Send+<span class="lifetime">'static</span>, ExtraInput:Send+<span class="lifetime">'static</span>,
-     Alloc:BrotliAlloc+Send+<span class="lifetime">'static</span>,
-     U:Send+<span class="lifetime">'static</span>+Sync&gt;
-  BatchSpawnableLite&lt;ReturnValue, ExtraInput, Alloc, U&gt; <span class="kw">for </span>MultiThreadedSpawner
-  <span class="kw">where </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory:Send+<span class="lifetime">'static</span>,
-        &lt;Alloc <span class="kw">as </span>Allocator&lt;u16&gt;&gt;::AllocatedMemory: Send+Sync,
-        &lt;Alloc <span class="kw">as </span>Allocator&lt;u32&gt;&gt;::AllocatedMemory: Send+Sync {
-  <span class="kw">type </span>JoinHandle = &lt;MultiThreadedSpawner <span class="kw">as </span>BatchSpawnable&lt;ReturnValue, ExtraInput, Alloc, U&gt;&gt;::JoinHandle;
-  <span class="kw">type </span>FinalJoinHandle = &lt;MultiThreadedSpawner <span class="kw">as </span>BatchSpawnable&lt;ReturnValue, ExtraInput, Alloc, U&gt;&gt;::FinalJoinHandle;
-  <span class="kw">fn </span>make_spawner(
-    <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-    input: <span class="kw-2">&amp;mut </span>Owned&lt;U&gt;,
-  ) -&gt; <span class="self">Self</span>::FinalJoinHandle {
-     &lt;<span class="self">Self </span><span class="kw">as </span>BatchSpawnable&lt;ReturnValue, ExtraInput, Alloc, U&gt;&gt;::make_spawner(<span class="self">self</span>, input)
-  }
-  <span class="kw">fn </span>spawn(
-    <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-    handle:<span class="kw-2">&amp;mut </span><span class="self">Self</span>::FinalJoinHandle,
-    alloc_per_thread:<span class="kw-2">&amp;mut </span>SendAlloc&lt;ReturnValue, ExtraInput, Alloc, <span class="self">Self</span>::JoinHandle&gt;,
-    index: usize,
-    num_threads: usize,
-    f: <span class="kw">fn</span>(ExtraInput, usize, usize, <span class="kw-2">&amp;</span>U, Alloc) -&gt; ReturnValue,
-  ) {
-   &lt;<span class="self">Self </span><span class="kw">as </span>BatchSpawnable&lt;ReturnValue, ExtraInput, Alloc, U&gt;&gt;::spawn(<span class="self">self</span>, handle, alloc_per_thread, index, num_threads, f)
-  }
+<span class="kw">impl</span>&lt;
+        ReturnValue: Send + <span class="lifetime">'static</span>,
+        ExtraInput: Send + <span class="lifetime">'static</span>,
+        Alloc: BrotliAlloc + Send + <span class="lifetime">'static</span>,
+        U: Send + <span class="lifetime">'static </span>+ Sync,
+    &gt; BatchSpawnableLite&lt;ReturnValue, ExtraInput, Alloc, U&gt; <span class="kw">for </span>MultiThreadedSpawner
+<span class="kw">where
+    </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory: Send + <span class="lifetime">'static</span>,
+    &lt;Alloc <span class="kw">as </span>Allocator&lt;u16&gt;&gt;::AllocatedMemory: Send + Sync,
+    &lt;Alloc <span class="kw">as </span>Allocator&lt;u32&gt;&gt;::AllocatedMemory: Send + Sync,
+{
+    <span class="kw">type </span>JoinHandle =
+        &lt;MultiThreadedSpawner <span class="kw">as </span>BatchSpawnable&lt;ReturnValue, ExtraInput, Alloc, U&gt;&gt;::JoinHandle;
+    <span class="kw">type </span>FinalJoinHandle = &lt;MultiThreadedSpawner <span class="kw">as </span>BatchSpawnable&lt;
+        ReturnValue,
+        ExtraInput,
+        Alloc,
+        U,
+    &gt;&gt;::FinalJoinHandle;
+    <span class="kw">fn </span>make_spawner(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span>Owned&lt;U&gt;) -&gt; <span class="self">Self</span>::FinalJoinHandle {
+        &lt;<span class="self">Self </span><span class="kw">as </span>BatchSpawnable&lt;ReturnValue, ExtraInput, Alloc, U&gt;&gt;::make_spawner(<span class="self">self</span>, input)
+    }
+    <span class="kw">fn </span>spawn(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        handle: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::FinalJoinHandle,
+        alloc_per_thread: <span class="kw-2">&amp;mut </span>SendAlloc&lt;ReturnValue, ExtraInput, Alloc, <span class="self">Self</span>::JoinHandle&gt;,
+        index: usize,
+        num_threads: usize,
+        f: <span class="kw">fn</span>(ExtraInput, usize, usize, <span class="kw-2">&amp;</span>U, Alloc) -&gt; ReturnValue,
+    ) {
+        &lt;<span class="self">Self </span><span class="kw">as </span>BatchSpawnable&lt;ReturnValue, ExtraInput, Alloc, U&gt;&gt;::spawn(
+            <span class="self">self</span>,
+            handle,
+            alloc_per_thread,
+            index,
+            num_threads,
+            f,
+        )
+    }
 }
 
-<span class="kw">pub fn </span>compress_multi&lt;Alloc:BrotliAlloc+Send+<span class="lifetime">'static</span>,
-                      SliceW: SliceWrapper&lt;u8&gt;+Send+<span class="lifetime">'static</span>+Sync&gt; (
-  params:<span class="kw-2">&amp;</span>BrotliEncoderParams,
-  owned_input: <span class="kw-2">&amp;mut </span>Owned&lt;SliceW&gt;,
-  output: <span class="kw-2">&amp;mut </span>[u8],
-  alloc_per_thread:<span class="kw-2">&amp;mut </span>[SendAlloc&lt;CompressionThreadResult&lt;Alloc&gt;,
-                                   UnionHasher&lt;Alloc&gt;,
-                                   Alloc,
-                                   &lt;MultiThreadedSpawner <span class="kw">as </span>BatchSpawnable&lt;CompressionThreadResult&lt;Alloc&gt;,UnionHasher&lt;Alloc&gt;, Alloc, SliceW&gt;&gt;::JoinHandle&gt;],
+<span class="kw">pub fn </span>compress_multi&lt;
+    Alloc: BrotliAlloc + Send + <span class="lifetime">'static</span>,
+    SliceW: SliceWrapper&lt;u8&gt; + Send + <span class="lifetime">'static </span>+ Sync,
+&gt;(
+    params: <span class="kw-2">&amp;</span>BrotliEncoderParams,
+    owned_input: <span class="kw-2">&amp;mut </span>Owned&lt;SliceW&gt;,
+    output: <span class="kw-2">&amp;mut </span>[u8],
+    alloc_per_thread: <span class="kw-2">&amp;mut </span>[SendAlloc&lt;
+        CompressionThreadResult&lt;Alloc&gt;,
+        UnionHasher&lt;Alloc&gt;,
+        Alloc,
+        &lt;MultiThreadedSpawner <span class="kw">as </span>BatchSpawnable&lt;
+            CompressionThreadResult&lt;Alloc&gt;,
+            UnionHasher&lt;Alloc&gt;,
+            Alloc,
+            SliceW,
+        &gt;&gt;::JoinHandle,
+    &gt;],
 ) -&gt; <span class="prelude-ty">Result</span>&lt;usize, BrotliEncoderThreadError&gt;
-  <span class="kw">where </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory: Send,
-        &lt;Alloc <span class="kw">as </span>Allocator&lt;u16&gt;&gt;::AllocatedMemory: Send+Sync,
-        &lt;Alloc <span class="kw">as </span>Allocator&lt;u32&gt;&gt;::AllocatedMemory: Send+Sync {
-  CompressMulti(params, owned_input, output, alloc_per_thread, <span class="kw-2">&amp;mut </span>MultiThreadedSpawner::default())
+<span class="kw">where
+    </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory: Send,
+    &lt;Alloc <span class="kw">as </span>Allocator&lt;u16&gt;&gt;::AllocatedMemory: Send + Sync,
+    &lt;Alloc <span class="kw">as </span>Allocator&lt;u32&gt;&gt;::AllocatedMemory: Send + Sync,
+{
+    CompressMulti(
+        params,
+        owned_input,
+        output,
+        alloc_per_thread,
+        <span class="kw-2">&amp;mut </span>MultiThreadedSpawner::default(),
+    )
 }
-
 </code></pre></div></section></main></body></html>
