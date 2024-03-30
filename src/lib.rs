@@ -8,7 +8,7 @@ use objc_id::ShareId;
 use raw_nspanel::RawNSPanel;
 use tauri::{
     plugin::{Builder, TauriPlugin},
-    Manager, Runtime, Window,
+    Manager, Runtime, WebviewWindow,
 };
 
 pub extern crate block;
@@ -25,16 +25,16 @@ pub struct Store {
     panels: HashMap<String, ShareId<RawNSPanel>>,
 }
 
-pub struct PanelManager(pub Mutex<Store>);
+pub struct WebviewPanelManager(pub Mutex<Store>);
 
-impl Default for PanelManager {
+impl Default for WebviewPanelManager {
     fn default() -> Self {
         Self(Mutex::new(Store::default()))
     }
 }
 
 pub trait ManagerExt<R: Runtime> {
-    fn get_panel(&self, label: &str) -> Result<ShareId<RawNSPanel>, Error>;
+    fn get_webview_panel(&self, label: &str) -> Result<ShareId<RawNSPanel>, Error>;
 }
 
 #[derive(Debug)]
@@ -43,8 +43,8 @@ pub enum Error {
 }
 
 impl<R: Runtime, T: Manager<R>> ManagerExt<R> for T {
-    fn get_panel(&self, label: &str) -> Result<ShareId<RawNSPanel>, Error> {
-        let manager = self.state::<self::PanelManager>();
+    fn get_webview_panel(&self, label: &str) -> Result<ShareId<RawNSPanel>, Error> {
+        let manager = self.state::<self::WebviewPanelManager>();
         let manager = manager.0.lock().unwrap();
 
         match manager.panels.get(label) {
@@ -55,25 +55,27 @@ impl<R: Runtime, T: Manager<R>> ManagerExt<R> for T {
 }
 
 #[derive(Default)]
-pub struct PanelConfig {
+pub struct WebviewPanelConfig {
     pub delegate: Option<id>,
 }
 
-pub trait WindowExt<R: Runtime> {
+pub trait WebviewWindowExt<R: Runtime> {
     fn to_panel(&self) -> tauri::Result<ShareId<RawNSPanel>>;
 }
 
-impl<R: Runtime> WindowExt<R> for Window<R> {
+impl<R: Runtime> WebviewWindowExt<R> for WebviewWindow<R> {
     fn to_panel(&self) -> tauri::Result<ShareId<RawNSPanel>> {
         let panel = RawNSPanel::from_window(self.to_owned());
         let shared_panel = panel.share();
-        let manager = self.state::<self::PanelManager>();
+        let manager = self.state::<self::WebviewPanelManager>();
+
         manager
             .0
             .lock()
             .unwrap()
             .panels
             .insert(self.label().into(), shared_panel.clone());
+
         Ok(shared_panel)
     }
 }
@@ -81,8 +83,9 @@ impl<R: Runtime> WindowExt<R> for Window<R> {
 /// Initializes the plugin.
 pub fn init<R: Runtime>() -> TauriPlugin<R> {
     Builder::new("nspanel")
-        .setup(|app| {
-            app.manage(self::PanelManager::default());
+        .setup(|app, _api| {
+            app.manage(self::WebviewPanelManager::default());
+
             Ok(())
         })
         .build()

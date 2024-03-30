@@ -13,7 +13,7 @@ use objc::{
 };
 use objc_foundation::INSObject;
 use objc_id::{Id, ShareId};
-use tauri::{Runtime, Window};
+use tauri::{Runtime, WebviewWindow};
 
 bitflags! {
     struct NSTrackingAreaOptions: u32 {
@@ -175,8 +175,8 @@ impl RawNSPanel {
         let () = unsafe { msg_send![view, addTrackingArea: track_view] };
     }
 
-    /// Create an NSPanel from a Tauri window
-    pub fn from_window<R: Runtime>(window: Window<R>) -> Id<Self> {
+    /// Create an NSPanel from a Tauri Webview Window
+    pub fn from_window<R: Runtime>(window: WebviewWindow<R>) -> Id<Self> {
         let nswindow: id = window.ns_window().unwrap() as _;
         let nspanel_class: id = unsafe { msg_send![Self::class(), class] };
         unsafe {

@@ -12,7 +12,7 @@ Install the plugin by adding the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-tauri-nspanel = { git = "https://github.com/ahkohd/tauri-nspanel" }
+tauri-nspanel = { git = "https://github.com/ahkohd/tauri-nspanel", branch = "v2" }
 ```
 
 # Usage
@@ -33,7 +33,7 @@ fn main() {
 2. To swizzle a window's `NSWindow` to `NSPanel`, use the `to_panel()` method:
 
 ```rust
-use tauri_nspanel::WindowExt;
+use tauri_nspanel::WebviewWindowExt;
 
 // ...
 let panel = window.to_panel().unwrap();
@@ -41,16 +41,16 @@ let panel = window.to_panel().unwrap();
 
 The window will be swizzled to `NSPanel`.
 
-> Only call the `to_panel()` method once on a window.
+> Only call the `to_panel()` method once on a webview window.
 
-3. To access your panels, use the `app_handle.get_panel("label")`:
+3. To access your panels, use the `app_handle.get_webview_panel("label")`:
 
 ```rust
 use tauri_nspanel::ManagerExt;
 
 // ...
 
-let my_panel = app_handle.get_panel("main");
+let my_panel = app_handle.get_webview_panel("main");
 ```
 
 4. To respond to panel events, such as resizing, moving, exposing, and minimizing ([See the exhaustive list](https://developer.apple.com/documentation/appkit/nswindowdelegate?language=objc)), you need to setup a `NSWindowDelegate` for your panel.

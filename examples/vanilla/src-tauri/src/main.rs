@@ -3,8 +3,8 @@
   windows_subsystem = "windows"
 )]
 
-use tauri::{AppHandle, Manager, Window, Wry};
-use tauri_nspanel::{panel_delegate, ManagerExt, WindowExt};
+use tauri::{AppHandle, Manager, WebviewWindow};
+use tauri_nspanel::{panel_delegate, ManagerExt, WebviewWindowExt};
 
 fn main() {
   tauri::Builder::default()
@@ -15,15 +15,17 @@ fn main() {
       close_panel
     ])
     .setup(|app| {
-      let window = app.handle().get_window("main").unwrap();
-      init(window);
+      init(app.app_handle());
+
       Ok(())
     })
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
 
-fn init(window: Window<Wry>) {
+fn init(app_handle: &AppHandle) {
+  let window: WebviewWindow = app_handle.get_webview_window("main").unwrap();
+
   let panel = window.to_panel().unwrap();
 
   let delegate = panel_delegate!(MyPanelDelegate {
@@ -31,11 +33,13 @@ fn init(window: Window<Wry>) {
     window_did_resign_key
   });
 
-  let handle = window.app_handle();
+  let handle = app_handle.to_owned();
+
   delegate.set_listener(Box::new(move |delegate_name: String| {
     match delegate_name.as_str() {
       "window_did_become_key" => {
         let app_name = handle.package_info().name.to_owned();
+
         println!("[info]: {:?} panel becomes key window!", app_name);
       }
       "window_did_resign_key" => {
@@ -49,20 +53,24 @@ fn init(window: Window<Wry>) {
 }
 
 #[tauri::command]
-fn show_panel(handle: AppHandle<Wry>) {
-  let panel = handle.get_panel("main").unwrap();
+fn show_panel(handle: AppHandle) {
+  let panel = handle.get_webview_panel("main").unwrap();
+
   panel.show();
 }
 
 #[tauri::command]
-fn hide_panel(handle: AppHandle<Wry>) {
-  let panel = handle.get_panel("main").unwrap();
+fn hide_panel(handle: AppHandle) {
+  let panel = handle.get_webview_panel("main").unwrap();
+
   panel.order_out(None);
 }
 
 #[tauri::command]
-fn close_panel(handle: AppHandle<Wry>) {
-  let panel = handle.get_panel("main").unwrap();
+fn close_panel(handle: AppHandle) {
+  let panel = handle.get_webview_panel("main").unwrap();
+
   panel.released_when_closed(true);
+
   panel.close();
 }
