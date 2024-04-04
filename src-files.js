@@ -77,7 +77,7 @@ var srcIndex = new Map(JSON.parse('[\
 ["ident_case",["",[],["lib.rs"]]],\
 ["idna",["",[],["lib.rs","punycode.rs","uts46.rs"]]],\
 ["ignore",["",[],["default_types.rs","dir.rs","gitignore.rs","lib.rs","overrides.rs","pathutil.rs","types.rs","walk.rs"]]],\
-["indexmap",["",[["map",[["core",[],["entry.rs","raw.rs","raw_entry_v1.rs"]]],["core.rs","iter.rs","slice.rs"]],["set",[],["iter.rs","slice.rs"]]],["arbitrary.rs","lib.rs","macros.rs","map.rs","mutable_keys.rs","set.rs","util.rs"]]],\
+["indexmap",["",[["map",[["core",[],["entry.rs","raw.rs","raw_entry_v1.rs"]]],["core.rs","iter.rs","mutable.rs","slice.rs"]],["set",[],["iter.rs","mutable.rs","slice.rs"]]],["arbitrary.rs","lib.rs","macros.rs","map.rs","set.rs","util.rs"]]],\
 ["infer",["",[["matchers",[],["app.rs","archive.rs","audio.rs","book.rs","doc.rs","font.rs","image.rs","mod.rs","odf.rs","text.rs","video.rs"]]],["lib.rs","map.rs"]]],\
 ["instant",["",[],["lib.rs","native.rs"]]],\
 ["itoa",["",[],["lib.rs","udiv128.rs"]]],\
@@ -125,7 +125,6 @@ var srcIndex = new Map(JSON.parse('[\
 ["regex_syntax",["",[["ast",[],["mod.rs","parse.rs","print.rs","visitor.rs"]],["hir",[],["interval.rs","literal.rs","mod.rs","print.rs","translate.rs","visitor.rs"]],["unicode_tables",[],["mod.rs"]]],["debug.rs","either.rs","error.rs","lib.rs","parser.rs","rank.rs","unicode.rs","utf8.rs"]]],\
 ["rustix",["",[["backend",[["libc",[["fs",[],["dir.rs","makedev.rs","mod.rs","syscalls.rs","types.rs"]],["io",[],["errno.rs","mod.rs","syscalls.rs","types.rs"]],["ugid",[],["mod.rs","syscalls.rs"]]],["c.rs","conv.rs","mod.rs"]]]],["fs",[],["abs.rs","at.rs","constants.rs","cwd.rs","dir.rs","fcntl.rs","fcntl_apple.rs","fcopyfile.rs","fd.rs","getpath.rs","id.rs","makedev.rs","mod.rs","seek_from.rs","sync.rs","xattr.rs"]],["io",[],["close.rs","dup.rs","errno.rs","fcntl.rs","ioctl.rs","mod.rs","read_write.rs"]],["ioctl",[],["bsd.rs","mod.rs","patterns.rs"]],["maybe_polyfill",[["std",[],["mod.rs"]]]],["path",[],["arg.rs","mod.rs"]]],["bitcast.rs","buffer.rs","cstr.rs","ffi.rs","lib.rs","timespec.rs","ugid.rs","utils.rs","weak.rs"]]],\
 ["ryu",["",[["buffer",[],["mod.rs"]],["pretty",[],["exponent.rs","mantissa.rs","mod.rs"]]],["common.rs","d2s.rs","d2s_full_table.rs","d2s_intrinsics.rs","digit_table.rs","f2s.rs","f2s_intrinsics.rs","lib.rs"]]],\
-["safemem",["",[],["lib.rs"]]],\
 ["same_file",["",[],["lib.rs","unix.rs"]]],\
 ["scopeguard",["",[],["lib.rs"]]],\
 ["selectors",["",[],["attr.rs","bloom.rs","builder.rs","context.rs","lib.rs","matching.rs","nth_index_cache.rs","parser.rs","sink.rs","tree.rs","visitor.rs"]]],\
