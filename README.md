@@ -1,4 +1,4 @@
-Swizzle Tauri's [`NSWindow`](https://developer.apple.com/documentation/appkit/nswindow) to [`NSPanel`](https://developer.apple.com/documentation/appkit/nspanel)
+Convert a Tauri window ([`NSWindow`](https://developer.apple.com/documentation/appkit/nswindow)) to panel ([`NSPanel`](https://developer.apple.com/documentation/appkit/nspanel))
 
 # Install
 
