@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/json-patch-1.2.0/src/diff.rs`."><title>diff.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="json_patch" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.2 (25ef9e3d8 2024-04-09)" data-channel="1.77.2" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/json-patch-1.4.0/src/diff.rs`."><title>diff.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="json_patch" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../json_patch/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -243,74 +243,241 @@
 <a href="#241" id="241">241</a>
 <a href="#242" id="242">242</a>
 <a href="#243" id="243">243</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>serde_json::Value;
+<a href="#244" id="244">244</a>
+<a href="#245" id="245">245</a>
+<a href="#246" id="246">246</a>
+<a href="#247" id="247">247</a>
+<a href="#248" id="248">248</a>
+<a href="#249" id="249">249</a>
+<a href="#250" id="250">250</a>
+<a href="#251" id="251">251</a>
+<a href="#252" id="252">252</a>
+<a href="#253" id="253">253</a>
+<a href="#254" id="254">254</a>
+<a href="#255" id="255">255</a>
+<a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
+<a href="#263" id="263">263</a>
+<a href="#264" id="264">264</a>
+<a href="#265" id="265">265</a>
+<a href="#266" id="266">266</a>
+<a href="#267" id="267">267</a>
+<a href="#268" id="268">268</a>
+<a href="#269" id="269">269</a>
+<a href="#270" id="270">270</a>
+<a href="#271" id="271">271</a>
+<a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
+<a href="#274" id="274">274</a>
+<a href="#275" id="275">275</a>
+<a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
+<a href="#351" id="351">351</a>
+<a href="#352" id="352">352</a>
+<a href="#353" id="353">353</a>
+<a href="#354" id="354">354</a>
+<a href="#355" id="355">355</a>
+<a href="#356" id="356">356</a>
+<a href="#357" id="357">357</a>
+<a href="#358" id="358">358</a>
+<a href="#359" id="359">359</a>
+<a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
+<a href="#362" id="362">362</a>
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::Patch;
+<span class="kw">use </span>serde_json::{Map, Value};
+<span class="kw">use </span>std::fmt::Write;
 
-<span class="kw">struct </span>PatchDiffer {
-    path: String,
-    patch: <span class="kw">super</span>::Patch,
-    shift: usize,
-}
-
-<span class="kw">impl </span>PatchDiffer {
-    <span class="kw">fn </span>new() -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            path: <span class="string">""</span>.to_string(),
-            patch: <span class="kw">super</span>::Patch(Vec::new()),
-            shift: <span class="number">0</span>,
+<span class="kw">fn </span>diff_impl(left: <span class="kw-2">&amp;</span>Value, right: <span class="kw-2">&amp;</span>Value, pointer: <span class="kw-2">&amp;mut </span>String, patch: <span class="kw-2">&amp;mut </span><span class="kw">super</span>::Patch) {
+    <span class="kw">match </span>(left, right) {
+        (Value::Object(<span class="kw-2">ref </span>left_obj), Value::Object(<span class="kw-2">ref </span>right_obj)) =&gt; {
+            diff_object(left_obj, right_obj, pointer, patch);
+        }
+        (Value::Array(<span class="kw-2">ref </span>left_array), Value::Array(<span class="kw-2">ref </span>ref_array)) =&gt; {
+            diff_array(left_array, ref_array, pointer, patch);
+        }
+        (<span class="kw">_</span>, <span class="kw">_</span>) <span class="kw">if </span>left == right =&gt; {
+            <span class="comment">// Nothing to do
+        </span>}
+        (<span class="kw">_</span>, <span class="kw">_</span>) =&gt; {
+            <span class="comment">// Values are different, replace the value at the path
+            </span>patch
+                .<span class="number">0
+                </span>.push(<span class="kw">super</span>::PatchOperation::Replace(<span class="kw">super</span>::ReplaceOperation {
+                    path: pointer.clone(),
+                    value: right.clone(),
+                }));
         }
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; treediff::Delegate&lt;<span class="lifetime">'a</span>, treediff::value::Key, Value&gt; <span class="kw">for </span>PatchDiffer {
-    <span class="kw">fn </span>push(<span class="kw-2">&amp;mut </span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>treediff::value::Key) {
-        <span class="kw">use </span>std::fmt::Write;
-        <span class="self">self</span>.path.push(<span class="string">'/'</span>);
-        <span class="kw">match </span><span class="kw-2">*</span>key {
-            treediff::value::Key::Index(idx) =&gt; <span class="macro">write!</span>(<span class="self">self</span>.path, <span class="string">"{}"</span>, idx - <span class="self">self</span>.shift).unwrap(),
-            treediff::value::Key::String(<span class="kw-2">ref </span>key) =&gt; append_path(<span class="kw-2">&amp;mut </span><span class="self">self</span>.path, key),
+<span class="kw">fn </span>diff_array(left: <span class="kw-2">&amp;</span>[Value], right: <span class="kw-2">&amp;</span>[Value], pointer: <span class="kw-2">&amp;mut </span>String, patch: <span class="kw-2">&amp;mut </span>Patch) {
+    <span class="kw">let </span>len = left.len().max(right.len());
+    <span class="kw">let </span><span class="kw-2">mut </span>shift = <span class="number">0usize</span>;
+    <span class="kw">let </span>prefix = pointer.len();
+    <span class="kw">for </span>idx <span class="kw">in </span><span class="number">0</span>..len {
+        <span class="macro">write!</span>(pointer, <span class="string">"/{}"</span>, idx - shift).unwrap();
+        <span class="kw">match </span>(left.get(idx), right.get(idx)) {
+            (<span class="prelude-val">Some</span>(left), <span class="prelude-val">Some</span>(right)) =&gt; {
+                <span class="comment">// Both array have an element at this index
+                </span>diff_impl(left, right, pointer, patch);
+            }
+            (<span class="prelude-val">Some</span>(_left), <span class="prelude-val">None</span>) =&gt; {
+                <span class="comment">// The left array has an element at this index, but not the right
+                </span>shift += <span class="number">1</span>;
+                patch
+                    .<span class="number">0
+                    </span>.push(<span class="kw">super</span>::PatchOperation::Remove(<span class="kw">super</span>::RemoveOperation {
+                        path: pointer.clone(),
+                    }));
+            }
+            (<span class="prelude-val">None</span>, <span class="prelude-val">Some</span>(right)) =&gt; {
+                <span class="comment">// The right array has an element at this index, but not the left
+                </span>patch
+                    .<span class="number">0
+                    </span>.push(<span class="kw">super</span>::PatchOperation::Add(<span class="kw">super</span>::AddOperation {
+                        path: pointer.clone(),
+                        value: right.clone(),
+                    }));
+            }
+            (<span class="prelude-val">None</span>, <span class="prelude-val">None</span>) =&gt; {
+                <span class="macro">unreachable!</span>()
+            }
         }
+        pointer.truncate(prefix);
     }
+}
 
-    <span class="kw">fn </span>pop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="kw">let </span>pos = <span class="self">self</span>.path.rfind(<span class="string">'/'</span>).unwrap_or(<span class="number">0</span>);
-        <span class="self">self</span>.path.truncate(pos);
-        <span class="self">self</span>.shift = <span class="number">0</span>;
-    }
-
-    <span class="kw">fn </span>removed&lt;<span class="lifetime">'b</span>&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, k: <span class="kw-2">&amp;</span><span class="lifetime">'b </span>treediff::value::Key, _v: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Value) {
-        <span class="kw">let </span>len = <span class="self">self</span>.path.len();
-        <span class="self">self</span>.push(k);
-        <span class="self">self</span>.patch
-            .<span class="number">0
-            </span>.push(<span class="kw">super</span>::PatchOperation::Remove(<span class="kw">super</span>::RemoveOperation {
-                path: <span class="self">self</span>.path.clone(),
-            }));
-        <span class="comment">// Shift indices, we are deleting array elements
-        </span><span class="kw">if let </span>treediff::value::Key::Index(<span class="kw">_</span>) = k {
-            <span class="self">self</span>.shift += <span class="number">1</span>;
+<span class="kw">fn </span>diff_object(
+    left: <span class="kw-2">&amp;</span>Map&lt;String, Value&gt;,
+    right: <span class="kw-2">&amp;</span>Map&lt;String, Value&gt;,
+    pointer: <span class="kw-2">&amp;mut </span>String,
+    patch: <span class="kw-2">&amp;mut </span>Patch,
+) {
+    <span class="comment">// Add or replace keys in the right object
+    </span><span class="kw">let </span>prefix = pointer.len();
+    <span class="kw">for </span>(key, right_value) <span class="kw">in </span>right {
+        pointer.push(<span class="string">'/'</span>);
+        append_path(pointer, key);
+        <span class="kw">match </span>left.get(key) {
+            <span class="prelude-val">Some</span>(left_value) =&gt; {
+                diff_impl(left_value, right_value, pointer, patch);
+            }
+            <span class="prelude-val">None </span>=&gt; {
+                patch
+                    .<span class="number">0
+                    </span>.push(<span class="kw">super</span>::PatchOperation::Add(<span class="kw">super</span>::AddOperation {
+                        path: pointer.clone(),
+                        value: right_value.clone(),
+                    }));
+            }
         }
-        <span class="self">self</span>.path.truncate(len);
+        pointer.truncate(prefix);
     }
 
-    <span class="kw">fn </span>added(<span class="kw-2">&amp;mut </span><span class="self">self</span>, k: <span class="kw-2">&amp;</span>treediff::value::Key, v: <span class="kw-2">&amp;</span>Value) {
-        <span class="kw">let </span>len = <span class="self">self</span>.path.len();
-        <span class="self">self</span>.push(k);
-        <span class="self">self</span>.patch
-            .<span class="number">0
-            </span>.push(<span class="kw">super</span>::PatchOperation::Add(<span class="kw">super</span>::AddOperation {
-                path: <span class="self">self</span>.path.clone(),
-                value: v.clone(),
-            }));
-        <span class="self">self</span>.path.truncate(len);
-    }
-
-    <span class="kw">fn </span>modified(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _old: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Value, new: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Value) {
-        <span class="self">self</span>.patch
-            .<span class="number">0
-            </span>.push(<span class="kw">super</span>::PatchOperation::Replace(<span class="kw">super</span>::ReplaceOperation {
-                path: <span class="self">self</span>.path.clone(),
-                value: new.clone(),
-            }));
+    <span class="comment">// Remove keys that are not in the right object
+    </span><span class="kw">for </span>key <span class="kw">in </span>left.keys() {
+        <span class="kw">if </span>!right.contains_key(key) {
+            pointer.push(<span class="string">'/'</span>);
+            append_path(pointer, key);
+            patch
+                .<span class="number">0
+                </span>.push(<span class="kw">super</span>::PatchOperation::Remove(<span class="kw">super</span>::RemoveOperation {
+                    path: pointer.clone(),
+                }));
+            pointer.truncate(prefix);
+        }
     }
 }
 
@@ -360,9 +527,9 @@
 ///
 /// let p = diff(&amp;left, &amp;right);
 /// assert_eq!(p, from_value::&lt;Patch&gt;(json!([
+///   { "op": "replace", "path": "/title", "value": "Hello!" },
 ///   { "op": "remove", "path": "/author/familyName" },
 ///   { "op": "remove", "path": "/tags/1" },
-///   { "op": "replace", "path": "/title", "value": "Hello!" },
 ///   { "op": "add", "path": "/phoneNumber", "value": "+01-123-456-7890" },
 /// ])).unwrap());
 ///
@@ -373,9 +540,10 @@
 /// # }
 /// ```
 </span><span class="kw">pub fn </span>diff(left: <span class="kw-2">&amp;</span>Value, right: <span class="kw-2">&amp;</span>Value) -&gt; <span class="kw">super</span>::Patch {
-    <span class="kw">let </span><span class="kw-2">mut </span>differ = PatchDiffer::new();
-    treediff::diff(left, right, <span class="kw-2">&amp;mut </span>differ);
-    differ.patch
+    <span class="kw">let </span><span class="kw-2">mut </span>patch = <span class="kw">super</span>::Patch(Vec::new());
+    <span class="kw">let </span><span class="kw-2">mut </span>path = String::new();
+    diff_impl(left, right, <span class="kw-2">&amp;mut </span>path, <span class="kw-2">&amp;mut </span>patch);
+    patch
 }
 
 <span class="attr">#[cfg(test)]
@@ -384,92 +552,120 @@
 
     <span class="attr">#[test]
     </span><span class="kw">pub fn </span>replace_all() {
-        <span class="kw">let </span>left = <span class="macro">json!</span>({<span class="string">"title"</span>: <span class="string">"Hello!"</span>});
-        <span class="kw">let </span>p = <span class="kw">super</span>::diff(<span class="kw-2">&amp;</span>left, <span class="kw-2">&amp;</span>Value::Null);
+        <span class="kw">let </span><span class="kw-2">mut </span>left = <span class="macro">json!</span>({<span class="string">"title"</span>: <span class="string">"Hello!"</span>});
+        <span class="kw">let </span>patch = <span class="kw">super</span>::diff(<span class="kw-2">&amp;</span>left, <span class="kw-2">&amp;</span>Value::Null);
         <span class="macro">assert_eq!</span>(
-            p,
+            patch,
             serde_json::from_value(<span class="macro">json!</span>([
                 { <span class="string">"op"</span>: <span class="string">"replace"</span>, <span class="string">"path"</span>: <span class="string">""</span>, <span class="string">"value"</span>: null },
             ]))
             .unwrap()
         );
-        <span class="kw">let </span><span class="kw-2">mut </span>left = <span class="macro">json!</span>({<span class="string">"title"</span>: <span class="string">"Hello!"</span>});
-        <span class="kw">crate</span>::patch(<span class="kw-2">&amp;mut </span>left, <span class="kw-2">&amp;</span>p).unwrap();
+        <span class="kw">crate</span>::patch(<span class="kw-2">&amp;mut </span>left, <span class="kw-2">&amp;</span>patch).unwrap();
     }
 
     <span class="attr">#[test]
     </span><span class="kw">pub fn </span>diff_empty_key() {
-        <span class="kw">let </span>left = <span class="macro">json!</span>({<span class="string">"title"</span>: <span class="string">"Something"</span>, <span class="string">""</span>: <span class="string">"Hello!"</span>});
+        <span class="kw">let </span><span class="kw-2">mut </span>left = <span class="macro">json!</span>({<span class="string">"title"</span>: <span class="string">"Something"</span>, <span class="string">""</span>: <span class="string">"Hello!"</span>});
         <span class="kw">let </span>right = <span class="macro">json!</span>({<span class="string">"title"</span>: <span class="string">"Something"</span>, <span class="string">""</span>: <span class="string">"Bye!"</span>});
-        <span class="kw">let </span>p = <span class="kw">super</span>::diff(<span class="kw-2">&amp;</span>left, <span class="kw-2">&amp;</span>right);
+        <span class="kw">let </span>patch = <span class="kw">super</span>::diff(<span class="kw-2">&amp;</span>left, <span class="kw-2">&amp;</span>right);
         <span class="macro">assert_eq!</span>(
-            p,
+            patch,
             serde_json::from_value(<span class="macro">json!</span>([
                 { <span class="string">"op"</span>: <span class="string">"replace"</span>, <span class="string">"path"</span>: <span class="string">"/"</span>, <span class="string">"value"</span>: <span class="string">"Bye!" </span>},
             ]))
             .unwrap()
         );
-        <span class="kw">let </span><span class="kw-2">mut </span>left_patched = <span class="macro">json!</span>({<span class="string">"title"</span>: <span class="string">"Something"</span>, <span class="string">""</span>: <span class="string">"Hello!"</span>});
-        <span class="kw">crate</span>::patch(<span class="kw-2">&amp;mut </span>left_patched, <span class="kw-2">&amp;</span>p).unwrap();
-        <span class="macro">assert_eq!</span>(left_patched, right);
+        <span class="kw">crate</span>::patch(<span class="kw-2">&amp;mut </span>left, <span class="kw-2">&amp;</span>patch).unwrap();
+        <span class="macro">assert_eq!</span>(left, right);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">pub fn </span>add_all() {
         <span class="kw">let </span>right = <span class="macro">json!</span>({<span class="string">"title"</span>: <span class="string">"Hello!"</span>});
-        <span class="kw">let </span>p = <span class="kw">super</span>::diff(<span class="kw-2">&amp;</span>Value::Null, <span class="kw-2">&amp;</span>right);
+        <span class="kw">let </span>patch = <span class="kw">super</span>::diff(<span class="kw-2">&amp;</span>Value::Null, <span class="kw-2">&amp;</span>right);
         <span class="macro">assert_eq!</span>(
-            p,
+            patch,
             serde_json::from_value(<span class="macro">json!</span>([
                 { <span class="string">"op"</span>: <span class="string">"replace"</span>, <span class="string">"path"</span>: <span class="string">""</span>, <span class="string">"value"</span>: { <span class="string">"title"</span>: <span class="string">"Hello!" </span>} },
             ]))
             .unwrap()
         );
+
+        <span class="kw">let </span><span class="kw-2">mut </span>left = Value::Null;
+        <span class="kw">crate</span>::patch(<span class="kw-2">&amp;mut </span>left, <span class="kw-2">&amp;</span>patch).unwrap();
+        <span class="macro">assert_eq!</span>(left, right);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">pub fn </span>remove_all() {
-        <span class="kw">let </span>left = <span class="macro">json!</span>([<span class="string">"hello"</span>, <span class="string">"bye"</span>]);
+        <span class="kw">let </span><span class="kw-2">mut </span>left = <span class="macro">json!</span>([<span class="string">"hello"</span>, <span class="string">"bye"</span>]);
         <span class="kw">let </span>right = <span class="macro">json!</span>([]);
-        <span class="kw">let </span>p = <span class="kw">super</span>::diff(<span class="kw-2">&amp;</span>left, <span class="kw-2">&amp;</span>right);
+        <span class="kw">let </span>patch = <span class="kw">super</span>::diff(<span class="kw-2">&amp;</span>left, <span class="kw-2">&amp;</span>right);
         <span class="macro">assert_eq!</span>(
-            p,
+            patch,
             serde_json::from_value(<span class="macro">json!</span>([
                 { <span class="string">"op"</span>: <span class="string">"remove"</span>, <span class="string">"path"</span>: <span class="string">"/0" </span>},
                 { <span class="string">"op"</span>: <span class="string">"remove"</span>, <span class="string">"path"</span>: <span class="string">"/0" </span>},
             ]))
             .unwrap()
         );
+
+        <span class="kw">crate</span>::patch(<span class="kw-2">&amp;mut </span>left, <span class="kw-2">&amp;</span>patch).unwrap();
+        <span class="macro">assert_eq!</span>(left, right);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">pub fn </span>remove_tail() {
-        <span class="kw">let </span>left = <span class="macro">json!</span>([<span class="string">"hello"</span>, <span class="string">"bye"</span>, <span class="string">"hi"</span>]);
+        <span class="kw">let </span><span class="kw-2">mut </span>left = <span class="macro">json!</span>([<span class="string">"hello"</span>, <span class="string">"bye"</span>, <span class="string">"hi"</span>]);
         <span class="kw">let </span>right = <span class="macro">json!</span>([<span class="string">"hello"</span>]);
-        <span class="kw">let </span>p = <span class="kw">super</span>::diff(<span class="kw-2">&amp;</span>left, <span class="kw-2">&amp;</span>right);
+        <span class="kw">let </span>patch = <span class="kw">super</span>::diff(<span class="kw-2">&amp;</span>left, <span class="kw-2">&amp;</span>right);
         <span class="macro">assert_eq!</span>(
-            p,
+            patch,
             serde_json::from_value(<span class="macro">json!</span>([
                 { <span class="string">"op"</span>: <span class="string">"remove"</span>, <span class="string">"path"</span>: <span class="string">"/1" </span>},
                 { <span class="string">"op"</span>: <span class="string">"remove"</span>, <span class="string">"path"</span>: <span class="string">"/1" </span>},
             ]))
             .unwrap()
         );
+
+        <span class="kw">crate</span>::patch(<span class="kw-2">&amp;mut </span>left, <span class="kw-2">&amp;</span>patch).unwrap();
+        <span class="macro">assert_eq!</span>(left, right);
     }
+
+    <span class="attr">#[test]
+    </span><span class="kw">pub fn </span>add_tail() {
+        <span class="kw">let </span><span class="kw-2">mut </span>left = <span class="macro">json!</span>([<span class="string">"hello"</span>]);
+        <span class="kw">let </span>right = <span class="macro">json!</span>([<span class="string">"hello"</span>, <span class="string">"bye"</span>, <span class="string">"hi"</span>]);
+        <span class="kw">let </span>patch = <span class="kw">super</span>::diff(<span class="kw-2">&amp;</span>left, <span class="kw-2">&amp;</span>right);
+        <span class="macro">assert_eq!</span>(
+            patch,
+            serde_json::from_value(<span class="macro">json!</span>([
+                { <span class="string">"op"</span>: <span class="string">"add"</span>, <span class="string">"path"</span>: <span class="string">"/1"</span>, <span class="string">"value"</span>: <span class="string">"bye" </span>},
+                { <span class="string">"op"</span>: <span class="string">"add"</span>, <span class="string">"path"</span>: <span class="string">"/2"</span>, <span class="string">"value"</span>: <span class="string">"hi" </span>}
+            ]))
+            .unwrap()
+        );
+
+        <span class="kw">crate</span>::patch(<span class="kw-2">&amp;mut </span>left, <span class="kw-2">&amp;</span>patch).unwrap();
+        <span class="macro">assert_eq!</span>(left, right);
+    }
+
     <span class="attr">#[test]
     </span><span class="kw">pub fn </span>replace_object() {
-        <span class="kw">let </span>left = <span class="macro">json!</span>([<span class="string">"hello"</span>, <span class="string">"bye"</span>]);
+        <span class="kw">let </span><span class="kw-2">mut </span>left = <span class="macro">json!</span>([<span class="string">"hello"</span>, <span class="string">"bye"</span>]);
         <span class="kw">let </span>right = <span class="macro">json!</span>({<span class="string">"hello"</span>: <span class="string">"bye"</span>});
-        <span class="kw">let </span>p = <span class="kw">super</span>::diff(<span class="kw-2">&amp;</span>left, <span class="kw-2">&amp;</span>right);
+        <span class="kw">let </span>patch = <span class="kw">super</span>::diff(<span class="kw-2">&amp;</span>left, <span class="kw-2">&amp;</span>right);
         <span class="macro">assert_eq!</span>(
-            p,
+            patch,
             serde_json::from_value(<span class="macro">json!</span>([
-                { <span class="string">"op"</span>: <span class="string">"add"</span>, <span class="string">"path"</span>: <span class="string">"/hello"</span>, <span class="string">"value"</span>: <span class="string">"bye" </span>},
-                { <span class="string">"op"</span>: <span class="string">"remove"</span>, <span class="string">"path"</span>: <span class="string">"/0" </span>},
-                { <span class="string">"op"</span>: <span class="string">"remove"</span>, <span class="string">"path"</span>: <span class="string">"/0" </span>},
+                { <span class="string">"op"</span>: <span class="string">"replace"</span>, <span class="string">"path"</span>: <span class="string">""</span>, <span class="string">"value"</span>: {<span class="string">"hello"</span>: <span class="string">"bye"</span>} }
             ]))
             .unwrap()
         );
+
+        <span class="kw">crate</span>::patch(<span class="kw-2">&amp;mut </span>left, <span class="kw-2">&amp;</span>patch).unwrap();
+        <span class="macro">assert_eq!</span>(left, right);
     }
 
     <span class="attr">#[test]
@@ -481,6 +677,74 @@
             <span class="string">"/slashed/path/with/~"</span>: <span class="number">2</span>,
         });
         <span class="kw">let </span>patch = <span class="kw">super</span>::diff(<span class="kw-2">&amp;</span>left, <span class="kw-2">&amp;</span>right);
+
+        <span class="kw">crate</span>::patch(<span class="kw-2">&amp;mut </span>left, <span class="kw-2">&amp;</span>patch).unwrap();
+        <span class="macro">assert_eq!</span>(left, right);
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">pub fn </span>replace_object_array() {
+        <span class="kw">let </span><span class="kw-2">mut </span>left = <span class="macro">json!</span>({ <span class="string">"style"</span>: { <span class="string">"ref"</span>: {<span class="string">"name"</span>: <span class="string">"name"</span>} } });
+        <span class="kw">let </span>right = <span class="macro">json!</span>({ <span class="string">"style"</span>: [{ <span class="string">"ref"</span>: {<span class="string">"hello"</span>: <span class="string">"hello"</span>} }]});
+        <span class="kw">let </span>patch = <span class="kw">crate</span>::diff(<span class="kw-2">&amp;</span>left, <span class="kw-2">&amp;</span>right);
+
+        <span class="macro">assert_eq!</span>(
+            patch,
+            serde_json::from_value(<span class="macro">json!</span>([
+                { <span class="string">"op"</span>: <span class="string">"replace"</span>, <span class="string">"path"</span>: <span class="string">"/style"</span>, <span class="string">"value"</span>: [{ <span class="string">"ref"</span>: {<span class="string">"hello"</span>: <span class="string">"hello"</span>} }] },
+            ]))
+            .unwrap()
+        );
+        <span class="kw">crate</span>::patch(<span class="kw-2">&amp;mut </span>left, <span class="kw-2">&amp;</span>patch).unwrap();
+        <span class="macro">assert_eq!</span>(left, right);
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">pub fn </span>replace_array_object() {
+        <span class="kw">let </span><span class="kw-2">mut </span>left = <span class="macro">json!</span>({ <span class="string">"style"</span>: [{ <span class="string">"ref"</span>: {<span class="string">"hello"</span>: <span class="string">"hello"</span>} }]});
+        <span class="kw">let </span>right = <span class="macro">json!</span>({ <span class="string">"style"</span>: { <span class="string">"ref"</span>: {<span class="string">"name"</span>: <span class="string">"name"</span>} } });
+        <span class="kw">let </span>patch = <span class="kw">crate</span>::diff(<span class="kw-2">&amp;</span>left, <span class="kw-2">&amp;</span>right);
+
+        <span class="macro">assert_eq!</span>(
+            patch,
+            serde_json::from_value(<span class="macro">json!</span>([
+                { <span class="string">"op"</span>: <span class="string">"replace"</span>, <span class="string">"path"</span>: <span class="string">"/style"</span>, <span class="string">"value"</span>: { <span class="string">"ref"</span>: {<span class="string">"name"</span>: <span class="string">"name"</span>} } },
+            ]))
+            .unwrap()
+        );
+        <span class="kw">crate</span>::patch(<span class="kw-2">&amp;mut </span>left, <span class="kw-2">&amp;</span>patch).unwrap();
+        <span class="macro">assert_eq!</span>(left, right);
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">pub fn </span>remove_keys() {
+        <span class="kw">let </span><span class="kw-2">mut </span>left = <span class="macro">json!</span>({<span class="string">"first"</span>: <span class="number">1</span>, <span class="string">"second"</span>: <span class="number">2</span>, <span class="string">"third"</span>: <span class="number">3</span>});
+        <span class="kw">let </span>right = <span class="macro">json!</span>({<span class="string">"first"</span>: <span class="number">1</span>, <span class="string">"second"</span>: <span class="number">2</span>});
+        <span class="kw">let </span>patch = <span class="kw">super</span>::diff(<span class="kw-2">&amp;</span>left, <span class="kw-2">&amp;</span>right);
+        <span class="macro">assert_eq!</span>(
+            patch,
+            serde_json::from_value(<span class="macro">json!</span>([
+                { <span class="string">"op"</span>: <span class="string">"remove"</span>, <span class="string">"path"</span>: <span class="string">"/third" </span>}
+            ]))
+            .unwrap()
+        );
+
+        <span class="kw">crate</span>::patch(<span class="kw-2">&amp;mut </span>left, <span class="kw-2">&amp;</span>patch).unwrap();
+        <span class="macro">assert_eq!</span>(left, right);
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">pub fn </span>add_keys() {
+        <span class="kw">let </span><span class="kw-2">mut </span>left = <span class="macro">json!</span>({<span class="string">"first"</span>: <span class="number">1</span>, <span class="string">"second"</span>: <span class="number">2</span>});
+        <span class="kw">let </span>right = <span class="macro">json!</span>({<span class="string">"first"</span>: <span class="number">1</span>, <span class="string">"second"</span>: <span class="number">2</span>, <span class="string">"third"</span>: <span class="number">3</span>});
+        <span class="kw">let </span>patch = <span class="kw">super</span>::diff(<span class="kw-2">&amp;</span>left, <span class="kw-2">&amp;</span>right);
+        <span class="macro">assert_eq!</span>(
+            patch,
+            serde_json::from_value(<span class="macro">json!</span>([
+                { <span class="string">"op"</span>: <span class="string">"add"</span>, <span class="string">"path"</span>: <span class="string">"/third"</span>, <span class="string">"value"</span>: <span class="number">3 </span>}
+            ]))
+            .unwrap()
+        );
 
         <span class="kw">crate</span>::patch(<span class="kw-2">&amp;mut </span>left, <span class="kw-2">&amp;</span>patch).unwrap();
         <span class="macro">assert_eq!</span>(left, right);

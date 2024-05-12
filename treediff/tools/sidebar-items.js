@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["ChangeType"],"struct":["DefaultMutableFilter","Merger","Recorder"],"trait":["MutableFilter"]};
