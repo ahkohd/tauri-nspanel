@@ -109,7 +109,7 @@ The following are projects related to this plugin:
 
 # Showcase
 
-Here are some notable projects using `tauri-nspanel`
+Here are some projects using `tauri-nspanel`
 
 - [Cap](https://github.com/CapSoftware/Cap)
 - [EcoPaste](https://github.com/EcoPasteHub/EcoPaste)
