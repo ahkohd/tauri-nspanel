@@ -107,6 +107,17 @@ The following are projects related to this plugin:
 - [tauri-nspanel-example](https://github.com/ahkohd/tauri-nspanel/tree/main/examples/vanilla)
 - [tauri-macos-spotlight-example](https://github.com/ahkohd/tauri-macos-spotlight-example)
 
+# Showcase
+
+Here are some projects using `tauri-nspanel`
+
+- [Cap](https://github.com/CapSoftware/Cap)
+- [EcoPaste](https://github.com/EcoPasteHub/EcoPaste)
+- [Overlayed](https://github.com/overlayeddev/overlayed)
+- [Lume](https://github.com/lumehq/lume)
+- [Verve](https://github.com/ParthJadhav/verve)
+- [Buffer](https://buffer.md)
+
 # Contributing
 
 PRs accepted. Please make sure to read the Contributing Guide before making a pull request.
