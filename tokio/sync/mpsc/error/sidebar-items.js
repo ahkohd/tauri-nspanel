@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["TryRecvError","TrySendError"],"struct":["SendError"]};
+window.SIDEBAR_ITEMS = {"enum":["SendTimeoutError","TryRecvError","TrySendError"],"struct":["SendError"]};

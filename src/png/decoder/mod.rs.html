@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/png-0.17.13/src/decoder/mod.rs`."><title>mod.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="png" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../png/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/png-0.17.14/src/decoder/mod.rs`."><title>mod.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="png" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -775,60 +773,27 @@
 <a href="#773" id="773">773</a>
 <a href="#774" id="774">774</a>
 <a href="#775" id="775">775</a>
-<a href="#776" id="776">776</a>
-<a href="#777" id="777">777</a>
-<a href="#778" id="778">778</a>
-<a href="#779" id="779">779</a>
-<a href="#780" id="780">780</a>
-<a href="#781" id="781">781</a>
-<a href="#782" id="782">782</a>
-<a href="#783" id="783">783</a>
-<a href="#784" id="784">784</a>
-<a href="#785" id="785">785</a>
-<a href="#786" id="786">786</a>
-<a href="#787" id="787">787</a>
-<a href="#788" id="788">788</a>
-<a href="#789" id="789">789</a>
-<a href="#790" id="790">790</a>
-<a href="#791" id="791">791</a>
-<a href="#792" id="792">792</a>
-<a href="#793" id="793">793</a>
-<a href="#794" id="794">794</a>
-<a href="#795" id="795">795</a>
-<a href="#796" id="796">796</a>
-<a href="#797" id="797">797</a>
-<a href="#798" id="798">798</a>
-<a href="#799" id="799">799</a>
-<a href="#800" id="800">800</a>
-<a href="#801" id="801">801</a>
-<a href="#802" id="802">802</a>
-<a href="#803" id="803">803</a>
-<a href="#804" id="804">804</a>
-<a href="#805" id="805">805</a>
-<a href="#806" id="806">806</a>
-<a href="#807" id="807">807</a>
-<a href="#808" id="808">808</a>
-<a href="#809" id="809">809</a>
-<a href="#810" id="810">810</a>
-<a href="#811" id="811">811</a>
-</pre></div><pre class="rust"><code><span class="kw">mod </span>stream;
+</pre></div><pre class="rust"><code><span class="kw">mod </span>interlace_info;
+<span class="kw">mod </span>stream;
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>transform;
 <span class="kw">mod </span>zlib;
 
 <span class="kw">pub use </span><span class="self">self</span>::stream::{DecodeOptions, Decoded, DecodingError, StreamingDecoder};
-<span class="kw">use </span><span class="self">self</span>::stream::{FormatErrorInner, CHUNCK_BUFFER_SIZE};
+<span class="kw">use </span><span class="self">self</span>::stream::{FormatErrorInner, CHUNK_BUFFER_SIZE};
 <span class="kw">use </span><span class="self">self</span>::transform::{create_transform_fn, TransformFn};
 
-<span class="kw">use </span>std::io::{BufRead, BufReader, Read};
+<span class="kw">use </span>std::io::{BufRead, BufReader, ErrorKind, Read};
 <span class="kw">use </span>std::mem;
-<span class="kw">use </span>std::ops::Range;
 
-<span class="kw">use </span><span class="kw">crate</span>::adam7;
+<span class="kw">use </span><span class="kw">crate</span>::adam7::{<span class="self">self</span>, Adam7Info};
 <span class="kw">use </span><span class="kw">crate</span>::chunk;
 <span class="kw">use </span><span class="kw">crate</span>::common::{
     BitDepth, BytesPerPixel, ColorType, Info, ParameterErrorKind, Transformations,
 };
 <span class="kw">use </span><span class="kw">crate</span>::filter::{unfilter, FilterType};
+
+<span class="kw">pub use </span>interlace_info::InterlaceInfo;
+<span class="kw">use </span>interlace_info::InterlaceInfoIter;
 
 <span class="comment">/*
 pub enum InterlaceHandling {
@@ -912,28 +877,9 @@ pub enum InterlaceHandling {
         <span class="self">self</span>.data
     }
 
-    <span class="kw">pub fn </span>interlace(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; InterlaceInfo {
-        <span class="self">self</span>.interlace
+    <span class="kw">pub fn </span>interlace(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>InterlaceInfo {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.interlace
     }
-}
-
-<span class="doccomment">/// PNG (2003) specifies two interlace modes, but reserves future extensions.
-</span><span class="attr">#[derive(Clone, Copy, Debug)]
-</span><span class="kw">pub enum </span>InterlaceInfo {
-    <span class="doccomment">/// the null method means no interlacing
-    </span>Null,
-    <span class="doccomment">/// Adam7 derives its name from doing 7 passes over the image, only decoding a subset of all pixels in each pass.
-    /// The following table shows pictorially what parts of each 8x8 area of the image is found in each pass:
-    ///
-    /// 1 6 4 6 2 6 4 6
-    /// 7 7 7 7 7 7 7 7
-    /// 5 6 5 6 5 6 5 6
-    /// 7 7 7 7 7 7 7 7
-    /// 3 6 4 6 3 6 4 6
-    /// 7 7 7 7 7 7 7 7
-    /// 5 6 5 6 5 6 5 6
-    /// 7 7 7 7 7 7 7 7
-    </span>Adam7 { pass: u8, line: u32, width: u32 },
 }
 
 <span class="doccomment">/// A row of data without interlace information.
@@ -961,7 +907,7 @@ pub enum InterlaceHandling {
 
         Decoder {
             read_decoder: ReadDecoder {
-                reader: BufReader::with_capacity(CHUNCK_BUFFER_SIZE, r),
+                reader: BufReader::with_capacity(CHUNK_BUFFER_SIZE, r),
                 decoder,
                 at_eof: <span class="bool-val">false</span>,
             },
@@ -976,7 +922,7 @@ pub enum InterlaceHandling {
 
         Decoder {
             read_decoder: ReadDecoder {
-                reader: BufReader::with_capacity(CHUNCK_BUFFER_SIZE, r),
+                reader: BufReader::with_capacity(CHUNK_BUFFER_SIZE, r),
                 decoder,
                 at_eof: <span class="bool-val">false</span>,
             },
@@ -1020,9 +966,7 @@ pub enum InterlaceHandling {
         <span class="kw">while </span><span class="self">self</span>.read_decoder.info().is_none() {
             buf.clear();
             <span class="kw">if </span><span class="self">self</span>.read_decoder.decode_next(<span class="kw-2">&amp;mut </span>buf)<span class="question-mark">?</span>.is_none() {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(DecodingError::Format(
-                    FormatErrorInner::UnexpectedEof.into(),
-                ));
+                <span class="kw">return </span><span class="prelude-val">Err</span>(DecodingError::IoError(ErrorKind::UnexpectedEof.into()));
             }
         }
         <span class="prelude-val">Ok</span>(<span class="self">self</span>.read_decoder.info().unwrap())
@@ -1092,6 +1036,22 @@ pub enum InterlaceHandling {
             .set_ignore_text_chunk(ignore_text_chunk);
     }
 
+    <span class="doccomment">/// Set the decoder to ignore iccp chunks while parsing.
+    ///
+    /// eg.
+    /// ```
+    /// use std::fs::File;
+    /// use png::Decoder;
+    /// let mut decoder = Decoder::new(File::open("tests/iccp/broken_iccp.png").unwrap());
+    /// decoder.set_ignore_iccp_chunk(true);
+    /// assert!(decoder.read_info().is_ok());
+    /// ```
+    </span><span class="kw">pub fn </span>set_ignore_iccp_chunk(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ignore_iccp_chunk: bool) {
+        <span class="self">self</span>.read_decoder
+            .decoder
+            .set_ignore_iccp_chunk(ignore_iccp_chunk);
+    }
+
     <span class="doccomment">/// Set the decoder to ignore and not verify the Adler-32 checksum
     /// and CRC code.
     </span><span class="kw">pub fn </span>ignore_checksums(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ignore_checksums: bool) {
@@ -1116,9 +1076,7 @@ pub enum InterlaceHandling {
             <span class="kw">let </span>(consumed, result) = {
                 <span class="kw">let </span>buf = <span class="self">self</span>.reader.fill_buf()<span class="question-mark">?</span>;
                 <span class="kw">if </span>buf.is_empty() {
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(DecodingError::Format(
-                        FormatErrorInner::UnexpectedEof.into(),
-                    ));
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(DecodingError::IoError(ErrorKind::UnexpectedEof.into()));
                 }
                 <span class="self">self</span>.decoder.update(buf, image_data)<span class="question-mark">?
             </span>};
@@ -1136,9 +1094,7 @@ pub enum InterlaceHandling {
         <span class="kw">while </span>!<span class="self">self</span>.at_eof {
             <span class="kw">let </span>buf = <span class="self">self</span>.reader.fill_buf()<span class="question-mark">?</span>;
             <span class="kw">if </span>buf.is_empty() {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(DecodingError::Format(
-                    FormatErrorInner::UnexpectedEof.into(),
-                ));
+                <span class="kw">return </span><span class="prelude-val">Err</span>(DecodingError::IoError(ErrorKind::UnexpectedEof.into()));
             }
             <span class="kw">let </span>(consumed, event) = <span class="self">self</span>.decoder.update(buf, <span class="kw-2">&amp;mut </span><span class="macro">vec!</span>[])<span class="question-mark">?</span>;
             <span class="self">self</span>.reader.consume(consumed);
@@ -1153,9 +1109,7 @@ pub enum InterlaceHandling {
             }
         }
 
-        <span class="prelude-val">Err</span>(DecodingError::Format(
-            FormatErrorInner::UnexpectedEof.into(),
-        ))
+        <span class="prelude-val">Err</span>(DecodingError::IoError(ErrorKind::UnexpectedEof.into()))
     }
 
     <span class="kw">fn </span>info(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Info&lt;<span class="lifetime">'static</span>&gt;&gt; {
@@ -1202,18 +1156,13 @@ pub enum InterlaceHandling {
     width: u32,
     height: u32,
     rowlen: usize,
-    interlace: InterlaceIter,
+    current_interlace_info: <span class="prelude-ty">Option</span>&lt;InterlaceInfo&gt;,
+    interlace_info_iter: InterlaceInfoIter,
     consumed_and_flushed: bool,
 }
 
-<span class="attr">#[derive(Clone)]
-</span><span class="kw">enum </span>InterlaceIter {
-    <span class="prelude-val">None</span>(Range&lt;u32&gt;),
-    Adam7(adam7::Adam7Iterator),
-}
-
 <span class="doccomment">/// Denote a frame as given by sequence numbers.
-</span><span class="attr">#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+</span><span class="attr">#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 </span><span class="kw">enum </span>SubframeIdx {
     <span class="doccomment">/// The initial frame in an IDAT chunk without fcTL chunk applying to it.
     /// Note that this variant precedes `Some` as IDAT frames precede fdAT frames and all fdAT
@@ -1241,7 +1190,6 @@ pub enum InterlaceHandling {
                 <span class="prelude-val">Some</span>(Decoded::ChunkBegin(<span class="kw">_</span>, chunk::IDAT))
                 | <span class="prelude-val">Some</span>(Decoded::ChunkBegin(<span class="kw">_</span>, chunk::fdAT)) =&gt; <span class="kw">break</span>,
                 <span class="prelude-val">Some</span>(Decoded::FrameControl(<span class="kw">_</span>)) =&gt; {
-                    <span class="self">self</span>.subframe = SubframeInfo::new(<span class="self">self</span>.info());
                     <span class="comment">// The next frame is the one to which this chunk applies.
                     </span><span class="self">self</span>.next_frame = SubframeIdx::Some(<span class="self">self</span>.fctl_read);
                     <span class="comment">// TODO: what about overflow here? That would imply there are more fctl chunks
@@ -1266,6 +1214,9 @@ pub enum InterlaceHandling {
             .ok_or(DecodingError::Format(FormatErrorInner::MissingIhdr.into()))<span class="question-mark">?</span>;
         <span class="self">self</span>.bpp = info.bpp_in_prediction();
         <span class="self">self</span>.subframe = SubframeInfo::new(info);
+        <span class="self">self</span>.data_stream.clear();
+        <span class="self">self</span>.current_start = <span class="number">0</span>;
+        <span class="self">self</span>.prev_start = <span class="number">0</span>;
 
         <span class="comment">// Allocate output buffer.
         </span><span class="kw">let </span>buflen = <span class="self">self</span>.output_line_size(<span class="self">self</span>.subframe.width);
@@ -1297,17 +1248,13 @@ pub enum InterlaceHandling {
     /// Output lines will be written in row-major, packed matrix with width and height of the read
     /// frame (or subframe), all samples are in big endian byte order where this matters.
     </span><span class="kw">pub fn </span>next_frame(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buf: <span class="kw-2">&amp;mut </span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;OutputInfo, DecodingError&gt; {
-        <span class="kw">let </span>subframe_idx = <span class="kw">match </span><span class="self">self</span>.decoder.info().unwrap().frame_control() {
-            <span class="prelude-val">None </span>=&gt; SubframeIdx::Initial,
-            <span class="prelude-val">Some</span>(<span class="kw">_</span>) =&gt; SubframeIdx::Some(<span class="self">self</span>.fctl_read - <span class="number">1</span>),
-        };
-
         <span class="kw">if </span><span class="self">self</span>.next_frame == SubframeIdx::End {
             <span class="kw">return </span><span class="prelude-val">Err</span>(DecodingError::Parameter(
                 ParameterErrorKind::PolledAfterEndOfImage.into(),
             ));
-        } <span class="kw">else if </span><span class="self">self</span>.next_frame != subframe_idx {
-            <span class="comment">// Advance until we've read the info / fcTL for this frame.
+        } <span class="kw">else if </span><span class="self">self</span>.subframe.consumed_and_flushed {
+            <span class="comment">// Advance until the next `fdAT`
+            // (along the way we should encounter the fcTL for this frame).
             </span><span class="self">self</span>.read_until_image_data()<span class="question-mark">?</span>;
         }
 
@@ -1330,28 +1277,30 @@ pub enum InterlaceHandling {
             line_size: <span class="self">self</span>.output_line_size(<span class="self">self</span>.subframe.width),
         };
 
-        <span class="self">self</span>.data_stream.clear();
-        <span class="self">self</span>.current_start = <span class="number">0</span>;
-        <span class="self">self</span>.prev_start = <span class="number">0</span>;
-        <span class="kw">let </span>width = <span class="self">self</span>.info().width;
         <span class="kw">if </span><span class="self">self</span>.info().interlaced {
+            <span class="kw">let </span>stride = <span class="self">self</span>.output_line_size(<span class="self">self</span>.info().width);
+            <span class="kw">let </span>samples = color_type.samples() <span class="kw">as </span>u8;
+            <span class="kw">let </span>bits_pp = samples * (bit_depth <span class="kw">as </span>u8);
             <span class="kw">while let </span><span class="prelude-val">Some</span>(InterlacedRow {
                 data: row,
                 interlace,
                 ..
             }) = <span class="self">self</span>.next_interlaced_row()<span class="question-mark">?
             </span>{
-                <span class="kw">let </span>(line, pass) = <span class="kw">match </span>interlace {
-                    InterlaceInfo::Adam7 { line, pass, .. } =&gt; (line, pass),
-                    InterlaceInfo::Null =&gt; <span class="macro">unreachable!</span>(<span class="string">"expected interlace information"</span>),
-                };
-                <span class="kw">let </span>samples = color_type.samples() <span class="kw">as </span>u8;
-                adam7::expand_pass(buf, width, row, pass, line, samples * (bit_depth <span class="kw">as </span>u8));
+                <span class="comment">// `unwrap` won't panic, because we checked `self.info().interlaced` above.
+                </span><span class="kw">let </span>adam7info = interlace.get_adam7_info().unwrap();
+                adam7::expand_pass(buf, stride, row, adam7info, bits_pp);
             }
         } <span class="kw">else </span>{
+            <span class="kw">let </span>current_interlace_info = <span class="self">self</span>.subframe.current_interlace_info.as_ref();
+            <span class="kw">let </span>already_done_rows = current_interlace_info
+                .map(|info| info.line_number())
+                .unwrap_or(<span class="self">self</span>.subframe.height);
+
             <span class="kw">for </span>row <span class="kw">in </span>buf
                 .chunks_exact_mut(output_info.line_size)
                 .take(<span class="self">self</span>.subframe.height <span class="kw">as </span>usize)
+                .skip(already_done_rows <span class="kw">as </span>usize)
             {
                 <span class="self">self</span>.next_interlaced_row_impl(<span class="self">self</span>.subframe.rowlen, row)<span class="question-mark">?</span>;
             }
@@ -1360,6 +1309,7 @@ pub enum InterlaceHandling {
         <span class="comment">// Advance over the rest of data for this (sub-)frame.
         </span><span class="kw">if </span>!<span class="self">self</span>.subframe.consumed_and_flushed {
             <span class="self">self</span>.decoder.finish_decoding()<span class="question-mark">?</span>;
+            <span class="self">self</span>.subframe.consumed_and_flushed = <span class="bool-val">true</span>;
         }
 
         <span class="comment">// Advance our state to expect the next frame.
@@ -1391,15 +1341,22 @@ pub enum InterlaceHandling {
 
     <span class="doccomment">/// Returns the next processed row of the image
     </span><span class="kw">pub fn </span>next_interlaced_row(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;InterlacedRow&gt;, DecodingError&gt; {
-        <span class="kw">let </span>(rowlen, interlace) = <span class="kw">match </span><span class="self">self</span>.next_pass() {
-            <span class="prelude-val">Some</span>((rowlen, interlace)) =&gt; (rowlen, interlace),
+        <span class="kw">let </span>interlace = <span class="kw">match </span><span class="self">self</span>.subframe.current_interlace_info.as_ref() {
             <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
+            <span class="prelude-val">Some</span>(interlace) =&gt; <span class="kw-2">*</span>interlace,
         };
-
-        <span class="kw">let </span>width = <span class="kw">if let </span>InterlaceInfo::Adam7 { width, .. } = interlace {
-            width
-        } <span class="kw">else </span>{
-            <span class="self">self</span>.subframe.width
+        <span class="kw">if </span>interlace.line_number() == <span class="number">0 </span>{
+            <span class="self">self</span>.prev_start = <span class="self">self</span>.current_start;
+        }
+        <span class="kw">let </span>rowlen = <span class="kw">match </span>interlace {
+            InterlaceInfo::Null(<span class="kw">_</span>) =&gt; <span class="self">self</span>.subframe.rowlen,
+            InterlaceInfo::Adam7(Adam7Info { width, .. }) =&gt; {
+                <span class="self">self</span>.info().raw_row_length_from_width(width)
+            }
+        };
+        <span class="kw">let </span>width = <span class="kw">match </span>interlace {
+            InterlaceInfo::Adam7(Adam7Info { width, .. }) =&gt; width,
+            InterlaceInfo::Null(<span class="kw">_</span>) =&gt; <span class="self">self</span>.subframe.width,
         };
         <span class="kw">let </span>output_line_size = <span class="self">self</span>.output_line_size(width);
 
@@ -1455,6 +1412,7 @@ pub enum InterlaceHandling {
         };
         transform_fn(row, output_buffer, <span class="self">self</span>.info());
 
+        <span class="self">self</span>.subframe.current_interlace_info = <span class="self">self</span>.subframe.interlace_info_iter.next();
         <span class="prelude-val">Ok</span>(())
     }
 
@@ -1508,24 +1466,6 @@ pub enum InterlaceHandling {
         color.raw_row_length_from_width(depth, width) - <span class="number">1
     </span>}
 
-    <span class="kw">fn </span>next_pass(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(usize, InterlaceInfo)&gt; {
-        <span class="kw">match </span><span class="self">self</span>.subframe.interlace {
-            InterlaceIter::Adam7(<span class="kw-2">ref mut </span>adam7) =&gt; {
-                <span class="kw">let </span>last_pass = adam7.current_pass();
-                <span class="kw">let </span>(pass, line, width) = adam7.next()<span class="question-mark">?</span>;
-                <span class="kw">let </span>rowlen = <span class="self">self</span>.info().raw_row_length_from_width(width);
-                <span class="kw">if </span>last_pass != pass {
-                    <span class="self">self</span>.prev_start = <span class="self">self</span>.current_start;
-                }
-                <span class="prelude-val">Some</span>((rowlen, InterlaceInfo::Adam7 { pass, line, width }))
-            }
-            InterlaceIter::None(<span class="kw-2">ref mut </span>height) =&gt; {
-                <span class="kw">let _ </span>= height.next()<span class="question-mark">?</span>;
-                <span class="prelude-val">Some</span>((<span class="self">self</span>.subframe.rowlen, InterlaceInfo::Null))
-            }
-        }
-    }
-
     <span class="doccomment">/// Write the next raw interlaced row into `self.prev`.
     ///
     /// The scanline is filtered against the previous scanline according to the specification.
@@ -1548,20 +1488,8 @@ pub enum InterlaceHandling {
             }
 
             <span class="kw">match </span><span class="self">self</span>.decoder.decode_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data_stream)<span class="question-mark">? </span>{
-                <span class="prelude-val">Some</span>(Decoded::ImageData) =&gt; {}
-                <span class="prelude-val">Some</span>(Decoded::ImageDataFlushed) =&gt; {
-                    <span class="self">self</span>.subframe.consumed_and_flushed = <span class="bool-val">true</span>;
-                }
-                <span class="prelude-val">None </span>=&gt; {
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(DecodingError::Format(
-                        <span class="kw">if </span><span class="self">self</span>.data_stream.is_empty() {
-                            FormatErrorInner::NoMoreImageData
-                        } <span class="kw">else </span>{
-                            FormatErrorInner::UnexpectedEndOfChunk
-                        }
-                        .into(),
-                    ));
-                }
+                <span class="prelude-val">Some</span>(Decoded::ImageData) =&gt; (),
+                <span class="prelude-val">Some</span>(Decoded::ImageDataFlushed) =&gt; <span class="self">self</span>.subframe.consumed_and_flushed = <span class="bool-val">true</span>,
                 <span class="kw">_ </span>=&gt; (),
             }
         }
@@ -1593,7 +1521,8 @@ pub enum InterlaceHandling {
             width: <span class="number">0</span>,
             height: <span class="number">0</span>,
             rowlen: <span class="number">0</span>,
-            interlace: InterlaceIter::None(<span class="number">0</span>..<span class="number">0</span>),
+            current_interlace_info: <span class="prelude-val">None</span>,
+            interlace_info_iter: InterlaceInfoIter::empty(),
             consumed_and_flushed: <span class="bool-val">false</span>,
         }
     }
@@ -1607,17 +1536,14 @@ pub enum InterlaceHandling {
             (info.width, info.height)
         };
 
-        <span class="kw">let </span>interlace = <span class="kw">if </span>info.interlaced {
-            InterlaceIter::Adam7(adam7::Adam7Iterator::new(width, height))
-        } <span class="kw">else </span>{
-            InterlaceIter::None(<span class="number">0</span>..height)
-        };
-
+        <span class="kw">let </span><span class="kw-2">mut </span>interlace_info_iter = InterlaceInfoIter::new(width, height, info.interlaced);
+        <span class="kw">let </span>current_interlace_info = interlace_info_iter.next();
         SubframeInfo {
             width,
             height,
             rowlen: info.raw_row_length_from_width(width),
-            interlace,
+            current_interlace_info,
+            interlace_info_iter,
             consumed_and_flushed: <span class="bool-val">false</span>,
         }
     }

@@ -1,0 +1,1 @@
+searchState.loadedDescShard("matches", 0, "A macro to evaluate, as a boolean, whether an expression …\nAssert that an expression matches a refutable pattern.\nAssert that an expression matches a refutable pattern …\nCheck if an expression matches a refutable pattern.")

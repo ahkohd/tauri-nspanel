@@ -1,0 +1,308 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Declare a new class."><title>declare_class in objc2 - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="objc2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-118b08c4c78b968e.js"></script><script defer src="sidebar-items.js"></script><script defer src="../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc macro"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../objc2/index.html">objc2</a><span class="version">0.5.2</span></h2></div><div class="sidebar-elems"></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Macro <a href="index.html">objc2</a>::<wbr><a class="macro" href="#">declare_class</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../src/objc2/macros/declare_class.rs.html#378-525">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><span class="macro">macro_rules!</span> declare_class {
+    {
+        $(<span class="attr">#[<span class="macro-nonterminal">$m</span>:meta]</span>)*
+        <span class="macro-nonterminal">$v</span>:vis <span class="kw">struct </span><span class="macro-nonterminal">$name</span>:ident;
+
+        <span class="kw">unsafe impl </span>ClassType <span class="kw">for </span><span class="macro-nonterminal">$for_class</span>:ty {
+            $(<span class="attr">#[inherits($(<span class="macro-nonterminal">$inheritance_rest</span>:ty),+)]</span>)<span class="question-mark">?
+            </span><span class="kw">type </span>Super = <span class="macro-nonterminal">$superclass</span>:ty;
+
+            <span class="kw">type </span>Mutability = <span class="macro-nonterminal">$mutability</span>:ty;
+
+            <span class="kw">const </span>NAME: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str = <span class="macro-nonterminal">$name_const</span>:expr;
+        }
+
+        <span class="kw">impl </span>DeclaredClass <span class="kw">for </span><span class="macro-nonterminal">$for_declared</span>:ty {
+            $(<span class="kw">type </span>Ivars = <span class="macro-nonterminal">$ivars</span>:ty;)<span class="question-mark">?
+        </span>}
+
+        $(<span class="macro-nonterminal">$impls</span>:tt)*
+    } =&gt; { ... };
+}</pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Declare a new class.</p>
+<p>This is useful in many cases since Objective-C frameworks tend to favour a
+design pattern using “delegates”, where to hook into a piece of
+functionality in a class, you implement that class’ delegate protocol in
+a custom class.</p>
+<p>This macro is the declarative way of creating classes, in contrast with
+the <a href="declare/index.html" title="mod objc2::declare"><code>declare</code></a> module which mostly contain ways of declaring classes in
+an imperative fashion. It is highly recommended that you use this macro
+though, since it contains a lot of extra debug assertions and niceties
+that help ensure the soundness of your code.</p>
+<h2 id="specification"><a class="doc-anchor" href="#specification">§</a>Specification</h2>
+<p>This macro consists of the following parts (the first three are required):</p>
+<ul>
+<li>The type declaration.</li>
+<li>The <a href="trait.ClassType.html" title="trait objc2::ClassType"><code>ClassType</code></a> implementation.</li>
+<li>The <a href="trait.DeclaredClass.html" title="trait objc2::DeclaredClass"><code>DeclaredClass</code></a> implementation.</li>
+<li>Any number of inherent implementations.</li>
+<li>Any number of protocol implementations.</li>
+</ul>
+<p>With the syntax generally resembling a combination of that in
+<a href="macro.extern_class.html" title="macro objc2::extern_class"><code>extern_class!</code></a> and <a href="macro.extern_methods.html" title="macro objc2::extern_methods"><code>extern_methods!</code></a>.</p>
+<h3 id="type-declaration"><a class="doc-anchor" href="#type-declaration">§</a>Type declaration</h3>
+<p>The type declaration works a lot like in <a href="macro.extern_class.html" title="macro objc2::extern_class"><code>extern_class!</code></a>, an opaque
+struct is created and a lot of traits is implemented for that struct.</p>
+<p>You are allowed to add most common attributes to the declaration,
+including <code>#[cfg(...)]</code> and doc comments. ABI-modifying attributes like
+<code>#[repr(...)]</code> are not allowed.</p>
+<p><code>#[derive(...)]</code> attributes are allowed, but heavily discouraged, as they
+are likely to not work as you’d expect them to. This is being worked on in
+<a href="https://github.com/madsmtm/objc2/issues/267">#267</a>.</p>
+<p>If the type implements <a href="https://doc.rust-lang.org/1.82.0/core/ops/drop/trait.Drop.html" title="trait core::ops::drop::Drop"><code>Drop</code></a>, the macro will generate a <code>dealloc</code>
+method for you, which will call <code>drop</code> automatically.</p>
+<h3 id="classtype-implementation"><a class="doc-anchor" href="#classtype-implementation">§</a><code>ClassType</code> implementation</h3>
+<p>This also resembles the syntax in <a href="macro.extern_class.html" title="macro objc2::extern_class"><code>extern_class!</code></a>, except that
+<a href="trait.ClassType.html#associatedconstant.NAME" title="associated constant objc2::ClassType::NAME"><code>ClassType::NAME</code></a> must be specified, and it must be unique across the
+entire application.</p>
+<p>If you’re developing a library, good practice here would be to include
+your crate name in the prefix (something like <code>"MyLibrary_MyClass"</code>).</p>
+<p>The class is guaranteed to have been created and registered with the
+Objective-C runtime after the <a href="trait.ClassType.html#tymethod.class" title="associated function objc2::ClassType::class"><code>ClassType::class</code></a> function has been
+called.</p>
+<h3 id="declaredclass-implementation"><a class="doc-anchor" href="#declaredclass-implementation">§</a><code>DeclaredClass</code> implementation</h3>
+<p>The syntax here is as if you were implementing the trait yourself.</p>
+<p>You may optionally specify the associated type <a href="trait.DeclaredClass.html#associatedtype.Ivars" title="associated type objc2::DeclaredClass::Ivars"><code>Ivars</code></a>; this is the
+intended way to specify the data your class stores. If you don’t specify
+any ivars, the macro will default to <a href="https://doc.rust-lang.org/1.82.0/std/primitive.unit.html" title="primitive unit"><code>()</code></a>.</p>
+<p>Beware that if you want to use the class’ inherited initializers (such as
+<code>init</code>), you must override the subclass’ designated initializers, and
+initialize your ivars properly in there.</p>
+<h3 id="inherent-method-definitions"><a class="doc-anchor" href="#inherent-method-definitions">§</a>Inherent method definitions</h3>
+<p>Within the <code>impl</code> block you can define two types of functions;
+<a href="https://doc.rust-lang.org/reference/items/associated-items.html#methods">“associated functions”</a> and <a href="https://doc.rust-lang.org/reference/items/associated-items.html#methods">“methods”</a>. These are then mapped to the
+Objective-C equivalents “class methods” and “instance methods”. In
+particular, if you use <code>self</code> or the special name <code>this</code> (or <code>_this</code>),
+your method will be registered as an instance method, and if you don’t it
+will be registered as a class method.</p>
+<p>On instance methods, you can freely choose between different types of
+receivers, e.g. <code>&amp;self</code>, <code>this: *const Self</code>, <code>&amp;mut self</code>, and so on. Note
+though that using <code>&amp;mut self</code> requires the class’ mutability to be
+<a href="mutability/trait.IsAllowedMutable.html" title="trait objc2::mutability::IsAllowedMutable"><code>IsAllowedMutable</code></a>.
+If you need mutation of your class’ instance variables, consider using
+<a href="https://doc.rust-lang.org/1.82.0/core/cell/struct.Cell.html" title="struct core::cell::Cell"><code>Cell</code></a> or similar instead.</p>
+<p>The desired selector can be specified using the <code>#[method(my:selector:)]</code>
+or <code>#[method_id(my:selector:)]</code> attribute, similar to the
+<a href="macro.extern_methods.html" title="macro objc2::extern_methods"><code>extern_methods!</code></a> macro.</p>
+<p>If the <code>#[method_id(...)]</code> attribute is used, the return type must be
+<code>Option&lt;Retained&lt;T&gt;&gt;</code> or <code>Retained&lt;T&gt;</code>. Additionally, if the selector is
+in the “init”-family, the <code>self</code>/<code>this</code> parameter must be
+<code>Allocated&lt;Self&gt;</code>.</p>
+<p>Putting other attributes on the method such as <code>cfg</code>, <code>allow</code>, <code>doc</code>,
+<code>deprecated</code> and so on is supported. However, note that <code>cfg_attr</code> may not
+work correctly, due to implementation difficulty - if you have a concrete
+use-case, please <a href="https://github.com/madsmtm/objc2/issues/new">open an issue</a>, then we can discuss it.</p>
+<p>A transformation step is performed on the functions (to make them have the
+correct ABI) and hence they shouldn’t really be called manually. (You
+can’t mark them as <code>pub</code> for the same reason). Instead, use the
+<a href="macro.extern_methods.html" title="macro objc2::extern_methods"><code>extern_methods!</code></a> macro to create a Rust interface to the methods.</p>
+<p>If the parameter or return type is <a href="https://doc.rust-lang.org/1.82.0/std/primitive.bool.html" title="primitive bool"><code>bool</code></a>, a conversion is performed to
+make it behave similarly to the Objective-C <code>BOOL</code>. Use <a href="runtime/struct.Bool.html" title="struct objc2::runtime::Bool"><code>runtime::Bool</code></a>
+if you want to control this manually.</p>
+<p>Note that <code>&amp;mut Retained&lt;_&gt;</code> and other such out parameters are not yet
+supported, and may generate a panic at runtime.</p>
+<h3 id="protocol-implementations"><a class="doc-anchor" href="#protocol-implementations">§</a>Protocol implementations</h3>
+<p>You can specify protocols that the class should implement, along with any
+required/optional methods for said protocols.</p>
+<p>The protocol must have been previously defined with <a href="macro.extern_protocol.html" title="macro objc2::extern_protocol"><code>extern_protocol!</code></a>.</p>
+<p>The methods work exactly as normal, they’re only put “under” the protocol
+definition to make things easier to read.</p>
+<p>Putting attributes on the <code>impl</code> item such as <code>cfg</code>, <code>allow</code>, <code>doc</code>,
+<code>deprecated</code> and so on is supported.</p>
+<h2 id="panics"><a class="doc-anchor" href="#panics">§</a>Panics</h2>
+<p>The implemented <code>ClassType::class</code> method may panic in a few cases, such
+as if:</p>
+<ul>
+<li>A class with the specified name already exists.</li>
+<li>Debug assertions are enabled, and an overriden method’s signature is not
+equal to the one on the superclass.</li>
+<li>Debug assertions are enabled, and the protocol’s required methods are not
+implemented.</li>
+</ul>
+<p>And possibly more similar cases in the future.</p>
+<h2 id="safety"><a class="doc-anchor" href="#safety">§</a>Safety</h2>
+<p>Using this macro requires writing a few <code>unsafe</code> markers:</p>
+<p><code>unsafe impl ClassType for T</code> has the following safety requirements:</p>
+<ul>
+<li>Any invariants that the superclass <a href="trait.ClassType.html#associatedtype.Super" title="associated type objc2::ClassType::Super"><code>ClassType::Super</code></a> may have must be
+upheld.</li>
+<li><a href="trait.ClassType.html#associatedtype.Mutability" title="associated type objc2::ClassType::Mutability"><code>ClassType::Mutability</code></a> must be correct.</li>
+<li>If your type implements <code>Drop</code>, the implementation must abide by the
+following rules:
+<ul>
+<li>It must not call any overridden methods.</li>
+<li>It must not <code>retain</code> the object past the lifetime of the drop.</li>
+<li>It must not <code>retain</code> in the same scope that <code>&amp;mut self</code> is active.</li>
+<li>TODO: And probably a few more. <a href="https://github.com/madsmtm/objc2/issues/new">Open an issue</a> if you would like
+guidance on whether your implementation is correct.</li>
+</ul>
+</li>
+</ul>
+<p><code>unsafe impl T { ... }</code> asserts that the types match those that are
+expected when the method is invoked from Objective-C. Note that unlike
+with <a href="macro.extern_methods.html" title="macro objc2::extern_methods"><code>extern_methods!</code></a>, there are no safe-guards here; you can write
+<code>i8</code>, but if Objective-C thinks it’s an <code>u32</code>, it will cause UB when
+called!</p>
+<p><code>unsafe impl P for T { ... }</code> requires that all required methods of the
+specified protocol is implemented, and that any extra requirements
+(implicit or explicit) that the protocol has are upheld. The methods in
+this definition has the same safety requirements as above.</p>
+<h2 id="examples"><a class="doc-anchor" href="#examples">§</a>Examples</h2>
+<p>Declare a class <code>MyCustomObject</code> that inherits <code>NSObject</code>, has a few
+instance variables and methods, and implements the <code>NSCopying</code> protocol.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>std::os::raw::c_int;
+
+<span class="kw">use </span>objc2_foundation::{NSCopying, NSObject, NSObjectProtocol, NSZone};
+<span class="kw">use </span>objc2::rc::{Allocated, Retained};
+<span class="kw">use </span>objc2::{
+    declare_class, extern_protocol, msg_send, msg_send_id, mutability, ClassType,
+    DeclaredClass, ProtocolType,
+};
+
+<span class="attr">#[derive(Clone)]
+</span><span class="kw">struct </span>Ivars {
+    foo: u8,
+    bar: c_int,
+    object: Retained&lt;NSObject&gt;,
+}
+
+<span class="macro">declare_class!</span>(
+    <span class="kw">struct </span>MyCustomObject;
+
+    <span class="comment">// SAFETY:
+    // - The superclass NSObject does not have any subclassing requirements.
+    // - Interior mutability is a safe default.
+    // - `MyCustomObject` does not implement `Drop`.
+    </span><span class="kw">unsafe impl </span>ClassType <span class="kw">for </span>MyCustomObject {
+        <span class="kw">type </span>Super = NSObject;
+        <span class="kw">type </span>Mutability = mutability::InteriorMutable;
+        <span class="kw">const </span>NAME: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str = <span class="string">"MyCustomObject"</span>;
+    }
+
+    <span class="kw">impl </span>DeclaredClass <span class="kw">for </span>MyCustomObject {
+        <span class="kw">type </span>Ivars = Ivars;
+    }
+
+    <span class="kw">unsafe impl </span>MyCustomObject {
+        <span class="attr">#[method_id(initWithFoo:)]
+        </span><span class="kw">fn </span>init_with(this: Allocated&lt;<span class="self">Self</span>&gt;, foo: u8) -&gt; <span class="prelude-ty">Option</span>&lt;Retained&lt;<span class="self">Self</span>&gt;&gt; {
+            <span class="kw">let </span>this = this.set_ivars(Ivars {
+                foo,
+                bar: <span class="number">42</span>,
+                object: NSObject::new(),
+            });
+            <span class="kw">unsafe </span>{ <span class="macro">msg_send_id!</span>[<span class="kw">super</span>(this), init] }
+        }
+
+        <span class="attr">#[method(foo)]
+        </span><span class="kw">fn </span>__get_foo(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u8 {
+            <span class="self">self</span>.ivars().foo
+        }
+
+        <span class="attr">#[method_id(object)]
+        </span><span class="kw">fn </span>__get_object(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Retained&lt;NSObject&gt; {
+            <span class="self">self</span>.ivars().object.clone()
+        }
+
+        <span class="attr">#[method(myClassMethod)]
+        </span><span class="kw">fn </span>__my_class_method() -&gt; bool {
+            <span class="bool-val">true
+        </span>}
+    }
+
+    <span class="kw">unsafe impl </span>NSObjectProtocol <span class="kw">for </span>MyCustomObject {}
+
+    <span class="kw">unsafe impl </span>NSCopying <span class="kw">for </span>MyCustomObject {
+        <span class="attr">#[method_id(copyWithZone:)]
+        </span><span class="kw">fn </span>copyWithZone(<span class="kw-2">&amp;</span><span class="self">self</span>, _zone: <span class="kw-2">*const </span>NSZone) -&gt; Retained&lt;<span class="self">Self</span>&gt; {
+            <span class="kw">let </span>new = <span class="self">Self</span>::alloc().set_ivars(<span class="self">self</span>.ivars().clone());
+            <span class="kw">unsafe </span>{ <span class="macro">msg_send_id!</span>[<span class="kw">super</span>(new), init] }
+        }
+
+        <span class="comment">// If we have tried to add other methods here, or had forgotten
+        // to implement the method, we would have gotten an error.
+    </span>}
+);
+
+<span class="kw">impl </span>MyCustomObject {
+    <span class="kw">pub fn </span>new(foo: u8) -&gt; Retained&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">unsafe </span>{ <span class="macro">msg_send_id!</span>[<span class="self">Self</span>::alloc(), initWithFoo: foo] }
+    }
+
+    <span class="kw">pub fn </span>get_foo(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u8 {
+        <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="self">self</span>, foo] }
+    }
+
+    <span class="kw">pub fn </span>get_object(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Retained&lt;NSObject&gt; {
+        <span class="kw">unsafe </span>{ <span class="macro">msg_send_id!</span>[<span class="self">self</span>, object] }
+    }
+
+    <span class="kw">pub fn </span>my_class_method() -&gt; bool {
+        <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="self">Self</span>::class(), myClassMethod] }
+    }
+}
+
+<span class="kw">fn </span>main() {
+    <span class="kw">let </span>obj = MyCustomObject::new(<span class="number">3</span>);
+    <span class="macro">assert_eq!</span>(obj.ivars().foo, <span class="number">3</span>);
+    <span class="macro">assert_eq!</span>(obj.ivars().bar, <span class="number">42</span>);
+    <span class="macro">assert!</span>(obj.ivars().object.is_kind_of::&lt;NSObject&gt;());
+
+    <span class="kw">let </span>obj = obj.copy();
+
+    <span class="macro">assert_eq!</span>(obj.get_foo(), <span class="number">3</span>);
+    <span class="macro">assert!</span>(obj.get_object().is_kind_of::&lt;NSObject&gt;());
+
+    <span class="macro">assert!</span>(MyCustomObject::my_class_method());
+}</code></pre></div>
+<p>Approximately equivalent to the following ARC-enabled Objective-C code.</p>
+<div class="example-wrap"><pre class="language-text"><code>#import &lt;Foundation/Foundation.h&gt;
+
+@interface MyCustomObject: NSObject &lt;NSCopying&gt;
+- (instancetype)initWithFoo:(uint8_t)foo;
+- (uint8_t)foo;
+- (NSObject*)object;
++ (BOOL)myClassMethod;
+@end
+
+
+@implementation MyCustomObject {
+    // Instance variables
+    uint8_t foo;
+    int bar;
+    NSObject* _Nonnull object;
+}
+
+- (instancetype)initWithFoo:(uint8_t)foo_arg {
+    self = [super init];
+    if (self) {
+        self-&gt;foo = foo_arg;
+        self-&gt;bar = 42;
+        self-&gt;object = [NSObject new];
+    }
+    return self;
+}
+
+- (uint8_t)foo {
+    return self-&gt;foo;
+}
+
+- (NSObject*)object {
+    return self-&gt;object;
+}
+
++ (BOOL)myClassMethod {
+    return YES;
+}
+
+// NSCopying
+
+- (id)copyWithZone:(NSZone *)_zone {
+    MyCustomObject* new = [[MyCustomObject alloc] initWithFoo: self-&gt;foo];
+    new-&gt;bar = self-&gt;bar;
+    new-&gt;obj = self-&gt;obj;
+    return new;
+}
+
+@end
+</code></pre></div></div></details></section></div></main></body></html>

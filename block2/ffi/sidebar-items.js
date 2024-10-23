@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["_Block_copy","_Block_object_assign","_Block_object_dispose","_Block_release"],"static":["_NSConcreteGlobalBlock","_NSConcreteStackBlock"],"struct":["Class"]};

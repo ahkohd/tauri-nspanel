@@ -1,0 +1,1 @@
+searchState.loadedDescShard("nodrop", 0, "A wrapper type to inhibit drop (destructor).\nA type holding <strong>T</strong> that will not call its destructor on drop\nReturns the argument unchanged.\nCalls <code>U::from(self)</code>.\nExtract the inner value.\nCreate a new <strong>NoDrop</strong>.")

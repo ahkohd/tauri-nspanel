@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bytes-1.6.0/src/bytes_mut.rs`."><title>bytes_mut.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bytes" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../bytes/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bytes-1.8.0/src/bytes_mut.rs`."><title>bytes_mut.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bytes" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1806,6 +1804,118 @@
 <a href="#1804" id="1804">1804</a>
 <a href="#1805" id="1805">1805</a>
 <a href="#1806" id="1806">1806</a>
+<a href="#1807" id="1807">1807</a>
+<a href="#1808" id="1808">1808</a>
+<a href="#1809" id="1809">1809</a>
+<a href="#1810" id="1810">1810</a>
+<a href="#1811" id="1811">1811</a>
+<a href="#1812" id="1812">1812</a>
+<a href="#1813" id="1813">1813</a>
+<a href="#1814" id="1814">1814</a>
+<a href="#1815" id="1815">1815</a>
+<a href="#1816" id="1816">1816</a>
+<a href="#1817" id="1817">1817</a>
+<a href="#1818" id="1818">1818</a>
+<a href="#1819" id="1819">1819</a>
+<a href="#1820" id="1820">1820</a>
+<a href="#1821" id="1821">1821</a>
+<a href="#1822" id="1822">1822</a>
+<a href="#1823" id="1823">1823</a>
+<a href="#1824" id="1824">1824</a>
+<a href="#1825" id="1825">1825</a>
+<a href="#1826" id="1826">1826</a>
+<a href="#1827" id="1827">1827</a>
+<a href="#1828" id="1828">1828</a>
+<a href="#1829" id="1829">1829</a>
+<a href="#1830" id="1830">1830</a>
+<a href="#1831" id="1831">1831</a>
+<a href="#1832" id="1832">1832</a>
+<a href="#1833" id="1833">1833</a>
+<a href="#1834" id="1834">1834</a>
+<a href="#1835" id="1835">1835</a>
+<a href="#1836" id="1836">1836</a>
+<a href="#1837" id="1837">1837</a>
+<a href="#1838" id="1838">1838</a>
+<a href="#1839" id="1839">1839</a>
+<a href="#1840" id="1840">1840</a>
+<a href="#1841" id="1841">1841</a>
+<a href="#1842" id="1842">1842</a>
+<a href="#1843" id="1843">1843</a>
+<a href="#1844" id="1844">1844</a>
+<a href="#1845" id="1845">1845</a>
+<a href="#1846" id="1846">1846</a>
+<a href="#1847" id="1847">1847</a>
+<a href="#1848" id="1848">1848</a>
+<a href="#1849" id="1849">1849</a>
+<a href="#1850" id="1850">1850</a>
+<a href="#1851" id="1851">1851</a>
+<a href="#1852" id="1852">1852</a>
+<a href="#1853" id="1853">1853</a>
+<a href="#1854" id="1854">1854</a>
+<a href="#1855" id="1855">1855</a>
+<a href="#1856" id="1856">1856</a>
+<a href="#1857" id="1857">1857</a>
+<a href="#1858" id="1858">1858</a>
+<a href="#1859" id="1859">1859</a>
+<a href="#1860" id="1860">1860</a>
+<a href="#1861" id="1861">1861</a>
+<a href="#1862" id="1862">1862</a>
+<a href="#1863" id="1863">1863</a>
+<a href="#1864" id="1864">1864</a>
+<a href="#1865" id="1865">1865</a>
+<a href="#1866" id="1866">1866</a>
+<a href="#1867" id="1867">1867</a>
+<a href="#1868" id="1868">1868</a>
+<a href="#1869" id="1869">1869</a>
+<a href="#1870" id="1870">1870</a>
+<a href="#1871" id="1871">1871</a>
+<a href="#1872" id="1872">1872</a>
+<a href="#1873" id="1873">1873</a>
+<a href="#1874" id="1874">1874</a>
+<a href="#1875" id="1875">1875</a>
+<a href="#1876" id="1876">1876</a>
+<a href="#1877" id="1877">1877</a>
+<a href="#1878" id="1878">1878</a>
+<a href="#1879" id="1879">1879</a>
+<a href="#1880" id="1880">1880</a>
+<a href="#1881" id="1881">1881</a>
+<a href="#1882" id="1882">1882</a>
+<a href="#1883" id="1883">1883</a>
+<a href="#1884" id="1884">1884</a>
+<a href="#1885" id="1885">1885</a>
+<a href="#1886" id="1886">1886</a>
+<a href="#1887" id="1887">1887</a>
+<a href="#1888" id="1888">1888</a>
+<a href="#1889" id="1889">1889</a>
+<a href="#1890" id="1890">1890</a>
+<a href="#1891" id="1891">1891</a>
+<a href="#1892" id="1892">1892</a>
+<a href="#1893" id="1893">1893</a>
+<a href="#1894" id="1894">1894</a>
+<a href="#1895" id="1895">1895</a>
+<a href="#1896" id="1896">1896</a>
+<a href="#1897" id="1897">1897</a>
+<a href="#1898" id="1898">1898</a>
+<a href="#1899" id="1899">1899</a>
+<a href="#1900" id="1900">1900</a>
+<a href="#1901" id="1901">1901</a>
+<a href="#1902" id="1902">1902</a>
+<a href="#1903" id="1903">1903</a>
+<a href="#1904" id="1904">1904</a>
+<a href="#1905" id="1905">1905</a>
+<a href="#1906" id="1906">1906</a>
+<a href="#1907" id="1907">1907</a>
+<a href="#1908" id="1908">1908</a>
+<a href="#1909" id="1909">1909</a>
+<a href="#1910" id="1910">1910</a>
+<a href="#1911" id="1911">1911</a>
+<a href="#1912" id="1912">1912</a>
+<a href="#1913" id="1913">1913</a>
+<a href="#1914" id="1914">1914</a>
+<a href="#1915" id="1915">1915</a>
+<a href="#1916" id="1916">1916</a>
+<a href="#1917" id="1917">1917</a>
+<a href="#1918" id="1918">1918</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>core::iter::FromIterator;
 <span class="kw">use </span>core::mem::{<span class="self">self</span>, ManuallyDrop, MaybeUninit};
 <span class="kw">use </span>core::ops::{Deref, DerefMut};
@@ -1825,7 +1935,7 @@
 <span class="attr">#[allow(unused)]
 </span><span class="kw">use </span><span class="kw">crate</span>::loom::sync::atomic::AtomicMut;
 <span class="kw">use </span><span class="kw">crate</span>::loom::sync::atomic::{AtomicPtr, AtomicUsize, Ordering};
-<span class="kw">use crate</span>::{Buf, BufMut, Bytes};
+<span class="kw">use crate</span>::{offset_from, Buf, BufMut, Bytes};
 
 <span class="doccomment">/// A unique reference to a contiguous slice of memory.
 ///
@@ -2072,7 +2182,14 @@
         }
     }
 
-    <span class="doccomment">/// Creates a new `BytesMut`, which is initialized with zero.
+    <span class="doccomment">/// Creates a new `BytesMut` containing `len` zeros.
+    ///
+    /// The resulting object has a length of `len` and a capacity greater
+    /// than or equal to `len`. The entire length of the object will be filled
+    /// with zeros.
+    ///
+    /// On some platforms or allocators this function may be faster than
+    /// a manual implementation.
     ///
     /// # Examples
     ///
@@ -2081,6 +2198,7 @@
     ///
     /// let zeros = BytesMut::zeroed(42);
     ///
+    /// assert!(zeros.capacity() &gt;= 42);
     /// assert_eq!(zeros.len(), 42);
     /// zeros.into_iter().for_each(|x| assert_eq!(x, 0));
     /// ```
@@ -2091,7 +2209,9 @@
     <span class="doccomment">/// Splits the bytes into two at the given index.
     ///
     /// Afterwards `self` contains elements `[0, at)`, and the returned
-    /// `BytesMut` contains elements `[at, capacity)`.
+    /// `BytesMut` contains elements `[at, capacity)`. It's guaranteed that the
+    /// memory does not move, that is, the address of `self` does not change,
+    /// and the address of the returned slice is `at` bytes after that.
     ///
     /// This is an `O(1)` operation that just increases the reference count
     /// and sets a few indices.
@@ -2157,7 +2277,7 @@
     ///
     /// assert_eq!(other, b"hello world"[..]);
     /// ```
-    </span><span class="attr">#[must_use = <span class="string">"consider BytesMut::advance(len()) if you don't need the other half"</span>]
+    </span><span class="attr">#[must_use = <span class="string">"consider BytesMut::clear if you don't need the other half"</span>]
     </span><span class="kw">pub fn </span>split(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; BytesMut {
         <span class="kw">let </span>len = <span class="self">self</span>.len();
         <span class="self">self</span>.split_to(len)
@@ -2231,9 +2351,8 @@
     /// ```
     </span><span class="kw">pub fn </span>truncate(<span class="kw-2">&amp;mut </span><span class="self">self</span>, len: usize) {
         <span class="kw">if </span>len &lt;= <span class="self">self</span>.len() {
-            <span class="kw">unsafe </span>{
-                <span class="self">self</span>.set_len(len);
-            }
+            <span class="comment">// SAFETY: Shrinking the buffer cannot expose uninitialized bytes.
+            </span><span class="kw">unsafe </span>{ <span class="self">self</span>.set_len(len) };
         }
     }
 
@@ -2249,7 +2368,8 @@
     /// assert!(buf.is_empty());
     /// ```
     </span><span class="kw">pub fn </span>clear(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="self">self</span>.truncate(<span class="number">0</span>);
+        <span class="comment">// SAFETY: Setting the length to zero cannot expose uninitialized bytes.
+        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.set_len(<span class="number">0</span>) };
     }
 
     <span class="doccomment">/// Resizes the buffer so that `len` is equal to `new_len`.
@@ -2275,18 +2395,26 @@
     /// assert_eq!(&amp;buf[..], &amp;[0x1, 0x1, 0x3, 0x3]);
     /// ```
     </span><span class="kw">pub fn </span>resize(<span class="kw-2">&amp;mut </span><span class="self">self</span>, new_len: usize, value: u8) {
-        <span class="kw">let </span>len = <span class="self">self</span>.len();
-        <span class="kw">if </span>new_len &gt; len {
-            <span class="kw">let </span>additional = new_len - len;
-            <span class="self">self</span>.reserve(additional);
-            <span class="kw">unsafe </span>{
-                <span class="kw">let </span>dst = <span class="self">self</span>.chunk_mut().as_mut_ptr();
-                ptr::write_bytes(dst, value, additional);
-                <span class="self">self</span>.set_len(new_len);
-            }
+        <span class="kw">let </span>additional = <span class="kw">if let </span><span class="prelude-val">Some</span>(additional) = new_len.checked_sub(<span class="self">self</span>.len()) {
+            additional
         } <span class="kw">else </span>{
             <span class="self">self</span>.truncate(new_len);
+            <span class="kw">return</span>;
+        };
+
+        <span class="kw">if </span>additional == <span class="number">0 </span>{
+            <span class="kw">return</span>;
         }
+
+        <span class="self">self</span>.reserve(additional);
+        <span class="kw">let </span>dst = <span class="self">self</span>.spare_capacity_mut().as_mut_ptr();
+        <span class="comment">// SAFETY: `spare_capacity_mut` returns a valid, properly aligned pointer and we've
+        // reserved enough space to write `additional` bytes.
+        </span><span class="kw">unsafe </span>{ ptr::write_bytes(dst, value, additional) };
+
+        <span class="comment">// SAFETY: There are at least `new_len` initialized bytes in the buffer so no
+        // uninitialized bytes are being exposed.
+        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.set_len(new_len) };
     }
 
     <span class="doccomment">/// Sets the length of the buffer.
@@ -2389,12 +2517,13 @@
             </span><span class="kw">return</span>;
         }
 
-        <span class="self">self</span>.reserve_inner(additional);
+        <span class="comment">// will always succeed
+        </span><span class="kw">let _ </span>= <span class="self">self</span>.reserve_inner(additional, <span class="bool-val">true</span>);
     }
 
-    <span class="comment">// In separate function to allow the short-circuits in `reserve` to
-    // be inline-able. Significant helps performance.
-    </span><span class="kw">fn </span>reserve_inner(<span class="kw-2">&amp;mut </span><span class="self">self</span>, additional: usize) {
+    <span class="comment">// In separate function to allow the short-circuits in `reserve` and `try_reclaim` to
+    // be inline-able. Significantly helps performance. Returns false if it did not succeed.
+    </span><span class="kw">fn </span>reserve_inner(<span class="kw-2">&amp;mut </span><span class="self">self</span>, additional: usize, allocate: bool) -&gt; bool {
         <span class="kw">let </span>len = <span class="self">self</span>.len();
         <span class="kw">let </span>kind = <span class="self">self</span>.kind();
 
@@ -2439,6 +2568,9 @@
                     // can gain capacity back.
                     </span><span class="self">self</span>.cap += off;
                 } <span class="kw">else </span>{
+                    <span class="kw">if </span>!allocate {
+                        <span class="kw">return </span><span class="bool-val">false</span>;
+                    }
                     <span class="comment">// Not enough space, or reusing might be too much overhead:
                     // allocate more space!
                     </span><span class="kw">let </span><span class="kw-2">mut </span>v =
@@ -2447,11 +2579,11 @@
 
                     <span class="comment">// Update the info
                     </span><span class="self">self</span>.ptr = vptr(v.as_mut_ptr().add(off));
-                    <span class="self">self</span>.len = v.len() - off;
                     <span class="self">self</span>.cap = v.capacity() - off;
+                    <span class="macro">debug_assert_eq!</span>(<span class="self">self</span>.len, v.len() - off);
                 }
 
-                <span class="kw">return</span>;
+                <span class="kw">return </span><span class="bool-val">true</span>;
             }
         }
 
@@ -2462,7 +2594,11 @@
         // allocating a new vector with the requested capacity.
         //
         // Compute the new capacity
-        </span><span class="kw">let </span><span class="kw-2">mut </span>new_cap = len.checked_add(additional).expect(<span class="string">"overflow"</span>);
+        </span><span class="kw">let </span><span class="kw-2">mut </span>new_cap = <span class="kw">match </span>len.checked_add(additional) {
+            <span class="prelude-val">Some</span>(new_cap) =&gt; new_cap,
+            <span class="prelude-val">None </span><span class="kw">if </span>!allocate =&gt; <span class="kw">return </span><span class="bool-val">false</span>,
+            <span class="prelude-val">None </span>=&gt; <span class="macro">panic!</span>(<span class="string">"overflow"</span>),
+        };
 
         <span class="kw">unsafe </span>{
             <span class="comment">// First, try to reclaim the buffer. This is possible if the current
@@ -2493,6 +2629,9 @@
                     <span class="self">self</span>.ptr = vptr(ptr);
                     <span class="self">self</span>.cap = v.capacity();
                 } <span class="kw">else </span>{
+                    <span class="kw">if </span>!allocate {
+                        <span class="kw">return </span><span class="bool-val">false</span>;
+                    }
                     <span class="comment">// calculate offset
                     </span><span class="kw">let </span>off = (<span class="self">self</span>.ptr.as_ptr() <span class="kw">as </span>usize) - (v.as_ptr() <span class="kw">as </span>usize);
 
@@ -2531,8 +2670,11 @@
                     <span class="self">self</span>.cap = v.capacity() - off;
                 }
 
-                <span class="kw">return</span>;
+                <span class="kw">return </span><span class="bool-val">true</span>;
             }
+        }
+        <span class="kw">if </span>!allocate {
+            <span class="kw">return </span><span class="bool-val">false</span>;
         }
 
         <span class="kw">let </span>original_capacity_repr = <span class="kw">unsafe </span>{ (<span class="kw-2">*</span>shared).original_capacity_repr };
@@ -2554,8 +2696,69 @@
         </span><span class="kw">let </span>data = (original_capacity_repr &lt;&lt; ORIGINAL_CAPACITY_OFFSET) | KIND_VEC;
         <span class="self">self</span>.data = invalid_ptr(data);
         <span class="self">self</span>.ptr = vptr(v.as_mut_ptr());
-        <span class="self">self</span>.len = v.len();
         <span class="self">self</span>.cap = v.capacity();
+        <span class="macro">debug_assert_eq!</span>(<span class="self">self</span>.len, v.len());
+        <span class="kw">return </span><span class="bool-val">true</span>;
+    }
+
+    <span class="doccomment">/// Attempts to cheaply reclaim already allocated capacity for at least `additional` more
+    /// bytes to be inserted into the given `BytesMut` and returns `true` if it succeeded.
+    ///
+    /// `try_reclaim` behaves exactly like `reserve`, except that it never allocates new storage
+    /// and returns a `bool` indicating whether it was successful in doing so:
+    ///
+    /// `try_reclaim` returns false under these conditions:
+    ///  - The spare capacity left is less than `additional` bytes AND
+    ///  - The existing allocation cannot be reclaimed cheaply or it was less than
+    ///    `additional` bytes in size
+    ///
+    /// Reclaiming the allocation cheaply is possible if the `BytesMut` has no outstanding
+    /// references through other `BytesMut`s or `Bytes` which point to the same underlying
+    /// storage.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bytes::BytesMut;
+    ///
+    /// let mut buf = BytesMut::with_capacity(64);
+    /// assert_eq!(true, buf.try_reclaim(64));
+    /// assert_eq!(64, buf.capacity());
+    ///
+    /// buf.extend_from_slice(b"abcd");
+    /// let mut split = buf.split();
+    /// assert_eq!(60, buf.capacity());
+    /// assert_eq!(4, split.capacity());
+    /// assert_eq!(false, split.try_reclaim(64));
+    /// assert_eq!(false, buf.try_reclaim(64));
+    /// // The split buffer is filled with "abcd"
+    /// assert_eq!(false, split.try_reclaim(4));
+    /// // buf is empty and has capacity for 60 bytes
+    /// assert_eq!(true, buf.try_reclaim(60));
+    ///
+    /// drop(buf);
+    /// assert_eq!(false, split.try_reclaim(64));
+    ///
+    /// split.clear();
+    /// assert_eq!(4, split.capacity());
+    /// assert_eq!(true, split.try_reclaim(64));
+    /// assert_eq!(64, split.capacity());
+    /// ```
+    </span><span class="comment">// I tried splitting out try_reclaim_inner after the short circuits, but it was inlined
+    // regardless with Rust 1.78.0 so probably not worth it
+    </span><span class="attr">#[inline]
+    #[must_use = <span class="string">"consider BytesMut::reserve if you need an infallible reservation"</span>]
+    </span><span class="kw">pub fn </span>try_reclaim(<span class="kw-2">&amp;mut </span><span class="self">self</span>, additional: usize) -&gt; bool {
+        <span class="kw">let </span>len = <span class="self">self</span>.len();
+        <span class="kw">let </span>rem = <span class="self">self</span>.capacity() - len;
+
+        <span class="kw">if </span>additional &lt;= rem {
+            <span class="comment">// The handle can already store at least `additional` more bytes, so
+            // there is no further work needed to be done.
+            </span><span class="kw">return </span><span class="bool-val">true</span>;
+        }
+
+        <span class="self">self</span>.reserve_inner(additional, <span class="bool-val">false</span>)
     }
 
     <span class="doccomment">/// Appends given bytes to this `BytesMut`.
@@ -2668,7 +2871,7 @@
     /// # SAFETY
     ///
     /// The caller must ensure that `count` &lt;= `self.cap`.
-    </span><span class="kw">unsafe fn </span>advance_unchecked(<span class="kw-2">&amp;mut </span><span class="self">self</span>, count: usize) {
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>advance_unchecked(<span class="kw-2">&amp;mut </span><span class="self">self</span>, count: usize) {
         <span class="comment">// Setting the start to 0 is a no-op, so return early if this is the
         // case.
         </span><span class="kw">if </span>count == <span class="number">0 </span>{
@@ -3476,23 +3679,6 @@
     ptr.cast::&lt;T&gt;()
 }
 
-<span class="doccomment">/// Precondition: dst &gt;= original
-///
-/// The following line is equivalent to:
-///
-/// ```rust,ignore
-/// self.ptr.as_ptr().offset_from(ptr) as usize;
-/// ```
-///
-/// But due to min rust is 1.39 and it is only stabilized
-/// in 1.47, we cannot use it.
-</span><span class="attr">#[inline]
-</span><span class="kw">fn </span>offset_from(dst: <span class="kw-2">*mut </span>u8, original: <span class="kw-2">*mut </span>u8) -&gt; usize {
-    <span class="macro">debug_assert!</span>(dst &gt;= original);
-
-    dst <span class="kw">as </span>usize - original <span class="kw">as </span>usize
-}
-
 <span class="kw">unsafe fn </span>rebuild_vec(ptr: <span class="kw-2">*mut </span>u8, <span class="kw-2">mut </span>len: usize, <span class="kw-2">mut </span>cap: usize, off: usize) -&gt; Vec&lt;u8&gt; {
     <span class="kw">let </span>ptr = ptr.sub(off);
     len += off;
@@ -3506,7 +3692,8 @@
 </span><span class="kw">static </span>SHARED_VTABLE: Vtable = Vtable {
     clone: shared_v_clone,
     to_vec: shared_v_to_vec,
-    is_unique: <span class="kw">crate</span>::bytes::shared_is_unique,
+    to_mut: shared_v_to_mut,
+    is_unique: shared_v_is_unique,
     drop: shared_v_drop,
 };
 
@@ -3539,6 +3726,41 @@
         v
     }
 }
+
+<span class="kw">unsafe fn </span>shared_v_to_mut(data: <span class="kw-2">&amp;</span>AtomicPtr&lt;()&gt;, ptr: <span class="kw-2">*const </span>u8, len: usize) -&gt; BytesMut {
+    <span class="kw">let </span>shared: <span class="kw-2">*mut </span>Shared = data.load(Ordering::Relaxed).cast();
+
+    <span class="kw">if </span>(<span class="kw-2">*</span>shared).is_unique() {
+        <span class="kw">let </span>shared = <span class="kw-2">&amp;mut *</span>shared;
+
+        <span class="comment">// The capacity is always the original capacity of the buffer
+        // minus the offset from the start of the buffer
+        </span><span class="kw">let </span>v = <span class="kw-2">&amp;mut </span>shared.vec;
+        <span class="kw">let </span>v_capacity = v.capacity();
+        <span class="kw">let </span>v_ptr = v.as_mut_ptr();
+        <span class="kw">let </span>offset = offset_from(ptr <span class="kw">as </span><span class="kw-2">*mut </span>u8, v_ptr);
+        <span class="kw">let </span>cap = v_capacity - offset;
+
+        <span class="kw">let </span>ptr = vptr(ptr <span class="kw">as </span><span class="kw-2">*mut </span>u8);
+
+        BytesMut {
+            ptr,
+            len,
+            cap,
+            data: shared,
+        }
+    } <span class="kw">else </span>{
+        <span class="kw">let </span>v = slice::from_raw_parts(ptr, len).to_vec();
+        release_shared(shared);
+        BytesMut::from_vec(v)
+    }
+}
+
+<span class="kw">unsafe fn </span>shared_v_is_unique(data: <span class="kw-2">&amp;</span>AtomicPtr&lt;()&gt;) -&gt; bool {
+    <span class="kw">let </span>shared = data.load(Ordering::Acquire);
+    <span class="kw">let </span>ref_count = (<span class="kw-2">*</span>shared.cast::&lt;Shared&gt;()).ref_count.load(Ordering::Relaxed);
+    ref_count == <span class="number">1
+</span>}
 
 <span class="kw">unsafe fn </span>shared_v_drop(data: <span class="kw-2">&amp;mut </span>AtomicPtr&lt;()&gt;, _ptr: <span class="kw-2">*const </span>u8, _len: usize) {
     data.with_mut(|shared| {

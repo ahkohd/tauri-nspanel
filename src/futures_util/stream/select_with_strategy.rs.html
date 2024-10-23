@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-util-0.3.30/src/stream/select_with_strategy.rs`."><title>select_with_strategy.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="futures_util" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../futures_util/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-util-0.3.31/src/stream/select_with_strategy.rs`."><title>select_with_strategy.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="futures_util" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -327,17 +325,17 @@
         old
     }
 
-    <span class="kw">fn </span>other(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; PollNext {
+    <span class="kw">fn </span>other(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="kw">match </span><span class="self">self </span>{
-            PollNext::Left =&gt; PollNext::Right,
-            PollNext::Right =&gt; PollNext::Left,
+            <span class="self">Self</span>::Left =&gt; <span class="self">Self</span>::Right,
+            <span class="self">Self</span>::Right =&gt; <span class="self">Self</span>::Left,
         }
     }
 }
 
 <span class="kw">impl </span>Default <span class="kw">for </span>PollNext {
     <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
-        PollNext::Left
+        <span class="self">Self</span>::Left
     }
 }
 
@@ -351,15 +349,14 @@
 <span class="kw">impl </span>InternalState {
     <span class="kw">fn </span>finish(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ps: PollNext) {
         <span class="kw">match </span>(<span class="kw-2">&amp;</span><span class="self">self</span>, ps) {
-            (InternalState::Start, PollNext::Left) =&gt; {
-                <span class="kw-2">*</span><span class="self">self </span>= InternalState::LeftFinished;
+            (<span class="self">Self</span>::Start, PollNext::Left) =&gt; {
+                <span class="kw-2">*</span><span class="self">self </span>= <span class="self">Self</span>::LeftFinished;
             }
-            (InternalState::Start, PollNext::Right) =&gt; {
-                <span class="kw-2">*</span><span class="self">self </span>= InternalState::RightFinished;
+            (<span class="self">Self</span>::Start, PollNext::Right) =&gt; {
+                <span class="kw-2">*</span><span class="self">self </span>= <span class="self">Self</span>::RightFinished;
             }
-            (InternalState::LeftFinished, PollNext::Right)
-            | (InternalState::RightFinished, PollNext::Left) =&gt; {
-                <span class="kw-2">*</span><span class="self">self </span>= InternalState::BothFinished;
+            (<span class="self">Self</span>::LeftFinished, PollNext::Right) | (<span class="self">Self</span>::RightFinished, PollNext::Left) =&gt; {
+                <span class="kw-2">*</span><span class="self">self </span>= <span class="self">Self</span>::BothFinished;
             }
             <span class="kw">_ </span>=&gt; {}
         }
@@ -381,7 +378,8 @@
     }
 }
 
-<span class="doccomment">/// This function will attempt to pull items from both streams. You provide a
+<span class="attr">#[allow(clippy::too_long_first_doc_paragraph)]
+</span><span class="doccomment">/// This function will attempt to pull items from both streams. You provide a
 /// closure to tell [`SelectWithStrategy`] which stream to poll. The closure can
 /// store state on `SelectWithStrategy` to which it will receive a `&amp;mut` on every
 /// invocation. This allows basing the strategy on prior choices.

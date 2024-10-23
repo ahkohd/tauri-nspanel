@@ -1,0 +1,103 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Interop with `core-foundation`-like crates"><title>objc2::topics::core_foundation_interop - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="objc2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../../objc2/index.html">objc2</a><span class="version">0.5.2</span></h2></div><h2 class="location"><a href="#">Module core_<wbr>foundation_<wbr>interop</a></h2><div class="sidebar-elems"><h2><a href="../index.html">In objc2::<wbr>topics</a></h2></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Module <a href="../../index.html">objc2</a>::<wbr><a href="../index.html">topics</a>::<wbr><a class="mod" href="#">core_foundation_interop</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../../../src/objc2/topics/mod.rs.html#7">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="interop-with-core-foundation-like-crates"><a class="doc-anchor" href="#interop-with-core-foundation-like-crates">§</a>Interop with <code>core-foundation</code>-like crates</h2>
+<p>The <code>objc2</code> project does not <a href="https://github.com/madsmtm/objc2/issues/556">yet</a> provide bindings to CoreFoundation and similar frameworks.</p>
+<p>To interact with these, you will have to use existing crates like <a href="https://crates.io/crates/core-foundation"><code>core-foundation</code></a>, <a href="https://crates.io/crates/core-graphics"><code>core-graphics</code></a>, <a href="https://crates.io/crates/security-framework"><code>security-framework</code></a>, <a href="https://crates.io/crates/system-configuration"><code>system-configuration</code></a> and so on.</p>
+<p>This can, however, pose a bit of an issue, since <code>objc2</code> and <a href="https://docs.rs/block2/latest/block2/"><code>block2</code></a> impose certain requirements on the types involved.</p>
+<h3 id="implementing-encode-for-a-newtype-wrapper"><a class="doc-anchor" href="#implementing-encode-for-a-newtype-wrapper">§</a>Implementing <code>Encode</code> for a newtype wrapper</h3>
+<p>Due to Rust’s orphan rules, <code>core-foundation</code> types do not implement <code>Encode</code>, and as such cannot be passed to/from methods and in blocks by default.</p>
+<p>We’re (slowly) working on fixing this, see <a href="https://github.com/servo/core-foundation-rs/pull/628">servo/core-foundation-rs#628</a>, but in the meantime, you can use a newtype wrapper around the <code>CF...Ref</code>, and implement <a href="../../encode/trait.Encode.html" title="trait objc2::encode::Encode"><code>Encode</code></a> for that wrapper.</p>
+<h4 id="examples"><a class="doc-anchor" href="#examples">§</a>Examples</h4>
+<p>Declaring an external function to <a href="https://developer.apple.com/documentation/corefoundation/1542816-cfrunloopobservercreatewithhandl?language=objc"><code>CFRunLoopObserverCreateWithHandler</code></a>, which uses blocks and <code>block2</code>, and as such require its parameters to implement <code>Encode</code>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>std::ptr;
+
+<span class="kw">use </span>block2::{RcBlock, Block};
+<span class="kw">use </span>core_foundation::base::{Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, TCFType};
+<span class="kw">use </span>core_foundation::runloop::{CFRunLoopActivity, CFRunLoopObserver, CFRunLoopObserverRef, kCFRunLoopAllActivities};
+<span class="kw">use </span>objc2::encode::{Encode, Encoding};
+
+<span class="attr">#[repr(transparent)]
+</span><span class="kw">struct </span>CFRunLoopObserverRefWrapper(CFRunLoopObserverRef);
+
+<span class="comment">// SAFETY: `CFRunLoopObserverRefWrapper` is `#[repr(transparent)]` over
+// `CFRunLoopObserverRef`, which is a typedef to `struct __CFRunLoopObserver *`.
+</span><span class="kw">unsafe impl </span>Encode <span class="kw">for </span>CFRunLoopObserverRefWrapper {
+    <span class="kw">const </span>ENCODING: Encoding = Encoding::Pointer(<span class="kw-2">&amp;</span>Encoding::Struct(<span class="string">"__CFRunLoopObserver"</span>, <span class="kw-2">&amp;</span>[]));
+}
+
+<span class="kw">extern </span><span class="string">"C" </span>{
+    <span class="kw">fn </span>CFRunLoopObserverCreateWithHandler(
+        allocator: CFAllocatorRef,
+        activities: CFOptionFlags,
+        repeats: Boolean,
+        order: CFIndex,
+        block: <span class="kw-2">&amp;</span>Block&lt;<span class="kw">dyn </span>Fn(CFRunLoopObserverRefWrapper, CFRunLoopActivity)&gt;
+    ) -&gt; CFRunLoopObserverRef;
+}
+
+<span class="kw">let </span>block = RcBlock::new(|observer: CFRunLoopObserverRefWrapper, activity| {
+    <span class="comment">// Extract `CFRunLoopObserverRef` from `CFRunLoopObserverRefWrapper`
+    </span><span class="kw">let </span>observer = observer.<span class="number">0</span>;
+});
+
+<span class="kw">let </span>observer = <span class="kw">unsafe </span>{
+    CFRunLoopObserver::wrap_under_create_rule(CFRunLoopObserverCreateWithHandler(
+        ptr::null(),
+        kCFRunLoopAllActivities,
+        <span class="bool-val">false </span><span class="kw">as </span>Boolean,
+        <span class="number">0</span>,
+        <span class="kw-2">&amp;</span>block,
+    ))
+};</code></pre></div>
+<p>An alternative, if you don’t want to go through the trouble of creating a newtype, is to use the <code>"relax-void-encoding"</code> Cargo feature.</p>
+<p>Here we set the <a href="https://developer.apple.com/documentation/quartzcore/calayer/1410903-bordercolor?language=objc"><code>-[CALayer borderColor]</code></a> property (which uses <code>CGColorRef</code>).</p>
+
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="kw">use </span>core_foundation::base::ToVoid;
+<span class="kw">use </span>core_graphics::color::CGColor;
+<span class="kw">use </span>objc2_quartz_core::CALayer;
+<span class="kw">use </span>objc2::msg_send;
+
+<span class="kw">fn </span>set_border_color(layer: <span class="kw-2">&amp;</span>CALayer, color: <span class="kw-2">&amp;</span>CGColor) {
+    <span class="kw">let </span>color = color.to_void();
+    <span class="comment">// Passing `*const c_void` here requires the "relax-void-encoding" feature
+    </span><span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[layer, setBorderColor: color] }
+}
+
+<span class="kw">let </span>layer = <span class="kw">unsafe </span>{ CALayer::new() };
+<span class="kw">let </span>color = CGColor::rgb(<span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>);
+set_border_color(<span class="kw-2">&amp;</span>layer, <span class="kw-2">&amp;</span>color);</code></pre></div>
+<h3 id="toll-free-bridging"><a class="doc-anchor" href="#toll-free-bridging">§</a>Toll-free bridging</h3>
+<p>Certain CoreFoundation types are documented to be <a href="https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFDesignConcepts/Articles/tollFreeBridgedTypes.html">“toll-free bridged”</a>, which means that they’re completely interoperable with the Foundation types. To convert between these in Rust, you’ll have to cast the pointers, e.g. between <code>CFStringRef</code> and <code>*const NSString</code>.</p>
+<h4 id="example"><a class="doc-anchor" href="#example">§</a>Example</h4>
+<p>Toll-free bridging between <code>CFString</code> and <code>NSString</code>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>core_foundation::base::TCFType;
+<span class="kw">use </span>core_foundation::string::{CFString, CFStringRef};
+<span class="kw">use </span>objc2_foundation::{NSString, ns_string};
+<span class="kw">use </span>objc2::rc::Retained;
+
+<span class="kw">fn </span>cf_string_to_ns(s: <span class="kw-2">&amp;</span>CFString) -&gt; <span class="kw-2">&amp;</span>NSString {
+    <span class="kw">let </span>ptr: CFStringRef = s.as_concrete_TypeRef();
+    <span class="kw">let </span>ptr: <span class="kw-2">*const </span>NSString = ptr.cast();
+    <span class="comment">// SAFETY: CFString is toll-free bridged with NSString.
+    </span><span class="kw">unsafe </span>{ ptr.as_ref().unwrap() }
+}
+
+<span class="comment">// Note: `NSString` is currently a bit special, and requires that we convert from
+// `Retained&lt;NSString&gt;`, as it could otherwise have come from `&amp;NSMutableString`,
+// and then we'd loose lifetime information by converting to `CFString`.
+//
+// This will be changed in the future, see https://github.com/madsmtm/objc2/issues/563.
+</span><span class="kw">fn </span>ns_string_to_cf(s: Retained&lt;NSString&gt;) -&gt; CFString {
+    <span class="comment">// Yield ownership over the string
+    </span><span class="kw">let </span>ptr: <span class="kw-2">*const </span>NSString = Retained::into_raw(s);
+    <span class="kw">let </span>ptr: CFStringRef = ptr.cast();
+    <span class="comment">// SAFETY: NSString is toll-free bridged with CFString, and
+    // ownership was passed above with `Retained::into_raw`.
+    </span><span class="kw">unsafe </span>{ CFString::wrap_under_create_rule(ptr) }
+}
+
+<span class="kw">let </span>cf = CFString::new(<span class="string">"foo"</span>);
+<span class="kw">let </span>ns = NSString::from_str(<span class="string">"foo"</span>);
+<span class="macro">assert_eq!</span>(cf_string_to_ns(<span class="kw-2">&amp;</span>cf), <span class="kw-2">&amp;*</span>ns);
+<span class="macro">assert_eq!</span>(cf, ns_string_to_cf(ns));</code></pre></div>
+</div></details></section></div></main></body></html>

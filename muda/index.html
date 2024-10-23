@@ -1,0 +1,92 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="muda is a Menu Utilities library for Desktop Applications."><title>muda - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="muda" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../muda/index.html">muda</a><span class="version">0.15.1</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#reexports">Re-exports</a></li><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#types">Type Aliases</a></li></ul></section></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">muda</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../src/muda/lib.rs.html#5-427">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>muda is a Menu Utilities library for Desktop Applications.</p>
+<h2 id="platforms-supported"><a class="doc-anchor" href="#platforms-supported">§</a>Platforms supported:</h2>
+<ul>
+<li>Windows</li>
+<li>macOS</li>
+<li>Linux (gtk Only)</li>
+</ul>
+<h2 id="platform-specific-notes"><a class="doc-anchor" href="#platform-specific-notes">§</a>Platform-specific notes:</h2>
+<ul>
+<li>
+<p>On macOS, menus can only be used from the main thread, and most
+functionality will panic if you try to use it from any other thread.</p>
+</li>
+<li>
+<p>On Windows, accelerators don’t work unless the win32 message loop calls
+<a href="https://docs.rs/windows-sys/latest/windows_sys/Win32/UI/WindowsAndMessaging/fn.TranslateAcceleratorW.html"><code>TranslateAcceleratorW</code></a>.
+See <a href="https://docs.rs/muda/latest/x86_64-pc-windows-msvc/muda/struct.Menu.html#method.init_for_hwnd"><code>Menu::init_for_hwnd</code></a> for more details</p>
+</li>
+</ul>
+<h2 id="dependencies-linux-only"><a class="doc-anchor" href="#dependencies-linux-only">§</a>Dependencies (Linux Only)</h2>
+<p><code>gtk</code> is used for menus and <code>libxdo</code> is used to make the predfined <code>Copy</code>, <code>Cut</code>, <code>Paste</code> and <code>SelectAll</code> menu items work. Be sure to install following packages before building:</p>
+<h5 id="arch-linux--manjaro"><a class="doc-anchor" href="#arch-linux--manjaro">§</a>Arch Linux / Manjaro:</h5><div class="example-wrap"><pre class="language-sh"><code>pacman -S gtk3 xdotool
+</code></pre></div><h5 id="debian--ubuntu"><a class="doc-anchor" href="#debian--ubuntu">§</a>Debian / Ubuntu:</h5><div class="example-wrap"><pre class="language-sh"><code>sudo apt install libgtk-3-dev libxdo-dev
+</code></pre></div><h2 id="example"><a class="doc-anchor" href="#example">§</a>Example</h2>
+<p>Create the menu and add your items</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">let </span>menu = Menu::new();
+<span class="kw">let </span>menu_item2 = MenuItem::new(<span class="string">"Menu item #2"</span>, <span class="bool-val">false</span>, <span class="prelude-val">None</span>);
+<span class="kw">let </span>submenu = Submenu::with_items(
+    <span class="string">"Submenu Outer"</span>,
+    <span class="bool-val">true</span>,
+    <span class="kw-2">&amp;</span>[
+        <span class="kw-2">&amp;</span>MenuItem::new(
+            <span class="string">"Menu item #1"</span>,
+            <span class="bool-val">true</span>,
+            <span class="prelude-val">Some</span>(Accelerator::new(<span class="prelude-val">Some</span>(Modifiers::ALT), Code::KeyD)),
+        ),
+        <span class="kw-2">&amp;</span>PredefinedMenuItem::separator(),
+        <span class="kw-2">&amp;</span>menu_item2,
+        <span class="kw-2">&amp;</span>MenuItem::new(<span class="string">"Menu item #3"</span>, <span class="bool-val">true</span>, <span class="prelude-val">None</span>),
+        <span class="kw-2">&amp;</span>PredefinedMenuItem::separator(),
+        <span class="kw-2">&amp;</span>Submenu::with_items(
+            <span class="string">"Submenu Inner"</span>,
+            <span class="bool-val">true</span>,
+            <span class="kw-2">&amp;</span>[
+                <span class="kw-2">&amp;</span>MenuItem::new(<span class="string">"Submenu item #1"</span>, <span class="bool-val">true</span>, <span class="prelude-val">None</span>),
+                <span class="kw-2">&amp;</span>PredefinedMenuItem::separator(),
+                <span class="kw-2">&amp;</span>menu_item2,
+            ],
+        ).unwrap(),
+    ],
+);</code></pre></div>
+<p>Then add your root menu to a Window on Windows and Linux
+or use it as your global app menu on macOS</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="comment">// --snip--
+</span><span class="attr">#[cfg(target_os = <span class="string">"windows"</span>)]
+</span><span class="kw">unsafe </span>{ menu.init_for_hwnd(window_hwnd) };
+<span class="attr">#[cfg(target_os = <span class="string">"linux"</span>)]
+</span>menu.init_for_gtk_window(<span class="kw-2">&amp;</span>gtk_window, <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>vertical_gtk_box));
+<span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
+</span>menu.init_for_nsapp();</code></pre></div>
+<h2 id="context-menus-popup-menus"><a class="doc-anchor" href="#context-menus-popup-menus">§</a>Context menus (Popup menus)</h2>
+<p>You can also use a <a href="struct.Menu.html" title="struct muda::Menu"><code>Menu</code></a> or a <a href="struct.Submenu.html" title="struct muda::Submenu"><code>Submenu</code></a> show a context menu.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>muda::ContextMenu;
+<span class="comment">// --snip--
+</span><span class="kw">let </span>position = muda::dpi::PhysicalPosition { x: <span class="number">100.</span>, y: <span class="number">120. </span>};
+<span class="attr">#[cfg(target_os = <span class="string">"windows"</span>)]
+</span><span class="kw">unsafe </span>{ menu.show_context_menu_for_hwnd(window_hwnd, <span class="prelude-val">Some</span>(position.into())) };
+<span class="attr">#[cfg(target_os = <span class="string">"linux"</span>)]
+</span>menu.show_context_menu_for_gtk_window(<span class="kw-2">&amp;</span>gtk_window, <span class="prelude-val">Some</span>(position.into()));
+<span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
+</span><span class="kw">unsafe </span>{ menu.show_context_menu_for_nsview(nsview, <span class="prelude-val">Some</span>(position.into())) };</code></pre></div>
+<h2 id="processing-menu-events"><a class="doc-anchor" href="#processing-menu-events">§</a>Processing menu events</h2>
+<p>You can use <a href="struct.MenuEvent.html#method.receiver" title="associated function muda::MenuEvent::receiver"><code>MenuEvent::receiver</code></a> to get a reference to the <a href="type.MenuEventReceiver.html" title="type muda::MenuEventReceiver"><code>MenuEventReceiver</code></a>
+which you can use to listen to events when a menu item is activated</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">if let </span><span class="prelude-val">Ok</span>(event) = MenuEvent::receiver().try_recv() {
+    <span class="kw">match </span>event.id {
+        id <span class="kw">if </span>id == save_item.id() =&gt; {
+            <span class="macro">println!</span>(<span class="string">"Save menu item activated"</span>);
+        },
+        <span class="kw">_ </span>=&gt; {}
+    }
+}</code></pre></div>
+</div></details><h2 id="reexports" class="section-header">Re-exports<a href="#reexports" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name" id="reexport.AboutMetadata"><code>pub use about_metadata::<a class="struct" href="about_metadata/struct.AboutMetadata.html" title="struct muda::about_metadata::AboutMetadata">AboutMetadata</a>;</code></div></li><li><div class="item-name" id="reexport.AboutMetadataBuilder"><code>pub use crate::about_metadata::<a class="struct" href="about_metadata/struct.AboutMetadataBuilder.html" title="struct muda::about_metadata::AboutMetadataBuilder">AboutMetadataBuilder</a>;</code></div></li><li><div class="item-name" id="reexport.AcceleratorParseError"><code>pub use crate::accelerator::<a class="enum" href="accelerator/enum.AcceleratorParseError.html" title="enum muda::accelerator::AcceleratorParseError">AcceleratorParseError</a>;</code></div></li><li><div class="item-name" id="reexport.dpi"><code>pub use <a class="mod" href="../dpi/index.html" title="mod dpi">dpi</a>;</code></div></li></ul><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="mod" href="about_metadata/index.html" title="mod muda::about_metadata">about_<wbr>metadata</a></div><div class="desc docblock-short">Types and functions to create <a href="about_metadata/struct.AboutMetadata.html" title="struct muda::about_metadata::AboutMetadata"><code>AboutMetadata</code></a> for the <a href="struct.PredefinedMenuItem.html#method.about" title="associated function muda::PredefinedMenuItem::about"><code>PredefinedMenuItem::about</code></a> dialog.</div></li><li><div class="item-name"><a class="mod" href="accelerator/index.html" title="mod muda::accelerator">accelerator</a></div><div class="desc docblock-short">Accelerators describe keyboard shortcuts for menu items.</div></li></ul><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.CheckMenuItem.html" title="struct muda::CheckMenuItem">Check<wbr>Menu<wbr>Item</a></div><div class="desc docblock-short">A check menu item inside a <a href="struct.Menu.html" title="struct muda::Menu"><code>Menu</code></a> or <a href="struct.Submenu.html" title="struct muda::Submenu"><code>Submenu</code></a>
+and usually contains a text and a check mark or a similar toggle
+that corresponds to a checked and unchecked states.</div></li><li><div class="item-name"><a class="struct" href="struct.CheckMenuItemBuilder.html" title="struct muda::CheckMenuItemBuilder">Check<wbr>Menu<wbr>Item<wbr>Builder</a></div><div class="desc docblock-short">A builder type for <a href="struct.CheckMenuItem.html" title="struct muda::CheckMenuItem"><code>CheckMenuItem</code></a></div></li><li><div class="item-name"><a class="struct" href="struct.Icon.html" title="struct muda::Icon">Icon</a></div><div class="desc docblock-short">An icon used for the window titlebar, taskbar, etc.</div></li><li><div class="item-name"><a class="struct" href="struct.IconMenuItem.html" title="struct muda::IconMenuItem">Icon<wbr>Menu<wbr>Item</a></div><div class="desc docblock-short">An icon menu item inside a <a href="struct.Menu.html" title="struct muda::Menu"><code>Menu</code></a> or <a href="struct.Submenu.html" title="struct muda::Submenu"><code>Submenu</code></a>
+and usually contains an icon and a text.</div></li><li><div class="item-name"><a class="struct" href="struct.IconMenuItemBuilder.html" title="struct muda::IconMenuItemBuilder">Icon<wbr>Menu<wbr>Item<wbr>Builder</a></div><div class="desc docblock-short">A builder type for <a href="struct.IconMenuItem.html" title="struct muda::IconMenuItem"><code>IconMenuItem</code></a></div></li><li><div class="item-name"><a class="struct" href="struct.Menu.html" title="struct muda::Menu">Menu</a></div><div class="desc docblock-short">A root menu that can be added to a Window on Windows and Linux
+and used as the app global menu on macOS.</div></li><li><div class="item-name"><a class="struct" href="struct.MenuEvent.html" title="struct muda::MenuEvent">Menu<wbr>Event</a></div><div class="desc docblock-short">Describes a menu event emitted when a menu item is activated</div></li><li><div class="item-name"><a class="struct" href="struct.MenuId.html" title="struct muda::MenuId">MenuId</a></div><div class="desc docblock-short">An unique id that is associated with a menu or a menu item.</div></li><li><div class="item-name"><a class="struct" href="struct.MenuItem.html" title="struct muda::MenuItem">Menu<wbr>Item</a></div><div class="desc docblock-short">A menu item inside a <a href="struct.Menu.html" title="struct muda::Menu"><code>Menu</code></a> or <a href="struct.Submenu.html" title="struct muda::Submenu"><code>Submenu</code></a> and contains only text.</div></li><li><div class="item-name"><a class="struct" href="struct.MenuItemBuilder.html" title="struct muda::MenuItemBuilder">Menu<wbr>Item<wbr>Builder</a></div><div class="desc docblock-short">A builder type for <a href="struct.MenuItem.html" title="struct muda::MenuItem"><code>MenuItem</code></a></div></li><li><div class="item-name"><a class="struct" href="struct.PredefinedMenuItem.html" title="struct muda::PredefinedMenuItem">Predefined<wbr>Menu<wbr>Item</a></div><div class="desc docblock-short">A predefined (native) menu item which has a predfined behavior by the OS or by this crate.</div></li><li><div class="item-name"><a class="struct" href="struct.Submenu.html" title="struct muda::Submenu">Submenu</a></div><div class="desc docblock-short">A menu that can be added to a <a href="struct.Menu.html" title="struct muda::Menu"><code>Menu</code></a> or another <a href="struct.Submenu.html" title="struct muda::Submenu"><code>Submenu</code></a>.</div></li><li><div class="item-name"><a class="struct" href="struct.SubmenuBuilder.html" title="struct muda::SubmenuBuilder">Submenu<wbr>Builder</a></div><div class="desc docblock-short">A builder type for <a href="struct.Submenu.html" title="struct muda::Submenu"><code>Submenu</code></a></div></li></ul><h2 id="enums" class="section-header">Enums<a href="#enums" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="enum" href="enum.BadIcon.html" title="enum muda::BadIcon">BadIcon</a></div><div class="desc docblock-short">An error produced when using <a href="struct.Icon.html#method.from_rgba" title="associated function muda::Icon::from_rgba"><code>Icon::from_rgba</code></a> with invalid arguments.</div></li><li><div class="item-name"><a class="enum" href="enum.Error.html" title="enum muda::Error">Error</a></div><div class="desc docblock-short">Errors returned by muda.</div></li><li><div class="item-name"><a class="enum" href="enum.MenuItemKind.html" title="enum muda::MenuItemKind">Menu<wbr>Item<wbr>Kind</a></div><div class="desc docblock-short">An enumeration of all available menu types, useful to match against
+the items returned from <a href="struct.Menu.html#method.items" title="method muda::Menu::items"><code>Menu::items</code></a> or <a href="struct.Submenu.html#method.items" title="method muda::Submenu::items"><code>Submenu::items</code></a></div></li><li><div class="item-name"><a class="enum" href="enum.NativeIcon.html" title="enum muda::NativeIcon">Native<wbr>Icon</a></div><div class="desc docblock-short">A native Icon to be used for the menu item</div></li></ul><h2 id="traits" class="section-header">Traits<a href="#traits" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="trait" href="trait.ContextMenu.html" title="trait muda::ContextMenu">Context<wbr>Menu</a></div><div class="desc docblock-short">A helper trait with methods to help creating a context menu.</div></li><li><div class="item-name"><a class="trait" href="trait.IsMenuItem.html" title="trait muda::IsMenuItem">IsMenu<wbr>Item</a></div><div class="desc docblock-short">A trait that defines a generic item in a menu, which may be one of <a href="enum.MenuItemKind.html" title="enum muda::MenuItemKind"><code>MenuItemKind</code></a></div></li></ul><h2 id="types" class="section-header">Type Aliases<a href="#types" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="type" href="type.MenuEventReceiver.html" title="type muda::MenuEventReceiver">Menu<wbr>Event<wbr>Receiver</a></div><div class="desc docblock-short">A reciever that could be used to listen to menu events.</div></li><li><div class="item-name"><a class="type" href="type.Result.html" title="type muda::Result">Result</a></div><div class="desc docblock-short">Convenient type alias of Result type for muda.</div></li></ul></section></div></main></body></html>

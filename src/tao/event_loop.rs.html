@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tao-0.16.9/src/event_loop.rs`."><title>event_loop.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tao" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../tao/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tao-0.30.3/src/event_loop.rs`."><title>event_loop.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tao" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -311,6 +309,107 @@
 <a href="#309" id="309">309</a>
 <a href="#310" id="310">310</a>
 <a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
+<a href="#351" id="351">351</a>
+<a href="#352" id="352">352</a>
+<a href="#353" id="353">353</a>
+<a href="#354" id="354">354</a>
+<a href="#355" id="355">355</a>
+<a href="#356" id="356">356</a>
+<a href="#357" id="357">357</a>
+<a href="#358" id="358">358</a>
+<a href="#359" id="359">359</a>
+<a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
+<a href="#362" id="362">362</a>
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+<a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
+<a href="#411" id="411">411</a>
+<a href="#412" id="412">412</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright 2014-2021 The winit contributors
 // Copyright 2021-2023 Tauri Programme within The Commons Conservancy
 // SPDX-License-Identifier: Apache-2.0
@@ -327,10 +426,16 @@
 //! [event_loop_proxy]: crate::event_loop::EventLoopProxy
 //! [send_event]: crate::event_loop::EventLoopProxy::send_event
 </span><span class="kw">use </span>instant::Instant;
-<span class="kw">use </span>raw_window_handle::{HasRawDisplayHandle, RawDisplayHandle};
-<span class="kw">use </span>std::{error, fmt, ops::Deref};
+<span class="kw">use </span>std::{error, fmt, marker::PhantomData, ops::Deref};
 
-<span class="kw">use crate</span>::{event::Event, monitor::MonitorHandle, platform_impl};
+<span class="kw">use crate</span>::{
+  dpi::PhysicalPosition,
+  error::ExternalError,
+  event::Event,
+  monitor::MonitorHandle,
+  platform_impl,
+  window::{ProgressBarState, Theme},
+};
 
 <span class="doccomment">/// Provides a way to retrieve events from the system and from the windows that were registered to
 /// the events loop.
@@ -371,6 +476,58 @@
 <span class="kw">impl</span>&lt;T&gt; fmt::Debug <span class="kw">for </span>EventLoopWindowTarget&lt;T&gt; {
   <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; fmt::Result {
     f.pad(<span class="string">"EventLoopWindowTarget { .. }"</span>)
+  }
+}
+
+<span class="doccomment">/// Object that allows building the event loop.
+///
+/// This is used to make specifying options that affect the whole application
+/// easier. But note that constructing multiple event loops is not supported.
+</span><span class="attr">#[derive(Default)]
+</span><span class="kw">pub struct </span>EventLoopBuilder&lt;T: <span class="lifetime">'static</span>&gt; {
+  <span class="kw">pub</span>(<span class="kw">crate</span>) platform_specific: platform_impl::PlatformSpecificEventLoopAttributes,
+  _p: PhantomData&lt;T&gt;,
+}
+<span class="kw">impl </span>EventLoopBuilder&lt;()&gt; {
+  <span class="doccomment">/// Start building a new event loop.
+  </span><span class="attr">#[inline]
+  </span><span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
+    <span class="self">Self</span>::with_user_event()
+  }
+}
+<span class="kw">impl</span>&lt;T&gt; EventLoopBuilder&lt;T&gt; {
+  <span class="doccomment">/// Start building a new event loop, with the given type as the user event
+  /// type.
+  </span><span class="attr">#[inline]
+  </span><span class="kw">pub fn </span>with_user_event() -&gt; <span class="self">Self </span>{
+    <span class="self">Self </span>{
+      platform_specific: Default::default(),
+      _p: PhantomData,
+    }
+  }
+  <span class="doccomment">/// Builds a new event loop.
+  ///
+  /// ***For cross-platform compatibility, the `EventLoop` must be created on the main thread.***
+  /// Attempting to create the event loop on a different thread will panic. This restriction isn't
+  /// strictly necessary on all platforms, but is imposed to eliminate any nasty surprises when
+  /// porting to platforms that require it. `EventLoopBuilderExt::any_thread` functions are exposed
+  /// in the relevant `platform` module if the target platform supports creating an event loop on
+  /// any thread.
+  ///
+  /// Usage will result in display backend initialisation, this can be controlled on linux
+  /// using an environment variable `WINIT_UNIX_BACKEND`. Legal values are `x11` and `wayland`.
+  /// If it is not set, winit will try to connect to a wayland connection, and if it fails will
+  /// fallback on x11. If this variable is set with any other value, winit will panic.
+  ///
+  /// ## Platform-specific
+  ///
+  /// - **iOS:** Can only be called on the main thread.
+  </span><span class="attr">#[inline]
+  </span><span class="kw">pub fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; EventLoop&lt;T&gt; {
+    EventLoop {
+      event_loop: platform_impl::EventLoop::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.platform_specific),
+      _marker: PhantomData,
+    }
   }
 }
 
@@ -431,44 +588,22 @@
 }
 
 <span class="kw">impl </span>EventLoop&lt;()&gt; {
-  <span class="doccomment">/// Builds a new event loop with a `()` as the user event type.
+  <span class="doccomment">/// Alias for [`EventLoopBuilder::new().build()`].
   ///
-  /// ***For cross-platform compatibility, the `EventLoop` must be created on the main thread.***
-  /// Attempting to create the event loop on a different thread will panic. This restriction isn't
-  /// strictly necessary on all platforms, but is imposed to eliminate any nasty surprises when
-  /// porting to platforms that require it. `EventLoopExt::new_any_thread` functions are exposed
-  /// in the relevant `platform` module if the target platform supports creating an event loop on
-  /// any thread.
-  ///
-  /// ## Platform-specific
-  ///
-  /// - **iOS:** Can only be called on the main thread.
+  /// [`EventLoopBuilder::new().build()`]: EventLoopBuilder::build
+  </span><span class="attr">#[inline]
   </span><span class="kw">pub fn </span>new() -&gt; EventLoop&lt;()&gt; {
-    EventLoop::&lt;()&gt;::with_user_event()
+    EventLoopBuilder::new().build()
   }
 }
 
 <span class="kw">impl </span>Default <span class="kw">for </span>EventLoop&lt;()&gt; {
   <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
-    EventLoop::&lt;()&gt;::new()
+    <span class="self">Self</span>::new()
   }
 }
 
 <span class="kw">impl</span>&lt;T&gt; EventLoop&lt;T&gt; {
-  <span class="doccomment">/// Builds a new event loop.
-  ///
-  /// All caveats documented in [`EventLoop::new`] apply to this function.
-  ///
-  /// ## Platform-specific
-  ///
-  /// - **iOS:** Can only be called on the main thread.
-  </span><span class="kw">pub fn </span>with_user_event() -&gt; EventLoop&lt;T&gt; {
-    EventLoop {
-      event_loop: platform_impl::EventLoop::new(),
-      _marker: ::std::marker::PhantomData,
-    }
-  }
-
   <span class="doccomment">/// Hijacks the calling thread and initializes the tao event loop with the provided
   /// closure. Since the closure is `'static`, it must be a `move` closure if it needs to
   /// access any data from the calling context.
@@ -554,12 +689,77 @@
     <span class="attr">#[cfg(target_os = <span class="string">"windows"</span>)]
     </span><span class="self">self</span>.p.set_device_event_filter(_filter);
   }
+
+  <span class="doccomment">/// Returns the current cursor position
+  ///
+  /// ## Platform-specific
+  ///
+  /// - **iOS / Android / Linux(Wayland)**: Unsupported, returns `0,0`.
+  </span><span class="attr">#[inline]
+  </span><span class="kw">pub fn </span>cursor_position(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;PhysicalPosition&lt;f64&gt;, ExternalError&gt; {
+    <span class="self">self</span>.p.cursor_position()
+  }
+
+  <span class="doccomment">/// Sets the progress bar state
+  ///
+  /// ## Platform-specific
+  ///
+  /// - **Windows:** Unsupported. Use the Progress Bar Function Available in Window (Windows can have different progress bars for different window)
+  /// - **Linux:** Only supported desktop environments with `libunity` (e.g. GNOME).
+  /// - **iOS / Android:** Unsupported.
+  </span><span class="attr">#[inline]
+  </span><span class="kw">pub fn </span>set_progress_bar(<span class="kw-2">&amp;</span><span class="self">self</span>, _progress: ProgressBarState) {
+    <span class="attr">#[cfg(any(target_os = <span class="string">"linux"</span>, target_os = <span class="string">"macos"</span>))]
+    </span><span class="self">self</span>.p.set_progress_bar(_progress)
+  }
+
+  <span class="doccomment">/// Sets the theme for the application.
+  ///
+  /// ## Platform-specific
+  ///
+  /// - **iOS / Android:** Unsupported.
+  </span><span class="attr">#[inline]
+  </span><span class="kw">pub fn </span>set_theme(<span class="kw-2">&amp;</span><span class="self">self</span>, theme: <span class="prelude-ty">Option</span>&lt;Theme&gt;) {
+    <span class="attr">#[cfg(any(
+      windows,
+      target_os = <span class="string">"linux"</span>,
+      target_os = <span class="string">"dragonfly"</span>,
+      target_os = <span class="string">"freebsd"</span>,
+      target_os = <span class="string">"netbsd"</span>,
+      target_os = <span class="string">"openbsd"</span>,
+      target_os = <span class="string">"macos"</span>,
+    ))]
+    </span><span class="self">self</span>.p.set_theme(theme)
+  }
 }
 
-<span class="kw">unsafe impl</span>&lt;T&gt; HasRawDisplayHandle <span class="kw">for </span>EventLoopWindowTarget&lt;T&gt; {
-  <span class="doccomment">/// Returns a [`raw_window_handle::RawDisplayHandle`] for the event loop.
-  </span><span class="kw">fn </span>raw_display_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RawDisplayHandle {
-    <span class="self">self</span>.p.raw_display_handle()
+<span class="attr">#[cfg(feature = <span class="string">"rwh_05"</span>)]
+</span><span class="kw">unsafe impl</span>&lt;T&gt; rwh_05::HasRawDisplayHandle <span class="kw">for </span>EventLoop&lt;T&gt; {
+  <span class="kw">fn </span>raw_display_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; rwh_05::RawDisplayHandle {
+    rwh_05::HasRawDisplayHandle::raw_display_handle(<span class="kw-2">&amp;**</span><span class="self">self</span>)
+  }
+}
+
+<span class="attr">#[cfg(feature = <span class="string">"rwh_06"</span>)]
+</span><span class="kw">impl</span>&lt;T&gt; rwh_06::HasDisplayHandle <span class="kw">for </span>EventLoop&lt;T&gt; {
+  <span class="kw">fn </span>display_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;rwh_06::DisplayHandle&lt;<span class="lifetime">'_</span>&gt;, rwh_06::HandleError&gt; {
+    rwh_06::HasDisplayHandle::display_handle(<span class="kw-2">&amp;**</span><span class="self">self</span>)
+  }
+}
+
+<span class="attr">#[cfg(feature = <span class="string">"rwh_05"</span>)]
+</span><span class="kw">unsafe impl</span>&lt;T&gt; rwh_05::HasRawDisplayHandle <span class="kw">for </span>EventLoopWindowTarget&lt;T&gt; {
+  <span class="kw">fn </span>raw_display_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; rwh_05::RawDisplayHandle {
+    <span class="self">self</span>.p.raw_display_handle_rwh_05()
+  }
+}
+
+<span class="attr">#[cfg(feature = <span class="string">"rwh_06"</span>)]
+</span><span class="kw">impl</span>&lt;T&gt; rwh_06::HasDisplayHandle <span class="kw">for </span>EventLoopWindowTarget&lt;T&gt; {
+  <span class="kw">fn </span>display_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;rwh_06::DisplayHandle&lt;<span class="lifetime">'_</span>&gt;, rwh_06::HandleError&gt; {
+    <span class="kw">let </span>raw = <span class="self">self</span>.p.raw_display_handle_rwh_06()<span class="question-mark">?</span>;
+    <span class="comment">// SAFETY: The display will never be deallocated while the event loop is alive.
+    </span><span class="prelude-val">Ok</span>(<span class="kw">unsafe </span>{ rwh_06::DisplayHandle::borrow_raw(raw) })
   }
 }
 

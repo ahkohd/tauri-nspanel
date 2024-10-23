@@ -1,0 +1,121 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="`msg_send!` for methods returning `id`, `NSObject*`, or similar object pointers."><title>msg_send_id in objc2 - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="objc2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-118b08c4c78b968e.js"></script><script defer src="sidebar-items.js"></script><script defer src="../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc macro"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../objc2/index.html">objc2</a><span class="version">0.5.2</span></h2></div><div class="sidebar-elems"></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Macro <a href="index.html">objc2</a>::<wbr><a class="macro" href="#">msg_send_id</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../src/objc2/macros/mod.rs.html#1230-1296">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><span class="macro">macro_rules!</span> msg_send_id {
+    [<span class="kw">super</span>(<span class="macro-nonterminal">$obj</span>:expr), $(<span class="macro-nonterminal">$selector_and_arguments</span>:tt)+] =&gt; { ... };
+    [<span class="kw">super</span>(<span class="macro-nonterminal">$obj</span>:expr, <span class="macro-nonterminal">$superclass</span>:expr), $(<span class="macro-nonterminal">$selector_and_arguments</span>:tt)+] =&gt; { ... };
+    [<span class="macro-nonterminal">$obj</span>:expr, new $(,)<span class="question-mark">?</span>] =&gt; { ... };
+    [<span class="macro-nonterminal">$obj</span>:expr, alloc $(,)<span class="question-mark">?</span>] =&gt; { ... };
+    [<span class="macro-nonterminal">$obj</span>:expr, init $(,)<span class="question-mark">?</span>] =&gt; { ... };
+    [<span class="macro-nonterminal">$obj</span>:expr, $(<span class="macro-nonterminal">$selector_and_arguments</span>:tt)+] =&gt; { ... };
+}</pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p><a href="macro.msg_send.html" title="macro objc2::msg_send"><code>msg_send!</code></a> for methods returning <code>id</code>, <code>NSObject*</code>, or similar object
+pointers.</p>
+<p>Object pointers in Objective-C have certain rules for when they should be
+retained and released across function calls. This macro helps doing that,
+and returns an <a href="rc/struct.Retained.html" title="struct objc2::rc::Retained"><code>rc::Retained</code></a> with the object, optionally wrapped in an
+<a href="https://doc.rust-lang.org/1.82.0/core/option/enum.Option.html" title="enum core::option::Option"><code>Option</code></a> if you want to handle failures yourself.</p>
+<h2 id="a-little-history"><a class="doc-anchor" href="#a-little-history">§</a>A little history</h2>
+<p>Objective-C’s type system is… limited, so you can’t tell without
+consulting the documentation who is responsible for releasing an object.
+To remedy this problem, Apple/Cocoa introduced (approximately) the
+following rule:</p>
+<p>The caller is responsible for releasing objects return from methods that
+begin with <code>new</code>, <code>alloc</code>, <code>copy</code>, <code>mutableCopy</code> or <code>init</code>, and method
+that begins with <code>init</code> takes ownership of the receiver. See <a href="https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmRules.html#//apple_ref/doc/uid/20000994-SW1">Cocoa’s
+Memory Management Policy</a> for a user-friendly introduction to
+this concept.</p>
+<p>In the past, users had to do <code>retain</code> and <code>release</code> calls themselves to
+properly follow these rules. To avoid the memory management problems
+associated with manual stuff like that, they <a href="https://developer.apple.com/library/archive/releasenotes/ObjectiveC/RN-TransitioningToARC/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011226">introduced “ARC”</a>,
+which codifies the rules as part of the language, and inserts the required
+<code>retain</code> and <code>release</code> calls automatically.</p>
+<p><a href="macro.msg_send.html" title="macro objc2::msg_send"><code>msg_send!</code></a> is similar to pre-ARC; you have to know when to retain and
+when to release an object. <a href="macro.msg_send_id.html" title="macro objc2::msg_send_id"><code>msg_send_id!</code></a> is similar to ARC; the rules
+are simple enough that we can do them automatically!</p>
+<h2 id="specification"><a class="doc-anchor" href="#specification">§</a>Specification</h2>
+<p>The syntax is the same as in <a href="macro.msg_send.html" title="macro objc2::msg_send"><code>msg_send!</code></a>.</p>
+<p>Attributes like <code>objc_method_family</code>, <code>ns_returns_retained</code>, <code>ns_consumed</code>
+and so on must not present on the method - if they are, you should do
+manual memory management using the <a href="macro.msg_send.html" title="macro objc2::msg_send"><code>msg_send!</code></a> macro instead.</p>
+<p>The accepted receiver and return types, and how we handle them, differ
+depending on which, if any, of the <a href="https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-method-families">recognized selector
+families</a> the selector belongs to:</p>
+<ul>
+<li>
+<p>The <code>new</code> family: The receiver may be anything that implements
+<a href="runtime/trait.MessageReceiver.html" title="trait objc2::runtime::MessageReceiver"><code>MessageReceiver</code></a> (though often you’ll want to use <code>&amp;AnyClass</code>). The
+return type is a generic <code>Retained&lt;T&gt;</code> or <code>Option&lt;Retained&lt;T&gt;&gt;</code>.</p>
+</li>
+<li>
+<p>The <code>alloc</code> family: The receiver must be <code>&amp;AnyClass</code>, and the return
+type is a generic <code>Allocated&lt;T&gt;</code>.</p>
+</li>
+<li>
+<p>The <code>init</code> family: The receiver must be <code>Allocated&lt;T&gt;</code> as returned from
+<code>alloc</code>, or if sending messages to the superclass, it must be
+<code>PartialInit&lt;T&gt;</code>.</p>
+<p>The receiver is consumed, and a the now-initialized <code>Retained&lt;T&gt;</code> or
+<code>Option&lt;Retained&lt;T&gt;&gt;</code> (with the same <code>T</code>) is returned.</p>
+</li>
+<li>
+<p>The <code>copy</code> family: The receiver may be anything that implements
+<a href="runtime/trait.MessageReceiver.html" title="trait objc2::runtime::MessageReceiver"><code>MessageReceiver</code></a> and the return type is a generic <code>Retained&lt;T&gt;</code> or
+<code>Option&lt;Retained&lt;T&gt;&gt;</code>.</p>
+</li>
+<li>
+<p>The <code>mutableCopy</code> family: Same as the <code>copy</code> family.</p>
+</li>
+<li>
+<p>No family: The receiver may be anything that implements
+<a href="runtime/trait.MessageReceiver.html" title="trait objc2::runtime::MessageReceiver"><code>MessageReceiver</code></a>. The result is retained using
+<a href="rc/struct.Retained.html#method.retain_autoreleased" title="associated function objc2::rc::Retained::retain_autoreleased"><code>Retained::retain_autoreleased</code></a>, and a generic <code>Retained&lt;T&gt;</code> or
+<code>Option&lt;Retained&lt;T&gt;&gt;</code> is returned. This retain is in most cases faster
+than using autorelease pools!</p>
+</li>
+</ul>
+<p>See <a href="https://clang.llvm.org/docs/AutomaticReferenceCounting.html#retainable-object-pointers-as-operands-and-arguments">the clang documentation</a> for the precise
+specification of Objective-C’s ownership rules.</p>
+<p>As you may have noticed, the return type is usually either <code>Retained</code> or
+<code>Option&lt;Retained&gt;</code>. Internally, the return type is always
+<code>Option&lt;Retained&gt;</code> (for example: almost all <code>new</code> methods can fail if the
+allocation failed), but for convenience, if the return type is
+<code>Retained&lt;T&gt;</code>, this macro will automatically unwrap the object, or panic
+with an error message if it couldn’t be retrieved.</p>
+<p>As a special case, if the last argument is the marker <code>_</code>, the macro will
+return a <code>Result&lt;Retained&lt;T&gt;, Retained&lt;E&gt;&gt;</code>, see below.</p>
+<p>The <code>retain</code>, <code>release</code> and <code>autorelease</code> selectors are not supported, use
+<a href="rc/struct.Retained.html#method.retain" title="associated function objc2::rc::Retained::retain"><code>Retained::retain</code></a>, <a href="rc/struct.Retained.html#method.drop" title="method objc2::rc::Retained::drop"><code>Retained::drop</code></a> and <a href="rc/struct.Retained.html#method.autorelease" title="associated function objc2::rc::Retained::autorelease"><code>Retained::autorelease</code></a> for
+that.</p>
+<h2 id="errors"><a class="doc-anchor" href="#errors">§</a>Errors</h2>
+<p>Very similarly to <a href="macro.msg_send.html" title="macro objc2::msg_send"><code>msg_send!</code></a>, this macro supports transforming the
+return type of methods whose last parameter is <code>NSError**</code> into the Rust
+equivalent, the <a href="https://doc.rust-lang.org/1.82.0/core/result/enum.Result.html" title="enum core::result::Result"><code>Result</code></a> type.</p>
+<p>In particular, you can make the last argument the special marker <code>_</code>, and
+then the macro will return a <code>Result&lt;Retained&lt;T&gt;, Retained&lt;E&gt;&gt;</code> (where you
+must specify <code>E</code> yourself, usually you’d use <code>objc2_foundation::NSError</code>).</p>
+<h2 id="panics"><a class="doc-anchor" href="#panics">§</a>Panics</h2>
+<p>Panics if the return type is specified as <code>Retained&lt;_, _&gt;</code> and the method
+returned NULL.</p>
+<p>Additional panicking cases are documented in <a href="macro.msg_send.html" title="macro objc2::msg_send"><code>msg_send!</code></a>.</p>
+<h2 id="safety"><a class="doc-anchor" href="#safety">§</a>Safety</h2>
+<p>Same as <a href="macro.msg_send.html" title="macro objc2::msg_send"><code>msg_send!</code></a>, with an expected return type of <code>id</code>,
+<code>instancetype</code>, <code>NSObject*</code>, or other such object pointers. The method
+must not have any attributes that changes the how it handles memory
+management.</p>
+<p>Note that if you’re using this inside a context that expects unwinding to
+have Objective-C semantics (like <a href="exception/fn.catch.html" title="fn objc2::exception::catch"><code>exception::catch</code></a>), you should make
+sure that the return type is <code>Option&lt;Retained&lt;_, _&gt;&gt;</code> so that you don’t
+get an unexpected unwind through incompatible ABIs!</p>
+<h2 id="examples"><a class="doc-anchor" href="#examples">§</a>Examples</h2>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::{class, msg_send_id};
+<span class="kw">use </span>objc2::ffi::NSUInteger;
+<span class="kw">use </span>objc2::rc::Retained;
+<span class="kw">use </span>objc2::runtime::NSObject;
+<span class="comment">// Allocate new object
+</span><span class="kw">let </span>obj = <span class="kw">unsafe </span>{ <span class="macro">msg_send_id!</span>[<span class="macro">class!</span>(NSObject), alloc] };
+<span class="comment">// Consume the allocated object, return initialized object
+</span><span class="kw">let </span>obj: Retained&lt;NSObject&gt; = <span class="kw">unsafe </span>{ <span class="macro">msg_send_id!</span>[obj, init] };
+<span class="comment">// Copy the object
+</span><span class="kw">let </span>copy: Retained&lt;NSObject&gt; = <span class="kw">unsafe </span>{ <span class="macro">msg_send_id!</span>[<span class="kw-2">&amp;</span>obj, copy] };
+<span class="comment">// Call ordinary selector that returns an object
+// This time, we handle failures ourselves
+</span><span class="kw">let </span>s: <span class="prelude-ty">Option</span>&lt;Retained&lt;NSObject&gt;&gt; = <span class="kw">unsafe </span>{ <span class="macro">msg_send_id!</span>[<span class="kw-2">&amp;</span>obj, description] };
+<span class="kw">let </span>s = s.expect(<span class="string">"description was NULL"</span>);</code></pre></div>
+</div></details></section></div></main></body></html>

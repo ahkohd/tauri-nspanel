@@ -1,0 +1,313 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Bindings to the `WebKit` framework"><title>objc2_web_kit - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="objc2_web_kit" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../objc2_web_kit/index.html">objc2_<wbr>web_<wbr>kit</a><span class="version">0.2.2</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#structs">Structs</a></li><li><a href="#traits">Traits</a></li></ul></section></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">objc2_web_kit</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../src/objc2_web_kit/lib.rs.html#1-40">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="bindings-to-the-webkit-framework"><a class="doc-anchor" href="#bindings-to-the-webkit-framework">§</a>Bindings to the <code>WebKit</code> framework</h2>
+<p>See <a href="https://developer.apple.com/documentation/webkit/">Apple’s docs</a> and <a href="https://docs.rs/objc2/latest/objc2/topics/about_generated/index.html">the general docs on framework crates</a> for more information.</p>
+<h3 id="example"><a class="doc-anchor" href="#example">§</a>Example</h3>
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="attr">#![deny(unsafe_op_in_unsafe_fn)]
+#![allow(clippy::incompatible_msrv)]
+</span><span class="kw">use </span>core::cell::OnceCell;
+
+<span class="kw">use </span>objc2::{
+    declare_class, msg_send_id,
+    mutability::MainThreadOnly,
+    rc::Retained,
+    runtime::{AnyObject, ProtocolObject, Sel},
+    sel, ClassType, DeclaredClass,
+};
+<span class="attr">#[allow(deprecated)]
+</span><span class="kw">use </span>objc2_app_kit::{
+    NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate, NSBackingStoreType,
+    NSBezelStyle, NSButton, NSColor, NSControl, NSControlTextEditingDelegate, NSLayoutAttribute,
+    NSMenu, NSMenuItem, NSStackView, NSStackViewDistribution, NSTextField, NSTextFieldDelegate,
+    NSTextView, NSUserInterfaceLayoutOrientation, NSWindow, NSWindowStyleMask,
+};
+<span class="kw">use </span>objc2_foundation::{
+    ns_string, MainThreadMarker, NSNotification, NSObject, NSObjectProtocol, NSPoint, NSRect,
+    NSSize, NSURLRequest, NSURL,
+};
+<span class="kw">use </span>objc2_web_kit::{WKNavigation, WKNavigationDelegate, WKWebView};
+
+<span class="macro">macro_rules!</span> idcell {
+    (<span class="macro-nonterminal">$name</span>:ident =&gt; <span class="macro-nonterminal">$this</span>:expr) =&gt; {
+        <span class="macro-nonterminal">$this</span>.ivars().<span class="macro-nonterminal">$name</span>.set(<span class="macro-nonterminal">$name</span>).expect(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
+            <span class="string">"ivar should not already be initialized: `{}`"</span>,
+            <span class="macro">stringify!</span>(<span class="macro-nonterminal">$name</span>)
+        ));
+    };
+    (<span class="macro-nonterminal">$name</span>:ident &lt;= <span class="macro-nonterminal">$this</span>:expr) =&gt; {
+        <span class="attr">#[rustfmt::skip]
+        </span><span class="kw">let </span><span class="prelude-val">Some</span>(<span class="macro-nonterminal">$name</span>) = <span class="macro-nonterminal">$this</span>.ivars().<span class="macro-nonterminal">$name</span>.get() <span class="kw">else </span>{
+            <span class="macro">unreachable!</span>(
+                <span class="string">"ivar should be initialized: `{}`"</span>,
+                <span class="macro">stringify!</span>(<span class="macro-nonterminal">$name</span>)
+            )
+        };
+    };
+}
+
+<span class="attr">#[derive(Default)]
+</span><span class="kw">struct </span>Ivars {
+    nav_url: OnceCell&lt;Retained&lt;NSTextField&gt;&gt;,
+    web_view: OnceCell&lt;Retained&lt;WKWebView&gt;&gt;,
+    window: OnceCell&lt;Retained&lt;NSWindow&gt;&gt;,
+}
+
+<span class="macro">declare_class!</span>(
+    <span class="kw">struct </span>Delegate;
+
+    <span class="comment">// SAFETY:
+    // - The superclass NSObject does not have any subclassing requirements.
+    // - Main thread only mutability is correct, since this is an application delegate.
+    // - `Delegate` does not implement `Drop`.
+    </span><span class="kw">unsafe impl </span>ClassType <span class="kw">for </span>Delegate {
+        <span class="kw">type </span>Super = NSObject;
+        <span class="kw">type </span>Mutability = MainThreadOnly;
+        <span class="kw">const </span>NAME: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str = <span class="string">"Delegate"</span>;
+    }
+
+    <span class="kw">impl </span>DeclaredClass <span class="kw">for </span>Delegate {
+        <span class="kw">type </span>Ivars = Ivars;
+    }
+
+    <span class="kw">unsafe impl </span>NSObjectProtocol <span class="kw">for </span>Delegate {}
+
+    <span class="kw">unsafe impl </span>NSApplicationDelegate <span class="kw">for </span>Delegate {
+        <span class="attr">#[method(applicationDidFinishLaunching:)]
+        #[allow(non_snake_case)]
+        </span><span class="kw">unsafe fn </span>applicationDidFinishLaunching(<span class="kw-2">&amp;</span><span class="self">self</span>, _notification: <span class="kw-2">&amp;</span>NSNotification) {
+            <span class="kw">let </span>mtm = MainThreadMarker::from(<span class="self">self</span>);
+            <span class="comment">// create the app window
+            </span><span class="kw">let </span>window = {
+                <span class="kw">let </span>content_rect = NSRect::new(NSPoint::new(<span class="number">0.</span>, <span class="number">0.</span>), NSSize::new(<span class="number">1024.</span>, <span class="number">768.</span>));
+                <span class="kw">let </span>style = NSWindowStyleMask::Closable
+                    | NSWindowStyleMask::Resizable
+                    | NSWindowStyleMask::Titled;
+                <span class="kw">let </span>backing_store_type = NSBackingStoreType::NSBackingStoreBuffered;
+                <span class="kw">let </span>flag = <span class="bool-val">false</span>;
+                <span class="kw">unsafe </span>{
+                    NSWindow::initWithContentRect_styleMask_backing_defer(
+                        mtm.alloc(),
+                        content_rect,
+                        style,
+                        backing_store_type,
+                        flag,
+                    )
+                }
+            };
+
+            <span class="comment">// create the web view
+            </span><span class="kw">let </span>web_view = {
+                <span class="kw">let </span>frame_rect = NSRect::ZERO;
+                <span class="kw">unsafe </span>{ WKWebView::initWithFrame(mtm.alloc(), frame_rect) }
+            };
+
+            <span class="comment">// create the nav bar view
+            </span><span class="kw">let </span>nav_bar = {
+                <span class="kw">let </span>frame_rect = NSRect::ZERO;
+                <span class="kw">let </span>this = <span class="kw">unsafe </span>{ NSStackView::initWithFrame(mtm.alloc(), frame_rect) };
+                <span class="kw">unsafe </span>{
+                    this.setOrientation(NSUserInterfaceLayoutOrientation::Horizontal);
+                    this.setAlignment(NSLayoutAttribute::Height);
+                    this.setDistribution(NSStackViewDistribution::Fill);
+                    this.setSpacing(<span class="number">0.</span>);
+                }
+                this
+            };
+
+            <span class="comment">// create the nav buttons view
+            </span><span class="kw">let </span>nav_buttons = {
+                <span class="kw">let </span>frame_rect = NSRect::ZERO;
+                <span class="kw">let </span>this = <span class="kw">unsafe </span>{ NSStackView::initWithFrame(mtm.alloc(), frame_rect) };
+                <span class="kw">unsafe </span>{
+                    this.setOrientation(NSUserInterfaceLayoutOrientation::Horizontal);
+                    this.setAlignment(NSLayoutAttribute::Height);
+                    this.setDistribution(NSStackViewDistribution::FillEqually);
+                    this.setSpacing(<span class="number">0.</span>);
+                }
+                this
+            };
+
+            <span class="comment">// create the back button
+            </span><span class="kw">let </span>back_button = {
+                <span class="comment">// configure the button to navigate the webview backward
+                </span><span class="kw">let </span>title = <span class="macro">ns_string!</span>(<span class="string">"back"</span>);
+                <span class="kw">let </span>target = <span class="prelude-val">Some</span>::&lt;<span class="kw-2">&amp;</span>AnyObject&gt;(<span class="kw-2">&amp;</span>web_view);
+                <span class="kw">let </span>action = <span class="prelude-val">Some</span>(<span class="macro">sel!</span>(goBack));
+                <span class="kw">let </span>this =
+                    <span class="kw">unsafe </span>{ NSButton::buttonWithTitle_target_action(title, target, action, mtm) };
+                <span class="attr">#[allow(deprecated)]
+                </span><span class="kw">unsafe </span>{
+                    this.setBezelStyle(NSBezelStyle::ShadowlessSquare)
+                };
+                this
+            };
+
+            <span class="comment">// create the forward button
+            </span><span class="kw">let </span>forward_button = {
+                <span class="comment">// configure the button to navigate the web view forward
+                </span><span class="kw">let </span>title = <span class="macro">ns_string!</span>(<span class="string">"forward"</span>);
+                <span class="kw">let </span>target = <span class="prelude-val">Some</span>::&lt;<span class="kw-2">&amp;</span>AnyObject&gt;(<span class="kw-2">&amp;</span>web_view);
+                <span class="kw">let </span>action = <span class="prelude-val">Some</span>(<span class="macro">sel!</span>(goForward));
+                <span class="kw">let </span>this =
+                    <span class="kw">unsafe </span>{ NSButton::buttonWithTitle_target_action(title, target, action, mtm) };
+                <span class="attr">#[allow(deprecated)]
+                </span><span class="kw">unsafe </span>{
+                    this.setBezelStyle(NSBezelStyle::ShadowlessSquare)
+                };
+                this
+            };
+
+            <span class="kw">unsafe </span>{
+                nav_buttons.addArrangedSubview(<span class="kw-2">&amp;</span>back_button);
+                nav_buttons.addArrangedSubview(<span class="kw-2">&amp;</span>forward_button);
+            }
+
+            <span class="comment">// create the url text field
+            </span><span class="kw">let </span>nav_url = {
+                <span class="kw">let </span>frame_rect = NSRect::ZERO;
+                <span class="kw">let </span>this = <span class="kw">unsafe </span>{ NSTextField::initWithFrame(mtm.alloc(), frame_rect) };
+                <span class="kw">unsafe </span>{
+                    this.setDrawsBackground(<span class="bool-val">true</span>);
+                    this.setBackgroundColor(<span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>NSColor::lightGrayColor()));
+                    this.setTextColor(<span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>NSColor::blackColor()));
+                }
+                this
+            };
+
+            <span class="kw">unsafe </span>{
+                nav_bar.addArrangedSubview(<span class="kw-2">&amp;</span>nav_buttons);
+                nav_bar.addArrangedSubview(<span class="kw-2">&amp;</span>nav_url);
+            }
+
+            <span class="comment">// create the window content view
+            </span><span class="kw">let </span>content_view = {
+                <span class="kw">let </span>frame_rect = window.frame();
+                <span class="kw">let </span>this = <span class="kw">unsafe </span>{ NSStackView::initWithFrame(mtm.alloc(), frame_rect) };
+                <span class="kw">unsafe </span>{
+                    this.setOrientation(NSUserInterfaceLayoutOrientation::Vertical);
+                    this.setAlignment(NSLayoutAttribute::Width);
+                    this.setDistribution(NSStackViewDistribution::Fill);
+                    this.setSpacing(<span class="number">0.</span>);
+                }
+                this
+            };
+
+            <span class="kw">unsafe </span>{
+                content_view.addArrangedSubview(<span class="kw-2">&amp;</span>nav_bar);
+                content_view.addArrangedSubview(<span class="kw-2">&amp;</span>web_view);
+            }
+
+            <span class="kw">unsafe </span>{
+                <span class="comment">// handle input from text field (on &lt;ENTER&gt;, load URL from text field in web view)
+                </span><span class="kw">let </span>object = ProtocolObject::from_ref(<span class="self">self</span>);
+                nav_url.setDelegate(<span class="prelude-val">Some</span>(object));
+
+                <span class="comment">// handle nav events from web view (on finished navigating, update text area with current URL)
+                </span><span class="kw">let </span>object = ProtocolObject::from_ref(<span class="self">self</span>);
+                web_view.setNavigationDelegate(<span class="prelude-val">Some</span>(object));
+            }
+
+            <span class="comment">// create the menu with a "quit" entry
+            </span><span class="kw">unsafe </span>{
+                <span class="kw">let </span>menu = NSMenu::initWithTitle(mtm.alloc(), <span class="macro">ns_string!</span>(<span class="string">""</span>));
+                <span class="kw">let </span>menu_app_item = NSMenuItem::initWithTitle_action_keyEquivalent(
+                    mtm.alloc(),
+                    <span class="macro">ns_string!</span>(<span class="string">""</span>),
+                    <span class="prelude-val">None</span>,
+                    <span class="macro">ns_string!</span>(<span class="string">""</span>),
+                );
+                <span class="kw">let </span>menu_app_menu = NSMenu::initWithTitle(mtm.alloc(), <span class="macro">ns_string!</span>(<span class="string">""</span>));
+                menu_app_menu.addItemWithTitle_action_keyEquivalent(
+                    <span class="macro">ns_string!</span>(<span class="string">"Quit"</span>),
+                    <span class="prelude-val">Some</span>(<span class="macro">sel!</span>(terminate:)),
+                    <span class="macro">ns_string!</span>(<span class="string">"q"</span>),
+                );
+                menu_app_item.setSubmenu(<span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>menu_app_menu));
+                menu.addItem(<span class="kw-2">&amp;</span>menu_app_item);
+
+                <span class="kw">let </span>app = NSApplication::sharedApplication(mtm);
+                app.setMainMenu(<span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>menu));
+            }
+
+            <span class="comment">// configure the window
+            </span>window.setContentView(<span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>content_view));
+            window.center();
+            window.setTitle(<span class="macro">ns_string!</span>(<span class="string">"browser example"</span>));
+            window.makeKeyAndOrderFront(<span class="prelude-val">None</span>);
+
+            <span class="comment">// request the web view navigate to a page
+            </span><span class="kw">unsafe </span>{
+                <span class="kw">let </span>request = {
+                    <span class="kw">let </span>url_string = <span class="macro">ns_string!</span>(<span class="string">"https://google.com"</span>);
+                    <span class="kw">let </span>url = NSURL::URLWithString(url_string).expect(<span class="string">"URL should parse"</span>);
+                    NSURLRequest::requestWithURL(<span class="kw-2">&amp;</span>url)
+                };
+                web_view.loadRequest(<span class="kw-2">&amp;</span>request);
+            }
+
+            <span class="macro">idcell!</span>(nav_url =&gt; <span class="self">self</span>);
+            <span class="macro">idcell!</span>(web_view =&gt; <span class="self">self</span>);
+            <span class="macro">idcell!</span>(window =&gt; <span class="self">self</span>);
+        }
+    }
+
+    <span class="kw">unsafe impl </span>NSControlTextEditingDelegate <span class="kw">for </span>Delegate {
+        <span class="attr">#[method(control:textView:doCommandBySelector:)]
+        #[allow(non_snake_case)]
+        </span><span class="kw">unsafe fn </span>control_textView_doCommandBySelector(
+            <span class="kw-2">&amp;</span><span class="self">self</span>,
+            _control: <span class="kw-2">&amp;</span>NSControl,
+            text_view: <span class="kw-2">&amp;</span>NSTextView,
+            command_selector: Sel,
+        ) -&gt; bool {
+            <span class="macro">idcell!</span>(web_view &lt;= <span class="self">self</span>);
+            <span class="kw">if </span>command_selector == <span class="macro">sel!</span>(insertNewline:) {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(url) = <span class="kw">unsafe </span>{ NSURL::URLWithString(<span class="kw-2">&amp;</span>text_view.string()) } {
+                    <span class="kw">unsafe </span>{ web_view.loadRequest(<span class="kw-2">&amp;</span>NSURLRequest::requestWithURL(<span class="kw-2">&amp;</span>url)) };
+                    <span class="kw">return </span><span class="bool-val">true</span>.into();
+                }
+            }
+            <span class="bool-val">false
+        </span>}
+    }
+
+    <span class="kw">unsafe impl </span>NSTextFieldDelegate <span class="kw">for </span>Delegate {}
+
+    <span class="kw">unsafe impl </span>WKNavigationDelegate <span class="kw">for </span>Delegate {
+        <span class="attr">#[method(webView:didFinishNavigation:)]
+        #[allow(non_snake_case)]
+        </span><span class="kw">unsafe fn </span>webView_didFinishNavigation(
+            <span class="kw-2">&amp;</span><span class="self">self</span>,
+            web_view: <span class="kw-2">&amp;</span>WKWebView,
+            _navigation: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>WKNavigation&gt;,
+        ) {
+            <span class="macro">idcell!</span>(nav_url &lt;= <span class="self">self</span>);
+            <span class="kw">unsafe </span>{
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(url) = web_view.URL().and_then(|url| url.absoluteString()) {
+                    nav_url.setStringValue(<span class="kw-2">&amp;</span>url);
+                }
+            }
+        }
+    }
+);
+
+<span class="kw">impl </span>Delegate {
+    <span class="kw">fn </span>new(mtm: MainThreadMarker) -&gt; Retained&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">let </span>this = mtm.alloc();
+        <span class="kw">let </span>this = this.set_ivars(Ivars::default());
+        <span class="kw">unsafe </span>{ <span class="macro">msg_send_id!</span>[<span class="kw">super</span>(this), init] }
+    }
+}
+
+<span class="kw">fn </span>main() {
+    <span class="kw">let </span>mtm = MainThreadMarker::new().unwrap();
+    <span class="kw">let </span>app = NSApplication::sharedApplication(mtm);
+    app.setActivationPolicy(NSApplicationActivationPolicy::Regular);
+
+    <span class="comment">// configure the application delegate
+    </span><span class="kw">let </span>delegate = Delegate::new(mtm);
+    <span class="kw">let </span>object = ProtocolObject::from_ref(<span class="kw-2">&amp;*</span>delegate);
+    app.setDelegate(<span class="prelude-val">Some</span>(object));
+
+    <span class="comment">// run the app
+    </span><span class="kw">unsafe </span>{ app.run() };
+}</code></pre></div>
+</div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.WKAudiovisualMediaTypes.html" title="struct objc2_web_kit::WKAudiovisualMediaTypes">WKAudiovisual<wbr>Media<wbr>Types</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKContentMode.html" title="struct objc2_web_kit::WKContentMode">WKContent<wbr>Mode</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKDialogResult.html" title="struct objc2_web_kit::WKDialogResult">WKDialog<wbr>Result</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKDownload.html" title="struct objc2_web_kit::WKDownload">WKDownload</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKDownloadRedirectPolicy.html" title="struct objc2_web_kit::WKDownloadRedirectPolicy">WKDownload<wbr>Redirect<wbr>Policy</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKFrameInfo.html" title="struct objc2_web_kit::WKFrameInfo">WKFrame<wbr>Info</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKFullscreenState.html" title="struct objc2_web_kit::WKFullscreenState">WKFullscreen<wbr>State</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKInactiveSchedulingPolicy.html" title="struct objc2_web_kit::WKInactiveSchedulingPolicy">WKInactive<wbr>Scheduling<wbr>Policy</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKMediaCaptureState.html" title="struct objc2_web_kit::WKMediaCaptureState">WKMedia<wbr>Capture<wbr>State</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKMediaCaptureType.html" title="struct objc2_web_kit::WKMediaCaptureType">WKMedia<wbr>Capture<wbr>Type</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKMediaPlaybackState.html" title="struct objc2_web_kit::WKMediaPlaybackState">WKMedia<wbr>Playback<wbr>State</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKNavigation.html" title="struct objc2_web_kit::WKNavigation">WKNavigation</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKNavigationAction.html" title="struct objc2_web_kit::WKNavigationAction">WKNavigation<wbr>Action</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKNavigationActionPolicy.html" title="struct objc2_web_kit::WKNavigationActionPolicy">WKNavigation<wbr>Action<wbr>Policy</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKNavigationResponse.html" title="struct objc2_web_kit::WKNavigationResponse">WKNavigation<wbr>Response</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKNavigationResponsePolicy.html" title="struct objc2_web_kit::WKNavigationResponsePolicy">WKNavigation<wbr>Response<wbr>Policy</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKNavigationType.html" title="struct objc2_web_kit::WKNavigationType">WKNavigation<wbr>Type</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKOpenPanelParameters.html" title="struct objc2_web_kit::WKOpenPanelParameters">WKOpen<wbr>Panel<wbr>Parameters</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKPermissionDecision.html" title="struct objc2_web_kit::WKPermissionDecision">WKPermission<wbr>Decision</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKPreferences.html" title="struct objc2_web_kit::WKPreferences">WKPreferences</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKScriptMessage.html" title="struct objc2_web_kit::WKScriptMessage">WKScript<wbr>Message</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKSecurityOrigin.html" title="struct objc2_web_kit::WKSecurityOrigin">WKSecurity<wbr>Origin</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKUserContentController.html" title="struct objc2_web_kit::WKUserContentController">WKUser<wbr>Content<wbr>Controller</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKUserInterfaceDirectionPolicy.html" title="struct objc2_web_kit::WKUserInterfaceDirectionPolicy">WKUser<wbr>Interface<wbr>Direction<wbr>Policy</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKUserScript.html" title="struct objc2_web_kit::WKUserScript">WKUser<wbr>Script</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKUserScriptInjectionTime.html" title="struct objc2_web_kit::WKUserScriptInjectionTime">WKUser<wbr>Script<wbr>Injection<wbr>Time</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKWebView.html" title="struct objc2_web_kit::WKWebView">WKWeb<wbr>View</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKWebViewConfiguration.html" title="struct objc2_web_kit::WKWebViewConfiguration">WKWeb<wbr>View<wbr>Configuration</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKWebpagePreferences.html" title="struct objc2_web_kit::WKWebpagePreferences">WKWebpage<wbr>Preferences</a></div></li><li><div class="item-name"><a class="struct" href="struct.WKWebsiteDataStore.html" title="struct objc2_web_kit::WKWebsiteDataStore">WKWebsite<wbr>Data<wbr>Store</a></div></li></ul><h2 id="traits" class="section-header">Traits<a href="#traits" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="trait" href="trait.WKDownloadDelegate.html" title="trait objc2_web_kit::WKDownloadDelegate">WKDownload<wbr>Delegate</a></div></li><li><div class="item-name"><a class="trait" href="trait.WKNavigationDelegate.html" title="trait objc2_web_kit::WKNavigationDelegate">WKNavigation<wbr>Delegate</a></div></li><li><div class="item-name"><a class="trait" href="trait.WKScriptMessageHandler.html" title="trait objc2_web_kit::WKScriptMessageHandler">WKScript<wbr>Message<wbr>Handler</a></div></li><li><div class="item-name"><a class="trait" href="trait.WKUIDelegate.html" title="trait objc2_web_kit::WKUIDelegate">WKUI<wbr>Delegate</a></div></li><li><div class="item-name"><a class="trait" href="trait.WKURLSchemeHandler.html" title="trait objc2_web_kit::WKURLSchemeHandler">WKURL<wbr>Scheme<wbr>Handler</a></div></li><li><div class="item-name"><a class="trait" href="trait.WKURLSchemeTask.html" title="trait objc2_web_kit::WKURLSchemeTask">WKURL<wbr>Scheme<wbr>Task</a></div></li></ul></section></div></main></body></html>

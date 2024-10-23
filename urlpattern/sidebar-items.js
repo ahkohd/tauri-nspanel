@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Error","UrlPatternMatchInput"],"mod":["quirks"],"struct":["UrlPattern","UrlPatternComponentResult","UrlPatternInit","UrlPatternOptions","UrlPatternResult"]};

@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.37.0/src/sync/broadcast.rs`."><title>broadcast.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="tokio" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../tokio/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.41.0/src/sync/broadcast.rs`."><title>broadcast.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="tokio" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1541,7 +1539,6 @@
 <a href="#1539" id="1539">1539</a>
 <a href="#1540" id="1540">1540</a>
 <a href="#1541" id="1541">1541</a>
-<a href="#1542" id="1542">1542</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! A multi-producer, multi-consumer broadcast queue. Each sent value is seen by
 //! all consumers.
 //!
@@ -1663,6 +1660,7 @@
 </span><span class="kw">use </span><span class="kw">crate</span>::loom::cell::UnsafeCell;
 <span class="kw">use </span><span class="kw">crate</span>::loom::sync::atomic::{AtomicBool, AtomicUsize};
 <span class="kw">use </span><span class="kw">crate</span>::loom::sync::{Arc, Mutex, MutexGuard, RwLock, RwLockReadGuard};
+<span class="kw">use </span><span class="kw">crate</span>::runtime::coop::cooperative;
 <span class="kw">use </span><span class="kw">crate</span>::util::linked_list::{<span class="self">self</span>, GuardedLinkedList, LinkedList};
 <span class="kw">use </span><span class="kw">crate</span>::util::WakeList;
 
@@ -1672,8 +1670,7 @@
 <span class="kw">use </span>std::pin::Pin;
 <span class="kw">use </span>std::ptr::NonNull;
 <span class="kw">use </span>std::sync::atomic::Ordering::{Acquire, Relaxed, Release, SeqCst};
-<span class="kw">use </span>std::task::{Context, Poll, Waker};
-<span class="kw">use </span>std::usize;
+<span class="kw">use </span>std::task::{ready, Context, Poll, Waker};
 
 <span class="doccomment">/// Sending-half of the [`broadcast`] channel.
 ///
@@ -2144,7 +2141,7 @@
         </span>tail.pos = tail.pos.wrapping_add(<span class="number">1</span>);
 
         <span class="comment">// Get the slot
-        </span><span class="kw">let </span><span class="kw-2">mut </span>slot = <span class="self">self</span>.shared.buffer[idx].write().unwrap();
+        </span><span class="kw">let </span><span class="kw-2">mut </span>slot = <span class="self">self</span>.shared.buffer[idx].write();
 
         <span class="comment">// Track the position
         </span>slot.pos = pos;
@@ -2240,7 +2237,7 @@
         <span class="kw">while </span>low &lt; high {
             <span class="kw">let </span>mid = low + (high - low) / <span class="number">2</span>;
             <span class="kw">let </span>idx = base_idx.wrapping_add(mid) &amp; <span class="self">self</span>.shared.mask;
-            <span class="kw">if </span><span class="self">self</span>.shared.buffer[idx].read().unwrap().rem.load(SeqCst) == <span class="number">0 </span>{
+            <span class="kw">if </span><span class="self">self</span>.shared.buffer[idx].read().rem.load(SeqCst) == <span class="number">0 </span>{
                 low = mid + <span class="number">1</span>;
             } <span class="kw">else </span>{
                 high = mid;
@@ -2282,7 +2279,7 @@
         <span class="kw">let </span>tail = <span class="self">self</span>.shared.tail.lock();
 
         <span class="kw">let </span>idx = (tail.pos.wrapping_sub(<span class="number">1</span>) &amp; <span class="self">self</span>.shared.mask <span class="kw">as </span>u64) <span class="kw">as </span>usize;
-        <span class="self">self</span>.shared.buffer[idx].read().unwrap().rem.load(SeqCst) == <span class="number">0
+        <span class="self">self</span>.shared.buffer[idx].read().rem.load(SeqCst) == <span class="number">0
     </span>}
 
     <span class="doccomment">/// Returns the number of active receivers.
@@ -2602,7 +2599,7 @@
         <span class="kw">let </span>idx = (<span class="self">self</span>.next &amp; <span class="self">self</span>.shared.mask <span class="kw">as </span>u64) <span class="kw">as </span>usize;
 
         <span class="comment">// The slot holding the next value to read
-        </span><span class="kw">let </span><span class="kw-2">mut </span>slot = <span class="self">self</span>.shared.buffer[idx].read().unwrap();
+        </span><span class="kw">let </span><span class="kw-2">mut </span>slot = <span class="self">self</span>.shared.buffer[idx].read();
 
         <span class="kw">if </span>slot.pos != <span class="self">self</span>.next {
             <span class="comment">// Release the `slot` lock before attempting to acquire the `tail`
@@ -2619,7 +2616,7 @@
             <span class="kw">let </span><span class="kw-2">mut </span>tail = <span class="self">self</span>.shared.tail.lock();
 
             <span class="comment">// Acquire slot lock again
-            </span>slot = <span class="self">self</span>.shared.buffer[idx].read().unwrap();
+            </span>slot = <span class="self">self</span>.shared.buffer[idx].read();
 
             <span class="comment">// Make sure the position did not change. This could happen in the
             // unlikely event that the buffer is wrapped between dropping the
@@ -2807,8 +2804,7 @@
     /// }
     /// ```
     </span><span class="kw">pub async fn </span>recv(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;T, RecvError&gt; {
-        <span class="kw">let </span>fut = Recv::new(<span class="self">self</span>);
-        fut.<span class="kw">await
+        cooperative(Recv::new(<span class="self">self</span>)).<span class="kw">await
     </span>}
 
     <span class="doccomment">/// Attempts to return a pending value on this receiver without awaiting.

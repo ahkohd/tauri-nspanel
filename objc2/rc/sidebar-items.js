@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["autoreleasepool","autoreleasepool_leaking"],"struct":["Allocated","AutoreleasePool","PartialInit","Retained","Weak"],"trait":["AutoreleaseSafe","DefaultId","DefaultRetained","IdFromIterator","IdIntoIterator","RetainedFromIterator","RetainedIntoIterator"],"type":["Id","WeakId"]};

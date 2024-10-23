@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Error","IndexError","MalformedPointerError","MaybePointer"],"mod":["prelude"],"struct":["Assignment","NotFoundError","NotUtf8Error","OutOfBoundsError","ParseError","Pointer","ReplaceTokenError","Token","Tokens","UnresolvableError"],"trait":["Assign","Delete","Resolve","ResolveMut"]};

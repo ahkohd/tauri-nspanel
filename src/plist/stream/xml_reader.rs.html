@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/plist-1.6.1/src/stream/xml_reader.rs`."><title>xml_reader.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="plist" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../plist/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/plist-1.7.0/src/stream/xml_reader.rs`."><title>xml_reader.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="plist" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -265,9 +263,40 @@
 <a href="#263" id="263">263</a>
 <a href="#264" id="264">264</a>
 <a href="#265" id="265">265</a>
+<a href="#266" id="266">266</a>
+<a href="#267" id="267">267</a>
+<a href="#268" id="268">268</a>
+<a href="#269" id="269">269</a>
+<a href="#270" id="270">270</a>
+<a href="#271" id="271">271</a>
+<a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
+<a href="#274" id="274">274</a>
+<a href="#275" id="275">275</a>
+<a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>base64::{engine::general_purpose::STANDARD <span class="kw">as </span>base64_standard, Engine};
 <span class="kw">use </span>quick_xml::{events::Event <span class="kw">as </span>XmlEvent, Error <span class="kw">as </span>XmlReaderError, Reader <span class="kw">as </span>EventReader};
-<span class="kw">use </span>std::io::{<span class="self">self</span>, BufReader, Read};
+<span class="kw">use </span>std::io::{<span class="self">self</span>, BufRead};
 
 <span class="kw">use crate</span>::{
     error::{Error, ErrorKind, FilePosition},
@@ -290,26 +319,43 @@
     </span>}
 }
 
-<span class="kw">pub struct </span>XmlReader&lt;R: Read&gt; {
+<span class="kw">pub struct </span>XmlReader&lt;R: BufRead&gt; {
     buffer: Vec&lt;u8&gt;,
+    started: bool,
     finished: bool,
     state: ReaderState&lt;R&gt;,
 }
 
-<span class="kw">struct </span>ReaderState&lt;R: Read&gt;(EventReader&lt;BufReader&lt;R&gt;&gt;);
+<span class="kw">struct </span>ReaderState&lt;R: BufRead&gt;(EventReader&lt;R&gt;);
 
-<span class="kw">impl</span>&lt;R: Read&gt; XmlReader&lt;R&gt; {
+<span class="kw">enum </span>ReadResult {
+    XmlDecl,
+    Event(OwnedEvent),
+    Eof,
+}
+
+<span class="kw">impl</span>&lt;R: BufRead&gt; XmlReader&lt;R&gt; {
     <span class="kw">pub fn </span>new(reader: R) -&gt; XmlReader&lt;R&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>xml_reader = EventReader::from_reader(BufReader::new(reader));
-        xml_reader.trim_text(<span class="bool-val">false</span>);
-        xml_reader.check_end_names(<span class="bool-val">true</span>);
-        xml_reader.expand_empty_elements(<span class="bool-val">true</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>xml_reader = EventReader::from_reader(reader);
+        <span class="kw">let </span>config = xml_reader.config_mut();
+        config.trim_text(<span class="bool-val">false</span>);
+        config.check_end_names = <span class="bool-val">true</span>;
+        config.expand_empty_elements = <span class="bool-val">true</span>;
 
         XmlReader {
             buffer: Vec::new(),
+            started: <span class="bool-val">false</span>,
             finished: <span class="bool-val">false</span>,
             state: ReaderState(xml_reader),
         }
+    }
+
+    <span class="kw">pub fn </span>into_inner(<span class="self">self</span>) -&gt; R {
+        <span class="self">self</span>.state.<span class="number">0</span>.into_inner()
+    }
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>xml_doc_started(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.started
     }
 }
 
@@ -323,35 +369,46 @@
                 <span class="prelude-val">Ok</span>(err) =&gt; ErrorKind::Io(err),
                 <span class="prelude-val">Err</span>(err) =&gt; ErrorKind::Io(std::io::Error::from(err.kind())),
             },
-            XmlReaderError::UnexpectedEof(<span class="kw">_</span>) =&gt; ErrorKind::UnexpectedEof,
+            XmlReaderError::Syntax(<span class="kw">_</span>) =&gt; ErrorKind::UnexpectedEof,
+            XmlReaderError::IllFormed(<span class="kw">_</span>) =&gt; ErrorKind::InvalidXmlSyntax,
             XmlReaderError::NonDecodable(<span class="kw">_</span>) =&gt; ErrorKind::InvalidXmlUtf8,
             <span class="kw">_ </span>=&gt; ErrorKind::InvalidXmlSyntax,
         }
     }
 }
 
-<span class="kw">impl</span>&lt;R: Read&gt; Iterator <span class="kw">for </span>XmlReader&lt;R&gt; {
+<span class="kw">impl</span>&lt;R: BufRead&gt; Iterator <span class="kw">for </span>XmlReader&lt;R&gt; {
     <span class="kw">type </span>Item = <span class="prelude-ty">Result</span>&lt;OwnedEvent, Error&gt;;
 
     <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="prelude-ty">Result</span>&lt;OwnedEvent, Error&gt;&gt; {
         <span class="kw">if </span><span class="self">self</span>.finished {
             <span class="kw">return </span><span class="prelude-val">None</span>;
         }
-        <span class="kw">match </span><span class="self">self</span>.state.read_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>.buffer) {
-            <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(event)) =&gt; <span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(event)),
-            <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>) =&gt; {
-                <span class="self">self</span>.finished = <span class="bool-val">true</span>;
-                <span class="prelude-val">None
-            </span>}
-            <span class="prelude-val">Err</span>(err) =&gt; {
-                <span class="self">self</span>.finished = <span class="bool-val">true</span>;
-                <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(err))
+
+        <span class="kw">loop </span>{
+            <span class="kw">match </span><span class="self">self</span>.state.read_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>.buffer) {
+                <span class="prelude-val">Ok</span>(ReadResult::XmlDecl) =&gt; {
+                    <span class="self">self</span>.started = <span class="bool-val">true</span>;
+                }
+                <span class="prelude-val">Ok</span>(ReadResult::Event(event)) =&gt; {
+                    <span class="self">self</span>.started = <span class="bool-val">true</span>;
+                    <span class="kw">return </span><span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(event));
+                }
+                <span class="prelude-val">Ok</span>(ReadResult::Eof) =&gt; {
+                    <span class="self">self</span>.started = <span class="bool-val">true</span>;
+                    <span class="self">self</span>.finished = <span class="bool-val">true</span>;
+                    <span class="kw">return </span><span class="prelude-val">None</span>;
+                }
+                <span class="prelude-val">Err</span>(err) =&gt; {
+                    <span class="self">self</span>.finished = <span class="bool-val">true</span>;
+                    <span class="kw">return </span><span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(err));
+                }
             }
         }
     }
 }
 
-<span class="kw">impl</span>&lt;R: Read&gt; ReaderState&lt;R&gt; {
+<span class="kw">impl</span>&lt;R: BufRead&gt; ReaderState&lt;R&gt; {
     <span class="kw">fn </span>xml_reader_pos(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; FilePosition {
         <span class="kw">let </span>pos = <span class="self">self</span>.<span class="number">0</span>.buffer_position();
         FilePosition(pos <span class="kw">as </span>u64)
@@ -394,16 +451,19 @@
         }
     }
 
-    <span class="kw">fn </span>read_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;mut </span>Vec&lt;u8&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;OwnedEvent&gt;, Error&gt; {
+    <span class="kw">fn </span>read_next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;mut </span>Vec&lt;u8&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;ReadResult, Error&gt; {
         <span class="kw">loop </span>{
             <span class="kw">match </span><span class="self">self</span>.read_xml_event(buffer)<span class="question-mark">? </span>{
+                XmlEvent::Decl(<span class="kw">_</span>) | XmlEvent::DocType(<span class="kw">_</span>) =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(ReadResult::XmlDecl),
                 XmlEvent::Start(name) =&gt; {
                     <span class="kw">match </span>name.local_name().as_ref() {
                         <span class="string">b"plist" </span>=&gt; {}
-                        <span class="string">b"array" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::StartArray(<span class="prelude-val">None</span>))),
-                        <span class="string">b"dict" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::StartDictionary(<span class="prelude-val">None</span>))),
+                        <span class="string">b"array" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(ReadResult::Event(Event::StartArray(<span class="prelude-val">None</span>))),
+                        <span class="string">b"dict" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(ReadResult::Event(Event::StartDictionary(<span class="prelude-val">None</span>))),
                         <span class="string">b"key" </span>=&gt; {
-                            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::String(<span class="self">self</span>.read_content(buffer)<span class="question-mark">?</span>.into())))
+                            <span class="kw">return </span><span class="prelude-val">Ok</span>(ReadResult::Event(Event::String(
+                                <span class="self">self</span>.read_content(buffer)<span class="question-mark">?</span>.into(),
+                            )))
                         }
                         <span class="string">b"data" </span>=&gt; {
                             <span class="kw">let </span><span class="kw-2">mut </span>encoded = <span class="self">self</span>.read_content(buffer)<span class="question-mark">?</span>;
@@ -412,18 +472,18 @@
                             <span class="kw">let </span>data = base64_standard
                                 .decode(<span class="kw-2">&amp;</span>encoded)
                                 .map_err(|<span class="kw">_</span>| <span class="self">self</span>.with_pos(ErrorKind::InvalidDataString))<span class="question-mark">?</span>;
-                            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::Data(data.into())));
+                            <span class="kw">return </span><span class="prelude-val">Ok</span>(ReadResult::Event(Event::Data(data.into())));
                         }
                         <span class="string">b"date" </span>=&gt; {
                             <span class="kw">let </span>s = <span class="self">self</span>.read_content(buffer)<span class="question-mark">?</span>;
                             <span class="kw">let </span>date = Date::from_xml_format(<span class="kw-2">&amp;</span>s)
                                 .map_err(|<span class="kw">_</span>| <span class="self">self</span>.with_pos(ErrorKind::InvalidDateString))<span class="question-mark">?</span>;
-                            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::Date(date)));
+                            <span class="kw">return </span><span class="prelude-val">Ok</span>(ReadResult::Event(Event::Date(date)));
                         }
                         <span class="string">b"integer" </span>=&gt; {
                             <span class="kw">let </span>s = <span class="self">self</span>.read_content(buffer)<span class="question-mark">?</span>;
                             <span class="kw">match </span>Integer::from_str(<span class="kw-2">&amp;</span>s) {
-                                <span class="prelude-val">Ok</span>(i) =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::Integer(i))),
+                                <span class="prelude-val">Ok</span>(i) =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(ReadResult::Event(Event::Integer(i))),
                                 <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
                                     <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="self">self</span>.with_pos(ErrorKind::InvalidIntegerString))
                                 }
@@ -432,23 +492,25 @@
                         <span class="string">b"real" </span>=&gt; {
                             <span class="kw">let </span>s = <span class="self">self</span>.read_content(buffer)<span class="question-mark">?</span>;
                             <span class="kw">match </span>s.parse() {
-                                <span class="prelude-val">Ok</span>(f) =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::Real(f))),
+                                <span class="prelude-val">Ok</span>(f) =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(ReadResult::Event(Event::Real(f))),
                                 <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="self">self</span>.with_pos(ErrorKind::InvalidRealString)),
                             }
                         }
                         <span class="string">b"string" </span>=&gt; {
-                            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::String(<span class="self">self</span>.read_content(buffer)<span class="question-mark">?</span>.into())))
+                            <span class="kw">return </span><span class="prelude-val">Ok</span>(ReadResult::Event(Event::String(
+                                <span class="self">self</span>.read_content(buffer)<span class="question-mark">?</span>.into(),
+                            )))
                         }
-                        <span class="string">b"true" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::Boolean(<span class="bool-val">true</span>))),
-                        <span class="string">b"false" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::Boolean(<span class="bool-val">false</span>))),
+                        <span class="string">b"true" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(ReadResult::Event(Event::Boolean(<span class="bool-val">true</span>))),
+                        <span class="string">b"false" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(ReadResult::Event(Event::Boolean(<span class="bool-val">false</span>))),
                         <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="self">self</span>.with_pos(ErrorKind::UnknownXmlElement)),
                     }
                 }
                 XmlEvent::End(name) =&gt; <span class="kw">match </span>name.local_name().as_ref() {
-                    <span class="string">b"array" </span>| <span class="string">b"dict" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Event::EndCollection)),
+                    <span class="string">b"array" </span>| <span class="string">b"dict" </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(ReadResult::Event(Event::EndCollection)),
                     <span class="kw">_ </span>=&gt; (),
                 },
-                XmlEvent::Eof =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
+                XmlEvent::Eof =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(ReadResult::Eof),
                 XmlEvent::Text(text) =&gt; {
                     <span class="kw">let </span>unescaped = text
                         .unescape()
@@ -461,8 +523,6 @@
                     }
                 }
                 XmlEvent::PI(<span class="kw">_</span>)
-                | XmlEvent::Decl(<span class="kw">_</span>)
-                | XmlEvent::DocType(<span class="kw">_</span>)
                 | XmlEvent::CData(<span class="kw">_</span>)
                 | XmlEvent::Comment(<span class="kw">_</span>)
                 | XmlEvent::Empty(<span class="kw">_</span>) =&gt; {
@@ -475,7 +535,7 @@
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
-    <span class="kw">use </span>std::fs::File;
+    <span class="kw">use </span>std::{fs::File, io::BufReader};
 
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span><span class="kw">crate</span>::stream::Event::<span class="kw-2">*</span>;
@@ -483,8 +543,8 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>streaming_parser() {
         <span class="kw">let </span>reader = File::open(<span class="string">"./tests/data/xml.plist"</span>).unwrap();
-        <span class="kw">let </span>streaming_parser = XmlReader::new(reader);
-        <span class="kw">let </span>events: Vec&lt;Event&gt; = streaming_parser.map(|e| e.unwrap()).collect();
+        <span class="kw">let </span>streaming_parser = XmlReader::new(BufReader::new(reader));
+        <span class="kw">let </span>events: <span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt; = streaming_parser.collect();
 
         <span class="kw">let </span>comparison = <span class="kw-2">&amp;</span>[
             StartDictionary(<span class="prelude-val">None</span>),
@@ -518,13 +578,13 @@
             EndCollection,
         ];
 
-        <span class="macro">assert_eq!</span>(events, comparison);
+        <span class="macro">assert_eq!</span>(events.unwrap(), comparison);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>bad_data() {
         <span class="kw">let </span>reader = File::open(<span class="string">"./tests/data/xml_error.plist"</span>).unwrap();
-        <span class="kw">let </span>streaming_parser = XmlReader::new(reader);
+        <span class="kw">let </span>streaming_parser = XmlReader::new(BufReader::new(reader));
         <span class="kw">let </span>events: Vec&lt;<span class="kw">_</span>&gt; = streaming_parser.collect();
 
         <span class="macro">assert!</span>(events.last().unwrap().is_err());

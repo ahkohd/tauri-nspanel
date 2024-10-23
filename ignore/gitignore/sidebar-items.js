@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["gitconfig_excludes_path"],"struct":["Gitignore","GitignoreBuilder","Glob"]};

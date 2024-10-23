@@ -1,0 +1,197 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Apple’s C language extension of blocks"><title>block2 - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="block2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../block2/index.html">block2</a><span class="version">0.5.1</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#modules">Modules</a></li><li><a href="#macros">Macros</a></li><li><a href="#structs">Structs</a></li><li><a href="#traits">Traits</a></li><li><a href="#types">Type Aliases</a></li></ul></section></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">block2</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../src/block2/lib.rs.html#1-386">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="apples-c-language-extension-of-blocks"><a class="doc-anchor" href="#apples-c-language-extension-of-blocks">§</a>Apple’s C language extension of blocks</h2>
+<p>C Blocks are functions which capture their environments, i.e. the
+C-equivalent of Rust’s <a href="https://doc.rust-lang.org/1.82.0/core/ops/function/trait.Fn.html" title="trait core::ops::function::Fn"><code>Fn</code></a> closures. As they were originally developed
+by Apple, they’re often used in Objective-C code. This crate provides
+capabilities to create, manage and invoke these blocks, in an ergonomic,
+“Rust-centric” fashion.</p>
+<p>At a high level, this crate contains four types, each representing
+different kinds of blocks, and different kinds of ownership.</p>
+<div><table><thead><tr><th><code>block2</code> type</th><th>Equivalent Rust type</th></tr></thead><tbody>
+<tr><td><code>&amp;Block&lt;dyn Fn() + 'a&gt;</code></td><td><code>&amp;dyn Fn() + 'a</code></td></tr>
+<tr><td><code>RcBlock&lt;dyn Fn() + 'a&gt;</code></td><td><code>Arc&lt;dyn Fn() + 'a&gt;</code></td></tr>
+<tr><td><code>StackBlock&lt;'a, (), (), impl Fn() + 'a&gt;</code></td><td><code>impl Fn() + 'a</code></td></tr>
+<tr><td><code>GlobalBlock&lt;dyn Fn()&gt;</code></td><td><a href="https://doc.rust-lang.org/reference/types/function-item.html"><code>fn</code> item</a></td></tr>
+</tbody></table>
+</div>
+<p>For more information on the specifics of the block implementation, see the
+<a href="https://clang.llvm.org/docs/BlockLanguageSpec.html">C language specification</a> and the <a href="http://clang.llvm.org/docs/Block-ABI-Apple.html">ABI specification</a>.</p>
+<h3 id="external-functions-using-blocks"><a class="doc-anchor" href="#external-functions-using-blocks">§</a>External functions using blocks</h3>
+<p>To declare external functions or methods that takes blocks, use
+<code>&amp;Block&lt;dyn Fn(Params) -&gt; R&gt;</code> or <code>Option&lt;&amp;Block&lt;dyn Fn(Args) -&gt; R&gt;&gt;</code>,
+where <code>Params</code> is the parameter types, and <code>R</code> is the return type.</p>
+<p>In the next few examples, we’re going to work with a function
+<code>check_addition</code>, that takes as parameter a block that adds two integers,
+and checks that the addition is correct.</p>
+<p>Such a function could be written in C like in the following.</p>
+<div class="example-wrap"><pre class="language-objc"><code>#include &lt;cassert&gt;
+#include &lt;stdint.h&gt;
+#include &lt;Block.h&gt;
+
+void check_addition(int32_t (^block)(int32_t, int32_t)) {
+    assert(block(5, 8) == 13);
+}
+</code></pre></div>
+<p>An <code>extern "C" { ... }</code> declaration for that function would then be:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>block2::Block;
+
+<span class="kw">extern </span><span class="string">"C" </span>{
+    <span class="kw">fn </span>check_addition(block: <span class="kw-2">&amp;</span>Block&lt;<span class="kw">dyn </span>Fn(i32, i32) -&gt; i32&gt;);
+}</code></pre></div>
+<p>This can similarly be done inside external methods declared with
+<a href="../objc2/macro.extern_methods.html" title="macro objc2::extern_methods"><code>objc2::extern_methods!</code></a>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>block2::Block;
+<span class="kw">use </span>objc2::extern_methods;
+
+<span class="macro">extern_methods!</span>(
+    <span class="kw">unsafe impl </span>MyClass {
+        <span class="attr">#[method(checkAddition:)]
+        </span><span class="kw">pub fn </span>checkAddition(<span class="kw-2">&amp;</span><span class="self">self</span>, block: <span class="kw-2">&amp;</span>Block&lt;<span class="kw">dyn </span>Fn(i32, i32) -&gt; i32&gt;);
+    }
+);</code></pre></div>
+<p>If the function/method allowed passing <code>NULL</code> blocks, the type would be
+<code>Option&lt;&amp;Block&lt;dyn Fn(i32, i32) -&gt; i32&gt;&gt;</code> instead.</p>
+<h3 id="invoking-blocks"><a class="doc-anchor" href="#invoking-blocks">§</a>Invoking blocks</h3>
+<p>We can also define the external function in Rust, and expose it to
+Objective-C. To do this, we can use <a href="struct.Block.html#method.call" title="method block2::Block::call"><code>Block::call</code></a> to invoke the block
+inside the function.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>block2::Block;
+
+<span class="attr">#[no_mangle]
+</span><span class="kw">extern </span><span class="string">"C" </span><span class="kw">fn </span>check_addition(block: <span class="kw-2">&amp;</span>Block&lt;<span class="kw">dyn </span>Fn(i32, i32) -&gt; i32&gt;) {
+    <span class="macro">assert_eq!</span>(block.call((<span class="number">5</span>, <span class="number">8</span>)), <span class="number">13</span>);
+}</code></pre></div>
+<p>Note the extra parentheses in the <code>call</code> method, since the arguments must
+be passed as a tuple.</p>
+<h3 id="creating-blocks"><a class="doc-anchor" href="#creating-blocks">§</a>Creating blocks</h3>
+<p>Creating a block to pass to Objective-C can be done with <a href="struct.RcBlock.html" title="struct block2::RcBlock"><code>RcBlock</code></a> or
+<a href="struct.StackBlock.html" title="struct block2::StackBlock"><code>StackBlock</code></a>, depending on if you want to move the block to the heap,
+or let the callee decide if it needs to do that.</p>
+<p>To call such a function / method, we could create a new block from a
+closure using <a href="struct.RcBlock.html#method.new" title="associated function block2::RcBlock::new"><code>RcBlock::new</code></a>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>block2::RcBlock;
+
+<span class="kw">let </span>block = RcBlock::new(|a, b| a + b);
+check_addition(<span class="kw-2">&amp;</span>block);</code></pre></div>
+<p>This creates the block on the heap. If the external function you’re
+calling is not going to copy the block, it may be more performant if you
+construct a <a href="struct.StackBlock.html" title="struct block2::StackBlock"><code>StackBlock</code></a> directly, using <a href="struct.StackBlock.html#method.new" title="associated function block2::StackBlock::new"><code>StackBlock::new</code></a>.</p>
+<p>Note that this requires that the closure is <a href="https://doc.rust-lang.org/1.82.0/core/clone/trait.Clone.html" title="trait core::clone::Clone"><code>Clone</code></a>, as the external
+code is allowed to copy the block to the heap in the future.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>block2::StackBlock;
+
+<span class="kw">let </span>block = StackBlock::new(|a, b| a + b);
+check_addition(<span class="kw-2">&amp;</span>block);</code></pre></div>
+<p>As an optimization, if your closure doesn’t capture any variables (as in
+the above examples), you can use the <a href="macro.global_block.html" title="macro block2::global_block"><code>global_block!</code></a> macro to create a
+static block.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>block2::global_block;
+
+<span class="macro">global_block!</span> {
+    <span class="kw">static </span>BLOCK = |a: i32, b: i32| -&gt; i32 {
+        a + b
+    };
+}
+
+check_addition(<span class="kw-2">&amp;</span>BLOCK);</code></pre></div>
+<h3 id="lifetimes"><a class="doc-anchor" href="#lifetimes">§</a>Lifetimes</h3>
+<p>When dealing with blocks, there can be quite a few lifetimes to keep in
+mind.</p>
+<p>The most important one is the lifetime of the block’s data, i.e. the
+lifetime of the data in the closure contained in the block. This lifetime
+can be specified as <code>'f</code> in <code>&amp;Block&lt;dyn Fn() + 'f&gt;</code>.</p>
+<p>Note that <code>&amp;Block&lt;dyn Fn()&gt;</code>, without any lifetime specifier, can be a bit
+confusing, as the default depends on where it is typed. In function/method
+signatures, it defaults to <code>'static</code>, but as the type of e.g. a <code>let</code>
+binding, the lifetime may be inferred to be something smaller, see <a href="https://doc.rust-lang.org/reference/lifetime-elision.html#default-trait-object-lifetimes">the
+reference</a> for details. If in doubt, either add a
+<code>+ 'static</code> or <code>+ '_</code> to force an escaping or non-escaping block.</p>
+<p>Another lifetime is the lifetime of the currently held pointer, i.e. <code>'b</code>
+in <code>&amp;'b Block&lt;dyn Fn()&gt;</code>. This lifetime can be safely extended using
+<a href="struct.Block.html#method.copy" title="method block2::Block::copy"><code>Block::copy</code></a>, so should prove to be little trouble (of course the
+lifetime still can’t be extended past the lifetime of the captured data
+above).</p>
+<p>Finally, the block’s parameter and return types can also contain
+lifetimes, as <code>'a</code> and <code>'r</code> in <code>&amp;Block&lt;dyn Fn(&amp;'a i32) -&gt; &amp;'r u32&gt;</code>.
+Unfortunately, these lifetimes are quite problematic and unsupported at
+the moment, due to Rust trait limitations regarding higher-ranked trait
+bounds. If you run into problems with this in a block that takes or
+returns a reference, consider using the ABI-compatible <code>NonNull&lt;T&gt;</code>, or
+transmute to a <code>'static</code> lifetime.</p>
+<h3 id="thread-safety"><a class="doc-anchor" href="#thread-safety">§</a>Thread safety</h3>
+<p>Thread-safe blocks are not yet representable in <code>block2</code>, and as such any
+function that requires a thread-safe block must be marked <code>unsafe</code>.</p>
+<h3 id="mutability"><a class="doc-anchor" href="#mutability">§</a>Mutability</h3>
+<p>Blocks are generally assumed to be shareable, and as such can only very
+rarely be made mutable. In particular, there is no good way to prevent
+re-entrancy.</p>
+<p>You will likely have to use interior mutability instead.</p>
+<h3 id="specifying-a-runtime"><a class="doc-anchor" href="#specifying-a-runtime">§</a>Specifying a runtime</h3>
+<p>Different runtime implementations exist and act in slightly different ways
+(and have several different helper functions), the most important aspect
+being that the libraries are named differently, so we must take that into
+account when linking.</p>
+<p>You can choose the desired runtime by using the relevant cargo feature
+flags, see the following sections (you might have to disable the default
+<code>"apple"</code> feature first).</p>
+<h4 id="apples-libclosure"><a class="doc-anchor" href="#apples-libclosure">§</a>Apple’s <a href="https://github.com/apple-oss-distributions/libclosure"><code>libclosure</code></a></h4>
+<ul>
+<li>Feature flag: <code>apple</code>.</li>
+</ul>
+<p>This is the most common and most sophisticated runtime, and it has quite a
+lot more features than the specification mandates.</p>
+<p>The minimum required operating system versions are as follows (though in
+practice Rust itself requires higher versions than this):</p>
+<ul>
+<li>macOS: <code>10.6</code></li>
+<li>iOS/iPadOS: <code>3.2</code></li>
+<li>tvOS: <code>1.0</code></li>
+<li>watchOS: <code>1.0</code></li>
+</ul>
+<p><strong>This is used by default</strong>, so you do not need to specify a runtime if
+you’re using this crate on of these platforms.</p>
+<h4 id="llvm-compiler-rts-libblocksruntime"><a class="doc-anchor" href="#llvm-compiler-rts-libblocksruntime">§</a>LLVM <code>compiler-rt</code>’s <a href="https://github.com/llvm/llvm-project/tree/release/13.x/compiler-rt/lib/BlocksRuntime"><code>libBlocksRuntime</code></a></h4>
+<ul>
+<li>Feature flag: <code>compiler-rt</code>.</li>
+</ul>
+<p>This is a copy of Apple’s older (around macOS 10.6) runtime, and is now
+used in <a href="https://github.com/apple/swift-corelibs-libdispatch/tree/swift-5.5.1-RELEASE/src/BlocksRuntime">Swift’s <code>libdispatch</code></a> and <a href="https://github.com/apple/swift-corelibs-foundation/tree/swift-5.5.1-RELEASE/Sources/BlocksRuntime">Swift’s Foundation</a> as well.</p>
+<p>The runtime and associated headers can be installed on many Linux systems
+with the <code>libblocksruntime-dev</code> package.</p>
+<p>Using this runtime probably won’t work together with <code>objc2</code> crate.</p>
+<h4 id="gnusteps-libobjc2"><a class="doc-anchor" href="#gnusteps-libobjc2">§</a>GNUStep’s <a href="https://github.com/gnustep/libobjc2"><code>libobjc2</code></a></h4>
+<ul>
+<li>Feature flag: <code>gnustep-1-7</code>, <code>gnustep-1-8</code>, <code>gnustep-1-9</code>, <code>gnustep-2-0</code>
+and <code>gnustep-2-1</code> depending on the version you’re using.</li>
+</ul>
+<p>GNUStep is a bit odd, because it bundles blocks support into its
+Objective-C runtime. This means we have to link to <code>libobjc</code>, and this is
+done by depending on the <code>objc2</code> crate. A bit unorthodox, yes, but it
+works.</p>
+<p>Sources:</p>
+<ul>
+<li><a href="https://github.com/gnustep/libobjc2/blob/v2.1/objc/blocks_runtime.h"><code>Block.h</code></a></li>
+<li><a href="https://github.com/gnustep/libobjc2/blob/v2.1/objc/blocks_private.h"><code>Block_private.h</code></a></li>
+</ul>
+<h4 id="microsofts-winobjc"><a class="doc-anchor" href="#microsofts-winobjc">§</a>Microsoft’s <a href="https://github.com/microsoft/WinObjC"><code>WinObjC</code></a></h4>
+<ul>
+<li>Feature flag: <code>unstable-winobjc</code>.</li>
+</ul>
+<p><strong>Unstable: Hasn’t been tested on Windows yet!</strong></p>
+<p><a href="https://github.com/microsoft/libobjc2">A fork</a> based on GNUStep’s <code>libobjc2</code>
+version 1.8.</p>
+<h4 id="objfw"><a class="doc-anchor" href="#objfw">§</a><a href="https://github.com/ObjFW/ObjFW"><code>ObjFW</code></a></h4>
+<ul>
+<li>Feature flag: <code>unstable-objfw</code>.</li>
+</ul>
+<p><strong>Unstable: Doesn’t work yet!</strong></p>
+<h3 id="c-compiler-configuration"><a class="doc-anchor" href="#c-compiler-configuration">§</a>C Compiler configuration</h3>
+<p>To our knowledge, only Clang supports blocks. To compile C or Objective-C
+sources using these features, you should set <a href="https://clang.llvm.org/docs/ClangCommandLineReference.html#cmdoption-clang-fblocks">the <code>-fblocks</code> flag</a>.</p>
+</div></details><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="mod" href="ffi/index.html" title="mod block2::ffi">ffi</a></div><div class="desc docblock-short">Raw bindings to <code>Block.h</code></div></li></ul><h2 id="macros" class="section-header">Macros<a href="#macros" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="macro" href="macro.global_block.html" title="macro block2::global_block">global_<wbr>block</a></div><div class="desc docblock-short">Construct a static <a href="struct.GlobalBlock.html" title="struct block2::GlobalBlock"><code>GlobalBlock</code></a>.</div></li></ul><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.Block.html" title="struct block2::Block">Block</a></div><div class="desc docblock-short">An opaque type that holds an Objective-C block.</div></li><li><div class="item-name"><a class="struct" href="struct.GlobalBlock.html" title="struct block2::GlobalBlock">Global<wbr>Block</a></div><div class="desc docblock-short">A global Objective-C block that does not capture an environment.</div></li><li><div class="item-name"><a class="struct" href="struct.RcBlock.html" title="struct block2::RcBlock">RcBlock</a></div><div class="desc docblock-short">A reference-counted Objective-C block that is stored on the heap.</div></li><li><div class="item-name"><a class="struct" href="struct.StackBlock.html" title="struct block2::StackBlock">Stack<wbr>Block</a></div><div class="desc docblock-short">An Objective-C block constructed on the stack.</div></li></ul><h2 id="traits" class="section-header">Traits<a href="#traits" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="trait" href="trait.BlockFn.html" title="trait block2::BlockFn">BlockFn</a></div><div class="desc docblock-short">Types that represent closure parameters/arguments and return types in a
+block.</div></li><li><div class="item-name"><a class="trait" href="trait.IntoBlock.html" title="trait block2::IntoBlock">Into<wbr>Block</a></div><div class="desc docblock-short">Types that may be converted into a block.</div></li></ul><h2 id="types" class="section-header">Type Aliases<a href="#types" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="type" href="type.ConcreteBlock.html" title="type block2::ConcreteBlock">Concrete<wbr>Block</a><wbr><span class="stab deprecated" title="">Deprecated</span></div><div class="desc docblock-short">Deprecated alias for a <code>'static</code> <code>StackBlock</code>.</div></li></ul></section></div></main></body></html>

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Builder","TauriPlugin"],"trait":["Plugin"],"type":["Result"]};
+window.SIDEBAR_ITEMS = {"enum":["BuilderError","PermissionState"],"struct":["Builder","PluginApi","PluginHandle","TauriPlugin"],"trait":["Plugin"]};

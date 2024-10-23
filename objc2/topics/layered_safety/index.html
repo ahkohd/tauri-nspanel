@@ -1,0 +1,171 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Layered Safety"><title>objc2::topics::layered_safety - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="objc2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../../objc2/index.html">objc2</a><span class="version">0.5.2</span></h2></div><h2 class="location"><a href="#">Module layered_<wbr>safety</a></h2><div class="sidebar-elems"><h2><a href="../index.html">In objc2::<wbr>topics</a></h2></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Module <a href="../../index.html">objc2</a>::<wbr><a href="../index.html">topics</a>::<wbr><a class="mod" href="#">layered_safety</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../../../src/objc2/topics/mod.rs.html#9">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="layered-safety"><a class="doc-anchor" href="#layered-safety">§</a>Layered Safety</h2>
+<p>Objective-C is different from Rust<sup><a href="https://xkcd.com/285/">citation needed</a></sup>. In particular,
+Rust has a concept of “safety” (see the <a href="https://doc.rust-lang.org/nomicon/intro.html">nomicon</a> for details), which
+Objective-C completely lacks.</p>
+<p>You will find when using the framework crates that basically everything (that
+has not been manually audited) is <code>unsafe</code>. So you might rightfully ask:
+What’s the point then? Can’t I just use <code>msg_send!</code>, and save the extra
+dependency?
+Yes, you could, but in fact the framework crates are much safer than doing
+method calling manually, even though you may end up writing <code>unsafe</code> just as
+many times. I dub this “layered safety”<sup>1</sup> to capture the fact that
+<em>not all usage of <code>unsafe</code> is created equally</em>!</p>
+<p>Simply put, when using an <code>unsafe</code> method in e.g. <code>objc2-foundation</code>, you have
+to ensure the compiler of much fewer things than when doing method calling
+manually.
+To see why this is the case, let me guide you through the various abstraction
+layers that the framework crates and <code>objc2</code> provide, and we’ll see how each
+step makes things safer!</p>
+<p>The framework crates are not perfect though, and there may be cases where you
+have to drop down into lower-level details; luckily though, the fact that we
+have this layered architecture with each step exposed along the way allows you
+to do exactly that!</p>
+<p><sup>1: I haven’t heard this concept named before, if you know of prior art on this please let me know.</sup></p>
+<h3 id="layer-1-objc_msgsend"><a class="doc-anchor" href="#layer-1-objc_msgsend">§</a>Layer 1: <code>objc_msgSend</code></h3>
+<p>Unlike C APIs where you define an <code>extern "C"</code> function that you want to call,
+method calling is done in Objective-C using the “trampoline functions”
+<a href="../../../objc_sys/message/fn.objc_msgSend.html" title="fn objc_sys::message::objc_msgSend"><code>objc_msgSend</code></a>, <code>objc_msgSend_stret</code>, <code>objc_msgSend_fpret</code> and so on.
+Which of these is correct depends on the target architecture and the calling
+convention. Furthermore, to use these you first have to cast them to the
+correct function signature using <code>mem::transmute</code>.</p>
+<p>This is actually what’s done <a href="https://github.com/rust-lang/rust/blob/aa0189170057a6b56f445f05b9840caf6f260212/library/std/src/sys/unix/args.rs#L196-L248">in the standard library</a>, since they
+need to do it so rarely, and the extra dependency on a crate wouldn’t be worth
+the cost.</p>
+<h4 id="example"><a class="doc-anchor" href="#example">§</a>Example</h4>
+<p>Doing the Rust equivalent of Objective-C’s <code>NSUInteger hash_code = [obj hash];</code>.</p>
+
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="kw">use </span>std::mem::transmute;
+<span class="kw">use </span>std::ffi::c_char;
+<span class="kw">use </span>objc2::ffi::{objc_object, objc_msgSend, sel_registerName, NSUInteger, SEL};
+
+<span class="kw">let </span>obj: <span class="kw-2">*const </span>objc_object;
+<span class="kw">let </span>sel = <span class="kw">unsafe </span>{ sel_registerName(<span class="string">b"hash\0"</span>.as_ptr() <span class="kw">as </span><span class="kw-2">*const </span>c_char) };
+<span class="kw">let </span>msg_send_fn = <span class="kw">unsafe </span>{
+    transmute::&lt;
+        <span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>(),
+        <span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">*const </span>objc_object, SEL) -&gt; NSUInteger,
+    &gt;(objc_msgSend)
+};
+<span class="kw">let </span>hash_code = <span class="kw">unsafe </span>{ msg_send_fn(obj, sel) };</code></pre></div>
+<h3 id="layer-2-messagereceiver"><a class="doc-anchor" href="#layer-2-messagereceiver">§</a>Layer 2: <code>MessageReceiver</code></h3>
+<p>We can improve on this using <a href="../../runtime/trait.MessageReceiver.html#method.send_message" title="method objc2::runtime::MessageReceiver::send_message"><code>MessageReceiver::send_message</code></a>, which
+abstracts away the calling convention details, as well as adding an <code>Encode</code>
+bound on all the involved types. This ensures that we don’t accidentally try
+to pass e.g. a <code>Vec&lt;T&gt;</code>, which does not have a stable memory layout.</p>
+<p>Additionally, when <code>debug_assertions</code> are enabled, the types involved in the
+message send are compared to the types exposed in the Objective-C runtime.
+This cannot catch mistakes like passing <code>null</code> where a non-null object was
+expected, but it helps a lot with accidentally passing a <code>&amp;c_int</code> where <code>int</code>
+was expected.</p>
+<h4 id="example-1"><a class="doc-anchor" href="#example-1">§</a>Example</h4>
+<p>We’ll reuse the <code>hash</code> example from above again.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::ffi::NSUInteger;
+<span class="kw">use </span>objc2::runtime::{MessageReceiver, NSObject, Sel};
+
+<span class="kw">let </span>obj: <span class="kw-2">&amp;</span>NSObject;
+<span class="kw">let </span>sel = Sel::register(<span class="string">"hash"</span>);
+<span class="kw">let </span>hash_code: NSUInteger = <span class="kw">unsafe </span>{
+    MessageReceiver::send_message(obj, sel, ())
+};</code></pre></div>
+<h3 id="layer-3a-msg_send"><a class="doc-anchor" href="#layer-3a-msg_send">§</a>Layer 3a: <code>msg_send!</code></h3>
+<p>Introducing macros: <a href="../../macro.msg_send.html" title="macro objc2::msg_send"><code>msg_send!</code></a> can abstract away the tediousness of writing
+the selector expression, as well as ensuring that the number of arguments to
+the method is correct. It also handles details surrounding Objective-C’s
+<code>BOOL</code> type.</p>
+<h4 id="examples"><a class="doc-anchor" href="#examples">§</a>Examples</h4>
+<p>The <code>hash</code> example again.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::ffi::NSUInteger;
+<span class="kw">use </span>objc2::runtime::NSObject;
+<span class="kw">use </span>objc2::msg_send;
+
+<span class="kw">let </span>obj: <span class="kw-2">&amp;</span>NSObject;
+<span class="kw">let </span>hash_code: NSUInteger = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[obj, hash] };</code></pre></div>
+<p>That example is now pretty close to as minimal as it gets, so let’s introduce
+something more complex; creating and using an instance of <a href="https://developer.apple.com/documentation/foundation/nsdata?language=objc"><code>NSData</code></a>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::ffi::NSUInteger;
+<span class="kw">use </span>objc2::runtime::NSObject;
+<span class="kw">use </span>objc2::{class, msg_send};
+
+<span class="kw">let </span>obj: <span class="kw-2">*const </span>NSObject = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="macro">class!</span>(NSData), new] };
+<span class="kw">let </span>length: NSUInteger = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[obj, length] };
+<span class="comment">// We have to specify the return type here, see layer 4 below
+</span><span class="kw">let _</span>: () = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[obj, release] };</code></pre></div>
+<h3 id="layer-3b-msg_send_id"><a class="doc-anchor" href="#layer-3b-msg_send_id">§</a>Layer 3b: <code>msg_send_id!</code></h3>
+<p>As you can see in the new example involving <code>NSData</code>, it can be quite tedious
+to remember the <code>release</code> call when you’re done with the object. Furthermore,
+whether you need to <code>retain</code> and <code>release</code> the object involves subtle rules
+that depend on the name of the method!</p>
+<p>Objective-C solved this years ago with the introduction of “ARC”. Similarly,
+we can solve this with <a href="../../macro.msg_send_id.html" title="macro objc2::msg_send_id"><code>msg_send_id!</code></a> and the smart pointer <a href="../../rc/struct.Retained.html" title="struct objc2::rc::Retained"><code>rc::Retained</code></a>,
+which work together to ensure that the memory management of the object is done
+correctly.</p>
+<h4 id="example-2"><a class="doc-anchor" href="#example-2">§</a>Example</h4>
+<p>The <code>NSData</code> example again.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::ffi::NSUInteger;
+<span class="kw">use </span>objc2::rc::Retained;
+<span class="kw">use </span>objc2::runtime::NSObject;
+<span class="kw">use </span>objc2::{class, msg_send, msg_send_id};
+
+<span class="kw">let </span>obj: Retained&lt;NSObject&gt; = <span class="kw">unsafe </span>{ <span class="macro">msg_send_id!</span>[<span class="macro">class!</span>(NSData), new] };
+<span class="kw">let </span>length: NSUInteger = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="kw-2">&amp;</span>obj, length] };
+<span class="comment">// `obj` goes out of scope, `release` is automatically sent to the object</span></code></pre></div>
+<h3 id="layer-4-extern_x-macros"><a class="doc-anchor" href="#layer-4-extern_x-macros">§</a>Layer 4: <code>extern_x</code> macros</h3>
+<p>There’s still a problem with the above: we can’t actually make a reusable
+<code>hash</code> nor <code>length</code> function, since <code>NSObject</code> can refer to any object, and
+all objects do not actually respond to that method.</p>
+<p>To help with this, we have the <a href="../../macro.extern_class.html" title="macro objc2::extern_class"><code>extern_class!</code></a> macro, which define a new
+type resembling <code>NSObject</code>, but which represents the <code>NSData</code> class instead.</p>
+<p>This allows us to make a completely safe API for downstream users!</p>
+<p>Along with this, we can now use the <a href="../../macro.extern_methods.html" title="macro objc2::extern_methods"><code>extern_methods!</code></a> macro to help with
+defining our methods, which is also a big improvement over the <code>msg_send!</code> /
+<code>msg_send_id!</code> macros, since it allows us to directly “see” the types, instead
+of having them work by type-inference.</p>
+<h4 id="example-3"><a class="doc-anchor" href="#example-3">§</a>Example</h4>
+<p>The <code>NSData</code> example again.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::ffi::NSUInteger;
+<span class="kw">use </span>objc2::rc::Retained;
+<span class="kw">use </span>objc2::runtime::NSObject;
+<span class="kw">use </span>objc2::{extern_class, extern_methods, mutability, ClassType};
+
+<span class="macro">extern_class!</span>(
+    <span class="attr">#[derive(PartialEq, Eq, Hash)]
+    </span><span class="kw">pub struct </span>NSData;
+
+    <span class="kw">unsafe impl </span>ClassType <span class="kw">for </span>NSData {
+        <span class="kw">type </span>Super = NSObject;
+        <span class="kw">type </span>Mutability = mutability::InteriorMutable;
+    }
+);
+
+<span class="macro">extern_methods!</span>(
+    <span class="kw">unsafe impl </span>NSData {
+        <span class="attr">#[method_id(new)]
+        </span><span class="kw">pub fn </span>new() -&gt; Retained&lt;<span class="self">Self</span>&gt;;
+
+        <span class="attr">#[method(length)]
+        </span><span class="kw">pub fn </span>length(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; NSUInteger;
+    }
+);
+
+<span class="kw">let </span>obj = NSData::new();
+<span class="kw">let </span>length = obj.length();</code></pre></div>
+<h3 id="layer-5-framework-crates"><a class="doc-anchor" href="#layer-5-framework-crates">§</a>Layer 5: Framework crates</h3>
+<p>Apple has a <em>lot</em> of Objective-C code, and manually defining an interface to
+all of it would take a lifetime. Especially keeping track of which methods are
+nullable, and which are not, is difficult.</p>
+<p>Instead, we can autogenerate the above definition from the headers directly
+using type information exposed by <code>clang</code>, giving us a very high confidence
+that it is correct!</p>
+<h4 id="example-4"><a class="doc-anchor" href="#example-4">§</a>Example</h4>
+<p>The <code>NSData</code> example again.</p>
+
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2_foundation::NSData;
+
+<span class="kw">let </span>obj = NSData::new();
+<span class="kw">let </span>length = obj.length();</code></pre></div>
+</div></details></section></div></main></body></html>

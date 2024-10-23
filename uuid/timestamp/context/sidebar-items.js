@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["NoContext"]};
+window.SIDEBAR_ITEMS = {"struct":["NoContext","ThreadLocalContext"]};

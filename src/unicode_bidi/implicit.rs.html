@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unicode-bidi-0.3.15/src/implicit.rs`."><title>implicit.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="unicode_bidi" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../unicode_bidi/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unicode-bidi-0.3.17/src/implicit.rs`."><title>implicit.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="unicode_bidi" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -585,6 +583,27 @@
 <a href="#583" id="583">583</a>
 <a href="#584" id="584">584</a>
 <a href="#585" id="585">585</a>
+<a href="#586" id="586">586</a>
+<a href="#587" id="587">587</a>
+<a href="#588" id="588">588</a>
+<a href="#589" id="589">589</a>
+<a href="#590" id="590">590</a>
+<a href="#591" id="591">591</a>
+<a href="#592" id="592">592</a>
+<a href="#593" id="593">593</a>
+<a href="#594" id="594">594</a>
+<a href="#595" id="595">595</a>
+<a href="#596" id="596">596</a>
+<a href="#597" id="597">597</a>
+<a href="#598" id="598">598</a>
+<a href="#599" id="599">599</a>
+<a href="#600" id="600">600</a>
+<a href="#601" id="601">601</a>
+<a href="#602" id="602">602</a>
+<a href="#603" id="603">603</a>
+<a href="#604" id="604">604</a>
+<a href="#605" id="605">605</a>
+<a href="#606" id="606">606</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright 2015 The Servo Project Developers. See the
 // COPYRIGHT file at the top-level directory of this distribution.
 //
@@ -596,8 +615,11 @@
 
 </span><span class="doccomment">//! 3.3.4 - 3.3.6. Resolve implicit levels and types.
 
+</span><span class="attr">#[cfg(not(feature = <span class="string">"smallvec"</span>))]
 </span><span class="kw">use </span>alloc::vec::Vec;
 <span class="kw">use </span>core::cmp::max;
+<span class="attr">#[cfg(feature = <span class="string">"smallvec"</span>)]
+</span><span class="kw">use </span>smallvec::SmallVec;
 
 <span class="kw">use </span><span class="kw">super</span>::char_data::BidiClass::{<span class="self">self</span>, <span class="kw-2">*</span>};
 <span class="kw">use </span><span class="kw">super</span>::level::Level;
@@ -626,7 +648,13 @@
     <span class="comment">// The previous class for the purposes of rule W1, not tracking changes from any other rules.
     </span><span class="kw">let </span><span class="kw-2">mut </span>prev_class_before_w1 = sequence.sos;
     <span class="kw">let </span><span class="kw-2">mut </span>last_strong_is_al = <span class="bool-val">false</span>;
-    <span class="kw">let </span><span class="kw-2">mut </span>et_run_indices = Vec::new(); <span class="comment">// for W5
+    <span class="attr">#[cfg(feature = <span class="string">"smallvec"</span>)]
+    </span><span class="kw">let </span><span class="kw-2">mut </span>et_run_indices = SmallVec::&lt;[usize; <span class="number">8</span>]&gt;::new(); <span class="comment">// for W5
+    </span><span class="attr">#[cfg(not(feature = <span class="string">"smallvec"</span>))]
+    </span><span class="kw">let </span><span class="kw-2">mut </span>et_run_indices = Vec::new(); <span class="comment">// for W5
+    </span><span class="attr">#[cfg(feature = <span class="string">"smallvec"</span>)]
+    </span><span class="kw">let </span><span class="kw-2">mut </span>bn_run_indices = SmallVec::&lt;[usize; <span class="number">8</span>]&gt;::new(); <span class="comment">// for W5 +  &lt;https://www.unicode.org/reports/tr9/#Retaining_Explicit_Formatting_Characters&gt;
+    </span><span class="attr">#[cfg(not(feature = <span class="string">"smallvec"</span>))]
     </span><span class="kw">let </span><span class="kw-2">mut </span>bn_run_indices = Vec::new(); <span class="comment">// for W5 +  &lt;https://www.unicode.org/reports/tr9/#Retaining_Explicit_Formatting_Characters&gt;
 
     </span><span class="kw">for </span>(run_index, level_run) <span class="kw">in </span>sequence.runs.iter().enumerate() {
@@ -764,7 +792,7 @@
                         <span class="kw">_ </span>=&gt; {
                             <span class="comment">// &lt;https://www.unicode.org/reports/tr9/#Retaining_Explicit_Formatting_Characters&gt;
                             // If there was a BN run before this, that's now a part of this ET run.
-                            </span>et_run_indices.extend(<span class="kw-2">&amp;</span>bn_run_indices);
+                            </span>et_run_indices.extend(bn_run_indices.clone());
 
                             <span class="comment">// In case this is followed by an EN.
                             </span>et_run_indices.push(i);
@@ -811,25 +839,28 @@
 
     <span class="comment">// W7. If the previous strong char was L, change EN to L.
     </span><span class="kw">let </span><span class="kw-2">mut </span>last_strong_is_l = sequence.sos == L;
-    <span class="kw">for </span>run <span class="kw">in </span><span class="kw-2">&amp;</span>sequence.runs {
-        <span class="kw">for </span>i <span class="kw">in </span>run.clone() {
-            <span class="kw">match </span>processing_classes[i] {
-                EN <span class="kw">if </span>last_strong_is_l =&gt; {
-                    processing_classes[i] = L;
-                }
-                L =&gt; {
-                    last_strong_is_l = <span class="bool-val">true</span>;
-                }
-                R | AL =&gt; {
-                    last_strong_is_l = <span class="bool-val">false</span>;
-                }
-                <span class="comment">// &lt;https://www.unicode.org/reports/tr9/#Retaining_Explicit_Formatting_Characters&gt;
-                // Already scanning past BN here.
-                </span><span class="kw">_ </span>=&gt; {}
+    <span class="kw">for </span>i <span class="kw">in </span>sequence.runs.iter().cloned().flatten() {
+        <span class="kw">match </span>processing_classes[i] {
+            EN <span class="kw">if </span>last_strong_is_l =&gt; {
+                processing_classes[i] = L;
             }
+            L =&gt; {
+                last_strong_is_l = <span class="bool-val">true</span>;
+            }
+            R | AL =&gt; {
+                last_strong_is_l = <span class="bool-val">false</span>;
+            }
+            <span class="comment">// &lt;https://www.unicode.org/reports/tr9/#Retaining_Explicit_Formatting_Characters&gt;
+            // Already scanning past BN here.
+            </span><span class="kw">_ </span>=&gt; {}
         }
     }
 }
+
+<span class="attr">#[cfg(feature = <span class="string">"smallvec"</span>)]
+</span><span class="kw">type </span>BracketPairVec = SmallVec&lt;[BracketPair; <span class="number">8</span>]&gt;;
+<span class="attr">#[cfg(not(feature = <span class="string">"smallvec"</span>))]
+</span><span class="kw">type </span>BracketPairVec = Vec&lt;BracketPair&gt;;
 
 <span class="doccomment">/// 3.3.5 Resolving Neutral Types
 ///
@@ -854,7 +885,14 @@
 
     // &gt; Identify the bracket pairs in the current isolating run sequence according to BD16.
     // We use processing_classes, not original_classes, due to BD14/BD15
-    </span><span class="kw">let </span>bracket_pairs = identify_bracket_pairs(text, data_source, sequence, processing_classes);
+    </span><span class="kw">let </span><span class="kw-2">mut </span>bracket_pairs = BracketPairVec::new();
+    identify_bracket_pairs(
+        text,
+        data_source,
+        sequence,
+        processing_classes,
+        <span class="kw-2">&amp;mut </span>bracket_pairs,
+    );
 
     <span class="comment">// &gt; For each bracket-pair element in the list of pairs of text positions
     //
@@ -895,7 +933,7 @@
                 found_e = <span class="bool-val">true</span>;
             } <span class="kw">else if </span>class == not_e {
                 found_not_e = <span class="bool-val">true</span>;
-            } <span class="kw">else if </span>class == BidiClass::EN || class == BidiClass::AN {
+            } <span class="kw">else if </span><span class="macro">matches!</span>(class, BidiClass::EN | BidiClass::AN) {
                 <span class="comment">// &gt; Within this scope, bidirectional types EN and AN are treated as R.
                 </span><span class="kw">if </span>e == BidiClass::L {
                     found_not_e = <span class="bool-val">true</span>;
@@ -924,15 +962,15 @@
                 .iter_backwards_from(pair.start, pair.start_run)
                 .map(|i| processing_classes[i])
                 .find(|class| {
-                    <span class="kw-2">*</span>class == BidiClass::L
-                        || <span class="kw-2">*</span>class == BidiClass::R
-                        || <span class="kw-2">*</span>class == BidiClass::EN
-                        || <span class="kw-2">*</span>class == BidiClass::AN
+                    <span class="macro">matches!</span>(
+                        class,
+                        BidiClass::L | BidiClass::R | BidiClass::EN | BidiClass::AN
+                    )
                 })
                 .unwrap_or(sequence.sos);
 
             <span class="comment">// &gt; Within this scope, bidirectional types EN and AN are treated as R.
-            </span><span class="kw">if </span>previous_strong == BidiClass::EN || previous_strong == BidiClass::AN {
+            </span><span class="kw">if </span><span class="macro">matches!</span>(previous_strong, BidiClass::EN | BidiClass::AN) {
                 previous_strong = BidiClass::R;
             }
 
@@ -1000,6 +1038,9 @@
     <span class="kw">let </span><span class="kw-2">mut </span>prev_class = sequence.sos;
     <span class="kw">while let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>i) = indices.next() {
         <span class="comment">// Process sequences of NI characters.
+        </span><span class="attr">#[cfg(feature = <span class="string">"smallvec"</span>)]
+        </span><span class="kw">let </span><span class="kw-2">mut </span>ni_run = SmallVec::&lt;[usize; <span class="number">8</span>]&gt;::new();
+        <span class="attr">#[cfg(not(feature = <span class="string">"smallvec"</span>))]
         </span><span class="kw">let </span><span class="kw-2">mut </span>ni_run = Vec::new();
         <span class="comment">// The BN is for &lt;https://www.unicode.org/reports/tr9/#Retaining_Explicit_Formatting_Characters&gt;
         </span><span class="kw">if </span>is_NI(processing_classes[i]) || processing_classes[i] == BN {
@@ -1071,9 +1112,12 @@
     data_source: <span class="kw-2">&amp;</span>D,
     run_sequence: <span class="kw-2">&amp;</span>IsolatingRunSequence,
     original_classes: <span class="kw-2">&amp;</span>[BidiClass],
-) -&gt; Vec&lt;BracketPair&gt; {
-    <span class="kw">let </span><span class="kw-2">mut </span>ret = <span class="macro">vec!</span>[];
-    <span class="kw">let </span><span class="kw-2">mut </span>stack = <span class="macro">vec!</span>[];
+    bracket_pairs: <span class="kw-2">&amp;mut </span>BracketPairVec,
+) {
+    <span class="attr">#[cfg(feature = <span class="string">"smallvec"</span>)]
+    </span><span class="kw">let </span><span class="kw-2">mut </span>stack = SmallVec::&lt;[(char, usize, usize); <span class="number">8</span>]&gt;::new();
+    <span class="attr">#[cfg(not(feature = <span class="string">"smallvec"</span>))]
+    </span><span class="kw">let </span><span class="kw-2">mut </span>stack = Vec::new();
 
     <span class="kw">for </span>(run_index, level_run) <span class="kw">in </span>run_sequence.runs.iter().enumerate() {
         <span class="kw">for </span>(i, ch) <span class="kw">in </span>text.subrange(level_run.clone()).char_indices() {
@@ -1119,7 +1163,7 @@
                                 start_run: element.<span class="number">2</span>,
                                 end_run: run_index,
                             };
-                            ret.push(pair);
+                            bracket_pairs.push(pair);
 
                             <span class="comment">// &gt; Pop the stack through the current stack element inclusively.
                             </span>stack.truncate(stack_index);
@@ -1132,8 +1176,7 @@
     }
     <span class="comment">// &gt; Sort the list of pairs of text positions in ascending order based on
     // &gt; the text position of the opening paired bracket.
-    </span>ret.sort_by_key(|r| r.start);
-    ret
+    </span>bracket_pairs.sort_by_key(|r| r.start);
 }
 
 <span class="doccomment">/// 3.3.6 Resolving Implicit Levels
@@ -1142,11 +1185,11 @@
 ///
 /// &lt;http://www.unicode.org/reports/tr9/#Resolving_Implicit_Levels&gt;
 </span><span class="attr">#[cfg_attr(feature = <span class="string">"flame_it"</span>, flamer::flame)]
-</span><span class="kw">pub fn </span>resolve_levels(original_classes: <span class="kw-2">&amp;</span>[BidiClass], levels: <span class="kw-2">&amp;mut </span>[Level]) -&gt; Level {
+</span><span class="kw">pub fn </span>resolve_levels(processing_classes: <span class="kw-2">&amp;</span>[BidiClass], levels: <span class="kw-2">&amp;mut </span>[Level]) -&gt; Level {
     <span class="kw">let </span><span class="kw-2">mut </span>max_level = Level::ltr();
-    <span class="macro">assert_eq!</span>(original_classes.len(), levels.len());
+    <span class="macro">assert_eq!</span>(processing_classes.len(), levels.len());
     <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..levels.len() {
-        <span class="kw">match </span>(levels[i].is_rtl(), original_classes[i]) {
+        <span class="kw">match </span>(levels[i].is_rtl(), processing_classes[i]) {
             (<span class="bool-val">false</span>, AN) | (<span class="bool-val">false</span>, EN) =&gt; levels[i].raise(<span class="number">2</span>).expect(<span class="string">"Level number error"</span>),
             (<span class="bool-val">false</span>, R) | (<span class="bool-val">true</span>, L) | (<span class="bool-val">true</span>, EN) | (<span class="bool-val">true</span>, AN) =&gt; {
                 levels[i].raise(<span class="number">1</span>).expect(<span class="string">"Level number error"</span>)
@@ -1165,9 +1208,6 @@
 /// &lt;http://www.unicode.org/reports/tr9/#NI&gt;
 </span><span class="attr">#[allow(non_snake_case)]
 </span><span class="kw">fn </span>is_NI(class: BidiClass) -&gt; bool {
-    <span class="kw">match </span>class {
-        B | S | WS | ON | FSI | LRI | RLI | PDI =&gt; <span class="bool-val">true</span>,
-        <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
-    }
+    <span class="macro">matches!</span>(class, B | S | WS | ON | FSI | LRI | RLI | PDI)
 }
 </code></pre></div></section></main></body></html>

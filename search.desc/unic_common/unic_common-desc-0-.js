@@ -1,0 +1,1 @@
+searchState.loadedDescShard("unic_common", 0, "UNIC — Common Utilities\nUNIC component description.\nUNIC component name.\nUNIC component version.\n<em>Version</em> data types.\nRepresents a <em>Unicode Version</em> type.\nReturns the argument unchanged.\nCalls <code>U::from(self)</code>.\nMajor version.\nMicro (or Update) version.\nMinor version.")

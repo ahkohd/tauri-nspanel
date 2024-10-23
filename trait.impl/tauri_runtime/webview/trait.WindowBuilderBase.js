@@ -1,3 +1,0 @@
-(function() {var implementors = {
-"tauri_runtime_wry":[["impl <a class=\"trait\" href=\"tauri_runtime/webview/trait.WindowBuilderBase.html\" title=\"trait tauri_runtime::webview::WindowBuilderBase\">WindowBuilderBase</a> for <a class=\"struct\" href=\"tauri_runtime_wry/struct.WindowBuilderWrapper.html\" title=\"struct tauri_runtime_wry::WindowBuilderWrapper\">WindowBuilderWrapper</a>"]]
-};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

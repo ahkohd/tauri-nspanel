@@ -1,0 +1,1 @@
+searchState.loadedDescShard("precomputed_hash", 0, "A base trait to expose a precomputed hash for a type.\nA trait to expose a precomputed hash for a type.\nReturn the precomputed hash for this item.")

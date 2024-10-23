@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-utils-1.5.4/src/config/parse.rs`."><title>parse.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="tauri_utils" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../tauri_utils/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-utils-2.0.2/src/config/parse.rs`."><title>parse.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="tauri_utils" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="icon" href="https://github.com/tauri-apps/tauri/raw/dev/.github/icon.png"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -388,11 +386,25 @@
 <a href="#386" id="386">386</a>
 <a href="#387" id="387">387</a>
 <a href="#388" id="388">388</a>
-</pre></div><pre class="rust"><code><span class="comment">// Copyright 2019-2023 Tauri Programme within The Commons Conservancy
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+</pre></div><pre class="rust"><code><span class="comment">// Copyright 2019-2024 Tauri Programme within The Commons Conservancy
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-License-Identifier: MIT
 
 </span><span class="kw">use </span><span class="kw">crate</span>::config::Config;
+<span class="kw">use </span><span class="kw">crate</span>::platform::Target;
 <span class="kw">use </span>json_patch::merge;
 <span class="kw">use </span>serde::de::DeserializeOwned;
 <span class="kw">use </span>serde_json::Value;
@@ -437,35 +449,29 @@
     }
   }
 
-  <span class="kw">fn </span>into_platform_file_name(<span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str {
+  <span class="kw">fn </span>into_platform_file_name(<span class="self">self</span>, target: Target) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str {
     <span class="kw">match </span><span class="self">self </span>{
-      <span class="self">Self</span>::Json =&gt; {
-        <span class="kw">if </span><span class="macro">cfg!</span>(target_os = <span class="string">"macos"</span>) {
-          <span class="string">"tauri.macos.conf.json"
-        </span>} <span class="kw">else if </span><span class="macro">cfg!</span>(windows) {
-          <span class="string">"tauri.windows.conf.json"
-        </span>} <span class="kw">else </span>{
-          <span class="string">"tauri.linux.conf.json"
-        </span>}
-      }
-      <span class="self">Self</span>::Json5 =&gt; {
-        <span class="kw">if </span><span class="macro">cfg!</span>(target_os = <span class="string">"macos"</span>) {
-          <span class="string">"tauri.macos.conf.json5"
-        </span>} <span class="kw">else if </span><span class="macro">cfg!</span>(windows) {
-          <span class="string">"tauri.windows.conf.json5"
-        </span>} <span class="kw">else </span>{
-          <span class="string">"tauri.linux.conf.json5"
-        </span>}
-      }
-      <span class="self">Self</span>::Toml =&gt; {
-        <span class="kw">if </span><span class="macro">cfg!</span>(target_os = <span class="string">"macos"</span>) {
-          <span class="string">"Tauri.macos.toml"
-        </span>} <span class="kw">else if </span><span class="macro">cfg!</span>(windows) {
-          <span class="string">"Tauri.windows.toml"
-        </span>} <span class="kw">else </span>{
-          <span class="string">"Tauri.linux.toml"
-        </span>}
-      }
+      <span class="self">Self</span>::Json =&gt; <span class="kw">match </span>target {
+        Target::MacOS =&gt; <span class="string">"tauri.macos.conf.json"</span>,
+        Target::Windows =&gt; <span class="string">"tauri.windows.conf.json"</span>,
+        Target::Linux =&gt; <span class="string">"tauri.linux.conf.json"</span>,
+        Target::Android =&gt; <span class="string">"tauri.android.conf.json"</span>,
+        Target::Ios =&gt; <span class="string">"tauri.ios.conf.json"</span>,
+      },
+      <span class="self">Self</span>::Json5 =&gt; <span class="kw">match </span>target {
+        Target::MacOS =&gt; <span class="string">"tauri.macos.conf.json5"</span>,
+        Target::Windows =&gt; <span class="string">"tauri.windows.conf.json5"</span>,
+        Target::Linux =&gt; <span class="string">"tauri.linux.conf.json5"</span>,
+        Target::Android =&gt; <span class="string">"tauri.android.conf.json5"</span>,
+        Target::Ios =&gt; <span class="string">"tauri.ios.conf.json5"</span>,
+      },
+      <span class="self">Self</span>::Toml =&gt; <span class="kw">match </span>target {
+        Target::MacOS =&gt; <span class="string">"Tauri.macos.toml"</span>,
+        Target::Windows =&gt; <span class="string">"Tauri.windows.toml"</span>,
+        Target::Linux =&gt; <span class="string">"Tauri.linux.toml"</span>,
+        Target::Android =&gt; <span class="string">"Tauri.android.toml"</span>,
+        Target::Ios =&gt; <span class="string">"Tauri.ios.toml"</span>,
+      },
     }
   }
 }
@@ -503,7 +509,7 @@
     </span>path: PathBuf,
 
     <span class="doccomment">/// The parsing [`toml::Error`].
-    </span>error: ::toml::de::Error,
+    </span>error: Box&lt;::toml::de::Error&gt;,
   },
 
   <span class="doccomment">/// Unknown config file name encountered.
@@ -532,18 +538,18 @@
 }
 
 <span class="doccomment">/// Determines if the given folder has a configuration file.
-</span><span class="kw">pub fn </span>folder_has_configuration_file(folder: <span class="kw-2">&amp;</span>Path) -&gt; bool {
+</span><span class="kw">pub fn </span>folder_has_configuration_file(target: Target, folder: <span class="kw-2">&amp;</span>Path) -&gt; bool {
   folder.join(ConfigFormat::Json.into_file_name()).exists()
       || folder.join(ConfigFormat::Json5.into_file_name()).exists()
       || folder.join(ConfigFormat::Toml.into_file_name()).exists()
        <span class="comment">// platform file names
-       </span>|| folder.join(ConfigFormat::Json.into_platform_file_name()).exists()
-      || folder.join(ConfigFormat::Json5.into_platform_file_name()).exists()
-      || folder.join(ConfigFormat::Toml.into_platform_file_name()).exists()
+       </span>|| folder.join(ConfigFormat::Json.into_platform_file_name(target)).exists()
+      || folder.join(ConfigFormat::Json5.into_platform_file_name(target)).exists()
+      || folder.join(ConfigFormat::Toml.into_platform_file_name(target)).exists()
 }
 
 <span class="doccomment">/// Determines if the given file path represents a Tauri configuration file.
-</span><span class="kw">pub fn </span>is_configuration_file(path: <span class="kw-2">&amp;</span>Path) -&gt; bool {
+</span><span class="kw">pub fn </span>is_configuration_file(target: Target, path: <span class="kw-2">&amp;</span>Path) -&gt; bool {
   path
     .file_name()
     .map(|file_name| {
@@ -551,38 +557,50 @@
         || file_name == OsStr::new(ConfigFormat::Json5.into_file_name())
         || file_name == OsStr::new(ConfigFormat::Toml.into_file_name())
       <span class="comment">// platform file names
-      </span>|| file_name == OsStr::new(ConfigFormat::Json.into_platform_file_name())
-        || file_name == OsStr::new(ConfigFormat::Json5.into_platform_file_name())
-        || file_name == OsStr::new(ConfigFormat::Toml.into_platform_file_name())
+      </span>|| file_name == OsStr::new(ConfigFormat::Json.into_platform_file_name(target))
+        || file_name == OsStr::new(ConfigFormat::Json5.into_platform_file_name(target))
+        || file_name == OsStr::new(ConfigFormat::Toml.into_platform_file_name(target))
     })
     .unwrap_or_default()
 }
 
 <span class="doccomment">/// Reads the configuration from the given root directory.
 ///
-/// It first looks for a `tauri.conf.json[5]` file on the given directory. The file must exist.
+/// It first looks for a `tauri.conf.json[5]` or `Tauri.toml` file on the given directory. The file must exist.
 /// Then it looks for a platform-specific configuration file:
-/// - `tauri.macos.conf.json[5]` on macOS
-/// - `tauri.linux.conf.json[5]` on Linux
-/// - `tauri.windows.conf.json[5]` on Windows
-/// Merging the configurations using [JSON Merge Patch (RFC 7396)].
+/// - `tauri.macos.conf.json[5]` or `Tauri.macos.toml` on macOS
+/// - `tauri.linux.conf.json[5]` or `Tauri.linux.toml` on Linux
+/// - `tauri.windows.conf.json[5]` or `Tauri.windows.toml` on Windows
+/// - `tauri.android.conf.json[5]` or `Tauri.android.toml` on Android
+/// - `tauri.ios.conf.json[5]` or `Tauri.ios.toml` on iOS
+///   Merging the configurations using [JSON Merge Patch (RFC 7396)].
+///
+/// Returns the raw configuration and the platform config path, if any.
 ///
 /// [JSON Merge Patch (RFC 7396)]: https://datatracker.ietf.org/doc/html/rfc7396.
-</span><span class="kw">pub fn </span>read_from(root_dir: PathBuf) -&gt; <span class="prelude-ty">Result</span>&lt;Value, ConfigError&gt; {
-  <span class="kw">let </span><span class="kw-2">mut </span>config: Value = parse_value(root_dir.join(<span class="string">"tauri.conf.json"</span>))<span class="question-mark">?</span>.<span class="number">0</span>;
-  <span class="kw">if let </span><span class="prelude-val">Some</span>((platform_config, <span class="kw">_</span>)) = read_platform(root_dir)<span class="question-mark">? </span>{
+</span><span class="kw">pub fn </span>read_from(
+  target: Target,
+  root_dir: PathBuf,
+) -&gt; <span class="prelude-ty">Result</span>&lt;(Value, <span class="prelude-ty">Option</span>&lt;PathBuf&gt;), ConfigError&gt; {
+  <span class="kw">let </span><span class="kw-2">mut </span>config: Value = parse_value(target, root_dir.join(<span class="string">"tauri.conf.json"</span>))<span class="question-mark">?</span>.<span class="number">0</span>;
+  <span class="kw">if let </span><span class="prelude-val">Some</span>((platform_config, path)) = read_platform(target, root_dir)<span class="question-mark">? </span>{
     merge(<span class="kw-2">&amp;mut </span>config, <span class="kw-2">&amp;</span>platform_config);
+    <span class="prelude-val">Ok</span>((config, <span class="prelude-val">Some</span>(path)))
+  } <span class="kw">else </span>{
+    <span class="prelude-val">Ok</span>((config, <span class="prelude-val">None</span>))
   }
-  <span class="prelude-val">Ok</span>(config)
 }
 
 <span class="doccomment">/// Reads the platform-specific configuration file from the given root directory if it exists.
 ///
 /// Check [`read_from`] for more information.
-</span><span class="kw">pub fn </span>read_platform(root_dir: PathBuf) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;(Value, PathBuf)&gt;, ConfigError&gt; {
-  <span class="kw">let </span>platform_config_path = root_dir.join(ConfigFormat::Json.into_platform_file_name());
-  <span class="kw">if </span>does_supported_file_name_exist(<span class="kw-2">&amp;</span>platform_config_path) {
-    <span class="kw">let </span>(platform_config, path): (Value, PathBuf) = parse_value(platform_config_path)<span class="question-mark">?</span>;
+</span><span class="kw">pub fn </span>read_platform(
+  target: Target,
+  root_dir: PathBuf,
+) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;(Value, PathBuf)&gt;, ConfigError&gt; {
+  <span class="kw">let </span>platform_config_path = root_dir.join(ConfigFormat::Json.into_platform_file_name(target));
+  <span class="kw">if </span>does_supported_file_name_exist(target, <span class="kw-2">&amp;</span>platform_config_path) {
+    <span class="kw">let </span>(platform_config, path): (Value, PathBuf) = parse_value(target, platform_config_path)<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>((platform_config, path)))
   } <span class="kw">else </span>{
     <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>)
@@ -593,16 +611,16 @@
 ///
 /// The passed path is expected to be the path to the "default" configuration format, in this case
 /// JSON with `.json`.
-</span><span class="kw">pub fn </span>does_supported_file_name_exist(path: <span class="kw">impl </span>Into&lt;PathBuf&gt;) -&gt; bool {
+</span><span class="kw">pub fn </span>does_supported_file_name_exist(target: Target, path: <span class="kw">impl </span>Into&lt;PathBuf&gt;) -&gt; bool {
   <span class="kw">let </span>path = path.into();
   <span class="kw">let </span>source_file_name = path.file_name().unwrap().to_str().unwrap();
   <span class="kw">let </span>lookup_platform_config = ENABLED_FORMATS
     .iter()
-    .any(|format| source_file_name == format.into_platform_file_name());
+    .any(|format| source_file_name == format.into_platform_file_name(target));
   ENABLED_FORMATS.iter().any(|format| {
     path
       .with_file_name(<span class="kw">if </span>lookup_platform_config {
-        format.into_platform_file_name()
+        format.into_platform_file_name(target)
       } <span class="kw">else </span>{
         format.into_file_name()
       })
@@ -614,41 +632,47 @@
 ///
 /// Hierarchy:
 /// 1. Check if `tauri.conf.json` exists
-///   a. Parse it with `serde_json`
-///   b. Parse it with `json5` if `serde_json` fails
-///   c. Return original `serde_json` error if all above steps failed
+///     a. Parse it with `serde_json`
+///     b. Parse it with `json5` if `serde_json` fails
+///     c. Return original `serde_json` error if all above steps failed
 /// 2. Check if `tauri.conf.json5` exists
-///   a. Parse it with `json5`
-///   b. Return error if all above steps failed
+///     a. Parse it with `json5`
+///     b. Return error if all above steps failed
 /// 3. Check if `Tauri.json` exists
-///   a. Parse it with `toml`
-///   b. Return error if all above steps failed
+///     a. Parse it with `toml`
+///     b. Return error if all above steps failed
 /// 4. Return error if all above steps failed
-</span><span class="kw">pub fn </span>parse(path: <span class="kw">impl </span>Into&lt;PathBuf&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;(Config, PathBuf), ConfigError&gt; {
-  do_parse(path.into())
+</span><span class="kw">pub fn </span>parse(target: Target, path: <span class="kw">impl </span>Into&lt;PathBuf&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;(Config, PathBuf), ConfigError&gt; {
+  do_parse(target, path.into())
 }
 
 <span class="doccomment">/// See [`parse`] for specifics, returns a JSON [`Value`] instead of [`Config`].
-</span><span class="kw">pub fn </span>parse_value(path: <span class="kw">impl </span>Into&lt;PathBuf&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;(Value, PathBuf), ConfigError&gt; {
-  do_parse(path.into())
+</span><span class="kw">pub fn </span>parse_value(
+  target: Target,
+  path: <span class="kw">impl </span>Into&lt;PathBuf&gt;,
+) -&gt; <span class="prelude-ty">Result</span>&lt;(Value, PathBuf), ConfigError&gt; {
+  do_parse(target, path.into())
 }
 
-<span class="kw">fn </span>do_parse&lt;D: DeserializeOwned&gt;(path: PathBuf) -&gt; <span class="prelude-ty">Result</span>&lt;(D, PathBuf), ConfigError&gt; {
+<span class="kw">fn </span>do_parse&lt;D: DeserializeOwned&gt;(
+  target: Target,
+  path: PathBuf,
+) -&gt; <span class="prelude-ty">Result</span>&lt;(D, PathBuf), ConfigError&gt; {
   <span class="kw">let </span>file_name = path
     .file_name()
     .map(OsStr::to_string_lossy)
     .unwrap_or_default();
   <span class="kw">let </span>lookup_platform_config = ENABLED_FORMATS
     .iter()
-    .any(|format| file_name == format.into_platform_file_name());
+    .any(|format| file_name == format.into_platform_file_name(target));
 
   <span class="kw">let </span>json5 = path.with_file_name(<span class="kw">if </span>lookup_platform_config {
-    ConfigFormat::Json5.into_platform_file_name()
+    ConfigFormat::Json5.into_platform_file_name(target)
   } <span class="kw">else </span>{
     ConfigFormat::Json5.into_file_name()
   });
   <span class="kw">let </span>toml = path.with_file_name(<span class="kw">if </span>lookup_platform_config {
-    ConfigFormat::Toml.into_platform_file_name()
+    ConfigFormat::Toml.into_platform_file_name(target)
   } <span class="kw">else </span>{
     ConfigFormat::Toml.into_file_name()
   });
@@ -684,7 +708,7 @@
     <span class="attr">#[cfg(feature = <span class="string">"config-json5"</span>)]
     </span>{
       <span class="kw">let </span>raw = read_to_string(<span class="kw-2">&amp;</span>json5)<span class="question-mark">?</span>;
-      do_parse_json5(<span class="kw-2">&amp;</span>raw, <span class="kw-2">&amp;</span>path).map(|config| (config, json5))
+      do_parse_json5(<span class="kw-2">&amp;</span>raw, <span class="kw-2">&amp;</span>json5).map(|config| (config, json5))
     }
 
     <span class="attr">#[cfg(not(feature = <span class="string">"config-json5"</span>))]
@@ -696,7 +720,7 @@
     <span class="attr">#[cfg(feature = <span class="string">"config-toml"</span>)]
     </span>{
       <span class="kw">let </span>raw = read_to_string(<span class="kw-2">&amp;</span>toml)<span class="question-mark">?</span>;
-      do_parse_toml(<span class="kw-2">&amp;</span>raw, <span class="kw-2">&amp;</span>path).map(|config| (config, toml))
+      do_parse_toml(<span class="kw-2">&amp;</span>raw, <span class="kw-2">&amp;</span>toml).map(|config| (config, toml))
     }
 
     <span class="attr">#[cfg(not(feature = <span class="string">"config-toml"</span>))]
@@ -765,7 +789,7 @@
 </span><span class="kw">fn </span>do_parse_toml&lt;D: DeserializeOwned&gt;(raw: <span class="kw-2">&amp;</span>str, path: <span class="kw-2">&amp;</span>Path) -&gt; <span class="prelude-ty">Result</span>&lt;D, ConfigError&gt; {
   ::toml::from_str(raw).map_err(|error| ConfigError::FormatToml {
     path: path.into(),
-    error,
+    error: Box::new(error),
   })
 }
 

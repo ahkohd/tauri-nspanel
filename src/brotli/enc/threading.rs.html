@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-3.5.0/src/enc/threading.rs`."><title>threading.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../brotli/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-7.0.0/src/enc/threading.rs`."><title>threading.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -598,21 +596,23 @@
 <a href="#596" id="596">596</a>
 <a href="#597" id="597">597</a>
 <a href="#598" id="598">598</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::backward_references::{AnyHasher, BrotliEncoderParams, CloneWithAlloc, UnionHasher};
-<span class="kw">use </span><span class="kw">super</span>::encode::{
-    BrotliEncoderCompressStream, BrotliEncoderCreateInstance, BrotliEncoderDestroyInstance,
-    BrotliEncoderMaxCompressedSize, BrotliEncoderOperation,
-    BrotliEncoderSetCustomDictionaryWithOptionalPrecomputedHasher, HasherSetup, SanitizeParams,
-};
-<span class="kw">use </span><span class="kw">super</span>::BrotliAlloc;
-<span class="kw">use </span>alloc::{Allocator, SliceWrapper, SliceWrapperMut};
-<span class="kw">use </span>concat::{BroCatli, BroCatliResult};
-<span class="kw">use </span>core::any;
+</pre></div><pre class="rust"><code><span class="kw">use </span>alloc::{Allocator, SliceWrapper, SliceWrapperMut};
 <span class="kw">use </span>core::marker::PhantomData;
-<span class="kw">use </span>core::mem;
 <span class="kw">use </span>core::ops::Range;
+<span class="kw">use </span>core::{any, mem};
 <span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
 </span><span class="kw">use </span>std;
+
+<span class="kw">use </span><span class="kw">super</span>::backward_references::{AnyHasher, BrotliEncoderParams, CloneWithAlloc, UnionHasher};
+<span class="kw">use </span><span class="kw">super</span>::encode::{
+    hasher_setup, BrotliEncoderDestroyInstance, BrotliEncoderMaxCompressedSize,
+    BrotliEncoderOperation, SanitizeParams,
+};
+<span class="kw">use </span><span class="kw">super</span>::BrotliAlloc;
+<span class="kw">use </span><span class="kw">crate</span>::concat::{BroCatli, BroCatliResult};
+<span class="kw">use </span><span class="kw">crate</span>::enc::combined_alloc::{alloc_default, allocate};
+<span class="kw">use </span><span class="kw">crate</span>::enc::encode::BrotliEncoderStateStruct;
+
 <span class="kw">pub type </span>PoisonedThreadError = ();
 
 <span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
@@ -899,11 +899,11 @@ impl&lt;ReturnValue:Send+'static,
     &lt;Alloc <span class="kw">as </span>Allocator&lt;u32&gt;&gt;::AllocatedMemory: Send + Sync,
 {
     <span class="kw">let </span>input = <span class="kw">if let </span>InternalSendAlloc::A(<span class="kw-2">ref mut </span>alloc, <span class="kw-2">ref </span>_extra) = alloc_per_thread[<span class="number">0</span>].<span class="number">0 </span>{
-        <span class="kw">let </span><span class="kw-2">mut </span>input = &lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::alloc_cell(alloc, input_slice.len());
+        <span class="kw">let </span><span class="kw-2">mut </span>input = allocate::&lt;u8, <span class="kw">_</span>&gt;(alloc, input_slice.len());
         input.slice_mut().clone_from_slice(input_slice);
         input
     } <span class="kw">else </span>{
-        &lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory::default()
+        alloc_default::&lt;u8, Alloc&gt;()
     };
     <span class="kw">let </span><span class="kw-2">mut </span>owned_input = Owned::new(input);
     <span class="kw">let </span>ret = CompressMulti(
@@ -934,11 +934,11 @@ impl&lt;ReturnValue:Send+'static,
     </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::AllocatedMemory: Send + <span class="lifetime">'static</span>,
 {
     <span class="kw">let </span><span class="kw-2">mut </span>range = get_range(thread_index, num_threads, input_and_params.<span class="number">0</span>.len());
-    <span class="kw">let </span><span class="kw-2">mut </span>mem = &lt;Alloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::alloc_cell(
+    <span class="kw">let </span><span class="kw-2">mut </span>mem = allocate::&lt;u8, <span class="kw">_</span>&gt;(
         <span class="kw-2">&amp;mut </span>alloc,
         BrotliEncoderMaxCompressedSize(range.end - range.start),
     );
-    <span class="kw">let </span><span class="kw-2">mut </span>state = BrotliEncoderCreateInstance(alloc);
+    <span class="kw">let </span><span class="kw-2">mut </span>state = BrotliEncoderStateStruct::new(alloc);
     state.params = input_and_params.<span class="number">1</span>.clone();
     <span class="kw">if </span>thread_index != <span class="number">0 </span>{
         state.params.catable = <span class="bool-val">true</span>; <span class="comment">// make sure we can concatenate this to the other work results
@@ -946,8 +946,7 @@ impl&lt;ReturnValue:Send+'static,
     </span>}
     state.params.appendable = <span class="bool-val">true</span>; <span class="comment">// make sure we are at least appendable, so that future items can be catted in
     </span><span class="kw">if </span>thread_index != <span class="number">0 </span>{
-        BrotliEncoderSetCustomDictionaryWithOptionalPrecomputedHasher(
-            <span class="kw-2">&amp;mut </span>state,
+        state.set_custom_dictionary_with_optional_precomputed_hasher(
             range.start,
             <span class="kw-2">&amp;</span>input_and_params.<span class="number">0</span>.slice()[..range.start],
             hasher,
@@ -959,8 +958,7 @@ impl&lt;ReturnValue:Send+'static,
     <span class="kw">loop </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>next_in_offset = <span class="number">0usize</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>available_in = range.end - range.start;
-        <span class="kw">let </span>result = BrotliEncoderCompressStream(
-            <span class="kw-2">&amp;mut </span>state,
+        <span class="kw">let </span>result = state.compress_stream(
             BrotliEncoderOperation::BROTLI_OPERATION_FINISH,
             <span class="kw-2">&amp;mut </span>available_in,
             <span class="kw-2">&amp;</span>input_and_params.<span class="number">0</span>.slice()[range.clone()],
@@ -973,7 +971,7 @@ impl&lt;ReturnValue:Send+'static,
         );
         <span class="kw">let </span>new_range = range.start + next_in_offset..range.end;
         range = new_range;
-        <span class="kw">if </span>result != <span class="number">0 </span>{
+        <span class="kw">if </span>result {
             compression_result = <span class="prelude-val">Ok</span>(out_offset);
             <span class="kw">break</span>;
         } <span class="kw">else if </span>available_out == <span class="number">0 </span>{
@@ -1047,14 +1045,14 @@ impl&lt;ReturnValue:Send+'static,
         <span class="kw">let </span><span class="kw-2">mut </span>local_params = params.clone();
         SanitizeParams(<span class="kw-2">&amp;mut </span>local_params);
         <span class="kw">let </span><span class="kw-2">mut </span>hasher = UnionHasher::Uninit;
-        HasherSetup(
+        hasher_setup(
             alloc_per_thread[num_threads - <span class="number">1</span>].<span class="number">0</span>.unwrap_input().<span class="number">0</span>,
             <span class="kw-2">&amp;mut </span>hasher,
             <span class="kw-2">&amp;mut </span>local_params,
             <span class="kw-2">&amp;</span>[],
             <span class="number">0</span>,
             <span class="number">0</span>,
-            <span class="number">0</span>,
+            <span class="bool-val">false</span>,
         );
         <span class="kw">for </span>thread_index <span class="kw">in </span><span class="number">1</span>..num_threads {
             <span class="kw">let </span>res = spawner_and_input.view(|input_and_params: <span class="kw-2">&amp;</span>(SliceW, BrotliEncoderParams)| {
@@ -1063,7 +1061,7 @@ impl&lt;ReturnValue:Send+'static,
                 <span class="kw">if </span>range.end - range.start &gt; overlap {
                     hasher.BulkStoreRange(
                         input_and_params.<span class="number">0</span>.slice(),
-                        !(<span class="number">0</span>),
+                        usize::MAX,
                         <span class="kw">if </span>range.start &gt; overlap {
                             range.start - overlap
                         } <span class="kw">else </span>{

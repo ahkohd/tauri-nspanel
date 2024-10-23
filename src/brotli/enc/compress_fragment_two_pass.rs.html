@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-3.5.0/src/enc/compress_fragment_two_pass.rs`."><title>compress_fragment_two_pass.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../brotli/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-7.0.0/src/enc/compress_fragment_two_pass.rs`."><title>compress_fragment_two_pass.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -942,22 +940,21 @@
 <a href="#940" id="940">940</a>
 <a href="#941" id="941">941</a>
 <a href="#942" id="942">942</a>
-<a href="#943" id="943">943</a>
-</pre></div><pre class="rust"><code><span class="attr">#![allow(dead_code)]
-</span><span class="kw">use </span><span class="kw">super</span>::backward_references::kHashMul32;
-<span class="comment">//use super::super::alloc::{SliceWrapper, SliceWrapperMut};
-</span><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::alloc;
+</pre></div><pre class="rust"><code><span class="kw">use </span>core;
+<span class="kw">use </span>core::cmp::min;
+
+<span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::alloc;
+<span class="kw">use </span><span class="kw">super</span>::backward_references::kHashMul32;
 <span class="kw">use </span><span class="kw">super</span>::bit_cost::BitsEntropy;
 <span class="kw">use </span><span class="kw">super</span>::brotli_bit_stream::{BrotliBuildAndStoreHuffmanTreeFast, BrotliStoreHuffmanTree};
 <span class="kw">use </span><span class="kw">super</span>::entropy_encode::{
-    BrotliConvertBitDepthsToSymbols, BrotliCreateHuffmanTree, HuffmanTree, NewHuffmanTree,
+    BrotliConvertBitDepthsToSymbols, BrotliCreateHuffmanTree, HuffmanTree,
 };
 <span class="kw">use </span><span class="kw">super</span>::static_dict::{
     FindMatchLengthWithLimit, BROTLI_UNALIGNED_LOAD32, BROTLI_UNALIGNED_LOAD64,
     BROTLI_UNALIGNED_STORE64,
 };
-<span class="kw">use </span><span class="kw">super</span>::util::{brotli_min_size_t, Log2FloorNonZero};
-<span class="kw">use </span>core;
+<span class="kw">use </span><span class="kw">super</span>::util::{floatX, Log2FloorNonZero};
 <span class="kw">static </span>kCompressFragmentTwoPassBlockSize: usize = (<span class="number">1i32 </span>&lt;&lt; <span class="number">17</span>) <span class="kw">as </span>usize;
 
 <span class="comment">// returns number of commands inserted
@@ -1059,12 +1056,8 @@
     </span>}
 }
 <span class="kw">fn </span>HashBytesAtOffset(v: u64, offset: i32, shift: usize, length: usize) -&gt; u32 {
-    <span class="number">0i32</span>;
-    <span class="number">0i32</span>;
-    {
-        <span class="kw">let </span>h: u64 = (v &gt;&gt; (<span class="number">8i32 </span>* offset) &lt;&lt; ((<span class="number">8 </span>- length) * <span class="number">8</span>)).wrapping_mul(kHashMul32 <span class="kw">as </span>(u64));
-        (h &gt;&gt; shift) <span class="kw">as </span>u32
-    }
+    <span class="kw">let </span>h: u64 = (v &gt;&gt; (<span class="number">8i32 </span>* offset) &lt;&lt; ((<span class="number">8 </span>- length) * <span class="number">8</span>)).wrapping_mul(kHashMul32 <span class="kw">as </span>(u64));
+    (h &gt;&gt; shift) <span class="kw">as </span>u32
 }
 
 <span class="kw">fn </span>EmitCopyLen(copylen: usize, commands: <span class="kw-2">&amp;mut &amp;mut </span>[u32]) -&gt; usize {
@@ -1124,13 +1117,13 @@
     <span class="kw">let </span>kInputMarginBytes: usize = <span class="number">16usize</span>;
 
     <span class="kw">if </span>block_size &gt;= kInputMarginBytes {
-        <span class="kw">let </span>len_limit: usize = brotli_min_size_t(
+        <span class="kw">let </span>len_limit: usize = min(
             block_size.wrapping_sub(min_match),
             input_size.wrapping_sub(kInputMarginBytes),
         );
         <span class="kw">let </span>ip_limit: usize = input_index.wrapping_add(len_limit);
         <span class="kw">let </span><span class="kw-2">mut </span>next_hash: u32;
-        <span class="kw">let </span><span class="kw-2">mut </span>goto_emit_remainder: i32 = <span class="number">0i32</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>goto_emit_remainder = <span class="bool-val">false</span>;
         next_hash = Hash(
             <span class="kw-2">&amp;</span>base_ip[{
                 ip_index = ip_index.wrapping_add(<span class="number">1</span>);
@@ -1139,11 +1132,10 @@
             shift,
             min_match,
         );
-        <span class="kw">while </span>goto_emit_remainder == <span class="number">0 </span>{
+        <span class="kw">while </span>!goto_emit_remainder {
             <span class="kw">let </span><span class="kw-2">mut </span>skip: u32 = <span class="number">32u32</span>;
             <span class="kw">let </span><span class="kw-2">mut </span>next_ip: usize = ip_index;
             <span class="kw">let </span><span class="kw-2">mut </span>candidate: usize = <span class="number">0</span>;
-            <span class="number">0i32</span>;
             <span class="kw">loop </span>{
                 {
                     <span class="lifetime">'break3</span>: <span class="kw">loop </span>{
@@ -1152,32 +1144,24 @@
                             <span class="kw">let </span>bytes_between_hash_lookups: u32 = skip &gt;&gt; <span class="number">5</span>;
                             skip = skip.wrapping_add(<span class="number">1</span>);
                             ip_index = next_ip;
-                            <span class="number">0i32</span>;
                             next_ip = ip_index.wrapping_add(bytes_between_hash_lookups <span class="kw">as </span>usize);
                             <span class="kw">if </span>next_ip &gt; ip_limit {
-                                goto_emit_remainder = <span class="number">1i32</span>;
+                                goto_emit_remainder = <span class="bool-val">true</span>;
                                 {
-                                    {
-                                        <span class="kw">break </span><span class="lifetime">'break3</span>;
-                                    }
+                                    <span class="kw">break </span><span class="lifetime">'break3</span>;
                                 }
                             }
                             next_hash = Hash(<span class="kw-2">&amp;</span>base_ip[next_ip..], shift, min_match);
-                            <span class="number">0i32</span>;
                             candidate = ip_index.wrapping_sub(last_distance <span class="kw">as </span>usize);
                             <span class="kw">if </span>IsMatch(<span class="kw-2">&amp;</span>base_ip[ip_index..], <span class="kw-2">&amp;</span>base_ip[candidate..], min_match)
                                 &amp;&amp; candidate &lt; ip_index
                             {
                                 table[(hash <span class="kw">as </span>usize)] = ip_index.wrapping_sub(<span class="number">0</span>) <span class="kw">as </span>i32;
                                 {
-                                    {
-                                        <span class="kw">break </span><span class="lifetime">'break3</span>;
-                                    }
+                                    <span class="kw">break </span><span class="lifetime">'break3</span>;
                                 }
                             }
                             candidate = table[(hash <span class="kw">as </span>usize)] <span class="kw">as </span>usize;
-                            <span class="number">0i32</span>;
-                            <span class="number">0i32</span>;
                             table[(hash <span class="kw">as </span>usize)] = ip_index.wrapping_sub(<span class="number">0</span>) <span class="kw">as </span>i32;
                         }
                         <span class="kw">if </span>IsMatch(<span class="kw-2">&amp;</span>base_ip[ip_index..], <span class="kw-2">&amp;</span>base_ip[candidate..], min_match) {
@@ -1187,15 +1171,13 @@
                 }
                 <span class="kw">if </span>!(ip_index.wrapping_sub(candidate)
                     &gt; (<span class="number">1usize </span>&lt;&lt; <span class="number">18</span>).wrapping_sub(<span class="number">16</span>) <span class="kw">as </span>isize <span class="kw">as </span>usize
-                    &amp;&amp; (goto_emit_remainder == <span class="number">0</span>))
+                    &amp;&amp; !goto_emit_remainder)
                 {
                     <span class="kw">break</span>;
                 }
             }
-            <span class="kw">if </span>goto_emit_remainder != <span class="number">0 </span>{
-                {
-                    <span class="kw">break</span>;
-                }
+            <span class="kw">if </span>goto_emit_remainder {
+                <span class="kw">break</span>;
             }
             {
                 <span class="kw">let </span>base: usize = ip_index;
@@ -1207,7 +1189,6 @@
                 <span class="kw">let </span>distance: i32 = base.wrapping_sub(candidate) <span class="kw">as </span>i32;
                 <span class="kw">let </span>insert: i32 = base.wrapping_sub(next_emit) <span class="kw">as </span>i32;
                 ip_index = ip_index.wrapping_add(matched);
-                <span class="number">0i32</span>;
                 <span class="kw-2">*</span>num_commands += EmitInsertLen(insert <span class="kw">as </span>u32, commands);
                 (<span class="kw-2">*</span>literals)[..(insert <span class="kw">as </span>usize)]
                     .clone_from_slice(<span class="kw-2">&amp;</span>base_ip[next_emit..(next_emit + insert <span class="kw">as </span>usize)]);
@@ -1226,11 +1207,9 @@
                 <span class="kw-2">*</span>num_commands += EmitCopyLenLastDistance(matched, commands);
                 next_emit = ip_index;
                 <span class="kw">if </span>ip_index &gt;= ip_limit {
-                    goto_emit_remainder = <span class="number">1i32</span>;
+                    goto_emit_remainder = <span class="bool-val">true</span>;
                     {
-                        {
-                            <span class="kw">break</span>;
-                        }
+                        <span class="kw">break</span>;
                     }
                 }
                 {
@@ -1280,16 +1259,13 @@
                 ));
                 ip_index = ip_index.wrapping_add(matched);
                 last_distance = base_index.wrapping_sub(candidate) <span class="kw">as </span>i32;
-                <span class="number">0i32</span>;
                 <span class="kw-2">*</span>num_commands += EmitCopyLen(matched, commands);
                 <span class="kw-2">*</span>num_commands += EmitDistance(last_distance <span class="kw">as </span>u32, commands);
                 next_emit = ip_index;
                 <span class="kw">if </span>ip_index &gt;= ip_limit {
-                    goto_emit_remainder = <span class="number">1i32</span>;
+                    goto_emit_remainder = <span class="bool-val">true</span>;
                     {
-                        {
-                            <span class="kw">break</span>;
-                        }
+                        <span class="kw">break</span>;
                     }
                 }
                 {
@@ -1327,7 +1303,7 @@
                     table[(cur_hash <span class="kw">as </span>usize)] = ip_index <span class="kw">as </span>i32;
                 }
             }
-            <span class="kw">if </span>goto_emit_remainder == <span class="number">0 </span>{
+            <span class="kw">if </span>!goto_emit_remainder {
                 next_hash = Hash(
                     <span class="kw-2">&amp;</span>base_ip[{
                         ip_index = ip_index.wrapping_add(<span class="number">1</span>);
@@ -1339,7 +1315,6 @@
             }
         }
     }
-    <span class="number">0i32</span>;
     <span class="kw">if </span>next_emit &lt; ip_end {
         <span class="kw">let </span>insert: u32 = ip_end.wrapping_sub(next_emit) <span class="kw">as </span>u32;
         <span class="kw-2">*</span>num_commands += EmitInsertLen(insert, commands);
@@ -1352,14 +1327,12 @@
 }
 
 <span class="kw">fn </span>ShouldCompress(input: <span class="kw-2">&amp;</span>[u8], input_size: usize, num_literals: usize) -&gt; bool {
-    <span class="kw">let </span>corpus_size: <span class="kw">super</span>::util::floatX = input_size <span class="kw">as </span>(<span class="kw">super</span>::util::floatX);
-    <span class="kw">if </span>num_literals <span class="kw">as </span>(<span class="kw">super</span>::util::floatX) &lt; <span class="number">0.98 </span><span class="kw">as </span><span class="kw">super</span>::util::floatX * corpus_size {
+    <span class="kw">let </span>corpus_size = input_size <span class="kw">as </span>floatX;
+    <span class="kw">if </span>(num_literals <span class="kw">as </span>floatX) &lt; <span class="number">0.98 </span>* corpus_size {
         <span class="bool-val">true
     </span>} <span class="kw">else </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>literal_histo: [u32; <span class="number">256</span>] = [<span class="number">0</span>; <span class="number">256</span>];
-        <span class="kw">let </span>max_total_bit_cost: <span class="kw">super</span>::util::floatX =
-            corpus_size * <span class="number">8i32 </span><span class="kw">as </span>(<span class="kw">super</span>::util::floatX) * <span class="number">0.98 </span><span class="kw">as </span><span class="kw">super</span>::util::floatX
-                / <span class="number">43i32 </span><span class="kw">as </span>(<span class="kw">super</span>::util::floatX);
+        <span class="kw">let </span>max_total_bit_cost: floatX = corpus_size * <span class="number">8.0 </span>* <span class="number">0.98 </span>/ <span class="number">43.0</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>i: usize;
         i = <span class="number">0usize</span>;
         <span class="kw">while </span>i &lt; input_size {
@@ -1381,9 +1354,20 @@
     BROTLI_UNALIGNED_STORE64(p, v);
     <span class="kw-2">*</span>pos = pos.wrapping_add(n_bits);
 }
-<span class="kw">pub fn </span>BrotliStoreMetaBlockHeader(
+
+<span class="attr">#[deprecated(note = <span class="string">"use store_meta_block_header instead"</span>)]
+</span><span class="kw">pub fn </span>BrotliStoreMetaBlockHeader(
     len: usize,
     is_uncompressed: i32,
+    storage_ix: <span class="kw-2">&amp;mut </span>usize,
+    storage: <span class="kw-2">&amp;mut </span>[u8],
+) {
+    store_meta_block_header(len, is_uncompressed != <span class="number">0</span>, storage_ix, storage);
+}
+
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>store_meta_block_header(
+    len: usize,
+    is_uncompressed: bool,
     storage_ix: <span class="kw-2">&amp;mut </span>usize,
     storage: <span class="kw-2">&amp;mut </span>[u8],
 ) {
@@ -1401,7 +1385,7 @@
         storage_ix,
         storage,
     );
-    BrotliWriteBits(<span class="number">1usize</span>, is_uncompressed <span class="kw">as </span>(u64), storage_ix, storage);
+    BrotliWriteBits(<span class="number">1</span>, u64::from(is_uncompressed), storage_ix, storage);
 }
 
 <span class="kw">pub fn </span>memcpy&lt;T: Sized + Clone&gt;(
@@ -1421,7 +1405,7 @@
     storage_ix: <span class="kw-2">&amp;mut </span>usize,
     storage: <span class="kw-2">&amp;mut </span>[u8],
 ) {
-    <span class="kw">let </span><span class="kw-2">mut </span>tree: [HuffmanTree; <span class="number">129</span>] = [NewHuffmanTree(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>); <span class="number">129</span>];
+    <span class="kw">let </span><span class="kw-2">mut </span>tree = [HuffmanTree::new(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>); <span class="number">129</span>];
     <span class="kw">let </span><span class="kw-2">mut </span>cmd_depth: [u8; <span class="number">704</span>] = [<span class="number">0</span>; <span class="number">704</span>];
     <span class="kw">let </span><span class="kw-2">mut </span>cmd_bits: [u16; <span class="number">64</span>] = [<span class="number">0</span>; <span class="number">64</span>];
     BrotliCreateHuffmanTree(histogram, <span class="number">64usize</span>, <span class="number">15i32</span>, <span class="kw-2">&amp;mut </span>tree[..], depth);
@@ -1452,7 +1436,6 @@
     memcpy(bits, (<span class="number">56usize</span>), <span class="kw-2">&amp;</span>cmd_bits[..], <span class="number">48usize</span>, <span class="number">8usize</span>);
     BrotliConvertBitDepthsToSymbols(<span class="kw-2">&amp;mut </span>depth[<span class="number">64</span>..], <span class="number">64usize</span>, <span class="kw-2">&amp;mut </span>bits[<span class="number">64</span>..]);
     {
-        <span class="kw">let </span><span class="kw-2">mut </span>i: usize;
         <span class="kw">for </span>item <span class="kw">in </span>cmd_depth[..<span class="number">64</span>].iter_mut() {
             <span class="kw-2">*</span>item = <span class="number">0</span>;
         }
@@ -1462,16 +1445,11 @@
         memcpy(<span class="kw-2">&amp;mut </span>cmd_depth[..], <span class="number">128usize</span>, depth, (<span class="number">40usize</span>), <span class="number">8usize</span>);
         memcpy(<span class="kw-2">&amp;mut </span>cmd_depth[..], <span class="number">192usize</span>, depth, (<span class="number">48usize</span>), <span class="number">8usize</span>);
         memcpy(<span class="kw-2">&amp;mut </span>cmd_depth[..], <span class="number">384usize</span>, depth, (<span class="number">56usize</span>), <span class="number">8usize</span>);
-        i = <span class="number">0usize</span>;
-        <span class="kw">while </span>i &lt; <span class="number">8usize </span>{
-            {
-                cmd_depth[(<span class="number">128usize</span>).wrapping_add((<span class="number">8usize</span>).wrapping_mul(i))] = depth[i];
-                cmd_depth[(<span class="number">256usize</span>).wrapping_add((<span class="number">8usize</span>).wrapping_mul(i))] =
-                    depth[i.wrapping_add(<span class="number">8</span>)];
-                cmd_depth[(<span class="number">448usize</span>).wrapping_add((<span class="number">8usize</span>).wrapping_mul(i))] =
-                    depth[i.wrapping_add(<span class="number">16</span>)];
-            }
-            i = i.wrapping_add(<span class="number">1</span>);
+        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0usize</span>..<span class="number">8usize </span>{
+            cmd_depth[(<span class="number">128usize</span>).wrapping_add((<span class="number">8usize</span>).wrapping_mul(i))] = depth[i];
+            cmd_depth[(<span class="number">256usize</span>).wrapping_add((<span class="number">8usize</span>).wrapping_mul(i))] = depth[i.wrapping_add(<span class="number">8</span>)];
+            cmd_depth[(<span class="number">448usize</span>).wrapping_add((<span class="number">8usize</span>).wrapping_mul(i))] =
+                depth[i.wrapping_add(<span class="number">16</span>)];
         }
         BrotliStoreHuffmanTree(
             <span class="kw-2">&amp;mut </span>cmd_depth[..],
@@ -1517,14 +1495,10 @@
     <span class="kw">let </span><span class="kw-2">mut </span>cmd_bits: [u16; <span class="number">128</span>] = [<span class="number">0</span>; <span class="number">128</span>];
     <span class="kw">let </span><span class="kw-2">mut </span>cmd_histo: [u32; <span class="number">128</span>] = [<span class="number">0</span>; <span class="number">128</span>];
     <span class="kw">let </span><span class="kw-2">mut </span>i: usize;
-    i = <span class="number">0usize</span>;
-    <span class="kw">while </span>i &lt; num_literals {
-        {
-            <span class="kw">let </span>_rhs = <span class="number">1</span>;
-            <span class="kw">let </span>_lhs = <span class="kw-2">&amp;mut </span>lit_histo[literals[i] <span class="kw">as </span>usize];
-            <span class="kw-2">*</span>_lhs = (<span class="kw-2">*</span>_lhs).wrapping_add(_rhs <span class="kw">as </span>u32);
-        }
-        i = i.wrapping_add(<span class="number">1</span>);
+    <span class="kw">for </span>i <span class="kw">in </span><span class="number">0usize</span>..num_literals {
+        <span class="kw">let </span>_rhs = <span class="number">1</span>;
+        <span class="kw">let </span>_lhs = <span class="kw-2">&amp;mut </span>lit_histo[literals[i] <span class="kw">as </span>usize];
+        <span class="kw-2">*</span>_lhs = (<span class="kw-2">*</span>_lhs).wrapping_add(_rhs <span class="kw">as </span>u32);
     }
     BrotliBuildAndStoreHuffmanTreeFast(
         mht,
@@ -1540,7 +1514,6 @@
     <span class="kw">while </span>i &lt; num_commands {
         {
             <span class="kw">let </span>code: u32 = commands[i] &amp; <span class="number">0xffu32</span>;
-            <span class="number">0i32</span>;
             {
                 <span class="kw">let </span>_rhs = <span class="number">1</span>;
                 <span class="kw">let </span>_lhs = <span class="kw-2">&amp;mut </span>cmd_histo[code <span class="kw">as </span>usize];
@@ -1576,40 +1549,35 @@
         storage_ix,
         storage,
     );
-    i = <span class="number">0usize</span>;
-    <span class="kw">while </span>i &lt; num_commands {
-        {
-            <span class="kw">let </span>cmd: u32 = commands[i];
-            <span class="kw">let </span>code: u32 = cmd &amp; <span class="number">0xffu32</span>;
-            <span class="kw">let </span>extra: u32 = cmd &gt;&gt; <span class="number">8</span>;
-            <span class="number">0i32</span>;
-            BrotliWriteBits(
-                cmd_depths[code <span class="kw">as </span>usize] <span class="kw">as </span>usize,
-                cmd_bits[code <span class="kw">as </span>usize] <span class="kw">as </span>(u64),
-                storage_ix,
-                storage,
-            );
-            BrotliWriteBits(
-                kNumExtraBits[code <span class="kw">as </span>usize] <span class="kw">as </span>usize,
-                extra <span class="kw">as </span>(u64),
-                storage_ix,
-                storage,
-            );
-            <span class="kw">if </span>code &lt; <span class="number">24u32 </span>{
-                <span class="kw">let </span>insert: u32 = kInsertOffset[code <span class="kw">as </span>usize].wrapping_add(extra);
-                <span class="kw">for </span>literal <span class="kw">in </span>literals[..(insert <span class="kw">as </span>usize)].iter() {
-                    <span class="kw">let </span>lit: u8 = <span class="kw-2">*</span>literal;
-                    BrotliWriteBits(
-                        lit_depths[lit <span class="kw">as </span>usize] <span class="kw">as </span>usize,
-                        lit_bits[lit <span class="kw">as </span>usize] <span class="kw">as </span>(u64),
-                        storage_ix,
-                        storage,
-                    );
-                }
-                literals = <span class="kw-2">&amp;</span>literals[insert <span class="kw">as </span>usize..];
+    <span class="kw">for </span>i <span class="kw">in </span><span class="number">0usize</span>..num_commands {
+        <span class="kw">let </span>cmd: u32 = commands[i];
+        <span class="kw">let </span>code: u32 = cmd &amp; <span class="number">0xffu32</span>;
+        <span class="kw">let </span>extra: u32 = cmd &gt;&gt; <span class="number">8</span>;
+        BrotliWriteBits(
+            cmd_depths[code <span class="kw">as </span>usize] <span class="kw">as </span>usize,
+            cmd_bits[code <span class="kw">as </span>usize] <span class="kw">as </span>(u64),
+            storage_ix,
+            storage,
+        );
+        BrotliWriteBits(
+            kNumExtraBits[code <span class="kw">as </span>usize] <span class="kw">as </span>usize,
+            extra <span class="kw">as </span>(u64),
+            storage_ix,
+            storage,
+        );
+        <span class="kw">if </span>code &lt; <span class="number">24u32 </span>{
+            <span class="kw">let </span>insert: u32 = kInsertOffset[code <span class="kw">as </span>usize].wrapping_add(extra);
+            <span class="kw">for </span>literal <span class="kw">in </span>literals[..(insert <span class="kw">as </span>usize)].iter() {
+                <span class="kw">let </span>lit: u8 = <span class="kw-2">*</span>literal;
+                BrotliWriteBits(
+                    lit_depths[lit <span class="kw">as </span>usize] <span class="kw">as </span>usize,
+                    lit_bits[lit <span class="kw">as </span>usize] <span class="kw">as </span>(u64),
+                    storage_ix,
+                    storage,
+                );
             }
+            literals = <span class="kw-2">&amp;</span>literals[insert <span class="kw">as </span>usize..];
         }
-        i = i.wrapping_add(<span class="number">1</span>);
     }
 }
 <span class="kw">fn </span>EmitUncompressedMetaBlock(
@@ -1618,19 +1586,20 @@
     storage_ix: <span class="kw-2">&amp;mut </span>usize,
     storage: <span class="kw-2">&amp;mut </span>[u8],
 ) {
-    BrotliStoreMetaBlockHeader(input_size, <span class="number">1i32</span>, storage_ix, storage);
+    store_meta_block_header(input_size, <span class="bool-val">true</span>, storage_ix, storage);
     <span class="kw-2">*</span>storage_ix = storage_ix.wrapping_add(<span class="number">7u32 </span><span class="kw">as </span>usize) &amp; !<span class="number">7u32 </span><span class="kw">as </span>usize;
     memcpy(storage, (<span class="kw-2">*</span>storage_ix &gt;&gt; <span class="number">3</span>), input, <span class="number">0</span>, input_size);
     <span class="kw-2">*</span>storage_ix = storage_ix.wrapping_add(input_size &lt;&lt; <span class="number">3</span>);
     storage[(<span class="kw-2">*</span>storage_ix &gt;&gt; <span class="number">3</span>)] = <span class="number">0u8</span>;
 }
+
 <span class="attr">#[allow(unused_variables)]
 #[inline(always)]
-</span><span class="kw">fn </span>BrotliCompressFragmentTwoPassImpl&lt;AllocHT: alloc::Allocator&lt;HuffmanTree&gt;&gt;(
+</span><span class="kw">fn </span>compress_fragment_two_pass_impl&lt;AllocHT: alloc::Allocator&lt;HuffmanTree&gt;&gt;(
     m: <span class="kw-2">&amp;mut </span>AllocHT,
     base_ip: <span class="kw-2">&amp;</span>[u8],
     <span class="kw-2">mut </span>input_size: usize,
-    is_last: i32,
+    is_last: bool,
     command_buf: <span class="kw-2">&amp;mut </span>[u32],
     literal_buf: <span class="kw-2">&amp;mut </span>[u8],
     table: <span class="kw-2">&amp;mut </span>[i32],
@@ -1641,7 +1610,7 @@
 ) {
     <span class="kw">let </span><span class="kw-2">mut </span>input_index: usize = <span class="number">0usize</span>;
     <span class="kw">while </span>input_size &gt; <span class="number">0usize </span>{
-        <span class="kw">let </span>block_size: usize = brotli_min_size_t(input_size, kCompressFragmentTwoPassBlockSize);
+        <span class="kw">let </span>block_size: usize = min(input_size, kCompressFragmentTwoPassBlockSize);
         <span class="kw">let </span><span class="kw-2">mut </span>num_literals: usize = <span class="number">0</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>num_commands: usize = <span class="number">0</span>;
         {
@@ -1662,7 +1631,7 @@
             );
         }
         <span class="kw">if </span>ShouldCompress(<span class="kw-2">&amp;</span>base_ip[input_index..], block_size, num_literals) {
-            BrotliStoreMetaBlockHeader(block_size, <span class="number">0i32</span>, storage_ix, storage);
+            store_meta_block_header(block_size, <span class="bool-val">false</span>, storage_ix, storage);
             BrotliWriteBits(<span class="number">13usize</span>, <span class="number">0</span>, storage_ix, storage);
             StoreCommands(
                 m,
@@ -1686,7 +1655,7 @@
             mht: <span class="kw-2">&amp;mut </span>AllocHT,
             input: <span class="kw-2">&amp;</span>[u8],
             input_size: usize,
-            is_last: i32,
+            is_last: bool,
             command_buf: <span class="kw-2">&amp;mut </span>[u32],
             literal_buf: <span class="kw-2">&amp;mut </span>[u8],
             table: <span class="kw-2">&amp;mut </span>[i32],
@@ -1694,7 +1663,7 @@
             storage: <span class="kw-2">&amp;mut </span>[u8],
         ) {
             <span class="kw">let </span>min_match = <span class="kw">if </span><span class="macro-nonterminal">$table_bits </span>&lt; <span class="number">15 </span>{ <span class="number">4 </span>} <span class="kw">else </span>{ <span class="number">6 </span>};
-            BrotliCompressFragmentTwoPassImpl(
+            compress_fragment_two_pass_impl(
                 mht,
                 input,
                 input_size,
@@ -1732,11 +1701,38 @@
     <span class="kw-2">*</span>storage_ix = new_storage_ix;
 }
 
-<span class="kw">pub fn </span>BrotliCompressFragmentTwoPass&lt;AllocHT: alloc::Allocator&lt;HuffmanTree&gt;&gt;(
+<span class="attr">#[deprecated(note = <span class="string">"use compress_fragment_two_pass instead"</span>)]
+</span><span class="kw">pub fn </span>BrotliCompressFragmentTwoPass&lt;AllocHT: alloc::Allocator&lt;HuffmanTree&gt;&gt;(
     m: <span class="kw-2">&amp;mut </span>AllocHT,
     input: <span class="kw-2">&amp;</span>[u8],
     input_size: usize,
     is_last: i32,
+    command_buf: <span class="kw-2">&amp;mut </span>[u32],
+    literal_buf: <span class="kw-2">&amp;mut </span>[u8],
+    table: <span class="kw-2">&amp;mut </span>[i32],
+    table_size: usize,
+    storage_ix: <span class="kw-2">&amp;mut </span>usize,
+    storage: <span class="kw-2">&amp;mut </span>[u8],
+) {
+    compress_fragment_two_pass(
+        m,
+        input,
+        input_size,
+        is_last != <span class="number">0</span>,
+        command_buf,
+        literal_buf,
+        table,
+        table_size,
+        storage_ix,
+        storage,
+    )
+}
+
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>compress_fragment_two_pass&lt;AllocHT: alloc::Allocator&lt;HuffmanTree&gt;&gt;(
+    m: <span class="kw-2">&amp;mut </span>AllocHT,
+    input: <span class="kw-2">&amp;</span>[u8],
+    input_size: usize,
+    is_last: bool,
     command_buf: <span class="kw-2">&amp;mut </span>[u32],
     literal_buf: <span class="kw-2">&amp;mut </span>[u8],
     table: <span class="kw-2">&amp;mut </span>[i32],
@@ -1880,7 +1876,7 @@
         RewindBitPosition(initial_storage_ix, storage_ix, storage);
         EmitUncompressedMetaBlock(input, input_size, storage_ix, storage);
     }
-    <span class="kw">if </span>is_last != <span class="number">0 </span>{
+    <span class="kw">if </span>is_last {
         BrotliWriteBits(<span class="number">1</span>, <span class="number">1</span>, storage_ix, storage);
         BrotliWriteBits(<span class="number">1</span>, <span class="number">1</span>, storage_ix, storage);
         <span class="kw-2">*</span>storage_ix = storage_ix.wrapping_add(<span class="number">7u32 </span><span class="kw">as </span>usize) &amp; !<span class="number">7u32 </span><span class="kw">as </span>usize;

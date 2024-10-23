@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["EmbeddedAssetsError"],"struct":["AssetOptions","CspHashes","EmbeddedAssets","EmbeddedAssetsInput"]};
+window.SIDEBAR_ITEMS = {"enum":["EmbeddedAssetsError"],"struct":["AssetOptions","CspHashes","EmbeddedAssets","EmbeddedAssetsInput"],"type":["EmbeddedAssetsResult"]};

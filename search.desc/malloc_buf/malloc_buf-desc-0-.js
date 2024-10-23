@@ -1,0 +1,1 @@
+searchState.loadedDescShard("malloc_buf", 0, "A type that represents a <code>malloc</code>’d chunk of memory.\nReturns the argument unchanged.\nCalls <code>U::from(self)</code>.\nConstructs a new <code>MallocBuffer</code> for a <code>malloc</code>’d buffer with …")

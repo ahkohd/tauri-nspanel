@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_derive-1.0.201/src/de.rs`."><title>de.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="serde_derive" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../serde_derive/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_derive-1.0.213/src/de.rs`."><title>de.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="serde_derive" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -3148,6 +3146,74 @@
 <a href="#3146" id="3146">3146</a>
 <a href="#3147" id="3147">3147</a>
 <a href="#3148" id="3148">3148</a>
+<a href="#3149" id="3149">3149</a>
+<a href="#3150" id="3150">3150</a>
+<a href="#3151" id="3151">3151</a>
+<a href="#3152" id="3152">3152</a>
+<a href="#3153" id="3153">3153</a>
+<a href="#3154" id="3154">3154</a>
+<a href="#3155" id="3155">3155</a>
+<a href="#3156" id="3156">3156</a>
+<a href="#3157" id="3157">3157</a>
+<a href="#3158" id="3158">3158</a>
+<a href="#3159" id="3159">3159</a>
+<a href="#3160" id="3160">3160</a>
+<a href="#3161" id="3161">3161</a>
+<a href="#3162" id="3162">3162</a>
+<a href="#3163" id="3163">3163</a>
+<a href="#3164" id="3164">3164</a>
+<a href="#3165" id="3165">3165</a>
+<a href="#3166" id="3166">3166</a>
+<a href="#3167" id="3167">3167</a>
+<a href="#3168" id="3168">3168</a>
+<a href="#3169" id="3169">3169</a>
+<a href="#3170" id="3170">3170</a>
+<a href="#3171" id="3171">3171</a>
+<a href="#3172" id="3172">3172</a>
+<a href="#3173" id="3173">3173</a>
+<a href="#3174" id="3174">3174</a>
+<a href="#3175" id="3175">3175</a>
+<a href="#3176" id="3176">3176</a>
+<a href="#3177" id="3177">3177</a>
+<a href="#3178" id="3178">3178</a>
+<a href="#3179" id="3179">3179</a>
+<a href="#3180" id="3180">3180</a>
+<a href="#3181" id="3181">3181</a>
+<a href="#3182" id="3182">3182</a>
+<a href="#3183" id="3183">3183</a>
+<a href="#3184" id="3184">3184</a>
+<a href="#3185" id="3185">3185</a>
+<a href="#3186" id="3186">3186</a>
+<a href="#3187" id="3187">3187</a>
+<a href="#3188" id="3188">3188</a>
+<a href="#3189" id="3189">3189</a>
+<a href="#3190" id="3190">3190</a>
+<a href="#3191" id="3191">3191</a>
+<a href="#3192" id="3192">3192</a>
+<a href="#3193" id="3193">3193</a>
+<a href="#3194" id="3194">3194</a>
+<a href="#3195" id="3195">3195</a>
+<a href="#3196" id="3196">3196</a>
+<a href="#3197" id="3197">3197</a>
+<a href="#3198" id="3198">3198</a>
+<a href="#3199" id="3199">3199</a>
+<a href="#3200" id="3200">3200</a>
+<a href="#3201" id="3201">3201</a>
+<a href="#3202" id="3202">3202</a>
+<a href="#3203" id="3203">3203</a>
+<a href="#3204" id="3204">3204</a>
+<a href="#3205" id="3205">3205</a>
+<a href="#3206" id="3206">3206</a>
+<a href="#3207" id="3207">3207</a>
+<a href="#3208" id="3208">3208</a>
+<a href="#3209" id="3209">3209</a>
+<a href="#3210" id="3210">3210</a>
+<a href="#3211" id="3211">3211</a>
+<a href="#3212" id="3212">3212</a>
+<a href="#3213" id="3213">3213</a>
+<a href="#3214" id="3214">3214</a>
+<a href="#3215" id="3215">3215</a>
+<a href="#3216" id="3216">3216</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::fragment::{Expr, Fragment, Match, Stmts};
 <span class="kw">use </span><span class="kw">crate</span>::internals::ast::{Container, Data, Field, Style, Variant};
 <span class="kw">use </span><span class="kw">crate</span>::internals::{attr, replace_receiver, ungroup, Ctxt, Derive};
@@ -3521,7 +3587,11 @@
         } <span class="kw">else </span>{
             <span class="kw">let </span>value = <span class="kw">match </span>field.attrs.default() {
                 attr::Default::Default =&gt; <span class="macro">quote!</span>(_serde::__private::Default::default()),
-                attr::Default::Path(path) =&gt; <span class="macro">quote!</span>(#path()),
+                <span class="comment">// If #path returns wrong type, error will be reported here (^^^^^).
+                // We attach span of the path to the function so it will be reported
+                // on the #[serde(default = "...")]
+                //                          ^^^^^
+                </span>attr::Default::Path(path) =&gt; <span class="macro">quote_spanned!</span>(path.span()=&gt; #path()),
                 attr::Default::None =&gt; <span class="macro">quote!</span>(_serde::__private::PhantomData),
             };
             <span class="macro">quote!</span>(#member: #value)
@@ -3611,7 +3681,10 @@
     cattrs: <span class="kw-2">&amp;</span>attr::Container,
     form: TupleForm,
 ) -&gt; Fragment {
-    <span class="macro">assert!</span>(!cattrs.has_flatten());
+    <span class="macro">assert!</span>(
+        !has_flatten(fields),
+        <span class="string">"tuples and tuple variants cannot have flatten fields"
+    </span>);
 
     <span class="kw">let </span>field_count = fields
         .iter()
@@ -3729,7 +3802,10 @@
     fields: <span class="kw-2">&amp;</span>[Field],
     cattrs: <span class="kw-2">&amp;</span>attr::Container,
 ) -&gt; Fragment {
-    <span class="macro">assert!</span>(!cattrs.has_flatten());
+    <span class="macro">assert!</span>(
+        !has_flatten(fields),
+        <span class="string">"tuples and tuple variants cannot have flatten fields"
+    </span>);
 
     <span class="kw">let </span>field_count = fields
         .iter()
@@ -3901,7 +3977,11 @@
         attr::Default::Default =&gt; <span class="prelude-val">Some</span>(<span class="macro">quote!</span>(
             <span class="kw">let </span>__default: <span class="self">Self</span>::Value = _serde::__private::Default::default();
         )),
-        attr::Default::Path(path) =&gt; <span class="prelude-val">Some</span>(<span class="macro">quote!</span>(
+        <span class="comment">// If #path returns wrong type, error will be reported here (^^^^^).
+        // We attach span of the path to the function so it will be reported
+        // on the #[serde(default = "...")]
+        //                          ^^^^^
+        </span>attr::Default::Path(path) =&gt; <span class="prelude-val">Some</span>(<span class="macro">quote_spanned!</span>(path.span()=&gt;
             <span class="kw">let </span>__default: <span class="self">Self</span>::Value = #path();
         )),
         attr::Default::None =&gt; {
@@ -3983,7 +4063,11 @@
         attr::Default::Default =&gt; <span class="prelude-val">Some</span>(<span class="macro">quote!</span>(
             <span class="kw">let </span>__default: #this_type #ty_generics = _serde::__private::Default::default();
         )),
-        attr::Default::Path(path) =&gt; <span class="prelude-val">Some</span>(<span class="macro">quote!</span>(
+        <span class="comment">// If #path returns wrong type, error will be reported here (^^^^^).
+        // We attach span of the path to the function so it will be reported
+        // on the #[serde(default = "...")]
+        //                          ^^^^^
+        </span>attr::Default::Path(path) =&gt; <span class="prelude-val">Some</span>(<span class="macro">quote_spanned!</span>(path.span()=&gt;
             <span class="kw">let </span>__default: #this_type #ty_generics = #path();
         )),
         attr::Default::None =&gt; {
@@ -4007,18 +4091,23 @@
 ) -&gt; TokenStream {
     <span class="kw">let </span>delife = params.borrowed.de_lifetime();
     <span class="kw">let </span>field_ty = field.ty;
+    <span class="kw">let </span>deserializer_var = <span class="macro">quote!</span>(__e);
 
     <span class="kw">let </span>value = <span class="kw">match </span>field.attrs.deserialize_with() {
         <span class="prelude-val">None </span>=&gt; {
             <span class="kw">let </span>span = field.original.span();
             <span class="kw">let </span>func = <span class="macro">quote_spanned!</span>(span=&gt; &lt;#field_ty <span class="kw">as </span>_serde::Deserialize&gt;::deserialize);
             <span class="macro">quote!</span> {
-                #func(__e)<span class="question-mark">?
+                #func(#deserializer_var)<span class="question-mark">?
             </span>}
         }
         <span class="prelude-val">Some</span>(path) =&gt; {
-            <span class="macro">quote!</span> {
-                #path(__e)<span class="question-mark">?
+            <span class="comment">// If #path returns wrong type, error will be reported here (^^^^^).
+            // We attach span of the path to the function so it will be reported
+            // on the #[serde(with = "...")]
+            //                       ^^^^^
+            </span><span class="macro">quote_spanned!</span> {path.span()=&gt;
+                #path(#deserializer_var)<span class="question-mark">?
             </span>}
         }
     };
@@ -4034,7 +4123,7 @@
 
     <span class="macro">quote!</span> {
         <span class="attr">#[inline]
-        </span><span class="kw">fn </span>visit_newtype_struct&lt;__E&gt;(<span class="self">self</span>, __e: __E) -&gt; _serde::__private::Result&lt;<span class="self">Self</span>::Value, __E::Error&gt;
+        </span><span class="kw">fn </span>visit_newtype_struct&lt;__E&gt;(<span class="self">self</span>, #deserializer_var: __E) -&gt; _serde::__private::Result&lt;<span class="self">Self</span>::Value, __E::Error&gt;
         <span class="kw">where
             </span>__E: _serde::Deserializer&lt;#delife&gt;,
         {
@@ -4094,29 +4183,28 @@
     };
     <span class="kw">let </span>expecting = cattrs.expecting().unwrap_or(<span class="kw-2">&amp;</span>expecting);
 
-    <span class="kw">let </span>field_names_idents: Vec&lt;<span class="kw">_</span>&gt; = fields
+    <span class="kw">let </span>deserialized_fields: Vec&lt;<span class="kw">_</span>&gt; = fields
         .iter()
         .enumerate()
         <span class="comment">// Skip fields that shouldn't be deserialized or that were flattened,
         // so they don't appear in the storage in their literal form
         </span>.filter(|<span class="kw-2">&amp;</span>(<span class="kw">_</span>, field)| !field.attrs.skip_deserializing() &amp;&amp; !field.attrs.flatten())
-        .map(|(i, field)| {
-            (
-                field.attrs.name().deserialize_name(),
-                field_i(i),
-                field.attrs.aliases(),
-            )
+        .map(|(i, field)| FieldWithAliases {
+            ident: field_i(i),
+            aliases: field.attrs.aliases(),
         })
         .collect();
-    <span class="kw">let </span>field_visitor = deserialize_field_identifier(<span class="kw-2">&amp;</span>field_names_idents, cattrs);
+
+    <span class="kw">let </span>has_flatten = has_flatten(fields);
+    <span class="kw">let </span>field_visitor = deserialize_field_identifier(<span class="kw-2">&amp;</span>deserialized_fields, cattrs, has_flatten);
 
     <span class="comment">// untagged struct variants do not get a visit_seq method. The same applies to
     // structs that only have a map representation.
     </span><span class="kw">let </span>visit_seq = <span class="kw">match </span>form {
         StructForm::Untagged(..) =&gt; <span class="prelude-val">None</span>,
-        <span class="kw">_ if </span>cattrs.has_flatten() =&gt; <span class="prelude-val">None</span>,
+        <span class="kw">_ if </span>has_flatten =&gt; <span class="prelude-val">None</span>,
         <span class="kw">_ </span>=&gt; {
-            <span class="kw">let </span>mut_seq = <span class="kw">if </span>field_names_idents.is_empty() {
+            <span class="kw">let </span>mut_seq = <span class="kw">if </span>deserialized_fields.is_empty() {
                 <span class="macro">quote!</span>(<span class="kw">_</span>)
             } <span class="kw">else </span>{
                 <span class="macro">quote!</span>(<span class="kw-2">mut </span>__seq)
@@ -4137,10 +4225,16 @@
             })
         }
     };
-    <span class="kw">let </span>visit_map = Stmts(deserialize_map(<span class="kw-2">&amp;</span>type_path, params, fields, cattrs));
+    <span class="kw">let </span>visit_map = Stmts(deserialize_map(
+        <span class="kw-2">&amp;</span>type_path,
+        params,
+        fields,
+        cattrs,
+        has_flatten,
+    ));
 
     <span class="kw">let </span>visitor_seed = <span class="kw">match </span>form {
-        StructForm::ExternallyTagged(..) <span class="kw">if </span>cattrs.has_flatten() =&gt; <span class="prelude-val">Some</span>(<span class="macro">quote!</span> {
+        StructForm::ExternallyTagged(..) <span class="kw">if </span>has_flatten =&gt; <span class="prelude-val">Some</span>(<span class="macro">quote!</span> {
             <span class="kw">impl </span>#de_impl_generics _serde::de::DeserializeSeed&lt;#delife&gt; <span class="kw">for </span>__Visitor #de_ty_generics #where_clause {
                 <span class="kw">type </span>Value = #this_type #ty_generics;
 
@@ -4155,12 +4249,10 @@
         <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
     };
 
-    <span class="kw">let </span>fields_stmt = <span class="kw">if </span>cattrs.has_flatten() {
+    <span class="kw">let </span>fields_stmt = <span class="kw">if </span>has_flatten {
         <span class="prelude-val">None
     </span>} <span class="kw">else </span>{
-        <span class="kw">let </span>field_names = field_names_idents
-            .iter()
-            .flat_map(|<span class="kw-2">&amp;</span>(<span class="kw">_</span>, <span class="kw">_</span>, aliases)| aliases);
+        <span class="kw">let </span>field_names = deserialized_fields.iter().flat_map(|field| field.aliases);
 
         <span class="prelude-val">Some</span>(<span class="macro">quote!</span> {
             <span class="attr">#[doc(hidden)]
@@ -4175,7 +4267,7 @@
         }
     };
     <span class="kw">let </span>dispatch = <span class="kw">match </span>form {
-        StructForm::Struct <span class="kw">if </span>cattrs.has_flatten() =&gt; <span class="macro">quote!</span> {
+        StructForm::Struct <span class="kw">if </span>has_flatten =&gt; <span class="macro">quote!</span> {
             _serde::Deserializer::deserialize_map(__deserializer, #visitor_expr)
         },
         StructForm::Struct =&gt; {
@@ -4184,7 +4276,7 @@
                 _serde::Deserializer::deserialize_struct(__deserializer, #type_name, FIELDS, #visitor_expr)
             }
         }
-        StructForm::ExternallyTagged(<span class="kw">_</span>) <span class="kw">if </span>cattrs.has_flatten() =&gt; <span class="macro">quote!</span> {
+        StructForm::ExternallyTagged(<span class="kw">_</span>) <span class="kw">if </span>has_flatten =&gt; <span class="macro">quote!</span> {
             _serde::de::VariantAccess::newtype_variant_seed(__variant, #visitor_expr)
         },
         StructForm::ExternallyTagged(<span class="kw">_</span>) =&gt; <span class="macro">quote!</span> {
@@ -4241,7 +4333,7 @@
 ) -&gt; <span class="prelude-ty">Option</span>&lt;Fragment&gt; {
     <span class="comment">// for now we do not support in_place deserialization for structs that
     // are represented as map.
-    </span><span class="kw">if </span>cattrs.has_flatten() {
+    </span><span class="kw">if </span>has_flatten(fields) {
         <span class="kw">return </span><span class="prelude-val">None</span>;
     }
 
@@ -4253,31 +4345,26 @@
     <span class="kw">let </span>expecting = <span class="macro">format!</span>(<span class="string">"struct {}"</span>, params.type_name());
     <span class="kw">let </span>expecting = cattrs.expecting().unwrap_or(<span class="kw-2">&amp;</span>expecting);
 
-    <span class="kw">let </span>field_names_idents: Vec&lt;<span class="kw">_</span>&gt; = fields
+    <span class="kw">let </span>deserialized_fields: Vec&lt;<span class="kw">_</span>&gt; = fields
         .iter()
         .enumerate()
         .filter(|<span class="kw-2">&amp;</span>(<span class="kw">_</span>, field)| !field.attrs.skip_deserializing())
-        .map(|(i, field)| {
-            (
-                field.attrs.name().deserialize_name(),
-                field_i(i),
-                field.attrs.aliases(),
-            )
+        .map(|(i, field)| FieldWithAliases {
+            ident: field_i(i),
+            aliases: field.attrs.aliases(),
         })
         .collect();
 
-    <span class="kw">let </span>field_visitor = deserialize_field_identifier(<span class="kw-2">&amp;</span>field_names_idents, cattrs);
+    <span class="kw">let </span>field_visitor = deserialize_field_identifier(<span class="kw-2">&amp;</span>deserialized_fields, cattrs, <span class="bool-val">false</span>);
 
-    <span class="kw">let </span>mut_seq = <span class="kw">if </span>field_names_idents.is_empty() {
+    <span class="kw">let </span>mut_seq = <span class="kw">if </span>deserialized_fields.is_empty() {
         <span class="macro">quote!</span>(<span class="kw">_</span>)
     } <span class="kw">else </span>{
         <span class="macro">quote!</span>(<span class="kw-2">mut </span>__seq)
     };
     <span class="kw">let </span>visit_seq = Stmts(deserialize_seq_in_place(params, fields, cattrs, expecting));
     <span class="kw">let </span>visit_map = Stmts(deserialize_map_in_place(params, fields, cattrs));
-    <span class="kw">let </span>field_names = field_names_idents
-        .iter()
-        .flat_map(|<span class="kw-2">&amp;</span>(<span class="kw">_</span>, <span class="kw">_</span>, aliases)| aliases);
+    <span class="kw">let </span>field_names = deserialized_fields.iter().flat_map(|field| field.aliases);
     <span class="kw">let </span>type_name = cattrs.name().deserialize_name();
 
     <span class="kw">let </span>in_place_impl_generics = de_impl_generics.in_place();
@@ -4360,45 +4447,41 @@
     }
 }
 
-<span class="kw">fn </span>prepare_enum_variant_enum(
-    variants: <span class="kw-2">&amp;</span>[Variant],
-    cattrs: <span class="kw-2">&amp;</span>attr::Container,
-) -&gt; (TokenStream, Stmts) {
-    <span class="kw">let </span><span class="kw-2">mut </span>deserialized_variants = variants
+<span class="kw">fn </span>prepare_enum_variant_enum(variants: <span class="kw-2">&amp;</span>[Variant]) -&gt; (TokenStream, Stmts) {
+    <span class="kw">let </span>deserialized_variants = variants
         .iter()
         .enumerate()
-        .filter(|<span class="kw-2">&amp;</span>(<span class="kw">_</span>, variant)| !variant.attrs.skip_deserializing());
-
-    <span class="kw">let </span>variant_names_idents: Vec&lt;<span class="kw">_</span>&gt; = deserialized_variants
-        .clone()
-        .map(|(i, variant)| {
-            (
-                variant.attrs.name().deserialize_name(),
-                field_i(i),
-                variant.attrs.aliases(),
-            )
-        })
-        .collect();
+        .filter(|<span class="kw-2">&amp;</span>(_i, variant)| !variant.attrs.skip_deserializing());
 
     <span class="kw">let </span>fallthrough = deserialized_variants
-        .position(|(<span class="kw">_</span>, variant)| variant.attrs.other())
-        .map(|other_idx| {
-            <span class="kw">let </span>ignore_variant = variant_names_idents[other_idx].<span class="number">1</span>.clone();
+        .clone()
+        .find(|(_i, variant)| variant.attrs.other())
+        .map(|(i, _variant)| {
+            <span class="kw">let </span>ignore_variant = field_i(i);
             <span class="macro">quote!</span>(_serde::__private::Ok(__Field::#ignore_variant))
         });
 
     <span class="kw">let </span>variants_stmt = {
-        <span class="kw">let </span>variant_names = variant_names_idents.iter().map(|(name, <span class="kw">_</span>, <span class="kw">_</span>)| name);
+        <span class="kw">let </span>variant_names = deserialized_variants
+            .clone()
+            .flat_map(|(_i, variant)| variant.attrs.aliases());
         <span class="macro">quote!</span> {
             <span class="attr">#[doc(hidden)]
             </span><span class="kw">const </span>VARIANTS: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>[<span class="kw-2">&amp;</span><span class="lifetime">'static </span>str] = <span class="kw-2">&amp;</span>[ #(#variant_names),* ];
         }
     };
 
+    <span class="kw">let </span>deserialized_variants: Vec&lt;<span class="kw">_</span>&gt; = deserialized_variants
+        .map(|(i, variant)| FieldWithAliases {
+            ident: field_i(i),
+            aliases: variant.attrs.aliases(),
+        })
+        .collect();
+
     <span class="kw">let </span>variant_visitor = Stmts(deserialize_generated_identifier(
-        <span class="kw-2">&amp;</span>variant_names_idents,
-        cattrs,
-        <span class="bool-val">true</span>,
+        <span class="kw-2">&amp;</span>deserialized_variants,
+        <span class="bool-val">false</span>, <span class="comment">// variant identifiers do not depend on the presence of flatten fields
+        </span><span class="bool-val">true</span>,
         <span class="prelude-val">None</span>,
         fallthrough,
     ));
@@ -4420,7 +4503,7 @@
     <span class="kw">let </span>expecting = <span class="macro">format!</span>(<span class="string">"enum {}"</span>, params.type_name());
     <span class="kw">let </span>expecting = cattrs.expecting().unwrap_or(<span class="kw-2">&amp;</span>expecting);
 
-    <span class="kw">let </span>(variants_stmt, variant_visitor) = prepare_enum_variant_enum(variants, cattrs);
+    <span class="kw">let </span>(variants_stmt, variant_visitor) = prepare_enum_variant_enum(variants);
 
     <span class="comment">// Match arms to extract a variant from a string
     </span><span class="kw">let </span>variant_arms = variants
@@ -4505,7 +4588,7 @@
     cattrs: <span class="kw-2">&amp;</span>attr::Container,
     tag: <span class="kw-2">&amp;</span>str,
 ) -&gt; Fragment {
-    <span class="kw">let </span>(variants_stmt, variant_visitor) = prepare_enum_variant_enum(variants, cattrs);
+    <span class="kw">let </span>(variants_stmt, variant_visitor) = prepare_enum_variant_enum(variants);
 
     <span class="comment">// Match arms to extract a variant from a string
     </span><span class="kw">let </span>variant_arms = variants
@@ -4559,7 +4642,7 @@
         split_with_de_lifetime(params);
     <span class="kw">let </span>delife = params.borrowed.de_lifetime();
 
-    <span class="kw">let </span>(variants_stmt, variant_visitor) = prepare_enum_variant_enum(variants, cattrs);
+    <span class="kw">let </span>(variants_stmt, variant_visitor) = prepare_enum_variant_enum(variants);
 
     <span class="kw">let </span>variant_arms: <span class="kw-2">&amp;</span>Vec&lt;<span class="kw">_</span>&gt; = <span class="kw-2">&amp;</span>variants
         .iter()
@@ -5133,27 +5216,35 @@
     }
 }
 
+<span class="kw">struct </span>FieldWithAliases&lt;<span class="lifetime">'a</span>&gt; {
+    ident: Ident,
+    aliases: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>BTreeSet&lt;String&gt;,
+}
+
 <span class="kw">fn </span>deserialize_generated_identifier(
-    fields: <span class="kw-2">&amp;</span>[(<span class="kw-2">&amp;</span>str, Ident, <span class="kw-2">&amp;</span>BTreeSet&lt;String&gt;)],
-    cattrs: <span class="kw-2">&amp;</span>attr::Container,
+    deserialized_fields: <span class="kw-2">&amp;</span>[FieldWithAliases],
+    has_flatten: bool,
     is_variant: bool,
     ignore_variant: <span class="prelude-ty">Option</span>&lt;TokenStream&gt;,
     fallthrough: <span class="prelude-ty">Option</span>&lt;TokenStream&gt;,
 ) -&gt; Fragment {
     <span class="kw">let </span>this_value = <span class="macro">quote!</span>(__Field);
-    <span class="kw">let </span>field_idents: <span class="kw-2">&amp;</span>Vec&lt;<span class="kw">_</span>&gt; = <span class="kw-2">&amp;</span>fields.iter().map(|(<span class="kw">_</span>, ident, <span class="kw">_</span>)| ident).collect();
+    <span class="kw">let </span>field_idents: <span class="kw-2">&amp;</span>Vec&lt;<span class="kw">_</span>&gt; = <span class="kw-2">&amp;</span>deserialized_fields
+        .iter()
+        .map(|field| <span class="kw-2">&amp;</span>field.ident)
+        .collect();
 
     <span class="kw">let </span>visitor_impl = Stmts(deserialize_identifier(
         <span class="kw-2">&amp;</span>this_value,
-        fields,
+        deserialized_fields,
         is_variant,
         fallthrough,
         <span class="prelude-val">None</span>,
-        !is_variant &amp;&amp; cattrs.has_flatten(),
+        !is_variant &amp;&amp; has_flatten,
         <span class="prelude-val">None</span>,
     ));
 
-    <span class="kw">let </span>lifetime = <span class="kw">if </span>!is_variant &amp;&amp; cattrs.has_flatten() {
+    <span class="kw">let </span>lifetime = <span class="kw">if </span>!is_variant &amp;&amp; has_flatten {
         <span class="prelude-val">Some</span>(<span class="macro">quote!</span>(&lt;<span class="lifetime">'de</span>&gt;))
     } <span class="kw">else </span>{
         <span class="prelude-val">None
@@ -5191,10 +5282,11 @@
 <span class="doccomment">/// Generates enum and its `Deserialize` implementation that represents each
 /// non-skipped field of the struct
 </span><span class="kw">fn </span>deserialize_field_identifier(
-    fields: <span class="kw-2">&amp;</span>[(<span class="kw-2">&amp;</span>str, Ident, <span class="kw-2">&amp;</span>BTreeSet&lt;String&gt;)],
+    deserialized_fields: <span class="kw-2">&amp;</span>[FieldWithAliases],
     cattrs: <span class="kw-2">&amp;</span>attr::Container,
+    has_flatten: bool,
 ) -&gt; Stmts {
-    <span class="kw">let </span>(ignore_variant, fallthrough) = <span class="kw">if </span>cattrs.has_flatten() {
+    <span class="kw">let </span>(ignore_variant, fallthrough) = <span class="kw">if </span>has_flatten {
         <span class="kw">let </span>ignore_variant = <span class="macro">quote!</span>(__other(_serde::__private::de::Content&lt;<span class="lifetime">'de</span>&gt;),);
         <span class="kw">let </span>fallthrough = <span class="macro">quote!</span>(_serde::__private::Ok(__Field::__other(__value)));
         (<span class="prelude-val">Some</span>(ignore_variant), <span class="prelude-val">Some</span>(fallthrough))
@@ -5207,8 +5299,8 @@
     };
 
     Stmts(deserialize_generated_identifier(
-        fields,
-        cattrs,
+        deserialized_fields,
+        has_flatten,
         <span class="bool-val">false</span>,
         ignore_variant,
         fallthrough,
@@ -5265,18 +5357,15 @@
         (variants, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>)
     };
 
-    <span class="kw">let </span>names_idents: Vec&lt;<span class="kw">_</span>&gt; = ordinary
+    <span class="kw">let </span>idents_aliases: Vec&lt;<span class="kw">_</span>&gt; = ordinary
         .iter()
-        .map(|variant| {
-            (
-                variant.attrs.name().deserialize_name(),
-                variant.ident.clone(),
-                variant.attrs.aliases(),
-            )
+        .map(|variant| FieldWithAliases {
+            ident: variant.ident.clone(),
+            aliases: variant.attrs.aliases(),
         })
         .collect();
 
-    <span class="kw">let </span>names = names_idents.iter().flat_map(|<span class="kw-2">&amp;</span>(<span class="kw">_</span>, <span class="kw">_</span>, aliases)| aliases);
+    <span class="kw">let </span>names = idents_aliases.iter().flat_map(|variant| variant.aliases);
 
     <span class="kw">let </span>names_const = <span class="kw">if </span>fallthrough.is_some() {
         <span class="prelude-val">None
@@ -5299,7 +5388,7 @@
     <span class="kw">let </span>delife = params.borrowed.de_lifetime();
     <span class="kw">let </span>visitor_impl = Stmts(deserialize_identifier(
         <span class="kw-2">&amp;</span>this_value,
-        <span class="kw-2">&amp;</span>names_idents,
+        <span class="kw-2">&amp;</span>idents_aliases,
         is_variant,
         fallthrough,
         fallthrough_borrowed,
@@ -5332,20 +5421,24 @@
 
 <span class="kw">fn </span>deserialize_identifier(
     this_value: <span class="kw-2">&amp;</span>TokenStream,
-    fields: <span class="kw-2">&amp;</span>[(<span class="kw-2">&amp;</span>str, Ident, <span class="kw-2">&amp;</span>BTreeSet&lt;String&gt;)],
+    deserialized_fields: <span class="kw-2">&amp;</span>[FieldWithAliases],
     is_variant: bool,
     fallthrough: <span class="prelude-ty">Option</span>&lt;TokenStream&gt;,
     fallthrough_borrowed: <span class="prelude-ty">Option</span>&lt;TokenStream&gt;,
     collect_other_fields: bool,
     expecting: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;,
 ) -&gt; Fragment {
-    <span class="kw">let </span>str_mapping = fields.iter().map(|(<span class="kw">_</span>, ident, aliases)| {
+    <span class="kw">let </span>str_mapping = deserialized_fields.iter().map(|field| {
+        <span class="kw">let </span>ident = <span class="kw-2">&amp;</span>field.ident;
+        <span class="kw">let </span>aliases = field.aliases;
         <span class="comment">// `aliases` also contains a main name
         </span><span class="macro">quote!</span>(#(#aliases)|* =&gt; _serde::__private::Ok(#this_value::#ident))
     });
-    <span class="kw">let </span>bytes_mapping = fields.iter().map(|(<span class="kw">_</span>, ident, aliases)| {
+    <span class="kw">let </span>bytes_mapping = deserialized_fields.iter().map(|field| {
+        <span class="kw">let </span>ident = <span class="kw-2">&amp;</span>field.ident;
         <span class="comment">// `aliases` also contains a main name
-        </span><span class="kw">let </span>aliases = aliases
+        </span><span class="kw">let </span>aliases = field
+            .aliases
             .iter()
             .map(|alias| Literal::byte_string(alias.as_bytes()));
         <span class="macro">quote!</span>(#(#aliases)|* =&gt; _serde::__private::Ok(#this_value::#ident))
@@ -5498,8 +5591,9 @@
             }
         }
     } <span class="kw">else </span>{
-        <span class="kw">let </span>u64_mapping = fields.iter().enumerate().map(|(i, (<span class="kw">_</span>, ident, <span class="kw">_</span>))| {
+        <span class="kw">let </span>u64_mapping = deserialized_fields.iter().enumerate().map(|(i, field)| {
             <span class="kw">let </span>i = i <span class="kw">as </span>u64;
+            <span class="kw">let </span>ident = <span class="kw-2">&amp;</span>field.ident;
             <span class="macro">quote!</span>(#i =&gt; _serde::__private::Ok(#this_value::#ident))
         });
 
@@ -5508,7 +5602,11 @@
             fallthrough
         } <span class="kw">else </span>{
             <span class="kw">let </span>index_expecting = <span class="kw">if </span>is_variant { <span class="string">"variant" </span>} <span class="kw">else </span>{ <span class="string">"field" </span>};
-            <span class="kw">let </span>fallthrough_msg = <span class="macro">format!</span>(<span class="string">"{} index 0 &lt;= i &lt; {}"</span>, index_expecting, fields.len());
+            <span class="kw">let </span>fallthrough_msg = <span class="macro">format!</span>(
+                <span class="string">"{} index 0 &lt;= i &lt; {}"</span>,
+                index_expecting,
+                deserialized_fields.len(),
+            );
             u64_fallthrough_arm_tokens = <span class="macro">quote!</span> {
                 _serde::__private::Err(_serde::de::Error::invalid_value(
                     _serde::de::Unexpected::Unsigned(__value),
@@ -5610,6 +5708,7 @@
     params: <span class="kw-2">&amp;</span>Parameters,
     fields: <span class="kw-2">&amp;</span>[Field],
     cattrs: <span class="kw-2">&amp;</span>attr::Container,
+    has_flatten: bool,
 ) -&gt; Fragment {
     <span class="comment">// Create the field names for the fields.
     </span><span class="kw">let </span>fields_names: Vec&lt;<span class="kw">_</span>&gt; = fields
@@ -5630,7 +5729,7 @@
         });
 
     <span class="comment">// Collect contents for flatten fields into a buffer
-    </span><span class="kw">let </span>let_collect = <span class="kw">if </span>cattrs.has_flatten() {
+    </span><span class="kw">let </span>let_collect = <span class="kw">if </span>has_flatten {
         <span class="prelude-val">Some</span>(<span class="macro">quote!</span> {
             <span class="kw">let </span><span class="kw-2">mut </span>__collect = _serde::__private::Vec::&lt;_serde::__private::Option&lt;(
                 _serde::__private::de::Content,
@@ -5682,7 +5781,7 @@
         });
 
     <span class="comment">// Visit ignored values to consume them
-    </span><span class="kw">let </span>ignored_arm = <span class="kw">if </span>cattrs.has_flatten() {
+    </span><span class="kw">let </span>ignored_arm = <span class="kw">if </span>has_flatten {
         <span class="prelude-val">Some</span>(<span class="macro">quote!</span> {
             __Field::__other(__name) =&gt; {
                 __collect.push(_serde::__private::Some((
@@ -5752,7 +5851,7 @@
             }
         });
 
-    <span class="kw">let </span>collected_deny_unknown_fields = <span class="kw">if </span>cattrs.has_flatten() &amp;&amp; cattrs.deny_unknown_fields() {
+    <span class="kw">let </span>collected_deny_unknown_fields = <span class="kw">if </span>has_flatten &amp;&amp; cattrs.deny_unknown_fields() {
         <span class="prelude-val">Some</span>(<span class="macro">quote!</span> {
             <span class="kw">if let </span>_serde::__private::Some(_serde::__private::Some((__key, <span class="kw">_</span>))) =
                 __collect.into_iter().filter(_serde::__private::Option::is_some).next()
@@ -5784,7 +5883,11 @@
         attr::Default::Default =&gt; <span class="prelude-val">Some</span>(<span class="macro">quote!</span>(
             <span class="kw">let </span>__default: <span class="self">Self</span>::Value = _serde::__private::Default::default();
         )),
-        attr::Default::Path(path) =&gt; <span class="prelude-val">Some</span>(<span class="macro">quote!</span>(
+        <span class="comment">// If #path returns wrong type, error will be reported here (^^^^^).
+        // We attach span of the path to the function so it will be reported
+        // on the #[serde(default = "...")]
+        //                          ^^^^^
+        </span>attr::Default::Path(path) =&gt; <span class="prelude-val">Some</span>(<span class="macro">quote_spanned!</span>(path.span()=&gt;
             <span class="kw">let </span>__default: <span class="self">Self</span>::Value = #path();
         )),
         attr::Default::None =&gt; {
@@ -5828,7 +5931,10 @@
     fields: <span class="kw-2">&amp;</span>[Field],
     cattrs: <span class="kw-2">&amp;</span>attr::Container,
 ) -&gt; Fragment {
-    <span class="macro">assert!</span>(!cattrs.has_flatten());
+    <span class="macro">assert!</span>(
+        !has_flatten(fields),
+        <span class="string">"inplace deserialization of maps does not support flatten fields"
+    </span>);
 
     <span class="comment">// Create the field names for the fields.
     </span><span class="kw">let </span>fields_names: Vec&lt;<span class="kw">_</span>&gt; = fields
@@ -5951,7 +6057,11 @@
         attr::Default::Default =&gt; <span class="prelude-val">Some</span>(<span class="macro">quote!</span>(
             <span class="kw">let </span>__default: #this_type #ty_generics = _serde::__private::Default::default();
         )),
-        attr::Default::Path(path) =&gt; <span class="prelude-val">Some</span>(<span class="macro">quote!</span>(
+        <span class="comment">// If #path returns wrong type, error will be reported here (^^^^^).
+        // We attach span of the path to the function so it will be reported
+        // on the #[serde(default = "...")]
+        //                          ^^^^^
+        </span>attr::Default::Path(path) =&gt; <span class="prelude-val">Some</span>(<span class="macro">quote_spanned!</span>(path.span()=&gt;
             <span class="kw">let </span>__default: #this_type #ty_generics = #path();
         )),
         attr::Default::None =&gt; {
@@ -5989,7 +6099,15 @@
     <span class="kw">let </span>(de_impl_generics, de_ty_generics, ty_generics, where_clause) =
         split_with_de_lifetime(params);
     <span class="kw">let </span>delife = params.borrowed.de_lifetime();
+    <span class="kw">let </span>deserializer_var = <span class="macro">quote!</span>(__deserializer);
 
+    <span class="comment">// If #deserialize_with returns wrong type, error will be reported here (^^^^^).
+    // We attach span of the path to the function so it will be reported
+    // on the #[serde(with = "...")]
+    //                       ^^^^^
+    </span><span class="kw">let </span>value = <span class="macro">quote_spanned!</span> {deserialize_with.span()=&gt;
+        #deserialize_with(#deserializer_var)<span class="question-mark">?
+    </span>};
     <span class="kw">let </span>wrapper = <span class="macro">quote!</span> {
         <span class="attr">#[doc(hidden)]
         </span><span class="kw">struct </span>__DeserializeWith #de_impl_generics #where_clause {
@@ -5999,12 +6117,12 @@
         }
 
         <span class="kw">impl </span>#de_impl_generics _serde::Deserialize&lt;#delife&gt; <span class="kw">for </span>__DeserializeWith #de_ty_generics #where_clause {
-            <span class="kw">fn </span>deserialize&lt;__D&gt;(__deserializer: __D) -&gt; _serde::__private::Result&lt;<span class="self">Self</span>, __D::Error&gt;
+            <span class="kw">fn </span>deserialize&lt;__D&gt;(#deserializer_var: __D) -&gt; _serde::__private::Result&lt;<span class="self">Self</span>, __D::Error&gt;
             <span class="kw">where
                 </span>__D: _serde::Deserializer&lt;#delife&gt;,
             {
                 _serde::__private::Ok(__DeserializeWith {
-                    value: #deserialize_with(__deserializer)<span class="question-mark">?</span>,
+                    value: #value,
                     phantom: _serde::__private::PhantomData,
                     lifetime: _serde::__private::PhantomData,
                 })
@@ -6095,7 +6213,11 @@
             <span class="kw">return </span><span class="macro">quote_expr!</span>(#func());
         }
         attr::Default::Path(path) =&gt; {
-            <span class="kw">return </span><span class="macro">quote_expr!</span>(#path());
+            <span class="comment">// If #path returns wrong type, error will be reported here (^^^^^).
+            // We attach span of the path to the function so it will be reported
+            // on the #[serde(default = "...")]
+            //                          ^^^^^
+            </span><span class="kw">return </span>Fragment::Expr(<span class="macro">quote_spanned!</span>(path.span()=&gt; #path()));
         }
         attr::Default::None =&gt; { <span class="comment">/* below */ </span>}
     }
@@ -6138,7 +6260,11 @@
             <span class="kw">return </span><span class="macro">quote_spanned!</span>(span=&gt; #assign_to _serde::__private::Default::default());
         }
         attr::Default::Path(path) =&gt; {
-            <span class="kw">return </span><span class="macro">quote_spanned!</span>(path.span()=&gt; #assign_to #path());
+            <span class="comment">// If #path returns wrong type, error will be reported here (^^^^^).
+            // We attach span of the path to the function so it will be reported
+            // on the #[serde(default = "...")]
+            //                          ^^^^^
+            </span><span class="kw">return </span><span class="macro">quote_spanned!</span>(path.span()=&gt; #assign_to #path());
         }
         attr::Default::None =&gt; { <span class="comment">/* below */ </span>}
     }
@@ -6159,6 +6285,14 @@
         Style::Newtype <span class="kw">if </span>variant.fields[<span class="number">0</span>].attrs.skip_deserializing() =&gt; Style::Unit,
         other =&gt; other,
     }
+}
+
+<span class="doccomment">/// True if there is any field with a `#[serde(flatten)]` attribute, other than
+/// fields which are skipped.
+</span><span class="kw">fn </span>has_flatten(fields: <span class="kw-2">&amp;</span>[Field]) -&gt; bool {
+    fields
+        .iter()
+        .any(|field| field.attrs.flatten() &amp;&amp; !field.attrs.skip_deserializing())
 }
 
 <span class="kw">struct </span>DeImplGenerics&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'a </span>Parameters);

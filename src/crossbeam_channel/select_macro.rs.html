@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/crossbeam-channel-0.5.12/src/select_macro.rs`."><title>select_macro.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="crossbeam_channel" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../crossbeam_channel/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/crossbeam-channel-0.5.13/src/select_macro.rs`."><title>select_macro.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="crossbeam_channel" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1116,6 +1114,32 @@
 <a href="#1114" id="1114">1114</a>
 <a href="#1115" id="1115">1115</a>
 <a href="#1116" id="1116">1116</a>
+<a href="#1117" id="1117">1117</a>
+<a href="#1118" id="1118">1118</a>
+<a href="#1119" id="1119">1119</a>
+<a href="#1120" id="1120">1120</a>
+<a href="#1121" id="1121">1121</a>
+<a href="#1122" id="1122">1122</a>
+<a href="#1123" id="1123">1123</a>
+<a href="#1124" id="1124">1124</a>
+<a href="#1125" id="1125">1125</a>
+<a href="#1126" id="1126">1126</a>
+<a href="#1127" id="1127">1127</a>
+<a href="#1128" id="1128">1128</a>
+<a href="#1129" id="1129">1129</a>
+<a href="#1130" id="1130">1130</a>
+<a href="#1131" id="1131">1131</a>
+<a href="#1132" id="1132">1132</a>
+<a href="#1133" id="1133">1133</a>
+<a href="#1134" id="1134">1134</a>
+<a href="#1135" id="1135">1135</a>
+<a href="#1136" id="1136">1136</a>
+<a href="#1137" id="1137">1137</a>
+<a href="#1138" id="1138">1138</a>
+<a href="#1139" id="1139">1139</a>
+<a href="#1140" id="1140">1140</a>
+<a href="#1141" id="1141">1141</a>
+<a href="#1142" id="1142">1142</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! The `select!` macro.
 
 /// A helper macro for `select!` to hide the long list of macro patterns from the documentation.
@@ -1868,7 +1892,7 @@
         <span class="macro-nonterminal">$cases</span>:tt
     ) =&gt; {{
         <span class="kw">let </span>_oper: <span class="macro-nonterminal">$crate::SelectedOperation</span>&lt;<span class="lifetime">'_</span>&gt; = {
-            <span class="kw">let </span>_oper = <span class="macro-nonterminal">$crate::internal::select</span>(<span class="kw-2">&amp;mut </span><span class="macro-nonterminal">$sel</span>);
+            <span class="kw">let </span>_oper = <span class="macro-nonterminal">$crate::internal::select</span>(<span class="kw-2">&amp;mut </span><span class="macro-nonterminal">$sel</span>, _IS_BIASED);
 
             <span class="comment">// Erase the lifetime so that `sel` can be dropped early even without NLL.
             </span><span class="kw">unsafe </span>{ ::std::mem::transmute(_oper) }
@@ -1890,7 +1914,7 @@
         <span class="macro-nonterminal">$cases</span>:tt
     ) =&gt; {{
         <span class="kw">let </span>_oper: ::std::option::Option&lt;<span class="macro-nonterminal">$crate::SelectedOperation</span>&lt;<span class="lifetime">'_</span>&gt;&gt; = {
-            <span class="kw">let </span>_oper = <span class="macro-nonterminal">$crate::internal::try_select</span>(<span class="kw-2">&amp;mut </span><span class="macro-nonterminal">$sel</span>);
+            <span class="kw">let </span>_oper = <span class="macro-nonterminal">$crate::internal::try_select</span>(<span class="kw-2">&amp;mut </span><span class="macro-nonterminal">$sel</span>, _IS_BIASED);
 
             <span class="comment">// Erase the lifetime so that `sel` can be dropped early even without NLL.
             </span><span class="kw">unsafe </span>{ ::std::mem::transmute(_oper) }
@@ -1920,7 +1944,7 @@
         <span class="macro-nonterminal">$cases</span>:tt
     ) =&gt; {{
         <span class="kw">let </span>_oper: ::std::option::Option&lt;<span class="macro-nonterminal">$crate::SelectedOperation</span>&lt;<span class="lifetime">'_</span>&gt;&gt; = {
-            <span class="kw">let </span>_oper = <span class="macro-nonterminal">$crate::internal::select_timeout</span>(<span class="kw-2">&amp;mut </span><span class="macro-nonterminal">$sel</span>, <span class="macro-nonterminal">$timeout</span>);
+            <span class="kw">let </span>_oper = <span class="macro-nonterminal">$crate::internal::select_timeout</span>(<span class="kw-2">&amp;mut </span><span class="macro-nonterminal">$sel</span>, <span class="macro-nonterminal">$timeout</span>, _IS_BIASED);
 
             <span class="comment">// Erase the lifetime so that `sel` can be dropped early even without NLL.
             </span><span class="kw">unsafe </span>{ ::std::mem::transmute(_oper) }
@@ -2103,7 +2127,8 @@
 ///
 /// This macro allows you to define a set of channel operations, wait until any one of them becomes
 /// ready, and finally execute it. If multiple operations are ready at the same time, a random one
-/// among them is selected.
+/// among them is selected (i.e. the unbiased selection). Use `select_biased!` for the biased
+/// selection.
 ///
 /// It is also possible to define a `default` case that gets executed if none of the operations are
 /// ready, either right away or for a certain duration of time.
@@ -2227,9 +2252,34 @@
 </span><span class="attr">#[macro_export]
 </span><span class="macro">macro_rules!</span> select {
     ($(<span class="macro-nonterminal">$tokens</span>:tt)<span class="kw-2">*</span>) =&gt; {
-        <span class="macro-nonterminal">$</span><span class="macro">crate::crossbeam_channel_internal!</span>(
-            $(<span class="macro-nonterminal">$tokens</span>)*
-        )
+        {
+            <span class="kw">const </span>_IS_BIASED: bool = <span class="bool-val">false</span>;
+
+            <span class="macro-nonterminal">$</span><span class="macro">crate::crossbeam_channel_internal!</span>(
+                $(<span class="macro-nonterminal">$tokens</span>)*
+            )
+        }
+    };
+}
+
+<span class="doccomment">/// Selects from a set of channel operations.
+///
+/// This macro allows you to define a list of channel operations, wait until any one of them
+/// becomes ready, and finally execute it. If multiple operations are ready at the same time, the
+/// operation nearest to the front of the list is always selected (i.e. the biased selection). Use
+/// [`select!`] for the unbiased selection.
+///
+/// Otherwise, this macro's functionality is identical to [`select!`]. Refer to it for the syntax.
+</span><span class="attr">#[macro_export]
+</span><span class="macro">macro_rules!</span> select_biased {
+    ($(<span class="macro-nonterminal">$tokens</span>:tt)<span class="kw-2">*</span>) =&gt; {
+        {
+            <span class="kw">const </span>_IS_BIASED: bool = <span class="bool-val">true</span>;
+
+            <span class="macro-nonterminal">$</span><span class="macro">crate::crossbeam_channel_internal!</span>(
+                $(<span class="macro-nonterminal">$tokens</span>)*
+            )
+        }
     };
 }
 </code></pre></div></section></main></body></html>

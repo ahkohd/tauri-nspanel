@@ -1,0 +1,184 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Support for type-encodings."><title>objc2::encode - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="objc2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../objc2/index.html">objc2</a><span class="version">0.5.2</span></h2></div><h2 class="location"><a href="#">Module encode</a></h2><div class="sidebar-elems"><section><ul class="block"><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li></ul></section><h2><a href="../index.html">In crate objc2</a></h2></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Module <a href="../index.html">objc2</a>::<wbr><a class="mod" href="#">encode</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../../src/objc2/encode.rs.html#1-1034">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="support-for-type-encodings"><a class="doc-anchor" href="#support-for-type-encodings">§</a>Support for type-encodings.</h2>
+<p>This module contains traits for annotating types that has an Objective-C
+type-encoding: Specifically <a href="trait.Encode.html" title="trait objc2::encode::Encode"><code>Encode</code></a> for structs/numeric types and
+<a href="trait.RefEncode.html" title="trait objc2::encode::RefEncode"><code>RefEncode</code></a> for references.</p>
+<p>Additionally, this exports the <a href="enum.Encoding.html" title="enum objc2::encode::Encoding"><code>Encoding</code></a> and <a href="enum.EncodingBox.html" title="enum objc2::encode::EncodingBox"><code>EncodingBox</code></a> types from
+<a href="../../objc2_encode/index.html" title="mod objc2_encode"><code>objc2-encode</code></a>, see that crate for a few more details on
+what Objective-C type-encodings are.</p>
+<h3 id="examples"><a class="doc-anchor" href="#examples">§</a>Examples</h3>
+<p>Implementing <a href="trait.Encode.html" title="trait objc2::encode::Encode"><code>Encode</code></a> and <a href="trait.RefEncode.html" title="trait objc2::encode::RefEncode"><code>RefEncode</code></a> for a custom type:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::encode::{Encode, Encoding, RefEncode};
+
+<span class="attr">#[repr(C)]
+</span><span class="kw">struct </span>MyStruct {
+    a: f32, <span class="comment">// float
+    </span>b: i16, <span class="comment">// int16_t
+</span>}
+
+<span class="kw">unsafe impl </span>Encode <span class="kw">for </span>MyStruct {
+    <span class="kw">const </span>ENCODING: Encoding = Encoding::Struct(
+        <span class="string">"MyStruct"</span>, <span class="comment">// Must use the same name as defined in C header files
+        </span><span class="kw-2">&amp;</span>[
+            f32::ENCODING, <span class="comment">// Same as Encoding::Float
+            </span>i16::ENCODING, <span class="comment">// Same as Encoding::Short
+        </span>],
+    );
+}
+
+<span class="comment">// @encode(MyStruct) -&gt; "{MyStruct=fs}"
+</span><span class="macro">assert!</span>(MyStruct::ENCODING.equivalent_to_str(<span class="string">"{MyStruct=fs}"</span>));
+
+<span class="kw">unsafe impl </span>RefEncode <span class="kw">for </span>MyStruct {
+    <span class="kw">const </span>ENCODING_REF: Encoding = Encoding::Pointer(<span class="kw-2">&amp;</span><span class="self">Self</span>::ENCODING);
+}
+
+<span class="comment">// @encode(MyStruct*) -&gt; "^{MyStruct=fs}"
+</span><span class="macro">assert!</span>(MyStruct::ENCODING_REF.equivalent_to_str(<span class="string">"^{MyStruct=fs}"</span>));</code></pre></div>
+<p>Implementing <a href="trait.Encode.html" title="trait objc2::encode::Encode"><code>Encode</code></a> for a few core-graphics types.</p>
+<p>Note that these are available in <code>objc2-foundation</code>, so the implementation
+here is mostly for demonstration.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::encode::{Encode, Encoding};
+
+<span class="attr">#[cfg(target_pointer_width = <span class="string">"32"</span>)]
+</span><span class="kw">type </span>CGFloat = f32;
+<span class="attr">#[cfg(target_pointer_width = <span class="string">"64"</span>)]
+</span><span class="kw">type </span>CGFloat = f64;
+
+<span class="attr">#[repr(C)]
+</span><span class="kw">struct </span>CGPoint {
+    x: CGFloat,
+    y: CGFloat,
+}
+
+<span class="comment">// SAFETY: The struct is `repr(C)`, and the encoding is correct.
+</span><span class="kw">unsafe impl </span>Encode <span class="kw">for </span>CGPoint {
+    <span class="kw">const </span>ENCODING: Encoding = Encoding::Struct(<span class="string">"CGPoint"</span>, <span class="kw-2">&amp;</span>[CGFloat::ENCODING, CGFloat::ENCODING]);
+}
+
+<span class="attr">#[repr(C)]
+</span><span class="kw">struct </span>CGSize {
+    width: CGFloat,
+    height: CGFloat,
+}
+
+<span class="comment">// SAFETY: The struct is `repr(C)`, and the encoding is correct.
+</span><span class="kw">unsafe impl </span>Encode <span class="kw">for </span>CGSize {
+    <span class="kw">const </span>ENCODING: Encoding = Encoding::Struct(<span class="string">"CGSize"</span>, <span class="kw-2">&amp;</span>[CGFloat::ENCODING, CGFloat::ENCODING]);
+}
+
+<span class="attr">#[repr(C)]
+</span><span class="kw">struct </span>CGRect {
+    origin: CGPoint,
+    size: CGSize,
+}
+
+<span class="comment">// SAFETY: The struct is `repr(C)`, and the encoding is correct.
+</span><span class="kw">unsafe impl </span>Encode <span class="kw">for </span>CGRect {
+    <span class="kw">const </span>ENCODING: Encoding = Encoding::Struct(<span class="string">"CGRect"</span>, <span class="kw-2">&amp;</span>[CGPoint::ENCODING, CGSize::ENCODING]);
+}
+
+<span class="kw">fn </span>main() {
+    <span class="kw">let </span>expected = <span class="kw">if </span><span class="macro">cfg!</span>(target_pointer_width = <span class="string">"64"</span>) {
+        <span class="string">"{CGRect={CGPoint=dd}{CGSize=dd}}"
+    </span>} <span class="kw">else </span>{
+        <span class="string">"{CGRect={CGPoint=ff}{CGSize=ff}}"
+    </span>};
+
+    <span class="macro">assert!</span>(CGRect::ENCODING.equivalent_to_str(expected));
+}</code></pre></div>
+<p>Implementing <a href="trait.Encode.html" title="trait objc2::encode::Encode"><code>Encode</code></a> and <a href="trait.RefEncode.html" title="trait objc2::encode::RefEncode"><code>RefEncode</code></a> for a transparent newtype.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::encode::{Encode, Encoding, RefEncode};
+
+<span class="comment">// Note: In this case `NSUInteger` could be a type alias for `usize`, and
+// actually that's already available as `objc2::ffi::NSUInteger`.
+</span><span class="attr">#[repr(transparent)]
+</span><span class="kw">struct </span>NSUInteger {
+    _inner: usize,
+}
+
+<span class="comment">// SAFETY: `NSUInteger` has the same `repr` as `usize`.
+</span><span class="kw">unsafe impl </span>Encode <span class="kw">for </span>NSUInteger {
+    <span class="comment">// Running `@encode(NSUInteger)` gives `Q` on 64-bit systems and `I` on
+    // 32-bit systems. This corresponds exactly to `usize`, which is also how
+    // we've defined our struct.
+    </span><span class="kw">const </span>ENCODING: Encoding = usize::ENCODING;
+}
+
+<span class="comment">// SAFETY: `&amp;NSUInteger` has the same representation as `&amp;usize`.
+</span><span class="kw">unsafe impl </span>RefEncode <span class="kw">for </span>NSUInteger {
+    <span class="comment">// Running `@encode(NSUInteger*)` gives `^Q` on 64-bit systems and `^I` on
+    // 32-bit systems. So implementing `RefEncode` as a plain pointer is
+    // correct.
+    </span><span class="kw">const </span>ENCODING_REF: Encoding = Encoding::Pointer(<span class="kw-2">&amp;</span>NSUInteger::ENCODING);
+}
+
+<span class="kw">fn </span>main() {
+    <span class="macro">assert!</span>(NSUInteger::ENCODING.equivalent_to_str(<span class="string">"Q"</span>));
+    <span class="macro">assert!</span>(&lt;<span class="kw-2">&amp;</span>NSUInteger&gt;::ENCODING.equivalent_to_str(<span class="string">"^Q"</span>));
+    <span class="macro">assert!</span>(&lt;<span class="kw-2">&amp;</span>NSUInteger&gt;::ENCODING.equivalent_to_str(<span class="string">"r^Q"</span>));
+}</code></pre></div>
+<p>Implementing <a href="trait.RefEncode.html" title="trait objc2::encode::RefEncode"><code>RefEncode</code></a> for an object, in this case <code>NSString</code>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::encode::{Encode, Encoding, RefEncode};
+<span class="kw">use </span>objc2::runtime::AnyObject;
+
+<span class="attr">#[repr(transparent)]
+</span><span class="kw">struct </span>NSString {
+    <span class="comment">// `NSString` has the same layout / works the same as `AnyObject`.
+    </span>_priv: AnyObject,
+}
+
+<span class="comment">// We don't know the size of NSString, so we can only hold pointers to it.
+//
+// SAFETY: The string is `repr(transparent)` over `AnyObject`.
+</span><span class="kw">unsafe impl </span>RefEncode <span class="kw">for </span>NSString {
+    <span class="kw">const </span>ENCODING_REF: Encoding = Encoding::Object;
+}
+
+<span class="kw">fn </span>main() {
+    <span class="comment">// The `RefEncode` implementation provide an `Encode` implementation for
+    // pointers to the object.
+    </span><span class="macro">assert_eq!</span>(&lt;<span class="kw-2">*const </span>NSString&gt;::ENCODING, Encoding::Object);
+    <span class="macro">assert_eq!</span>(&lt;<span class="kw-2">*mut </span>NSString&gt;::ENCODING, Encoding::Object);
+    <span class="macro">assert_eq!</span>(&lt;<span class="kw-2">&amp;</span>NSString&gt;::ENCODING, Encoding::Object);
+    <span class="macro">assert_eq!</span>(&lt;<span class="kw-2">&amp;mut </span>NSString&gt;::ENCODING, Encoding::Object);
+    <span class="macro">assert_eq!</span>(&lt;<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>NSString&gt;&gt;::ENCODING, Encoding::Object);
+    <span class="macro">assert_eq!</span>(&lt;<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>NSString&gt;&gt;::ENCODING, Encoding::Object);
+}</code></pre></div>
+<p>Implementing <a href="trait.RefEncode.html" title="trait objc2::encode::RefEncode"><code>RefEncode</code></a> for a type where you don’t necessarily know
+about the exact internals / the internals are not representable in Rust.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::encode::{Encoding, RefEncode};
+
+<span class="comment">// We choose in this case to represent `NSDecimal` as an opaque struct because
+// we don't know much about the internals.
+//
+// Therefore we do not implement `Encode`.
+</span><span class="attr">#[repr(C)]
+</span><span class="kw">struct </span>NSDecimal {
+    <span class="comment">// Note: This should be an [extern type][rfc-1861] instead, when that
+    // becomes possible, for now we use this as a workaround.
+    //
+    // [rfc-1861]: https://rust-lang.github.io/rfcs/1861-extern-types.html
+    </span>_priv: [u8; <span class="number">0</span>],
+}
+
+<span class="comment">// SAFETY: `&amp;NSDecimal` is a valid pointer, and the encoding is correct.
+</span><span class="kw">unsafe impl </span>RefEncode <span class="kw">for </span>NSDecimal {
+    <span class="kw">const </span>ENCODING_REF: Encoding = Encoding::Pointer(<span class="kw-2">&amp;</span>Encoding::Struct(<span class="string">"?"</span>, <span class="kw-2">&amp;</span>[]));
+}
+
+<span class="kw">fn </span>main() {
+    <span class="comment">// Running `@encode` on `NSDecimal*` on my 64-bit system gives
+    // `^{?=cCCC[38C]}`, but empty structs are treated as equivalent to all
+    // other structs by `objc2`.
+    </span><span class="macro">assert!</span>(NSDecimal::ENCODING_REF.equivalent_to_str(<span class="string">"^{?=cCCC[38C]}"</span>));
+    <span class="comment">// Does not compile:
+    // println!("{:?}", NSDecimal::ENCODING);
+</span>}</code></pre></div>
+</div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.ParseError.html" title="struct objc2::encode::ParseError">Parse<wbr>Error</a></div><div class="desc docblock-short">The error that was encountered while parsing an encoding string.</div></li></ul><h2 id="enums" class="section-header">Enums<a href="#enums" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="enum" href="enum.Encoding.html" title="enum objc2::encode::Encoding">Encoding</a></div><div class="desc docblock-short">An Objective-C type-encoding.</div></li><li><div class="item-name"><a class="enum" href="enum.EncodingBox.html" title="enum objc2::encode::EncodingBox">Encoding<wbr>Box</a></div><div class="desc docblock-short">The boxed version of <a href="enum.Encoding.html" title="enum objc2::encode::Encoding"><code>Encoding</code></a>.</div></li></ul><h2 id="traits" class="section-header">Traits<a href="#traits" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="trait" href="trait.Encode.html" title="trait objc2::encode::Encode">Encode</a></div><div class="desc docblock-short">Types that have an Objective-C type-encoding.</div></li><li><div class="item-name"><a class="trait" href="trait.EncodeArgument.html" title="trait objc2::encode::EncodeArgument">Encode<wbr>Argument</a></div><div class="desc docblock-short">Types that are safe as arguments to Objective-C methods.</div></li><li><div class="item-name"><a class="trait" href="trait.EncodeArguments.html" title="trait objc2::encode::EncodeArguments">Encode<wbr>Arguments</a></div><div class="desc docblock-short">Types that represent an ordered group of function arguments, where each
+argument has an Objective-C type-encoding, or can be converted from one.</div></li><li><div class="item-name"><a class="trait" href="trait.EncodeReturn.html" title="trait objc2::encode::EncodeReturn">Encode<wbr>Return</a></div><div class="desc docblock-short">Types that are safe as the return value from Objective-C.</div></li><li><div class="item-name"><a class="trait" href="trait.OptionEncode.html" title="trait objc2::encode::OptionEncode">Option<wbr>Encode</a></div><div class="desc docblock-short">A helper trait for types that follow the “null pointer optimization”, and
+are encodable inside an <a href="https://doc.rust-lang.org/1.82.0/core/option/enum.Option.html" title="enum core::option::Option"><code>Option</code></a>.</div></li><li><div class="item-name"><a class="trait" href="trait.RefEncode.html" title="trait objc2::encode::RefEncode">RefEncode</a></div><div class="desc docblock-short">Types whoose references has an Objective-C type-encoding.</div></li></ul></section></div></main></body></html>

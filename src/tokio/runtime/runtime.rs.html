@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.37.0/src/runtime/runtime.rs`."><title>runtime.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="tokio" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../tokio/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.41.0/src/runtime/runtime.rs`."><title>runtime.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="tokio" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -499,12 +497,31 @@
 <a href="#497" id="497">497</a>
 <a href="#498" id="498">498</a>
 <a href="#499" id="499">499</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::runtime::blocking::BlockingPool;
+<a href="#500" id="500">500</a>
+<a href="#501" id="501">501</a>
+<a href="#502" id="502">502</a>
+<a href="#503" id="503">503</a>
+<a href="#504" id="504">504</a>
+<a href="#505" id="505">505</a>
+<a href="#506" id="506">506</a>
+<a href="#507" id="507">507</a>
+<a href="#508" id="508">508</a>
+<a href="#509" id="509">509</a>
+<a href="#510" id="510">510</a>
+<a href="#511" id="511">511</a>
+<a href="#512" id="512">512</a>
+<a href="#513" id="513">513</a>
+<a href="#514" id="514">514</a>
+<a href="#515" id="515">515</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::BOX_FUTURE_THRESHOLD;
+<span class="kw">use </span><span class="kw">crate</span>::runtime::blocking::BlockingPool;
 <span class="kw">use </span><span class="kw">crate</span>::runtime::scheduler::CurrentThread;
 <span class="kw">use </span><span class="kw">crate</span>::runtime::{context, EnterGuard, Handle};
 <span class="kw">use </span><span class="kw">crate</span>::task::JoinHandle;
+<span class="kw">use </span><span class="kw">crate</span>::util::trace::SpawnMeta;
 
 <span class="kw">use </span>std::future::Future;
+<span class="kw">use </span>std::mem;
 <span class="kw">use </span>std::time::Duration;
 
 <span class="macro">cfg_rt_multi_thread!</span> {
@@ -617,6 +634,7 @@
     </span>MultiThread,
     <span class="doccomment">/// The flavor that executes tasks across multiple threads.
     </span><span class="attr">#[cfg(tokio_unstable)]
+    #[cfg_attr(docsrs, doc(cfg(tokio_unstable)))]
     </span>MultiThreadAlt,
 }
 
@@ -627,11 +645,11 @@
     </span>CurrentThread(CurrentThread),
 
     <span class="doccomment">/// Execute tasks across multiple threads.
-    </span><span class="attr">#[cfg(all(feature = <span class="string">"rt-multi-thread"</span>, not(target_os = <span class="string">"wasi"</span>)))]
+    </span><span class="attr">#[cfg(feature = <span class="string">"rt-multi-thread"</span>)]
     </span>MultiThread(MultiThread),
 
     <span class="doccomment">/// Execute tasks across multiple threads.
-    </span><span class="attr">#[cfg(all(tokio_unstable, feature = <span class="string">"rt-multi-thread"</span>, not(target_os = <span class="string">"wasi"</span>)))]
+    </span><span class="attr">#[cfg(all(tokio_unstable, feature = <span class="string">"rt-multi-thread"</span>))]
     </span>MultiThreadAlt(MultiThreadAlt),
 }
 
@@ -648,40 +666,38 @@
         }
     }
 
-    <span class="macro">cfg_not_wasi!</span> {
-        <span class="doccomment">/// Creates a new runtime instance with default configuration values.
-        ///
-        /// This results in the multi threaded scheduler, I/O driver, and time driver being
-        /// initialized.
-        ///
-        /// Most applications will not need to call this function directly. Instead,
-        /// they will use the  [`#[tokio::main]` attribute][main]. When a more complex
-        /// configuration is necessary, the [runtime builder] may be used.
-        ///
-        /// See [module level][mod] documentation for more details.
-        ///
-        /// # Examples
-        ///
-        /// Creating a new `Runtime` with default configuration values.
-        ///
-        /// ```
-        /// use tokio::runtime::Runtime;
-        ///
-        /// let rt = Runtime::new()
-        ///     .unwrap();
-        ///
-        /// // Use the runtime...
-        /// ```
-        ///
-        /// [mod]: index.html
-        /// [main]: ../attr.main.html
-        /// [threaded scheduler]: index.html#threaded-scheduler
-        /// [runtime builder]: crate::runtime::Builder
-        </span><span class="attr">#[cfg(feature = <span class="string">"rt-multi-thread"</span>)]
-        #[cfg_attr(docsrs, doc(cfg(feature = <span class="string">"rt-multi-thread"</span>)))]
-        </span><span class="kw">pub fn </span>new() -&gt; std::io::Result&lt;Runtime&gt; {
-            Builder::new_multi_thread().enable_all().build()
-        }
+    <span class="doccomment">/// Creates a new runtime instance with default configuration values.
+    ///
+    /// This results in the multi threaded scheduler, I/O driver, and time driver being
+    /// initialized.
+    ///
+    /// Most applications will not need to call this function directly. Instead,
+    /// they will use the  [`#[tokio::main]` attribute][main]. When a more complex
+    /// configuration is necessary, the [runtime builder] may be used.
+    ///
+    /// See [module level][mod] documentation for more details.
+    ///
+    /// # Examples
+    ///
+    /// Creating a new `Runtime` with default configuration values.
+    ///
+    /// ```
+    /// use tokio::runtime::Runtime;
+    ///
+    /// let rt = Runtime::new()
+    ///     .unwrap();
+    ///
+    /// // Use the runtime...
+    /// ```
+    ///
+    /// [mod]: index.html
+    /// [main]: ../attr.main.html
+    /// [threaded scheduler]: index.html#threaded-scheduler
+    /// [runtime builder]: crate::runtime::Builder
+    </span><span class="attr">#[cfg(feature = <span class="string">"rt-multi-thread"</span>)]
+    #[cfg_attr(docsrs, doc(cfg(feature = <span class="string">"rt-multi-thread"</span>)))]
+    </span><span class="kw">pub fn </span>new() -&gt; std::io::Result&lt;Runtime&gt; {
+        Builder::new_multi_thread().enable_all().build()
     }
 
     <span class="doccomment">/// Returns a handle to the runtime's spawner.
@@ -743,7 +759,14 @@
         </span>F: Future + Send + <span class="lifetime">'static</span>,
         F::Output: Send + <span class="lifetime">'static</span>,
     {
-        <span class="self">self</span>.handle.spawn(future)
+        <span class="kw">let </span>fut_size = mem::size_of::&lt;F&gt;();
+        <span class="kw">if </span>fut_size &gt; BOX_FUTURE_THRESHOLD {
+            <span class="self">self</span>.handle
+                .spawn_named(Box::pin(future), SpawnMeta::new_unnamed(fut_size))
+        } <span class="kw">else </span>{
+            <span class="self">self</span>.handle
+                .spawn_named(future, SpawnMeta::new_unnamed(fut_size))
+        }
     }
 
     <span class="doccomment">/// Runs the provided function on an executor dedicated to blocking operations.
@@ -827,6 +850,16 @@
     /// [handle]: fn@Handle::block_on
     </span><span class="attr">#[track_caller]
     </span><span class="kw">pub fn </span>block_on&lt;F: Future&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, future: F) -&gt; F::Output {
+        <span class="kw">let </span>fut_size = mem::size_of::&lt;F&gt;();
+        <span class="kw">if </span>fut_size &gt; BOX_FUTURE_THRESHOLD {
+            <span class="self">self</span>.block_on_inner(Box::pin(future), SpawnMeta::new_unnamed(fut_size))
+        } <span class="kw">else </span>{
+            <span class="self">self</span>.block_on_inner(future, SpawnMeta::new_unnamed(fut_size))
+        }
+    }
+
+    <span class="attr">#[track_caller]
+    </span><span class="kw">fn </span>block_on_inner&lt;F: Future&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, future: F, _meta: SpawnMeta&lt;<span class="lifetime">'_</span>&gt;) -&gt; F::Output {
         <span class="attr">#[cfg(all(
             tokio_unstable,
             tokio_taskdump,
@@ -840,7 +873,7 @@
         </span><span class="kw">let </span>future = <span class="kw">crate</span>::util::trace::task(
             future,
             <span class="string">"block_on"</span>,
-            <span class="prelude-val">None</span>,
+            _meta,
             <span class="kw">crate</span>::runtime::task::Id::next().as_u64(),
         );
 
@@ -848,9 +881,9 @@
 
         <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.scheduler {
             Scheduler::CurrentThread(exec) =&gt; exec.block_on(<span class="kw-2">&amp;</span><span class="self">self</span>.handle.inner, future),
-            <span class="attr">#[cfg(all(feature = <span class="string">"rt-multi-thread"</span>, not(target_os = <span class="string">"wasi"</span>)))]
+            <span class="attr">#[cfg(feature = <span class="string">"rt-multi-thread"</span>)]
             </span>Scheduler::MultiThread(exec) =&gt; exec.block_on(<span class="kw-2">&amp;</span><span class="self">self</span>.handle.inner, future),
-            <span class="attr">#[cfg(all(tokio_unstable, feature = <span class="string">"rt-multi-thread"</span>, not(target_os = <span class="string">"wasi"</span>)))]
+            <span class="attr">#[cfg(all(tokio_unstable, feature = <span class="string">"rt-multi-thread"</span>))]
             </span>Scheduler::MultiThreadAlt(exec) =&gt; exec.block_on(<span class="kw-2">&amp;</span><span class="self">self</span>.handle.inner, future),
         }
     }
@@ -958,6 +991,12 @@
     </span><span class="kw">pub fn </span>shutdown_background(<span class="self">self</span>) {
         <span class="self">self</span>.shutdown_timeout(Duration::from_nanos(<span class="number">0</span>));
     }
+
+    <span class="doccomment">/// Returns a view that lets you get information about how the runtime
+    /// is performing.
+    </span><span class="kw">pub fn </span>metrics(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">crate</span>::runtime::RuntimeMetrics {
+        <span class="self">self</span>.handle.metrics()
+    }
 }
 
 <span class="attr">#[allow(clippy::single_match)] </span><span class="comment">// there are comments in the error branch, so we don't want if-let
@@ -970,13 +1009,13 @@
                 </span><span class="kw">let </span>_guard = context::try_set_current(<span class="kw-2">&amp;</span><span class="self">self</span>.handle.inner);
                 current_thread.shutdown(<span class="kw-2">&amp;</span><span class="self">self</span>.handle.inner);
             }
-            <span class="attr">#[cfg(all(feature = <span class="string">"rt-multi-thread"</span>, not(target_os = <span class="string">"wasi"</span>)))]
+            <span class="attr">#[cfg(feature = <span class="string">"rt-multi-thread"</span>)]
             </span>Scheduler::MultiThread(multi_thread) =&gt; {
                 <span class="comment">// The threaded scheduler drops its tasks on its worker threads, which is
                 // already in the runtime's context.
                 </span>multi_thread.shutdown(<span class="kw-2">&amp;</span><span class="self">self</span>.handle.inner);
             }
-            <span class="attr">#[cfg(all(tokio_unstable, feature = <span class="string">"rt-multi-thread"</span>, not(target_os = <span class="string">"wasi"</span>)))]
+            <span class="attr">#[cfg(all(tokio_unstable, feature = <span class="string">"rt-multi-thread"</span>))]
             </span>Scheduler::MultiThreadAlt(multi_thread) =&gt; {
                 <span class="comment">// The threaded scheduler drops its tasks on its worker threads, which is
                 // already in the runtime's context.
@@ -989,13 +1028,4 @@
 <span class="kw">impl </span>std::panic::UnwindSafe <span class="kw">for </span>Runtime {}
 
 <span class="kw">impl </span>std::panic::RefUnwindSafe <span class="kw">for </span>Runtime {}
-
-<span class="macro">cfg_metrics!</span> {
-    <span class="kw">impl </span>Runtime {
-        <span class="doccomment">/// TODO
-        </span><span class="kw">pub fn </span>metrics(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">crate</span>::runtime::RuntimeMetrics {
-            <span class="self">self</span>.handle.metrics()
-        }
-    }
-}
 </code></pre></div></section></main></body></html>

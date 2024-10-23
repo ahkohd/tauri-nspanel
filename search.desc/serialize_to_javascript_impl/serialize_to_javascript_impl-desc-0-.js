@@ -1,0 +1,1 @@
+searchState.loadedDescShard("serialize_to_javascript_impl", 0, "Automatically derive <code>Template</code> from a struct with valid …\nAutomatically derive <code>DefaultTemplate</code> for a <code>Template</code> from …")

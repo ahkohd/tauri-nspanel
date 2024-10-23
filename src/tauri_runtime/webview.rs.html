@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-runtime-0.14.3/src/webview.rs`."><title>webview.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tauri_runtime" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../tauri_runtime/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-runtime-2.1.1/src/webview.rs`."><title>webview.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tauri_runtime" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="icon" href="https://github.com/tauri-apps/tauri/raw/dev/.github/icon.png"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -302,45 +300,312 @@
 <a href="#300" id="300">300</a>
 <a href="#301" id="301">301</a>
 <a href="#302" id="302">302</a>
-</pre></div><pre class="rust"><code><span class="comment">// Copyright 2019-2023 Tauri Programme within The Commons Conservancy
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
+<a href="#351" id="351">351</a>
+<a href="#352" id="352">352</a>
+<a href="#353" id="353">353</a>
+<a href="#354" id="354">354</a>
+<a href="#355" id="355">355</a>
+<a href="#356" id="356">356</a>
+<a href="#357" id="357">357</a>
+<a href="#358" id="358">358</a>
+<a href="#359" id="359">359</a>
+<a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
+<a href="#362" id="362">362</a>
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+<a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+</pre></div><pre class="rust"><code><span class="comment">// Copyright 2019-2024 Tauri Programme within The Commons Conservancy
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-License-Identifier: MIT
 
-</span><span class="doccomment">//! Items specific to the [`Runtime`](crate::Runtime)'s webview.
+</span><span class="doccomment">//! A layer between raw [`Runtime`] webviews and Tauri.
+//!
+</span><span class="kw">use crate</span>::{window::is_label_valid, Rect, Runtime, UserEvent};
 
-</span><span class="kw">use crate</span>::{menu::Menu, window::DetachedWindow, Icon};
+<span class="kw">use </span>http::Request;
+<span class="kw">use </span>tauri_utils::config::{WebviewUrl, WindowConfig, WindowEffectsConfig};
+<span class="kw">use </span>url::Url;
 
-<span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
-</span><span class="kw">use </span>tauri_utils::TitleBarStyle;
-<span class="kw">use </span>tauri_utils::{
-  config::{WindowConfig, WindowUrl},
-  Theme,
+<span class="kw">use </span>std::{
+  borrow::Cow,
+  collections::HashMap,
+  hash::{Hash, Hasher},
+  path::PathBuf,
+  sync::Arc,
 };
 
-<span class="attr">#[cfg(windows)]
-</span><span class="kw">use </span>windows::Win32::Foundation::HWND;
+<span class="kw">type </span>UriSchemeProtocol = <span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>str, http::Request&lt;Vec&lt;u8&gt;&gt;, Box&lt;<span class="kw">dyn </span>FnOnce(http::Response&lt;Cow&lt;<span class="lifetime">'static</span>, [u8]&gt;&gt;) + Send&gt;)
+  + Send
+  + Sync
+  + <span class="lifetime">'static</span>;
 
-<span class="kw">use </span>std::{fmt, path::PathBuf};
+<span class="kw">type </span>WebResourceRequestHandler =
+  <span class="kw">dyn </span>Fn(http::Request&lt;Vec&lt;u8&gt;&gt;, <span class="kw-2">&amp;mut </span>http::Response&lt;Cow&lt;<span class="lifetime">'static</span>, [u8]&gt;&gt;) + Send + Sync;
+
+<span class="kw">type </span>NavigationHandler = <span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>Url) -&gt; bool + Send;
+
+<span class="kw">type </span>OnPageLoadHandler = <span class="kw">dyn </span>Fn(Url, PageLoadEvent) + Send;
+
+<span class="kw">type </span>DownloadHandler = <span class="kw">dyn </span>Fn(DownloadEvent) -&gt; bool + Send + Sync;
+
+<span class="doccomment">/// Download event.
+</span><span class="kw">pub enum </span>DownloadEvent&lt;<span class="lifetime">'a</span>&gt; {
+  <span class="doccomment">/// Download requested.
+  </span>Requested {
+    <span class="doccomment">/// The url being downloaded.
+    </span>url: Url,
+    <span class="doccomment">/// Represents where the file will be downloaded to.
+    /// Can be used to set the download location by assigning a new path to it.
+    /// The assigned path _must_ be absolute.
+    </span>destination: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>PathBuf,
+  },
+  <span class="doccomment">/// Download finished.
+  </span>Finished {
+    <span class="doccomment">/// The URL of the original download request.
+    </span>url: Url,
+    <span class="doccomment">/// Potentially representing the filesystem path the file was downloaded to.
+    </span>path: <span class="prelude-ty">Option</span>&lt;PathBuf&gt;,
+    <span class="doccomment">/// Indicates if the download succeeded or not.
+    </span>success: bool,
+  },
+}
+
+<span class="attr">#[cfg(target_os = <span class="string">"android"</span>)]
+</span><span class="kw">pub struct </span>CreationContext&lt;<span class="lifetime">'a</span>, <span class="lifetime">'b</span>&gt; {
+  <span class="kw">pub </span>env: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>jni::JNIEnv&lt;<span class="lifetime">'b</span>&gt;,
+  <span class="kw">pub </span>activity: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>jni::objects::JObject&lt;<span class="lifetime">'b</span>&gt;,
+  <span class="kw">pub </span>webview: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>jni::objects::JObject&lt;<span class="lifetime">'b</span>&gt;,
+}
+
+<span class="doccomment">/// Kind of event for the page load handler.
+</span><span class="attr">#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+</span><span class="kw">pub enum </span>PageLoadEvent {
+  <span class="doccomment">/// Page started to load.
+  </span>Started,
+  <span class="doccomment">/// Page finished loading.
+  </span>Finished,
+}
+
+<span class="doccomment">/// A webview that has yet to be built.
+</span><span class="kw">pub struct </span>PendingWebview&lt;T: UserEvent, R: Runtime&lt;T&gt;&gt; {
+  <span class="doccomment">/// The label that the webview will be named.
+  </span><span class="kw">pub </span>label: String,
+
+  <span class="doccomment">/// The [`WebviewAttributes`] that the webview will be created with.
+  </span><span class="kw">pub </span>webview_attributes: WebviewAttributes,
+
+  <span class="kw">pub </span>uri_scheme_protocols: HashMap&lt;String, Box&lt;UriSchemeProtocol&gt;&gt;,
+
+  <span class="doccomment">/// How to handle IPC calls on the webview.
+  </span><span class="kw">pub </span>ipc_handler: <span class="prelude-ty">Option</span>&lt;WebviewIpcHandler&lt;T, R&gt;&gt;,
+
+  <span class="doccomment">/// A handler to decide if incoming url is allowed to navigate.
+  </span><span class="kw">pub </span>navigation_handler: <span class="prelude-ty">Option</span>&lt;Box&lt;NavigationHandler&gt;&gt;,
+
+  <span class="doccomment">/// The resolved URL to load on the webview.
+  </span><span class="kw">pub </span>url: String,
+
+  <span class="attr">#[cfg(target_os = <span class="string">"android"</span>)]
+  #[allow(clippy::type_complexity)]
+  </span><span class="kw">pub </span>on_webview_created:
+    <span class="prelude-ty">Option</span>&lt;Box&lt;<span class="kw">dyn </span>Fn(CreationContext&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;(), jni::errors::Error&gt; + Send&gt;&gt;,
+
+  <span class="kw">pub </span>web_resource_request_handler: <span class="prelude-ty">Option</span>&lt;Box&lt;WebResourceRequestHandler&gt;&gt;,
+
+  <span class="kw">pub </span>on_page_load_handler: <span class="prelude-ty">Option</span>&lt;Box&lt;OnPageLoadHandler&gt;&gt;,
+
+  <span class="kw">pub </span>download_handler: <span class="prelude-ty">Option</span>&lt;Arc&lt;DownloadHandler&gt;&gt;,
+}
+
+<span class="kw">impl</span>&lt;T: UserEvent, R: Runtime&lt;T&gt;&gt; PendingWebview&lt;T, R&gt; {
+  <span class="doccomment">/// Create a new [`PendingWebview`] with a label from the given [`WebviewAttributes`].
+  </span><span class="kw">pub fn </span>new(
+    webview_attributes: WebviewAttributes,
+    label: <span class="kw">impl </span>Into&lt;String&gt;,
+  ) -&gt; <span class="kw">crate</span>::Result&lt;<span class="self">Self</span>&gt; {
+    <span class="kw">let </span>label = label.into();
+    <span class="kw">if </span>!is_label_valid(<span class="kw-2">&amp;</span>label) {
+      <span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::InvalidWindowLabel)
+    } <span class="kw">else </span>{
+      <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
+        webview_attributes,
+        uri_scheme_protocols: Default::default(),
+        label,
+        ipc_handler: <span class="prelude-val">None</span>,
+        navigation_handler: <span class="prelude-val">None</span>,
+        url: <span class="string">"tauri://localhost"</span>.to_string(),
+        <span class="attr">#[cfg(target_os = <span class="string">"android"</span>)]
+        </span>on_webview_created: <span class="prelude-val">None</span>,
+        web_resource_request_handler: <span class="prelude-val">None</span>,
+        on_page_load_handler: <span class="prelude-val">None</span>,
+        download_handler: <span class="prelude-val">None</span>,
+      })
+    }
+  }
+
+  <span class="kw">pub fn </span>register_uri_scheme_protocol&lt;
+    N: Into&lt;String&gt;,
+    H: Fn(<span class="kw-2">&amp;</span>str, http::Request&lt;Vec&lt;u8&gt;&gt;, Box&lt;<span class="kw">dyn </span>FnOnce(http::Response&lt;Cow&lt;<span class="lifetime">'static</span>, [u8]&gt;&gt;) + Send&gt;)
+      + Send
+      + Sync
+      + <span class="lifetime">'static</span>,
+  &gt;(
+    <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+    uri_scheme: N,
+    protocol: H,
+  ) {
+    <span class="kw">let </span>uri_scheme = uri_scheme.into();
+    <span class="self">self
+      </span>.uri_scheme_protocols
+      .insert(uri_scheme, Box::new(protocol));
+  }
+
+  <span class="attr">#[cfg(target_os = <span class="string">"android"</span>)]
+  </span><span class="kw">pub fn </span>on_webview_created&lt;
+    F: Fn(CreationContext&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;(), jni::errors::Error&gt; + Send + <span class="lifetime">'static</span>,
+  &gt;(
+    <span class="kw-2">mut </span><span class="self">self</span>,
+    f: F,
+  ) -&gt; <span class="self">Self </span>{
+    <span class="self">self</span>.on_webview_created.replace(Box::new(f));
+    <span class="self">self
+  </span>}
+}
+
+<span class="doccomment">/// A webview that is not yet managed by Tauri.
+</span><span class="attr">#[derive(Debug)]
+</span><span class="kw">pub struct </span>DetachedWebview&lt;T: UserEvent, R: Runtime&lt;T&gt;&gt; {
+  <span class="doccomment">/// Name of the window
+  </span><span class="kw">pub </span>label: String,
+
+  <span class="doccomment">/// The [`crate::WebviewDispatch`] associated with the window.
+  </span><span class="kw">pub </span>dispatcher: R::WebviewDispatcher,
+}
+
+<span class="kw">impl</span>&lt;T: UserEvent, R: Runtime&lt;T&gt;&gt; Clone <span class="kw">for </span>DetachedWebview&lt;T, R&gt; {
+  <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
+    <span class="self">Self </span>{
+      label: <span class="self">self</span>.label.clone(),
+      dispatcher: <span class="self">self</span>.dispatcher.clone(),
+    }
+  }
+}
+
+<span class="kw">impl</span>&lt;T: UserEvent, R: Runtime&lt;T&gt;&gt; Hash <span class="kw">for </span>DetachedWebview&lt;T, R&gt; {
+  <span class="doccomment">/// Only use the [`DetachedWebview`]'s label to represent its hash.
+  </span><span class="kw">fn </span>hash&lt;H: Hasher&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H) {
+    <span class="self">self</span>.label.hash(state)
+  }
+}
+
+<span class="kw">impl</span>&lt;T: UserEvent, R: Runtime&lt;T&gt;&gt; Eq <span class="kw">for </span>DetachedWebview&lt;T, R&gt; {}
+<span class="kw">impl</span>&lt;T: UserEvent, R: Runtime&lt;T&gt;&gt; PartialEq <span class="kw">for </span>DetachedWebview&lt;T, R&gt; {
+  <span class="doccomment">/// Only use the [`DetachedWebview`]'s label to compare equality.
+  </span><span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; bool {
+    <span class="self">self</span>.label.eq(<span class="kw-2">&amp;</span>other.label)
+  }
+}
 
 <span class="doccomment">/// The attributes used to create an webview.
 </span><span class="attr">#[derive(Debug, Clone)]
 </span><span class="kw">pub struct </span>WebviewAttributes {
-  <span class="kw">pub </span>url: WindowUrl,
+  <span class="kw">pub </span>url: WebviewUrl,
   <span class="kw">pub </span>user_agent: <span class="prelude-ty">Option</span>&lt;String&gt;,
   <span class="kw">pub </span>initialization_scripts: Vec&lt;String&gt;,
   <span class="kw">pub </span>data_directory: <span class="prelude-ty">Option</span>&lt;PathBuf&gt;,
-  <span class="kw">pub </span>file_drop_handler_enabled: bool,
+  <span class="kw">pub </span>drag_drop_handler_enabled: bool,
   <span class="kw">pub </span>clipboard: bool,
   <span class="kw">pub </span>accept_first_mouse: bool,
   <span class="kw">pub </span>additional_browser_args: <span class="prelude-ty">Option</span>&lt;String&gt;,
+  <span class="kw">pub </span>window_effects: <span class="prelude-ty">Option</span>&lt;WindowEffectsConfig&gt;,
+  <span class="kw">pub </span>incognito: bool,
+  <span class="kw">pub </span>transparent: bool,
+  <span class="kw">pub </span>bounds: <span class="prelude-ty">Option</span>&lt;Rect&gt;,
+  <span class="kw">pub </span>auto_resize: bool,
+  <span class="kw">pub </span>proxy_url: <span class="prelude-ty">Option</span>&lt;Url&gt;,
+  <span class="kw">pub </span>zoom_hotkeys_enabled: bool,
+  <span class="kw">pub </span>browser_extensions_enabled: bool,
 }
 
 <span class="kw">impl </span>From&lt;<span class="kw-2">&amp;</span>WindowConfig&gt; <span class="kw">for </span>WebviewAttributes {
   <span class="kw">fn </span>from(config: <span class="kw-2">&amp;</span>WindowConfig) -&gt; <span class="self">Self </span>{
     <span class="kw">let </span><span class="kw-2">mut </span>builder = <span class="self">Self</span>::new(config.url.clone());
+    builder = builder.incognito(config.incognito);
+    <span class="attr">#[cfg(any(not(target_os = <span class="string">"macos"</span>), feature = <span class="string">"macos-private-api"</span>))]
+    </span>{
+      builder = builder.transparent(config.transparent);
+    }
     builder = builder.accept_first_mouse(config.accept_first_mouse);
-    <span class="kw">if </span>!config.file_drop_enabled {
-      builder = builder.disable_file_drop_handler();
+    <span class="kw">if </span>!config.drag_drop_enabled {
+      builder = builder.disable_drag_drop_handler();
     }
     <span class="kw">if let </span><span class="prelude-val">Some</span>(user_agent) = <span class="kw-2">&amp;</span>config.user_agent {
       builder = builder.user_agent(user_agent);
@@ -348,22 +613,38 @@
     <span class="kw">if let </span><span class="prelude-val">Some</span>(additional_browser_args) = <span class="kw-2">&amp;</span>config.additional_browser_args {
       builder = builder.additional_browser_args(additional_browser_args);
     }
+    <span class="kw">if let </span><span class="prelude-val">Some</span>(effects) = <span class="kw-2">&amp;</span>config.window_effects {
+      builder = builder.window_effects(effects.clone());
+    }
+    <span class="kw">if let </span><span class="prelude-val">Some</span>(url) = <span class="kw-2">&amp;</span>config.proxy_url {
+      builder = builder.proxy_url(url.to_owned());
+    }
+    builder = builder.zoom_hotkeys_enabled(config.zoom_hotkeys_enabled);
+    builder = builder.browser_extensions_enabled(config.browser_extensions_enabled);
     builder
   }
 }
 
 <span class="kw">impl </span>WebviewAttributes {
   <span class="doccomment">/// Initializes the default attributes for a webview.
-  </span><span class="kw">pub fn </span>new(url: WindowUrl) -&gt; <span class="self">Self </span>{
+  </span><span class="kw">pub fn </span>new(url: WebviewUrl) -&gt; <span class="self">Self </span>{
     <span class="self">Self </span>{
       url,
       user_agent: <span class="prelude-val">None</span>,
       initialization_scripts: Vec::new(),
       data_directory: <span class="prelude-val">None</span>,
-      file_drop_handler_enabled: <span class="bool-val">true</span>,
+      drag_drop_handler_enabled: <span class="bool-val">true</span>,
       clipboard: <span class="bool-val">false</span>,
       accept_first_mouse: <span class="bool-val">false</span>,
       additional_browser_args: <span class="prelude-val">None</span>,
+      window_effects: <span class="prelude-val">None</span>,
+      incognito: <span class="bool-val">false</span>,
+      transparent: <span class="bool-val">false</span>,
+      bounds: <span class="prelude-val">None</span>,
+      auto_resize: <span class="bool-val">false</span>,
+      proxy_url: <span class="prelude-val">None</span>,
+      zoom_hotkeys_enabled: <span class="bool-val">false</span>,
+      browser_extensions_enabled: <span class="bool-val">false</span>,
     }
   }
 
@@ -388,10 +669,10 @@
     <span class="self">self
   </span>}
 
-  <span class="doccomment">/// Disables the file drop handler. This is required to use drag and drop APIs on the front end on Windows.
+  <span class="doccomment">/// Disables the drag and drop handler. This is required to use HTML5 drag and drop APIs on the frontend on Windows.
   </span><span class="attr">#[must_use]
-  </span><span class="kw">pub fn </span>disable_file_drop_handler(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
-    <span class="self">self</span>.file_drop_handler_enabled = <span class="bool-val">false</span>;
+  </span><span class="kw">pub fn </span>disable_drag_drop_handler(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
+    <span class="self">self</span>.drag_drop_handler_enabled = <span class="bool-val">false</span>;
     <span class="self">self
   </span>}
 
@@ -418,190 +699,71 @@
     <span class="self">self</span>.additional_browser_args = <span class="prelude-val">Some</span>(additional_args.to_string());
     <span class="self">self
   </span>}
-}
 
-<span class="doccomment">/// Do **NOT** implement this trait except for use in a custom [`Runtime`](crate::Runtime).
-///
-/// This trait is separate from [`WindowBuilder`] to prevent "accidental" implementation.
-</span><span class="kw">pub trait </span>WindowBuilderBase: fmt::Debug + Clone + Sized {}
-
-<span class="doccomment">/// A builder for all attributes related to a single webview.
-///
-/// This trait is only meant to be implemented by a custom [`Runtime`](crate::Runtime)
-/// and not by applications.
-</span><span class="kw">pub trait </span>WindowBuilder: WindowBuilderBase {
-  <span class="doccomment">/// Initializes a new window attributes builder.
-  </span><span class="kw">fn </span>new() -&gt; <span class="self">Self</span>;
-
-  <span class="doccomment">/// Initializes a new webview builder from a [`WindowConfig`]
-  </span><span class="kw">fn </span>with_config(config: WindowConfig) -&gt; <span class="self">Self</span>;
-
-  <span class="doccomment">/// Sets the menu for the window.
+  <span class="doccomment">/// Sets window effects
   </span><span class="attr">#[must_use]
-  </span><span class="kw">fn </span>menu(<span class="self">self</span>, menu: Menu) -&gt; <span class="self">Self</span>;
+  </span><span class="kw">pub fn </span>window_effects(<span class="kw-2">mut </span><span class="self">self</span>, effects: WindowEffectsConfig) -&gt; <span class="self">Self </span>{
+    <span class="self">self</span>.window_effects = <span class="prelude-val">Some</span>(effects);
+    <span class="self">self
+  </span>}
 
-  <span class="doccomment">/// Show window in the center of the screen.
+  <span class="doccomment">/// Enable or disable incognito mode for the WebView.
   </span><span class="attr">#[must_use]
-  </span><span class="kw">fn </span>center(<span class="self">self</span>) -&gt; <span class="self">Self</span>;
+  </span><span class="kw">pub fn </span>incognito(<span class="kw-2">mut </span><span class="self">self</span>, incognito: bool) -&gt; <span class="self">Self </span>{
+    <span class="self">self</span>.incognito = incognito;
+    <span class="self">self
+  </span>}
 
-  <span class="doccomment">/// The initial position of the window's.
-  </span><span class="attr">#[must_use]
-  </span><span class="kw">fn </span>position(<span class="self">self</span>, x: f64, y: f64) -&gt; <span class="self">Self</span>;
-
-  <span class="doccomment">/// Window size.
-  </span><span class="attr">#[must_use]
-  </span><span class="kw">fn </span>inner_size(<span class="self">self</span>, width: f64, height: f64) -&gt; <span class="self">Self</span>;
-
-  <span class="doccomment">/// Window min inner size.
-  </span><span class="attr">#[must_use]
-  </span><span class="kw">fn </span>min_inner_size(<span class="self">self</span>, min_width: f64, min_height: f64) -&gt; <span class="self">Self</span>;
-
-  <span class="doccomment">/// Window max inner size.
-  </span><span class="attr">#[must_use]
-  </span><span class="kw">fn </span>max_inner_size(<span class="self">self</span>, max_width: f64, max_height: f64) -&gt; <span class="self">Self</span>;
-
-  <span class="doccomment">/// Whether the window is resizable or not.
-  /// When resizable is set to false, native window's maximize button is automatically disabled.
-  </span><span class="attr">#[must_use]
-  </span><span class="kw">fn </span>resizable(<span class="self">self</span>, resizable: bool) -&gt; <span class="self">Self</span>;
-
-  <span class="doccomment">/// Whether the window's native maximize button is enabled or not.
-  /// If resizable is set to false, this setting is ignored.
-  ///
-  /// ## Platform-specific
-  ///
-  /// - **macOS:** Disables the "zoom" button in the window titlebar, which is also used to enter fullscreen mode.
-  /// - **Linux / iOS / Android:** Unsupported.
-  </span><span class="attr">#[must_use]
-  </span><span class="kw">fn </span>maximizable(<span class="self">self</span>, maximizable: bool) -&gt; <span class="self">Self</span>;
-
-  <span class="doccomment">/// Whether the window's native minimize button is enabled or not.
-  ///
-  /// ## Platform-specific
-  ///
-  /// - **Linux / iOS / Android:** Unsupported.
-  </span><span class="attr">#[must_use]
-  </span><span class="kw">fn </span>minimizable(<span class="self">self</span>, minimizable: bool) -&gt; <span class="self">Self</span>;
-
-  <span class="doccomment">/// Whether the window's native close button is enabled or not.
-  ///
-  /// ## Platform-specific
-  ///
-  /// - **Linux:** "GTK+ will do its best to convince the window manager not to show a close button.
-  ///   Depending on the system, this function may not have any effect when called on a window that is already visible"
-  /// - **iOS / Android:** Unsupported.
-  </span><span class="attr">#[must_use]
-  </span><span class="kw">fn </span>closable(<span class="self">self</span>, closable: bool) -&gt; <span class="self">Self</span>;
-
-  <span class="doccomment">/// The title of the window in the title bar.
-  </span><span class="attr">#[must_use]
-  </span><span class="kw">fn </span>title&lt;S: Into&lt;String&gt;&gt;(<span class="self">self</span>, title: S) -&gt; <span class="self">Self</span>;
-
-  <span class="doccomment">/// Whether to start the window in fullscreen or not.
-  </span><span class="attr">#[must_use]
-  </span><span class="kw">fn </span>fullscreen(<span class="self">self</span>, fullscreen: bool) -&gt; <span class="self">Self</span>;
-
-  <span class="doccomment">/// Whether the window will be initially focused or not.
-  </span><span class="attr">#[must_use]
-  </span><span class="kw">fn </span>focused(<span class="self">self</span>, focused: bool) -&gt; <span class="self">Self</span>;
-
-  <span class="doccomment">/// Whether the window should be maximized upon creation.
-  </span><span class="attr">#[must_use]
-  </span><span class="kw">fn </span>maximized(<span class="self">self</span>, maximized: bool) -&gt; <span class="self">Self</span>;
-
-  <span class="doccomment">/// Whether the window should be immediately visible upon creation.
-  </span><span class="attr">#[must_use]
-  </span><span class="kw">fn </span>visible(<span class="self">self</span>, visible: bool) -&gt; <span class="self">Self</span>;
-
-  <span class="doccomment">/// Whether the window should be transparent. If this is true, writing colors
-  /// with alpha values different than `1.0` will produce a transparent window.
+  <span class="doccomment">/// Enable or disable transparency for the WebView.
   </span><span class="attr">#[cfg(any(not(target_os = <span class="string">"macos"</span>), feature = <span class="string">"macos-private-api"</span>))]
-  #[cfg_attr(
-    doc_cfg,
-    doc(cfg(any(not(target_os = <span class="string">"macos"</span>), feature = <span class="string">"macos-private-api"</span>)))
-  )]
   #[must_use]
-  </span><span class="kw">fn </span>transparent(<span class="self">self</span>, transparent: bool) -&gt; <span class="self">Self</span>;
+  </span><span class="kw">pub fn </span>transparent(<span class="kw-2">mut </span><span class="self">self</span>, transparent: bool) -&gt; <span class="self">Self </span>{
+    <span class="self">self</span>.transparent = transparent;
+    <span class="self">self
+  </span>}
 
-  <span class="doccomment">/// Whether the window should have borders and bars.
+  <span class="doccomment">/// Sets the webview to automatically grow and shrink its size and position when the parent window resizes.
   </span><span class="attr">#[must_use]
-  </span><span class="kw">fn </span>decorations(<span class="self">self</span>, decorations: bool) -&gt; <span class="self">Self</span>;
+  </span><span class="kw">pub fn </span>auto_resize(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
+    <span class="self">self</span>.auto_resize = <span class="bool-val">true</span>;
+    <span class="self">self
+  </span>}
 
-  <span class="doccomment">/// Whether the window should always be on top of other windows.
+  <span class="doccomment">/// Enable proxy for the WebView
   </span><span class="attr">#[must_use]
-  </span><span class="kw">fn </span>always_on_top(<span class="self">self</span>, always_on_top: bool) -&gt; <span class="self">Self</span>;
+  </span><span class="kw">pub fn </span>proxy_url(<span class="kw-2">mut </span><span class="self">self</span>, url: Url) -&gt; <span class="self">Self </span>{
+    <span class="self">self</span>.proxy_url = <span class="prelude-val">Some</span>(url);
+    <span class="self">self
+  </span>}
 
-  <span class="doccomment">/// Prevents the window contents from being captured by other apps.
+  <span class="doccomment">/// Whether page zooming by hotkeys is enabled
+  ///
+  /// ## Platform-specific:
+  ///
+  /// - **Windows**: Controls WebView2's [`IsZoomControlEnabled`](https://learn.microsoft.com/en-us/microsoft-edge/webview2/reference/winrt/microsoft_web_webview2_core/corewebview2settings?view=webview2-winrt-1.0.2420.47#iszoomcontrolenabled) setting.
+  /// - **MacOS / Linux**: Injects a polyfill that zooms in and out with `ctrl/command` + `-/=`,
+  ///   20% in each step, ranging from 20% to 1000%. Requires `webview:allow-set-webview-zoom` permission
+  ///
+  /// - **Android / iOS**: Unsupported.
   </span><span class="attr">#[must_use]
-  </span><span class="kw">fn </span>content_protected(<span class="self">self</span>, protected: bool) -&gt; <span class="self">Self</span>;
+  </span><span class="kw">pub fn </span>zoom_hotkeys_enabled(<span class="kw-2">mut </span><span class="self">self</span>, enabled: bool) -&gt; <span class="self">Self </span>{
+    <span class="self">self</span>.zoom_hotkeys_enabled = enabled;
+    <span class="self">self
+  </span>}
 
-  <span class="doccomment">/// Sets the window icon.
-  </span><span class="kw">fn </span>icon(<span class="self">self</span>, icon: Icon) -&gt; <span class="kw">crate</span>::Result&lt;<span class="self">Self</span>&gt;;
-
-  <span class="doccomment">/// Sets whether or not the window icon should be added to the taskbar.
+  <span class="doccomment">/// Whether browser extensions can be installed for the webview process
+  ///
+  /// ## Platform-specific:
+  ///
+  /// - **Windows**: Enables the WebView2 environment's [`AreBrowserExtensionsEnabled`](https://learn.microsoft.com/en-us/microsoft-edge/webview2/reference/winrt/microsoft_web_webview2_core/corewebview2environmentoptions?view=webview2-winrt-1.0.2739.15#arebrowserextensionsenabled)
+  /// - **MacOS / Linux / iOS / Android** - Unsupported.
   </span><span class="attr">#[must_use]
-  </span><span class="kw">fn </span>skip_taskbar(<span class="self">self</span>, skip: bool) -&gt; <span class="self">Self</span>;
-
-  <span class="doccomment">/// Sets a parent to the window to be created.
-  ///
-  /// A child window has the WS_CHILD style and is confined to the client area of its parent window.
-  ///
-  /// For more information, see &lt;https://docs.microsoft.com/en-us/windows/win32/winmsg/window-features#child-windows&gt;
-  </span><span class="attr">#[cfg(windows)]
-  #[must_use]
-  </span><span class="kw">fn </span>parent_window(<span class="self">self</span>, parent: HWND) -&gt; <span class="self">Self</span>;
-
-  <span class="doccomment">/// Sets a parent to the window to be created.
-  ///
-  /// A child window has the WS_CHILD style and is confined to the client area of its parent window.
-  ///
-  /// For more information, see &lt;https://docs.microsoft.com/en-us/windows/win32/winmsg/window-features#child-windows&gt;
-  </span><span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
-  #[must_use]
-  </span><span class="kw">fn </span>parent_window(<span class="self">self</span>, parent: <span class="kw-2">*mut </span>std::ffi::c_void) -&gt; <span class="self">Self</span>;
-
-  <span class="doccomment">/// Set an owner to the window to be created.
-  ///
-  /// From MSDN:
-  /// - An owned window is always above its owner in the z-order.
-  /// - The system automatically destroys an owned window when its owner is destroyed.
-  /// - An owned window is hidden when its owner is minimized.
-  ///
-  /// For more information, see &lt;https://docs.microsoft.com/en-us/windows/win32/winmsg/window-features#owned-windows&gt;
-  </span><span class="attr">#[cfg(windows)]
-  #[must_use]
-  </span><span class="kw">fn </span>owner_window(<span class="self">self</span>, owner: HWND) -&gt; <span class="self">Self</span>;
-
-  <span class="doccomment">/// Hide the titlebar. Titlebar buttons will still be visible.
-  </span><span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
-  #[must_use]
-  </span><span class="kw">fn </span>title_bar_style(<span class="self">self</span>, style: TitleBarStyle) -&gt; <span class="self">Self</span>;
-
-  <span class="doccomment">/// Hide the window title.
-  </span><span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
-  #[must_use]
-  </span><span class="kw">fn </span>hidden_title(<span class="self">self</span>, hidden: bool) -&gt; <span class="self">Self</span>;
-
-  <span class="doccomment">/// Defines the window [tabbing identifier] for macOS.
-  ///
-  /// Windows with matching tabbing identifiers will be grouped together.
-  /// If the tabbing identifier is not set, automatic tabbing will be disabled.
-  ///
-  /// [tabbing identifier]: &lt;https://developer.apple.com/documentation/appkit/nswindow/1644704-tabbingidentifier&gt;
-  </span><span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
-  #[must_use]
-  </span><span class="kw">fn </span>tabbing_identifier(<span class="self">self</span>, identifier: <span class="kw-2">&amp;</span>str) -&gt; <span class="self">Self</span>;
-
-  <span class="doccomment">/// Forces a theme or uses the system settings if None was provided.
-  </span><span class="kw">fn </span>theme(<span class="self">self</span>, theme: <span class="prelude-ty">Option</span>&lt;Theme&gt;) -&gt; <span class="self">Self</span>;
-
-  <span class="doccomment">/// Whether the icon was set or not.
-  </span><span class="kw">fn </span>has_icon(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool;
-
-  <span class="doccomment">/// Gets the window menu.
-  </span><span class="kw">fn </span>get_menu(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Menu&gt;;
+  </span><span class="kw">pub fn </span>browser_extensions_enabled(<span class="kw-2">mut </span><span class="self">self</span>, enabled: bool) -&gt; <span class="self">Self </span>{
+    <span class="self">self</span>.browser_extensions_enabled = enabled;
+    <span class="self">self
+  </span>}
 }
 
 <span class="doccomment">/// IPC handler.
-</span><span class="kw">pub type </span>WebviewIpcHandler&lt;T, R&gt; = Box&lt;<span class="kw">dyn </span>Fn(DetachedWindow&lt;T, R&gt;, String) + Send&gt;;
+</span><span class="kw">pub type </span>WebviewIpcHandler&lt;T, R&gt; = Box&lt;<span class="kw">dyn </span>Fn(DetachedWebview&lt;T, R&gt;, Request&lt;String&gt;) + Send&gt;;
 </code></pre></div></section></main></body></html>

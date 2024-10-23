@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["BORDERLESS_RESIZE_INSET"],"enum":["BadIcon","CursorIcon","Fullscreen","Theme","UserAttentionType"],"struct":["Icon","Window","WindowAttributes","WindowBuilder","WindowId"]};
+window.SIDEBAR_ITEMS = {"enum":["BadIcon","CursorIcon","Fullscreen","ProgressState","ResizeDirection","Theme","UserAttentionType"],"struct":["Icon","ProgressBarState","Window","WindowAttributes","WindowBuilder","WindowId","WindowSizeConstraints"]};

@@ -1,0 +1,51 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Types that can be sent Objective-C messages."><title>Message in objc2 - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="objc2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-118b08c4c78b968e.js"></script><script defer src="sidebar-items.js"></script><script defer src="../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc trait"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../objc2/index.html">objc2</a><span class="version">0.5.2</span></h2></div><h2 class="location"><a href="#">Message</a></h2><div class="sidebar-elems"><section><h3><a href="#object-safety">Object Safety</a></h3><h3><a href="#implementors">Implementors</a></h3></section><h2><a href="index.html">In crate objc2</a></h2></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Trait <a href="index.html">objc2</a>::<wbr><a class="trait" href="#">Message</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../src/objc2/top_level_traits.rs.html#83">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><code>pub unsafe trait Message: <a class="trait" href="encode/trait.RefEncode.html" title="trait objc2::encode::RefEncode">RefEncode</a> { }</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Types that can be sent Objective-C messages.</p>
+<p>Implementing this provides <a href="runtime/trait.MessageReceiver.html" title="trait objc2::runtime::MessageReceiver"><code>MessageReceiver</code></a> implementations for common
+pointer types and references to the type, which allows using them as the
+receiver (first argument) in the <a href="macro.msg_send.html" title="macro objc2::msg_send"><code>msg_send!</code></a> macro.</p>
+<p>This trait also allows the object to be used in <a href="rc/struct.Retained.html" title="struct objc2::rc::Retained"><code>Retained</code></a>.</p>
+<p>This is a subtrait of <a href="encode/trait.RefEncode.html" title="trait objc2::encode::RefEncode"><code>RefEncode</code></a>, meaning the type must also implement
+that, almost always with <a href="encode/trait.RefEncode.html#associatedconstant.ENCODING_REF" title="associated constant objc2::encode::RefEncode::ENCODING_REF"><code>RefEncode::ENCODING_REF</code></a> being
+<a href="encode/enum.Encoding.html#variant.Object" title="variant objc2::encode::Encoding::Object"><code>Encoding::Object</code></a>.</p>
+<p>This can be implemented for unsized (<code>!Sized</code>) types, but the intention is
+not to support dynamically sized types like slices, only <code>extern type</code>s
+(which is currently unstable).</p>
+<h2 id="drop-interaction"><a class="doc-anchor" href="#drop-interaction">§</a><code>Drop</code> interaction</h2>
+<p>If the inner type implements <a href="https://doc.rust-lang.org/1.82.0/core/ops/drop/trait.Drop.html" title="trait core::ops::drop::Drop"><code>Drop</code></a>, that implementation will very
+likely not be called, since there is no way to ensure that the Objective-C
+runtime will do so. If you need to run some code when the object is
+destroyed, implement the <code>dealloc</code> method instead.</p>
+<p>The <a href="macro.declare_class.html" title="macro objc2::declare_class"><code>declare_class!</code></a> macro does this for you, but the <a href="macro.extern_class.html" title="macro objc2::extern_class"><code>extern_class!</code></a>
+macro fundamentally cannot.</p>
+<h2 id="safety"><a class="doc-anchor" href="#safety">§</a>Safety</h2>
+<p>The type must represent an Objective-C object, meaning it:</p>
+<ul>
+<li>Must be valid to reinterpret as <a href="runtime/struct.AnyObject.html" title="struct objc2::runtime::AnyObject"><code>AnyObject</code></a>.</li>
+<li>Must be able to be the receiver of an Objective-C message sent with
+<a href="https://developer.apple.com/documentation/objectivec/1456712-objc_msgsend"><code>objc_msgSend</code></a> or similar.</li>
+<li>Must respond to the standard memory management <code>retain</code>, <code>release</code> and
+<code>autorelease</code> messages.</li>
+<li>Must support weak references. (In the future we should probably make a
+new trait for this, for example <code>NSTextView</code> only supports weak
+references on macOS 10.12 or above).</li>
+</ul>
+<h2 id="example"><a class="doc-anchor" href="#example">§</a>Example</h2>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::runtime::NSObject;
+<span class="kw">use </span>objc2::{Encoding, Message, RefEncode};
+
+<span class="attr">#[repr(C)]
+</span><span class="kw">struct </span>MyObject {
+    <span class="comment">// This has the exact same layout as `NSObject`
+    </span>inner: NSObject
+}
+
+<span class="kw">unsafe impl </span>RefEncode <span class="kw">for </span>MyObject {
+    <span class="kw">const </span>ENCODING_REF: Encoding = Encoding::Object;
+}
+
+<span class="kw">unsafe impl </span>Message <span class="kw">for </span>MyObject {}
+
+<span class="comment">// `*mut MyObject` and other pointer/reference types to the object can
+// now be used in `msg_send!`
+//
+// And `Retained&lt;MyObject&gt;` can now be constructed.</span></code></pre></div>
+</div></details><h2 id="object-safety" class="section-header">Object Safety<a href="#object-safety" class="anchor">§</a></h2><div class="object-safety-info">This trait is <b>not</b> <a href="https://doc.rust-lang.org/1.82.0/reference/items/traits.html#object-safety">object safe</a>.</div><h2 id="implementors" class="section-header">Implementors<a href="#implementors" class="anchor">§</a></h2><div id="implementors-list"><section id="impl-Message-for-Exception" class="impl"><a class="src rightside" href="../src/objc2/exception.rs.html#56">source</a><a href="#impl-Message-for-Exception" class="anchor">§</a><h3 class="code-header">impl <a class="trait" href="trait.Message.html" title="trait objc2::Message">Message</a> for <a class="struct" href="exception/struct.Exception.html" title="struct objc2::exception::Exception">Exception</a></h3></section><section id="impl-Message-for-AnyObject" class="impl"><a class="src rightside" href="../src/objc2/runtime/mod.rs.html#1198">source</a><a href="#impl-Message-for-AnyObject" class="anchor">§</a><h3 class="code-header">impl <a class="trait" href="trait.Message.html" title="trait objc2::Message">Message</a> for <a class="struct" href="runtime/struct.AnyObject.html" title="struct objc2::runtime::AnyObject">AnyObject</a></h3></section><section id="impl-Message-for-NSObject" class="impl"><a class="src rightside" href="../src/objc2/runtime/nsobject.rs.html#28-40">source</a><a href="#impl-Message-for-NSObject" class="anchor">§</a><h3 class="code-header">impl <a class="trait" href="trait.Message.html" title="trait objc2::Message">Message</a> for <a class="struct" href="runtime/struct.NSObject.html" title="struct objc2::runtime::NSObject">NSObject</a></h3></section><section id="impl-Message-for-ProtocolObject%3CP%3E" class="impl"><a class="src rightside" href="../src/objc2/runtime/protocol_object.rs.html#82">source</a><a href="#impl-Message-for-ProtocolObject%3CP%3E" class="anchor">§</a><h3 class="code-header">impl&lt;P: ?<a class="trait" href="https://doc.rust-lang.org/1.82.0/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a>&gt; <a class="trait" href="trait.Message.html" title="trait objc2::Message">Message</a> for <a class="struct" href="runtime/struct.ProtocolObject.html" title="struct objc2::runtime::ProtocolObject">ProtocolObject</a>&lt;P&gt;</h3></section></div><script src="../trait.impl/objc2/top_level_traits/trait.Message.js" async></script></section></div></main></body></html>

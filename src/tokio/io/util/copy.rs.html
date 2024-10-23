@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.37.0/src/io/util/copy.rs`."><title>copy.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="tokio" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../../tokio/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.41.0/src/io/util/copy.rs`."><title>copy.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="tokio" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -290,12 +288,17 @@
 <a href="#288" id="288">288</a>
 <a href="#289" id="289">289</a>
 <a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::io::{AsyncRead, AsyncWrite, ReadBuf};
 
 <span class="kw">use </span>std::future::Future;
 <span class="kw">use </span>std::io;
 <span class="kw">use </span>std::pin::Pin;
-<span class="kw">use </span>std::task::{Context, Poll};
+<span class="kw">use </span>std::task::{ready, Context, Poll};
 
 <span class="attr">#[derive(Debug)]
 </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">struct </span>CopyBuffer {
@@ -308,14 +311,14 @@
 }
 
 <span class="kw">impl </span>CopyBuffer {
-    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>new() -&gt; <span class="self">Self </span>{
+    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>new(buf_size: usize) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             read_done: <span class="bool-val">false</span>,
             need_flush: <span class="bool-val">false</span>,
             pos: <span class="number">0</span>,
             cap: <span class="number">0</span>,
             amt: <span class="number">0</span>,
-            buf: <span class="macro">vec!</span>[<span class="number">0</span>; <span class="kw">super</span>::DEFAULT_BUF_SIZE].into_boxed_slice(),
+            buf: <span class="macro">vec!</span>[<span class="number">0</span>; buf_size].into_boxed_slice(),
         }
     }
 
@@ -388,12 +391,9 @@
         </span><span class="comment">// Keep track of task budget
         </span><span class="kw">let </span>coop = <span class="macro">ready!</span>(<span class="kw">crate</span>::runtime::coop::poll_proceed(cx));
         <span class="kw">loop </span>{
-            <span class="comment">// If our buffer is empty, then we need to read some data to
-            // continue.
-            </span><span class="kw">if </span><span class="self">self</span>.pos == <span class="self">self</span>.cap &amp;&amp; !<span class="self">self</span>.read_done {
-                <span class="self">self</span>.pos = <span class="number">0</span>;
-                <span class="self">self</span>.cap = <span class="number">0</span>;
-
+            <span class="comment">// If there is some space left in our buffer, then we try to read some
+            // data to continue, thus maximizing the chances of a large write.
+            </span><span class="kw">if </span><span class="self">self</span>.cap &lt; <span class="self">self</span>.buf.len() &amp;&amp; !<span class="self">self</span>.read_done {
                 <span class="kw">match </span><span class="self">self</span>.poll_fill_buf(cx, reader.as_mut()) {
                     Poll::Ready(<span class="prelude-val">Ok</span>(())) =&gt; {
                         <span class="attr">#[cfg(any(
@@ -423,25 +423,29 @@
                         <span class="kw">return </span>Poll::Ready(<span class="prelude-val">Err</span>(err));
                     }
                     Poll::Pending =&gt; {
-                        <span class="comment">// Try flushing when the reader has no progress to avoid deadlock
-                        // when the reader depends on buffered writer.
-                        </span><span class="kw">if </span><span class="self">self</span>.need_flush {
-                            <span class="macro">ready!</span>(writer.as_mut().poll_flush(cx))<span class="question-mark">?</span>;
-                            <span class="attr">#[cfg(any(
-                                feature = <span class="string">"fs"</span>,
-                                feature = <span class="string">"io-std"</span>,
-                                feature = <span class="string">"net"</span>,
-                                feature = <span class="string">"process"</span>,
-                                feature = <span class="string">"rt"</span>,
-                                feature = <span class="string">"signal"</span>,
-                                feature = <span class="string">"sync"</span>,
-                                feature = <span class="string">"time"</span>,
-                            ))]
-                            </span>coop.made_progress();
-                            <span class="self">self</span>.need_flush = <span class="bool-val">false</span>;
-                        }
+                        <span class="comment">// Ignore pending reads when our buffer is not empty, because
+                        // we can try to write data immediately.
+                        </span><span class="kw">if </span><span class="self">self</span>.pos == <span class="self">self</span>.cap {
+                            <span class="comment">// Try flushing when the reader has no progress to avoid deadlock
+                            // when the reader depends on buffered writer.
+                            </span><span class="kw">if </span><span class="self">self</span>.need_flush {
+                                <span class="macro">ready!</span>(writer.as_mut().poll_flush(cx))<span class="question-mark">?</span>;
+                                <span class="attr">#[cfg(any(
+                                    feature = <span class="string">"fs"</span>,
+                                    feature = <span class="string">"io-std"</span>,
+                                    feature = <span class="string">"net"</span>,
+                                    feature = <span class="string">"process"</span>,
+                                    feature = <span class="string">"rt"</span>,
+                                    feature = <span class="string">"signal"</span>,
+                                    feature = <span class="string">"sync"</span>,
+                                    feature = <span class="string">"time"</span>,
+                                ))]
+                                </span>coop.made_progress();
+                                <span class="self">self</span>.need_flush = <span class="bool-val">false</span>;
+                            }
 
-                        <span class="kw">return </span>Poll::Pending;
+                            <span class="kw">return </span>Poll::Pending;
+                        }
                     }
                 }
             }
@@ -480,9 +484,13 @@
                 <span class="string">"writer returned length larger than input slice"
             </span>);
 
+            <span class="comment">// All data has been written, the buffer can be considered empty again
+            </span><span class="self">self</span>.pos = <span class="number">0</span>;
+            <span class="self">self</span>.cap = <span class="number">0</span>;
+
             <span class="comment">// If we've written all the data and we've seen EOF, flush out the
             // data and finish the transfer.
-            </span><span class="kw">if </span><span class="self">self</span>.pos == <span class="self">self</span>.cap &amp;&amp; <span class="self">self</span>.read_done {
+            </span><span class="kw">if </span><span class="self">self</span>.read_done {
                 <span class="macro">ready!</span>(writer.as_mut().poll_flush(cx))<span class="question-mark">?</span>;
                 <span class="attr">#[cfg(any(
                     feature = <span class="string">"fs"</span>,
@@ -561,7 +569,7 @@
         Copy {
             reader,
             writer,
-            buf: CopyBuffer::new()
+            buf: CopyBuffer::new(<span class="kw">super</span>::DEFAULT_BUF_SIZE)
         }.<span class="kw">await
     </span>}
 }

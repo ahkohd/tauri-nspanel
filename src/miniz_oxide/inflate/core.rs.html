@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/miniz_oxide-0.7.2/src/inflate/core.rs`."><title>core.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="miniz_oxide" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../miniz_oxide/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/miniz_oxide-0.8.0/src/inflate/core.rs`."><title>core.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="miniz_oxide" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2038,6 +2036,20 @@
 <a href="#2036" id="2036">2036</a>
 <a href="#2037" id="2037">2037</a>
 <a href="#2038" id="2038">2038</a>
+<a href="#2039" id="2039">2039</a>
+<a href="#2040" id="2040">2040</a>
+<a href="#2041" id="2041">2041</a>
+<a href="#2042" id="2042">2042</a>
+<a href="#2043" id="2043">2043</a>
+<a href="#2044" id="2044">2044</a>
+<a href="#2045" id="2045">2045</a>
+<a href="#2046" id="2046">2046</a>
+<a href="#2047" id="2047">2047</a>
+<a href="#2048" id="2048">2048</a>
+<a href="#2049" id="2049">2049</a>
+<a href="#2050" id="2050">2050</a>
+<a href="#2051" id="2051">2051</a>
+<a href="#2052" id="2052">2052</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Streaming decompression functionality.
 
 </span><span class="kw">use super</span>::<span class="kw-2">*</span>;
@@ -2351,20 +2363,20 @@
 }
 
 <span class="kw">impl </span>State {
-    <span class="kw">fn </span>is_failure(<span class="self">self</span>) -&gt; bool {
-        <span class="kw">match </span><span class="self">self </span>{
-            BlockTypeUnexpected =&gt; <span class="bool-val">true</span>,
-            BadCodeSizeSum =&gt; <span class="bool-val">true</span>,
-            BadDistOrLiteralTableLength =&gt; <span class="bool-val">true</span>,
-            BadTotalSymbols =&gt; <span class="bool-val">true</span>,
-            BadZlibHeader =&gt; <span class="bool-val">true</span>,
-            DistanceOutOfBounds =&gt; <span class="bool-val">true</span>,
-            BadRawLength =&gt; <span class="bool-val">true</span>,
-            BadCodeSizeDistPrevLookup =&gt; <span class="bool-val">true</span>,
-            InvalidLitlen =&gt; <span class="bool-val">true</span>,
-            InvalidDist =&gt; <span class="bool-val">true</span>,
-            <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
-        }
+    <span class="kw">const fn </span>is_failure(<span class="self">self</span>) -&gt; bool {
+        <span class="macro">matches!</span>(
+            <span class="self">self</span>,
+            BlockTypeUnexpected
+                | BadCodeSizeSum
+                | BadDistOrLiteralTableLength
+                | BadTotalSymbols
+                | BadZlibHeader
+                | DistanceOutOfBounds
+                | BadRawLength
+                | BadCodeSizeDistPrevLookup
+                | InvalidLitlen
+                | InvalidDist
+        )
     }
 
     <span class="attr">#[inline]
@@ -2485,7 +2497,7 @@
 ///
 /// See https://tools.ietf.org/html/rfc1950
 </span><span class="attr">#[inline]
-</span><span class="kw">fn </span>validate_zlib_header(cmf: u32, flg: u32, flags: u32, mask: usize) -&gt; Action {
+</span><span class="kw">const fn </span>validate_zlib_header(cmf: u32, flg: u32, flags: u32, mask: usize) -&gt; Action {
     <span class="kw">let </span><span class="kw-2">mut </span>failed =
     <span class="comment">// cmf + flg should be divisible by 31.
         </span>(((cmf * <span class="number">256</span>) + flg) % <span class="number">31 </span>!= <span class="number">0</span>) ||
@@ -2665,15 +2677,15 @@
     <span class="comment">// Clippy gives a false positive warning here due to the closure.
     // Read enough bytes from the input iterator to cover the number of bits we want.
     </span><span class="kw">while </span>l.num_bits &lt; amount {
-        <span class="kw">match </span>read_byte(in_iter, flags, |byte| {
+        <span class="kw">let </span>action = read_byte(in_iter, flags, |byte| {
             l.bit_buf |= BitBuffer::from(byte) &lt;&lt; l.num_bits;
             l.num_bits += <span class="number">8</span>;
             Action::None
-        }) {
-            Action::None =&gt; (),
-            <span class="comment">// If there are not enough bytes in the input iterator, return and signal that we need
-            // more.
-            </span>action =&gt; <span class="kw">return </span>action,
+        });
+
+        <span class="comment">// If there are not enough bytes in the input iterator, return and signal that we need more.
+        </span><span class="kw">if </span>!<span class="macro">matches!</span>(action, Action::None) {
+            <span class="kw">return </span>action;
         }
     }
 
@@ -2693,7 +2705,7 @@
 }
 
 <span class="attr">#[inline]
-</span><span class="kw">fn </span>end_of_input(flags: u32) -&gt; Action {
+</span><span class="kw">const fn </span>end_of_input(flags: u32) -&gt; Action {
     Action::End(<span class="kw">if </span>flags &amp; TINFL_FLAG_HAS_MORE_INPUT != <span class="number">0 </span>{
         TINFLStatus::NeedsMoreInput
     } <span class="kw">else </span>{
@@ -2718,17 +2730,31 @@
     memset(<span class="kw-2">&amp;mut </span>r.tables[DIST_TABLE].code_size[<span class="number">0</span>..<span class="number">32</span>], <span class="number">5</span>);
 }
 
-<span class="kw">static </span>REVERSED_BITS_LOOKUP: [u32; <span class="number">1024</span>] = {
-    <span class="kw">let </span><span class="kw-2">mut </span>table = [<span class="number">0</span>; <span class="number">1024</span>];
+<span class="attr">#[cfg(feature = <span class="string">"rustc-dep-of-std"</span>)]
+</span><span class="kw">fn </span>reverse_bits(n: u32) -&gt; u32 {
+    <span class="comment">// Lookup is not used when building as part of std to avoid wasting space
+    // for lookup table in every rust binary
+    // as it's only used for backtraces in the cold path
+    // - see #152
+    </span>n.reverse_bits()
+}
 
-    <span class="kw">let </span><span class="kw-2">mut </span>i = <span class="number">0</span>;
-    <span class="kw">while </span>i &lt; <span class="number">1024 </span>{
-        table[i] = (i <span class="kw">as </span>u32).reverse_bits();
-        i += <span class="number">1</span>;
-    }
+<span class="attr">#[cfg(not(feature = <span class="string">"rustc-dep-of-std"</span>))]
+</span><span class="kw">fn </span>reverse_bits(n: u32) -&gt; u32 {
+    <span class="kw">static </span>REVERSED_BITS_LOOKUP: [u32; <span class="number">512</span>] = {
+        <span class="kw">let </span><span class="kw-2">mut </span>table = [<span class="number">0</span>; <span class="number">512</span>];
 
-    table
-};
+        <span class="kw">let </span><span class="kw-2">mut </span>i = <span class="number">0</span>;
+        <span class="kw">while </span>i &lt; <span class="number">512 </span>{
+            table[i] = (i <span class="kw">as </span>u32).reverse_bits();
+            i += <span class="number">1</span>;
+        }
+
+        table
+    };
+
+    REVERSED_BITS_LOOKUP[n <span class="kw">as </span>usize]
+}
 
 <span class="kw">fn </span>init_tree(r: <span class="kw-2">&amp;mut </span>DecompressorOxide, l: <span class="kw-2">&amp;mut </span>LocalVars) -&gt; <span class="prelude-ty">Option</span>&lt;Action&gt; {
     <span class="kw">loop </span>{
@@ -2774,26 +2800,26 @@
 
         <span class="kw">let </span><span class="kw-2">mut </span>tree_next = -<span class="number">1</span>;
         <span class="kw">for </span>symbol_index <span class="kw">in </span><span class="number">0</span>..table_size {
-            <span class="kw">let </span><span class="kw-2">mut </span>rev_code = <span class="number">0</span>;
             <span class="kw">let </span>code_size = table.code_size[symbol_index];
             <span class="kw">if </span>code_size == <span class="number">0 </span>|| usize::from(code_size) &gt;= next_code.len() {
                 <span class="kw">continue</span>;
             }
 
-            <span class="kw">let </span><span class="kw-2">mut </span>cur_code = next_code[code_size <span class="kw">as </span>usize];
+            <span class="kw">let </span>cur_code = next_code[code_size <span class="kw">as </span>usize];
             next_code[code_size <span class="kw">as </span>usize] += <span class="number">1</span>;
 
             <span class="kw">let </span>n = cur_code &amp; (u32::MAX &gt;&gt; (<span class="number">32 </span>- code_size));
 
-            <span class="kw">let </span><span class="kw-2">mut </span>rev_code = <span class="kw">if </span>n &lt; <span class="number">1024 </span>{
-                REVERSED_BITS_LOOKUP[n <span class="kw">as </span>usize] &gt;&gt; (<span class="number">32 </span>- code_size)
+            <span class="kw">let </span><span class="kw-2">mut </span>rev_code = <span class="kw">if </span>n &lt; <span class="number">512 </span>{
+                <span class="comment">// Using a lookup table
+                // for a small speedup here,
+                // Seems to only really make a difference on very short
+                // inputs however.
+                // 512 seems to be around a sweet spot.
+                </span>reverse_bits(n)
             } <span class="kw">else </span>{
-                <span class="kw">for _ in </span><span class="number">0</span>..code_size {
-                    rev_code = (rev_code &lt;&lt; <span class="number">1</span>) | (cur_code &amp; <span class="number">1</span>);
-                    cur_code &gt;&gt;= <span class="number">1</span>;
-                }
-                rev_code
-            };
+                n.reverse_bits()
+            } &gt;&gt; (<span class="number">32 </span>- code_size);
 
             <span class="kw">if </span>code_size &lt;= FAST_LOOKUP_BITS {
                 <span class="kw">let </span>k = (i16::from(code_size) &lt;&lt; <span class="number">9</span>) | symbol_index <span class="kw">as </span>i16;

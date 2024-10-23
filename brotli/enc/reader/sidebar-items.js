@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["AllocatedStackMemory","CompressorReader","CompressorReaderCustomAlloc","CompressorReaderCustomIo","IntoIoReader","IoReaderWrapper","IoWriterWrapper","StackAllocator","StandardAlloc"],"trait":["Allocator","SliceWrapper","SliceWrapperMut"]};
+window.SIDEBAR_ITEMS = {"struct":["CompressorReader","CompressorReaderCustomAlloc","CompressorReaderCustomIo","IntoIoReader","IoReaderWrapper","IoWriterWrapper","StandardAlloc"]};

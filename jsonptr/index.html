@@ -1,0 +1,103 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="jsonptr - JSON Pointers for Rust"><title>jsonptr - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="jsonptr" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../jsonptr/index.html">jsonptr</a><span class="version">0.4.7</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li></ul></section></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">jsonptr</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../src/jsonptr/lib.rs.html#1-24">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="jsonptr---json-pointers-for-rust"><a class="doc-anchor" href="#jsonptr---json-pointers-for-rust">§</a>jsonptr - JSON Pointers for Rust</h2>
+<p><a href="https://github.com/chanced/jsonptr"><img alt="github" src="https://img.shields.io/badge/github-chanced/jsonptr-8da0cb?style=for-the-badge&labelColor=777&logo=github" height="21"></a>
+<a href="https://crates.io/crates/jsonptr"><img alt="crates.io" src="https://img.shields.io/crates/v/jsonptr.svg?style=for-the-badge&color=fc8d62&logo=rust" height="21"></a>
+<a href="https://docs.rs/jsonptr"><img alt="docs.rs" src="https://img.shields.io/badge/docs.rs-jsonptr-f0f0f0?style=for-the-badge&labelColor=777&logo=docs.rs" height="21"></a>
+<a href="https://github.com/chanced/jsonptr/actions?query=branch%3Amain"><img alt="build status" src="https://img.shields.io/github/actions/workflow/status/chanced/jsonptr/rust.yml?branch=main&style=for-the-badge" height="21"></a></p>
+<p>Data structures and logic for resolving, assigning, and deleting by JSON Pointers (<a href="https://datatracker.ietf.org/doc/html/rfc6901">RFC
+6901</a>).</p>
+<h3 id="usage"><a class="doc-anchor" href="#usage">§</a>Usage</h3>
+<p>JSON Pointers can be created either with a slice of strings or directly from a properly encoded string representing a JSON Pointer.</p>
+<h4 id="resolve-values"><a class="doc-anchor" href="#resolve-values">§</a>Resolve values</h4><h5 id="pointerresolve"><a class="doc-anchor" href="#pointerresolve">§</a><code>Pointer::resolve</code></h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>jsonptr::Pointer;
+<span class="kw">use </span>serde_json::json;
+
+<span class="kw">let </span><span class="kw-2">mut </span>data = <span class="macro">json!</span>({<span class="string">"foo"</span>: { <span class="string">"bar"</span>: <span class="string">"baz" </span>}});
+<span class="kw">let </span>ptr = Pointer::new([<span class="string">"foo"</span>, <span class="string">"bar"</span>]);
+<span class="kw">let </span>bar = ptr.resolve(<span class="kw-2">&amp;</span>data).unwrap();
+<span class="macro">assert_eq!</span>(bar, <span class="string">"baz"</span>);</code></pre></div>
+<h5 id="resolveresolve"><a class="doc-anchor" href="#resolveresolve">§</a><code>Resolve::resolve</code></h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>jsonptr::{Pointer, Resolve};
+<span class="kw">use </span>serde_json::json;
+
+<span class="kw">let </span><span class="kw-2">mut </span>data = <span class="macro">json!</span>({ <span class="string">"foo"</span>: { <span class="string">"bar"</span>: <span class="string">"baz" </span>}});
+<span class="kw">let </span>ptr = Pointer::new([<span class="string">"foo"</span>, <span class="string">"bar"</span>]);
+<span class="kw">let </span>bar = data.resolve(<span class="kw-2">&amp;</span>ptr).unwrap();
+<span class="macro">assert_eq!</span>(bar, <span class="string">"baz"</span>);
+</code></pre></div>
+<h5 id="resolvemutresolve_mut"><a class="doc-anchor" href="#resolvemutresolve_mut">§</a><code>ResolveMut::resolve_mut</code></h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>jsonptr::{Pointer, ResolveMut};
+<span class="kw">use </span>serde_json::json;
+
+<span class="kw">let </span>ptr = Pointer::try_from(<span class="string">"/foo/bar"</span>).unwrap();
+<span class="kw">let </span><span class="kw-2">mut </span>data = <span class="macro">json!</span>({ <span class="string">"foo"</span>: { <span class="string">"bar"</span>: <span class="string">"baz" </span>}});
+<span class="kw">let </span><span class="kw-2">mut </span>bar = data.resolve_mut(<span class="kw-2">&amp;</span>ptr).unwrap();
+<span class="macro">assert_eq!</span>(bar, <span class="string">"baz"</span>);</code></pre></div>
+<h4 id="assign"><a class="doc-anchor" href="#assign">§</a>Assign</h4><h5 id="pointerassign"><a class="doc-anchor" href="#pointerassign">§</a><code>Pointer::assign</code></h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>jsonptr::Pointer;
+<span class="kw">use </span>serde_json::json;
+
+<span class="kw">let </span>ptr = Pointer::try_from(<span class="string">"/foo/bar"</span>).unwrap();
+<span class="kw">let </span><span class="kw-2">mut </span>data = <span class="macro">json!</span>({});
+<span class="kw">let </span>_previous = ptr.assign(<span class="kw-2">&amp;mut </span>data, <span class="string">"qux"</span>).unwrap();
+<span class="macro">assert_eq!</span>(data, <span class="macro">json!</span>({ <span class="string">"foo"</span>: { <span class="string">"bar"</span>: <span class="string">"qux" </span>}}))</code></pre></div>
+<h5 id="assignasign"><a class="doc-anchor" href="#assignasign">§</a><code>Assign::asign</code></h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>jsonptr::{Assign, Pointer};
+<span class="kw">use </span>serde_json::json;
+
+<span class="kw">let </span>ptr = Pointer::try_from(<span class="string">"/foo/bar"</span>).unwrap();
+<span class="kw">let </span><span class="kw-2">mut </span>data = <span class="macro">json!</span>({});
+<span class="kw">let </span>_previous = data.assign(<span class="kw-2">&amp;</span>ptr, <span class="string">"qux"</span>).unwrap();
+<span class="macro">assert_eq!</span>(data, <span class="macro">json!</span>({ <span class="string">"foo"</span>: { <span class="string">"bar"</span>: <span class="string">"qux" </span>}}))</code></pre></div>
+<h4 id="delete"><a class="doc-anchor" href="#delete">§</a>Delete</h4><h5 id="pointerdelete"><a class="doc-anchor" href="#pointerdelete">§</a><code>Pointer::delete</code></h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>jsonptr::Pointer;
+<span class="kw">use </span>serde_json::json;
+
+<span class="kw">let </span><span class="kw-2">mut </span>data = <span class="macro">json!</span>({ <span class="string">"foo"</span>: { <span class="string">"bar"</span>: { <span class="string">"baz"</span>: <span class="string">"qux" </span>} } });
+<span class="kw">let </span>ptr = Pointer::new(<span class="kw-2">&amp;</span>[<span class="string">"foo"</span>, <span class="string">"bar"</span>, <span class="string">"baz"</span>]);
+<span class="macro">assert_eq!</span>(ptr.delete(<span class="kw-2">&amp;mut </span>data), <span class="prelude-val">Some</span>(<span class="string">"qux"</span>.into()));
+<span class="macro">assert_eq!</span>(data, <span class="macro">json!</span>({ <span class="string">"foo"</span>: { <span class="string">"bar"</span>: {} } }));
+
+<span class="comment">// unresolved pointers return None
+</span><span class="kw">let </span><span class="kw-2">mut </span>data = <span class="macro">json!</span>({});
+<span class="macro">assert_eq!</span>(ptr.delete(<span class="kw-2">&amp;mut </span>data), <span class="prelude-val">None</span>);</code></pre></div>
+<h5 id="deletedelete"><a class="doc-anchor" href="#deletedelete">§</a><code>Delete::delete</code></h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>jsonptr::{Pointer, Delete};
+<span class="kw">use </span>serde_json::json;
+
+<span class="kw">let </span><span class="kw-2">mut </span>data = <span class="macro">json!</span>({ <span class="string">"foo"</span>: { <span class="string">"bar"</span>: { <span class="string">"baz"</span>: <span class="string">"qux" </span>} } });
+<span class="kw">let </span>ptr = Pointer::new([<span class="string">"foo"</span>, <span class="string">"bar"</span>, <span class="string">"baz"</span>]);
+<span class="macro">assert_eq!</span>(ptr.delete(<span class="kw-2">&amp;mut </span>data), <span class="prelude-val">Some</span>(<span class="string">"qux"</span>.into()));
+<span class="macro">assert_eq!</span>(data, <span class="macro">json!</span>({ <span class="string">"foo"</span>: { <span class="string">"bar"</span>: {} } }));
+
+<span class="comment">// replacing a root pointer replaces data with `Value::Null`
+</span><span class="kw">let </span>ptr = Pointer::default();
+<span class="kw">let </span>deleted = <span class="macro">json!</span>({ <span class="string">"foo"</span>: { <span class="string">"bar"</span>: {} } });
+<span class="macro">assert_eq!</span>(data.delete(<span class="kw-2">&amp;</span>ptr), <span class="prelude-val">Some</span>(deleted));
+<span class="macro">assert!</span>(data.is_null());</code></pre></div>
+<h3 id="feature-flags"><a class="doc-anchor" href="#feature-flags">§</a>Feature Flags</h3><div><table><thead><tr><th style="text-align: center">Flag</th><th>Enables</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>"std"</code></td><td>implements <code>std::error::Error</code> for errors</td></tr>
+<tr><td style="text-align: center"><code>"url"</code></td><td><code>TryFrom&lt;url::Url&gt;</code> for <a href="struct.Pointer.html" title="struct jsonptr::Pointer"><code>Pointer</code></a></td></tr>
+<tr><td style="text-align: center"><code>"uniresid"</code></td><td><code>TryFrom&lt;uniresid::Uri&gt;</code> + <code>TryFrom&lt;uniresid::AbsoluteUri&gt;</code> for <a href="struct.Pointer.html" title="struct jsonptr::Pointer"><code>Pointer</code></a></td></tr>
+<tr><td style="text-align: center"><code>"fluent-uri"</code></td><td><code>TryFrom&lt;fluent_uri::Uri&lt;&amp;str&gt;&gt;</code> + <code>TryFrom&lt;fluent_uri::Uri&lt;String&gt;&gt;</code> + <code>TryFrom&lt;fluent_uri::Uri&lt;&amp;mut [u8]&gt;&gt;</code> for <a href="struct.Pointer.html" title="struct jsonptr::Pointer"><code>Pointer</code></a></td></tr>
+</tbody></table>
+</div><h3 id="contributions--issues"><a class="doc-anchor" href="#contributions--issues">§</a>Contributions / Issues</h3>
+<p>Contributions and feedback are always welcome and appreciated.</p>
+<p>If you find an issue, please open a ticket or a pull request.</p>
+<h3 id="license"><a class="doc-anchor" href="#license">§</a>License</h3>
+<p>MIT or Apache 2.0.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code></code></pre></div>
+</div></details><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="mod" href="prelude/index.html" title="mod jsonptr::prelude">prelude</a></div><div class="desc docblock-short">Exposes the traits <code>Assign</code>, <code>Delete</code>, <code>Resolve</code>, <code>ResolveMut</code></div></li></ul><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.Assignment.html" title="struct jsonptr::Assignment">Assignment</a></div><div class="desc docblock-short">The data structure returned from a successful call to <code>assign</code>.</div></li><li><div class="item-name"><a class="struct" href="struct.NotFoundError.html" title="struct jsonptr::NotFoundError">NotFound<wbr>Error</a></div><div class="desc docblock-short">NotFoundError indicates that a Pointer was not found in the data.</div></li><li><div class="item-name"><a class="struct" href="struct.NotUtf8Error.html" title="struct jsonptr::NotUtf8Error">NotUtf8<wbr>Error</a></div><div class="desc docblock-short">Pointer was not in UTF-8 format.</div></li><li><div class="item-name"><a class="struct" href="struct.OutOfBoundsError.html" title="struct jsonptr::OutOfBoundsError">OutOf<wbr>Bounds<wbr>Error</a></div><div class="desc docblock-short">Indicates that the <code>Pointer</code> contains an index of an array that is out of
+bounds.</div></li><li><div class="item-name"><a class="struct" href="struct.ParseError.html" title="struct jsonptr::ParseError">Parse<wbr>Error</a></div><div class="desc docblock-short">ParseError represents an that an error occurred when parsing an index.</div></li><li><div class="item-name"><a class="struct" href="struct.Pointer.html" title="struct jsonptr::Pointer">Pointer</a></div><div class="desc docblock-short">A JSON Pointer is a string containing a sequence of zero or more reference
+tokens, each prefixed by a ‘/’ character.</div></li><li><div class="item-name"><a class="struct" href="struct.ReplaceTokenError.html" title="struct jsonptr::ReplaceTokenError">Replace<wbr>Token<wbr>Error</a></div><div class="desc docblock-short">Returned from <code>Pointer::replace_token</code> when the provided index is out of
+bounds.</div></li><li><div class="item-name"><a class="struct" href="struct.Token.html" title="struct jsonptr::Token">Token</a></div><div class="desc docblock-short">A <code>Token</code> is a segment of a JSON Pointer, seperated by ‘/’ (%x2F). It can
+represent a key in a JSON object or an index in a JSON array.</div></li><li><div class="item-name"><a class="struct" href="struct.Tokens.html" title="struct jsonptr::Tokens">Tokens</a></div><div class="desc docblock-short">An iterator over the tokens in a Pointer.</div></li><li><div class="item-name"><a class="struct" href="struct.UnresolvableError.html" title="struct jsonptr::UnresolvableError">Unresolvable<wbr>Error</a></div><div class="desc docblock-short">Represents an error that occurs when attempting to resolve a <code>Pointer</code> that
+encounters a leaf node (i.e. a scalar / null value) which is not the root
+of the <code>Pointer</code>.</div></li></ul><h2 id="enums" class="section-header">Enums<a href="#enums" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="enum" href="enum.Error.html" title="enum jsonptr::Error">Error</a></div><div class="desc docblock-short">An enum representing possible errors that can occur when resolving or
+mutating by a JSON Pointer.</div></li><li><div class="item-name"><a class="enum" href="enum.IndexError.html" title="enum jsonptr::IndexError">Index<wbr>Error</a></div><div class="desc docblock-short">Indicates an error occurred while parsing a <code>usize</code> (<code>ParseError</code>) or the
+parsed value was out of bounds for the targeted array.</div></li><li><div class="item-name"><a class="enum" href="enum.MalformedPointerError.html" title="enum jsonptr::MalformedPointerError">Malformed<wbr>Pointer<wbr>Error</a></div><div class="desc docblock-short">Indicates that a Pointer was malformed.</div></li><li><div class="item-name"><a class="enum" href="enum.MaybePointer.html" title="enum jsonptr::MaybePointer">Maybe<wbr>Pointer</a></div><div class="desc docblock-short">Helper type for deserialization. Either a valid <a href="struct.Pointer.html" title="struct jsonptr::Pointer"><code>Pointer</code></a> or a string and
+the parsing error</div></li></ul><h2 id="traits" class="section-header">Traits<a href="#traits" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="trait" href="trait.Assign.html" title="trait jsonptr::Assign">Assign</a></div><div class="desc docblock-short">Assign is implemented by types which can internally assign a
+<code>serde_json::Value</code> by a JSON Pointer.</div></li><li><div class="item-name"><a class="trait" href="trait.Delete.html" title="trait jsonptr::Delete">Delete</a></div><div class="desc docblock-short">Delete is implemented by types which can internally remove a value based on
+a JSON Pointer</div></li><li><div class="item-name"><a class="trait" href="trait.Resolve.html" title="trait jsonptr::Resolve">Resolve</a></div><div class="desc docblock-short">Resolve is implemented by types which can resolve a reference to a
+<code>serde_json::Value</code> from the path in a JSON Pointer.</div></li><li><div class="item-name"><a class="trait" href="trait.ResolveMut.html" title="trait jsonptr::ResolveMut">Resolve<wbr>Mut</a></div><div class="desc docblock-short">ResolveMut is implemented by types which can resolve a mutable reference to
+a <code>serde_json::Value</code> from the path in a JSON Pointer.</div></li></ul></section></div></main></body></html>

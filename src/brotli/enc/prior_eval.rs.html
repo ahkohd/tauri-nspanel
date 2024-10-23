@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-3.5.0/src/enc/prior_eval.rs`."><title>prior_eval.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../brotli/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-7.0.0/src/enc/prior_eval.rs`."><title>prior_eval.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -854,53 +852,19 @@
 <a href="#852" id="852">852</a>
 <a href="#853" id="853">853</a>
 <a href="#854" id="854">854</a>
-<a href="#855" id="855">855</a>
-<a href="#856" id="856">856</a>
-<a href="#857" id="857">857</a>
-<a href="#858" id="858">858</a>
-<a href="#859" id="859">859</a>
-<a href="#860" id="860">860</a>
-<a href="#861" id="861">861</a>
-<a href="#862" id="862">862</a>
-<a href="#863" id="863">863</a>
-<a href="#864" id="864">864</a>
-<a href="#865" id="865">865</a>
-<a href="#866" id="866">866</a>
-<a href="#867" id="867">867</a>
-<a href="#868" id="868">868</a>
-<a href="#869" id="869">869</a>
-<a href="#870" id="870">870</a>
-<a href="#871" id="871">871</a>
-<a href="#872" id="872">872</a>
-<a href="#873" id="873">873</a>
-<a href="#874" id="874">874</a>
-<a href="#875" id="875">875</a>
-<a href="#876" id="876">876</a>
-<a href="#877" id="877">877</a>
-<a href="#878" id="878">878</a>
-<a href="#879" id="879">879</a>
-<a href="#880" id="880">880</a>
-<a href="#881" id="881">881</a>
-<a href="#882" id="882">882</a>
-<a href="#883" id="883">883</a>
-<a href="#884" id="884">884</a>
-<a href="#885" id="885">885</a>
-<a href="#886" id="886">886</a>
-<a href="#887" id="887">887</a>
-<a href="#888" id="888">888</a>
-<a href="#889" id="889">889</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::alloc;
-<span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::alloc::{Allocator, SliceWrapper, SliceWrapperMut};
-<span class="kw">use </span><span class="kw">super</span>::backward_references::BrotliEncoderParams;
-<span class="kw">use </span><span class="kw">super</span>::find_stride;
-<span class="kw">use </span><span class="kw">super</span>::input_pair::{InputPair, InputReference, InputReferenceMut};
-<span class="kw">use </span><span class="kw">super</span>::interface;
-<span class="kw">use </span><span class="kw">super</span>::ir_interpret::{push_base, IRInterpreter};
-<span class="kw">use </span><span class="kw">super</span>::util::{floatX, FastLog2u16};
-<span class="kw">use super</span>::{s16, v8};
-<span class="kw">use </span>core;
+</pre></div><pre class="rust"><code><span class="kw">use </span>core;
+<span class="kw">use </span>core::cmp::min;
 <span class="attr">#[cfg(feature = <span class="string">"simd"</span>)]
 </span><span class="kw">use </span>core::simd::prelude::SimdPartialOrd;
+
+<span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::alloc;
+<span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::alloc::{Allocator, SliceWrapper, SliceWrapperMut};
+<span class="kw">use </span><span class="kw">super</span>::backward_references::BrotliEncoderParams;
+<span class="kw">use </span><span class="kw">super</span>::input_pair::{InputPair, InputReference, InputReferenceMut};
+<span class="kw">use </span><span class="kw">super</span>::ir_interpret::{push_base, IRInterpreter};
+<span class="kw">use </span><span class="kw">super</span>::util::{floatX, FastLog2u16};
+<span class="kw">use super</span>::{find_stride, interface, s16, v8};
+<span class="kw">use </span><span class="kw">crate</span>::enc::combined_alloc::{alloc_default, alloc_if};
 
 <span class="comment">// the high nibble, followed by the low nibbles
 </span><span class="kw">pub const </span>CONTEXT_MAP_PRIOR_SIZE: usize = <span class="number">256 </span>* <span class="number">17</span>;
@@ -998,7 +962,7 @@
     high_nibble: <span class="prelude-ty">Option</span>&lt;u8&gt;,
 ) -&gt; usize {
     <span class="kw">if let </span><span class="prelude-val">Some</span>(nibble) = high_nibble {
-        <span class="number">1 </span>+ <span class="number">2 </span>* (actual_context | ((stride_byte <span class="kw">as </span>usize &amp; <span class="number">0xf</span>) &lt;&lt; <span class="number">8</span>) | ((nibble <span class="kw">as </span>usize) &lt;&lt; <span class="number">12</span>))
+        <span class="number">1 </span>+ <span class="number">2 </span>* (actual_context | ((stride_byte <span class="kw">as </span>usize &amp; <span class="number">0x0f</span>) &lt;&lt; <span class="number">8</span>) | ((nibble <span class="kw">as </span>usize) &lt;&lt; <span class="number">12</span>))
     } <span class="kw">else </span>{
         <span class="number">2 </span>* (actual_context | ((stride_byte <span class="kw">as </span>usize) &lt;&lt; <span class="number">8</span>))
     }
@@ -1323,57 +1287,21 @@ impl Prior for Stride8Prior {
             block_type: <span class="number">0</span>,
             cur_stride: <span class="number">1</span>,
             local_byte_offset: <span class="number">0</span>,
-            _nop: &lt;Alloc <span class="kw">as </span>Allocator&lt;u32&gt;&gt;::AllocatedMemory::default(),
-            cm_priors: <span class="kw">if </span>do_alloc {
-                &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::alloc_cell(alloc, CONTEXT_MAP_PRIOR_SIZE)
-            } <span class="kw">else </span>{
-                &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()
-            },
-            slow_cm_priors: <span class="kw">if </span>do_alloc {
-                &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::alloc_cell(alloc, CONTEXT_MAP_PRIOR_SIZE)
-            } <span class="kw">else </span>{
-                &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()
-            },
-            fast_cm_priors: <span class="kw">if </span>do_alloc {
-                &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::alloc_cell(alloc, CONTEXT_MAP_PRIOR_SIZE)
-            } <span class="kw">else </span>{
-                &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()
-            },
+            _nop: alloc_default::&lt;u32, Alloc&gt;(),
+            cm_priors: alloc_if::&lt;s16, <span class="kw">_</span>&gt;(do_alloc, alloc, CONTEXT_MAP_PRIOR_SIZE),
+            slow_cm_priors: alloc_if::&lt;s16, <span class="kw">_</span>&gt;(do_alloc, alloc, CONTEXT_MAP_PRIOR_SIZE),
+            fast_cm_priors: alloc_if::&lt;s16, <span class="kw">_</span>&gt;(do_alloc, alloc, CONTEXT_MAP_PRIOR_SIZE),
             stride_priors: [
-                <span class="kw">if </span>do_alloc {
-                    &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::alloc_cell(alloc, STRIDE_PRIOR_SIZE)
-                } <span class="kw">else </span>{
-                    &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()
-                },
-                <span class="kw">if </span>do_alloc {
-                    &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::alloc_cell(alloc, STRIDE_PRIOR_SIZE)
-                } <span class="kw">else </span>{
-                    &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()
-                },
-                <span class="kw">if </span>do_alloc {
-                    &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::alloc_cell(alloc, STRIDE_PRIOR_SIZE)
-                } <span class="kw">else </span>{
-                    &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()
-                },
-                <span class="kw">if </span>do_alloc {
-                    &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::alloc_cell(alloc, STRIDE_PRIOR_SIZE)
-                } <span class="kw">else </span>{
-                    &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()
-                },
+                alloc_if::&lt;s16, <span class="kw">_</span>&gt;(do_alloc, alloc, STRIDE_PRIOR_SIZE),
+                alloc_if::&lt;s16, <span class="kw">_</span>&gt;(do_alloc, alloc, STRIDE_PRIOR_SIZE),
+                alloc_if::&lt;s16, <span class="kw">_</span>&gt;(do_alloc, alloc, STRIDE_PRIOR_SIZE),
+                alloc_if::&lt;s16, <span class="kw">_</span>&gt;(do_alloc, alloc, STRIDE_PRIOR_SIZE),
                 <span class="comment">/*if do_alloc {m16x16.alloc_cell(STRIDE_PRIOR_SIZE)} else {
                 Alloc16x16::AllocatedMemory::default()},*/
             </span>],
-            adv_priors: <span class="kw">if </span>do_alloc {
-                &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::alloc_cell(alloc, ADV_PRIOR_SIZE)
-            } <span class="kw">else </span>{
-                &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()
-            },
+            adv_priors: alloc_if::&lt;s16, <span class="kw">_</span>&gt;(do_alloc, alloc, ADV_PRIOR_SIZE),
             _stride_pyramid_leaves: stride,
-            score: <span class="kw">if </span>do_alloc {
-                &lt;Alloc <span class="kw">as </span>Allocator&lt;v8&gt;&gt;::alloc_cell(alloc, <span class="number">8192</span>)
-            } <span class="kw">else </span>{
-                &lt;Alloc <span class="kw">as </span>Allocator&lt;v8&gt;&gt;::AllocatedMemory::default()
-            },
+            score: alloc_if::&lt;v8, <span class="kw">_</span>&gt;(do_alloc, alloc, <span class="number">8192</span>),
             cm_speed,
             stride_speed,
         };
@@ -1405,30 +1333,30 @@ impl Prior for Stride8Prior {
             <span class="kw">let </span>stride4_score = score[WhichPrior::STRIDE4 <span class="kw">as </span>usize];
             <span class="comment">//let stride8_score = score[WhichPrior::STRIDE8] * 1.125 + 16.0;
             </span><span class="kw">let </span>stride8_score = stride4_score + <span class="number">1.0</span>; <span class="comment">// FIXME: never lowest -- ignore stride 8
-            </span><span class="kw">let </span>stride_score = core::cmp::min(
+            </span><span class="kw">let </span>stride_score = min(
                 stride1_score <span class="kw">as </span>u64,
-                core::cmp::min(
+                min(
                     stride2_score <span class="kw">as </span>u64,
-                    core::cmp::min(
+                    min(
                         stride3_score <span class="kw">as </span>u64,
-                        core::cmp::min(stride4_score <span class="kw">as </span>u64, stride8_score <span class="kw">as </span>u64),
+                        min(stride4_score <span class="kw">as </span>u64, stride8_score <span class="kw">as </span>u64),
                     ),
                 ),
             );
 
             <span class="kw">let </span>adv_score = score[WhichPrior::ADV <span class="kw">as </span>usize];
-            <span class="kw">if </span>adv_score + epsilon &lt; stride_score <span class="kw">as </span>floatX
+            <span class="kw">if </span>adv_score + epsilon &lt; (stride_score <span class="kw">as </span>floatX)
                 &amp;&amp; adv_score + epsilon &lt; cm_score
                 &amp;&amp; adv_score + epsilon &lt; slow_cm_score
                 &amp;&amp; adv_score + epsilon &lt; fast_cm_score
             {
                 bitmask[i] = <span class="number">1</span>;
-            } <span class="kw">else if </span>slow_cm_score + epsilon &lt; stride_score <span class="kw">as </span>floatX
+            } <span class="kw">else if </span>slow_cm_score + epsilon &lt; (stride_score <span class="kw">as </span>floatX)
                 &amp;&amp; slow_cm_score + epsilon &lt; cm_score
                 &amp;&amp; slow_cm_score + epsilon &lt; fast_cm_score
             {
                 bitmask[i] = <span class="number">2</span>;
-            } <span class="kw">else if </span>fast_cm_score + epsilon &lt; stride_score <span class="kw">as </span>floatX
+            } <span class="kw">else if </span>fast_cm_score + epsilon &lt; (stride_score <span class="kw">as </span>floatX)
                 &amp;&amp; fast_cm_score + epsilon &lt; cm_score
             {
                 bitmask[i] = <span class="number">3</span>;
@@ -1475,7 +1403,7 @@ impl Prior for Stride8Prior {
         &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::free_cell(alloc, core::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.stride_priors[<span class="number">1</span>]));
         &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::free_cell(alloc, core::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.stride_priors[<span class="number">2</span>]));
         &lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::free_cell(alloc, core::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.stride_priors[<span class="number">3</span>]));
-        <span class="comment">//&lt;Alloc as Allocator&lt;s16&gt;&gt;::free_cell(alloc, core::mem::replace(&amp;mut self.stride_priors[4], &lt;Alloc as Allocator&lt;s16&gt;&gt;::AllocatedMemory::default()));
+        <span class="comment">//&lt;Alloc as Allocator&lt;s16&gt;&gt;::free_cell(alloc, core::mem::replace(&amp;mut self.stride_priors[4], alloc_default::&lt;s16, Alloc&gt;()));
         </span>&lt;Alloc <span class="kw">as </span>Allocator&lt;s16&gt;&gt;::free_cell(alloc, core::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.adv_priors));
     }
 
@@ -1747,7 +1675,7 @@ impl Prior for Stride8Prior {
         <span class="self">self</span>.context_map.literal_context_map.slice()
     }
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>prediction_mode(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ::interface::LiteralPredictionModeNibble {
+    </span><span class="kw">fn </span>prediction_mode(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">crate</span>::interface::LiteralPredictionModeNibble {
         <span class="self">self</span>.context_map.literal_prediction_mode()
     }
     <span class="attr">#[inline]

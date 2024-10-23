@@ -1,0 +1,147 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Define methods on an external class."><title>extern_methods in objc2 - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="objc2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-118b08c4c78b968e.js"></script><script defer src="sidebar-items.js"></script><script defer src="../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc macro"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../objc2/index.html">objc2</a><span class="version">0.5.2</span></h2></div><div class="sidebar-elems"></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Macro <a href="index.html">objc2</a>::<wbr><a class="macro" href="#">extern_methods</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../src/objc2/macros/extern_methods.rs.html#186-224">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><span class="macro">macro_rules!</span> extern_methods {
+    (
+        $(
+            $(<span class="attr">#[<span class="macro-nonterminal">$impl_m</span>:meta]</span>)*
+            <span class="kw">unsafe impl</span>&lt;$(<span class="macro-nonterminal">$t</span>:ident $(: <span class="macro-nonterminal">$b</span>:ident $(+ <span class="macro-nonterminal">$rest</span>:ident)<span class="kw-2">*</span>)<span class="question-mark">?</span>),* $(,)<span class="question-mark">?</span>&gt; <span class="macro-nonterminal">$</span><span class="kw">type</span>:<span class="macro-nonterminal">ty </span>{
+                $(<span class="macro-nonterminal">$methods</span>:tt)*
+            }
+        )+
+    ) =&gt; { ... };
+    (
+        $(
+            $(<span class="attr">#[<span class="macro-nonterminal">$impl_m</span>:meta]</span>)*
+            <span class="kw">unsafe impl </span><span class="macro-nonterminal">$</span><span class="kw">type</span>:<span class="macro-nonterminal">ty </span>{
+                $(<span class="macro-nonterminal">$methods</span>:tt)*
+            }
+        )+
+    ) =&gt; { ... };
+}</pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Define methods on an external class.</p>
+<p>This is a convenience macro to generate associated functions and methods
+that call <a href="macro.msg_send.html" title="macro objc2::msg_send"><code>msg_send!</code></a> or <a href="macro.msg_send_id.html" title="macro objc2::msg_send_id"><code>msg_send_id!</code></a> appropriately.</p>
+<h2 id="specification"><a class="doc-anchor" href="#specification">§</a>Specification</h2>
+<p>Within the <code>impl</code> block you can define two types of functions without
+bodies; <a href="https://doc.rust-lang.org/reference/items/associated-items.html#methods">“associated functions”</a> and <a href="https://doc.rust-lang.org/reference/items/associated-items.html#methods">“methods”</a>. These are then mapped to
+the Objective-C equivalents “class methods” and “instance methods”, and an
+appropriate body is created for you. In particular, if you use <code>self</code> or
+the special name <code>this</code> (or <code>_this</code>), your method will assumed to be an
+instance method, and if you don’t it will be assumed to be a class method.</p>
+<p>The desired selector can be specified using the <code>#[method(my:selector:)]</code>
+or <code>#[method_id(my:selector:)]</code> attribute. The <code>method</code> attribute maps to
+a call to <a href="macro.msg_send.html" title="macro objc2::msg_send"><code>msg_send!</code></a>, while the <code>method_id</code> maps to <a href="macro.msg_send_id.html" title="macro objc2::msg_send_id"><code>msg_send_id!</code></a>.</p>
+<p>If the attribute ends with “_”, as in <code>#[method(my:error:_)]</code> or
+<code>#[method_id(my:error:_)]</code>, the method is assumed to take an
+implicit <code>NSError**</code> parameter, which is automatically converted to a
+<a href="https://doc.rust-lang.org/1.82.0/core/result/enum.Result.html" title="enum core::result::Result"><code>Result</code></a>. See the error section in <a href="macro.msg_send.html" title="macro objc2::msg_send"><code>msg_send!</code></a> and <a href="macro.msg_send_id.html" title="macro objc2::msg_send_id"><code>msg_send_id!</code></a>
+for details.</p>
+<p>If you use <code>objc2_foundation::MainThreadMarker</code> as a parameter type, the
+macro will ignore it, allowing you to neatly specify “this method must be
+run on the main thread”. Note that due to type-system limitations, this is
+currently a textual match on <code>MainThreadMarker</code>; so you must use that
+exact identifier.</p>
+<p>Putting other attributes on the method such as <code>cfg</code>, <code>allow</code>, <code>doc</code>,
+<code>deprecated</code> and so on is supported. However, note that <code>cfg_attr</code> may not
+work correctly, due to implementation difficulty - if you have a concrete
+use-case, please <a href="https://github.com/madsmtm/objc2/issues/new">open an issue</a>, then we can discuss it.</p>
+<p>The name of the function will be used for the resulting function that the
+user will use to access the functionality, but is otherwise not used by
+the macro.</p>
+<p>If you specify a function/method with a body, the macro will output it
+unchanged.</p>
+<h2 id="safety"><a class="doc-anchor" href="#safety">§</a>Safety</h2>
+<p>You must ensure that any methods you declare with the <code>#[method(...)]</code>
+attribute upholds the safety guarantees decribed in the <a href="macro.msg_send.html" title="macro objc2::msg_send"><code>msg_send!</code></a>
+macro, <em>or</em> are marked <code>unsafe</code>.</p>
+<p>Likewise, you must ensure that any methods you declare with the
+<code>#[method_id(...)]</code> attribute upholds the safety guarantees decribed in
+the <a href="macro.msg_send_id.html" title="macro objc2::msg_send_id"><code>msg_send_id!</code></a> macro, <em>or</em> are marked <code>unsafe</code>.</p>
+<h2 id="examples"><a class="doc-anchor" href="#examples">§</a>Examples</h2>
+<p>Let’s create a quick custom class:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::encode::{Encode, Encoding};
+<span class="kw">use </span>objc2::ffi::NSUInteger;
+<span class="kw">use </span>objc2::rc::{Allocated, Retained};
+<span class="kw">use </span>objc2::runtime::NSObject;
+<span class="kw">use </span>objc2::{declare_class, extern_methods, mutability, ClassType, DeclaredClass};
+
+<span class="comment">// Shim
+</span><span class="kw">type </span>NSError = NSObject;
+
+<span class="macro">declare_class!</span>(
+    <span class="kw">pub struct </span>MyObject;
+
+    <span class="comment">// SAFETY:
+    // - The superclass NSObject does not have any subclassing requirements.
+    // - Interior mutability is a safe default.
+    // - `MyObject` does not implement `Drop`.
+    </span><span class="kw">unsafe impl </span>ClassType <span class="kw">for </span>MyObject {
+        <span class="kw">type </span>Super = NSObject;
+        <span class="kw">type </span>Mutability = mutability::InteriorMutable;
+        <span class="kw">const </span>NAME: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str = <span class="string">"MyObject"</span>;
+    }
+
+    <span class="kw">impl </span>DeclaredClass <span class="kw">for </span>MyObject {}
+
+    <span class="kw">unsafe impl </span>MyObject {
+        <span class="comment">// ... Assume we've implemented all the methods used below
+    </span>}
+);
+
+<span class="macro">extern_methods!</span>(
+    <span class="doccomment">/// Creation methods.
+    </span><span class="kw">unsafe impl </span>MyObject {
+        <span class="attr">#[method_id(new)]
+        </span><span class="kw">pub fn </span>new() -&gt; Retained&lt;<span class="self">Self</span>&gt;;
+
+        <span class="attr">#[method_id(initWithVal:)]
+        </span><span class="comment">// Arbitary self types are not stable, but we can work around it
+        // with the special name `this`.
+        </span><span class="kw">pub fn </span>init(this: Allocated&lt;<span class="self">Self</span>&gt;, val: usize) -&gt; Retained&lt;<span class="self">Self</span>&gt;;
+    }
+
+    <span class="doccomment">/// Instance accessor methods.
+    </span><span class="kw">unsafe impl </span>MyObject {
+        <span class="attr">#[method(foo)]
+        </span><span class="kw">pub fn </span>foo(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; NSUInteger;
+
+        <span class="attr">#[method_id(fooObject)]
+        </span><span class="kw">pub fn </span>foo_object(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Retained&lt;NSObject&gt;;
+
+        <span class="attr">#[method(withError:<span class="kw">_</span>)]
+        </span><span class="comment">// Since the selector specifies "_", the return type is assumed to
+        // be `Result`.
+        </span><span class="kw">pub fn </span>with_error(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), Retained&lt;NSError&gt;&gt;;
+    }
+);</code></pre></div>
+<p>The <code>extern_methods!</code> declaration then becomes:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::{msg_send, msg_send_id};
+
+<span class="doccomment">/// Creation methods.
+</span><span class="kw">impl </span>MyObject {
+    <span class="kw">pub fn </span>new() -&gt; Retained&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">unsafe </span>{ <span class="macro">msg_send_id!</span>[<span class="self">Self</span>::class(), new] }
+    }
+
+    <span class="kw">pub fn </span>init(this: Allocated&lt;<span class="self">Self</span>&gt;, val: usize) -&gt; Retained&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">unsafe </span>{ <span class="macro">msg_send_id!</span>[this, initWithVal: val] }
+    }
+}
+
+<span class="doccomment">/// Instance accessor methods.
+</span><span class="kw">impl </span>MyObject {
+    <span class="kw">pub fn </span>foo(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; NSUInteger {
+        <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="self">self</span>, foo] }
+    }
+
+    <span class="kw">pub fn </span>foo_object(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Retained&lt;NSObject&gt; {
+        <span class="kw">unsafe </span>{ <span class="macro">msg_send_id!</span>[<span class="self">self</span>, fooObject] }
+    }
+
+    <span class="comment">// Since the selector specifies one more argument than we
+    // have, the return type is assumed to be `Result`.
+    </span><span class="kw">pub fn </span>with_error(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), Retained&lt;NSError&gt;&gt; {
+        <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="self">self</span>, withError: <span class="kw">_</span>] }
+    }
+}</code></pre></div>
+<p>See the source code of <code>objc2-foundation</code> for many more examples.</p>
+</div></details></section></div></main></body></html>

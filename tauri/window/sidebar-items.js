@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["MenuEvent","MenuHandle","Monitor","PlatformWebview","Window","WindowBuilder"]};
+window.SIDEBAR_ITEMS = {"enum":["Effect","EffectState","ProgressBarStatus"],"struct":["Color","EffectsBuilder","Monitor","ProgressBarState","Window"]};

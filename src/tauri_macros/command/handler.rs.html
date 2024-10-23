@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-macros-1.4.4/src/command/handler.rs`."><title>handler.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="tauri_macros" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../tauri_macros/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-macros-2.0.2/src/command/handler.rs`."><title>handler.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="tauri_macros" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="icon" href="https://github.com/tauri-apps/tauri/raw/dev/.github/icon.png"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -68,32 +66,64 @@
 <a href="#66" id="66">66</a>
 <a href="#67" id="67">67</a>
 <a href="#68" id="68">68</a>
-</pre></div><pre class="rust"><code><span class="comment">// Copyright 2019-2023 Tauri Programme within The Commons Conservancy
+<a href="#69" id="69">69</a>
+<a href="#70" id="70">70</a>
+<a href="#71" id="71">71</a>
+<a href="#72" id="72">72</a>
+<a href="#73" id="73">73</a>
+<a href="#74" id="74">74</a>
+<a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
+<a href="#80" id="80">80</a>
+<a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
+<a href="#83" id="83">83</a>
+<a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+</pre></div><pre class="rust"><code><span class="comment">// Copyright 2019-2024 Tauri Programme within The Commons Conservancy
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-License-Identifier: MIT
 
 </span><span class="kw">use </span>quote::format_ident;
 <span class="kw">use </span>syn::{
-  parse::{Parse, ParseBuffer},
-  Ident, Path, Token,
+  parse::{Parse, ParseBuffer, ParseStream},
+  Attribute, Ident, Path, Token,
 };
+
+<span class="kw">struct </span>CommandDef {
+  path: Path,
+  attrs: Vec&lt;Attribute&gt;,
+}
+
+<span class="kw">impl </span>Parse <span class="kw">for </span>CommandDef {
+  <span class="kw">fn </span>parse(input: ParseStream) -&gt; syn::Result&lt;<span class="self">Self</span>&gt; {
+    <span class="kw">let </span>attrs = input.call(Attribute::parse_outer)<span class="question-mark">?</span>;
+    <span class="kw">let </span>path = input.parse()<span class="question-mark">?</span>;
+
+    <span class="prelude-val">Ok</span>(CommandDef { path, attrs })
+  }
+}
 
 <span class="doccomment">/// The items parsed from [`generate_handle!`](crate::generate_handle).
 </span><span class="kw">pub struct </span>Handler {
-  paths: Vec&lt;Path&gt;,
+  command_defs: Vec&lt;CommandDef&gt;,
   commands: Vec&lt;Ident&gt;,
   wrappers: Vec&lt;Path&gt;,
 }
 
 <span class="kw">impl </span>Parse <span class="kw">for </span>Handler {
   <span class="kw">fn </span>parse(input: <span class="kw-2">&amp;</span>ParseBuffer&lt;<span class="lifetime">'_</span>&gt;) -&gt; syn::Result&lt;<span class="self">Self</span>&gt; {
-    <span class="kw">let </span>paths = input.parse_terminated::&lt;Path, <span class="macro">Token!</span>[,]&gt;(Path::parse)<span class="question-mark">?</span>;
+    <span class="kw">let </span>command_defs = input.parse_terminated(CommandDef::parse, <span class="macro">Token!</span>[,])<span class="question-mark">?</span>;
 
     <span class="comment">// parse the command names and wrappers from the passed paths
-    </span><span class="kw">let </span>(commands, wrappers) = paths
+    </span><span class="kw">let </span>(commands, wrappers) = command_defs
       .iter()
-      .map(|path| {
-        <span class="kw">let </span><span class="kw-2">mut </span>wrapper = path.clone();
+      .map(|command_def| {
+        <span class="kw">let </span><span class="kw-2">mut </span>wrapper = command_def.path.clone();
         <span class="kw">let </span>last = <span class="kw">super</span>::path_to_command(<span class="kw-2">&amp;mut </span>wrapper);
 
         <span class="comment">// the name of the actual command function
@@ -107,7 +137,7 @@
       .unzip();
 
     <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
-      paths: paths.into_iter().collect(), <span class="comment">// remove punctuation separators
+      command_defs: command_defs.into_iter().collect(), <span class="comment">// remove punctuation separators
       </span>commands,
       wrappers,
     })
@@ -117,19 +147,23 @@
 <span class="kw">impl </span>From&lt;Handler&gt; <span class="kw">for </span>proc_macro::TokenStream {
   <span class="kw">fn </span>from(
     Handler {
-      paths,
+      command_defs,
       commands,
       wrappers,
     }: Handler,
   ) -&gt; <span class="self">Self </span>{
     <span class="kw">let </span>cmd = <span class="macro">format_ident!</span>(<span class="string">"__tauri_cmd__"</span>);
     <span class="kw">let </span>invoke = <span class="macro">format_ident!</span>(<span class="string">"__tauri_invoke__"</span>);
+    <span class="kw">let </span>(paths, attrs): (Vec&lt;Path&gt;, Vec&lt;Vec&lt;Attribute&gt;&gt;) = command_defs
+      .into_iter()
+      .map(|def| (def.path, def.attrs))
+      .unzip();
     <span class="macro">quote::quote!</span>(<span class="kw">move </span>|#invoke| {
       <span class="kw">let </span>#cmd = #invoke.message.command();
       <span class="kw">match </span>#cmd {
-        #(<span class="macro">stringify!</span>(#commands) =&gt; #<span class="macro">wrappers!</span>(#paths, #invoke),)*
+        #(#(#attrs)* <span class="macro">stringify!</span>(#commands) =&gt; #<span class="macro">wrappers!</span>(#paths, #invoke),)*
         <span class="kw">_ </span>=&gt; {
-          #invoke.resolver.reject(<span class="macro">format!</span>(<span class="string">"command {} not found"</span>, #cmd))
+          <span class="kw">return </span><span class="bool-val">false</span>;
         },
       }
     })

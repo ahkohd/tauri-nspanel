@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["CapabilityFile","PermissionEntry"],"struct":["Capability","CapabilityRemote"]};

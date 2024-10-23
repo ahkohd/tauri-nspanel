@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"attr":["command"],"macro":["generate_context","generate_handler"]};
+window.SIDEBAR_ITEMS = {"attr":["command","mobile_entry_point"],"macro":["do_menu_item","generate_context","generate_handler","include_image"]};

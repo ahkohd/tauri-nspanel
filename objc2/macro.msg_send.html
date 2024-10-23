@@ -1,0 +1,206 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Send a message to an object or class."><title>msg_send in objc2 - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="objc2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-118b08c4c78b968e.js"></script><script defer src="sidebar-items.js"></script><script defer src="../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc macro"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../objc2/index.html">objc2</a><span class="version">0.5.2</span></h2></div><div class="sidebar-elems"></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Macro <a href="index.html">objc2</a>::<wbr><a class="macro" href="#">msg_send</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../src/objc2/macros/mod.rs.html#992-1029">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><span class="macro">macro_rules!</span> msg_send {
+    [<span class="kw">super</span>(<span class="macro-nonterminal">$obj</span>:expr), $(<span class="macro-nonterminal">$selector_and_arguments</span>:tt)+] =&gt; { ... };
+    [<span class="kw">super</span>(<span class="macro-nonterminal">$obj</span>:expr, <span class="macro-nonterminal">$superclass</span>:expr), $(<span class="macro-nonterminal">$selector_and_arguments</span>:tt)+] =&gt; { ... };
+    [<span class="macro-nonterminal">$obj</span>:expr, $(<span class="macro-nonterminal">$selector_and_arguments</span>:tt)+] =&gt; { ... };
+}</pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Send a message to an object or class.</p>
+<p>This is wildly <code>unsafe</code>, even more so than sending messages in
+Objective-C, because this macro can’t inspect header files to see the
+expected types, and because Rust has more safety invariants to uphold.
+Make sure to review the safety section below!</p>
+<p>The recommended way of using this macro is by defining a wrapper function:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">unsafe fn </span>do_something(obj: <span class="kw-2">&amp;</span>NSObject, arg: c_int) -&gt; <span class="kw-2">*const </span>c_char {
+    <span class="macro">msg_send!</span>[obj, doSomething: arg]
+}</code></pre></div>
+<p>This way we are clearly communicating to Rust that: The method
+<code>doSomething:</code> works with a shared reference to the object. It takes a
+C-style signed integer, and returns a pointer to what is probably a
+C-compatible string. Now it’s much, <em>much</em> easier to make a safe
+abstraction around this!</p>
+<p>There exists a variant of this macro, <a href="macro.msg_send_id.html" title="macro objc2::msg_send_id"><code>msg_send_id!</code></a>, which can help
+with upholding certain requirements of methods that return Objective-C’s
+<code>id</code>, or other object pointers. Use that whenever you want to call such a
+method!</p>
+<h2 id="specification"><a class="doc-anchor" href="#specification">§</a>Specification</h2>
+<p>The syntax is somewhat similar to the message syntax in Objective-C,
+except with a comma between arguments. Eliding the comma is possible,
+but it is soft-deprecated, and will be fully deprecated in a future
+release. The deprecation can be tried out with the
+<code>"unstable-msg-send-always-comma"</code> feature flag.</p>
+<p>The first expression, know as the “receiver”, can be any type that
+implements <a href="runtime/trait.MessageReceiver.html" title="trait objc2::runtime::MessageReceiver"><code>MessageReceiver</code></a>, like a reference or a pointer to an
+object. Additionally, it can even be a reference to an <a href="rc/struct.Retained.html" title="struct objc2::rc::Retained"><code>rc::Retained</code></a>
+containing an object.</p>
+<p>The expression can be wrapped in <code>super</code>, with an optional superclass
+as the second argument. If no specific superclass is specified, the
+direct superclass is retrieved from <a href="trait.ClassType.html" title="trait objc2::ClassType"><code>ClassType</code></a>.</p>
+<p>All arguments, as well as the return type, must implement <a href="encode/trait.Encode.html" title="trait objc2::encode::Encode"><code>Encode</code></a> (bar
+the exceptions below).</p>
+<p>If the last argument is the special marker <code>_</code>, the macro will return a
+<code>Result&lt;(), Retained&lt;E&gt;&gt;</code>, see below.</p>
+<p>This macro roughly translates into a call to <a href="macro.sel.html" title="macro objc2::sel"><code>sel!</code></a>, and afterwards a
+fully qualified call to <a href="runtime/trait.MessageReceiver.html#method.send_message" title="method objc2::runtime::MessageReceiver::send_message"><code>MessageReceiver::send_message</code></a>. Note that this
+means that auto-dereferencing of the receiver is not supported, and that
+the receiver is consumed. You may encounter a little trouble with <code>&amp;mut</code>
+references, try refactoring into a separate method or reborrowing the
+reference.</p>
+<p>Variadic arguments are currently not supported.</p>
+<h2 id="bool-handling"><a class="doc-anchor" href="#bool-handling">§</a><code>bool</code> handling</h2>
+<p>Objective-C’s <code>BOOL</code> is slightly different from Rust’s <a href="https://doc.rust-lang.org/1.82.0/std/primitive.bool.html" title="primitive bool"><code>bool</code></a>, and hence
+a conversion step must be performed before using it. This is <em>very</em> easy
+to forget (because it’ll happen to work in <em>most</em> cases), so this macro
+does the conversion step automatically whenever an argument or the return
+type is <code>bool</code>.</p>
+<p>That means that any Objective-C method that take or return <code>BOOL</code> can be
+translated to use <code>bool</code> on the Rust side.</p>
+<p>If you want to handle the conversion explicitly, or the Objective-C method
+expects e.g. a pointer to a <code>BOOL</code>, use <a href="runtime/struct.Bool.html" title="struct objc2::runtime::Bool"><code>runtime::Bool</code></a> instead.</p>
+<h2 id="out-parameters"><a class="doc-anchor" href="#out-parameters">§</a>Out-parameters</h2>
+<p>Parameters like <code>NSString**</code> in Objective-C are passed by “writeback”,
+which means that the callee autoreleases any value that they may write
+into the parameter.</p>
+<p>This macro has support for passing such parameters using the following
+types:</p>
+<ul>
+<li><code>&amp;mut Retained&lt;_&gt;</code></li>
+<li><code>Option&lt;&amp;mut Retained&lt;_&gt;&gt;</code></li>
+<li><code>&amp;mut Option&lt;Retained&lt;_&gt;&gt;</code>,</li>
+<li><code>Option&lt;&amp;mut Option&lt;Retained&lt;_&gt;&gt;&gt;</code></li>
+</ul>
+<p>Beware with the first two, since they will cause undefined behaviour if
+the method overwrites the value with <code>nil</code>.</p>
+<p>See <a href="https://clang.llvm.org/docs/AutomaticReferenceCounting.html#passing-to-an-out-parameter-by-writeback">clang’s documentation</a> for more details.</p>
+<h2 id="errors"><a class="doc-anchor" href="#errors">§</a>Errors</h2>
+<p>The most common place you’ll see out-parameters is as <code>NSError**</code> the last
+parameter, which is used to communicate errors to the caller, see <a href="https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ErrorHandlingCocoa/ErrorHandling/ErrorHandling.html">Error
+Handling Programming Guide For Cocoa</a>.</p>
+<p>Similar to Swift’s <a href="https://developer.apple.com/documentation/swift/about-imported-cocoa-error-parameters">importing of error parameters</a>, this
+macro supports an even more convenient version than the out-parameter
+support, which transforms methods whose last parameter is <code>NSError**</code> and
+returns <code>BOOL</code>, into the Rust equivalent, the <a href="https://doc.rust-lang.org/1.82.0/core/result/enum.Result.html" title="enum core::result::Result"><code>Result</code></a> type.</p>
+<p>In particular, if you make the last argument the special marker <code>_</code>, then
+the macro will return a <code>Result&lt;(), Retained&lt;E&gt;&gt;</code> (where you must specify
+<code>E</code> yourself, usually you’d use <code>objc2_foundation::NSError</code>).</p>
+<p>At runtime, we create the temporary error variable for you on the stack
+and send it as the out-parameter to the method. If the method then returns
+<code>NO</code>/<code>false</code> (or in the case of <code>msg_send_id!</code>, <code>NULL</code>), the error
+variable is loaded and returned in <a href="https://doc.rust-lang.org/1.82.0/core/result/enum.Result.html#variant.Err" title="variant core::result::Result::Err"><code>Err</code></a>.</p>
+<p>Do beware that this is only valid on methods that return <code>BOOL</code>, see
+<a href="macro.msg_send_id.html" title="macro objc2::msg_send_id"><code>msg_send_id!</code></a> for methods that return instance types.</p>
+<h2 id="panics"><a class="doc-anchor" href="#panics">§</a>Panics</h2>
+<p>Panics if the <code>"catch-all"</code> feature is enabled and the Objective-C method
+throws an exception. Exceptions may still cause UB until
+<code>extern "C-unwind"</code> is stable, see <a href="https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html">RFC-2945</a>.</p>
+<p>Panics if <code>debug_assertions</code> are enabled and the Objective-C method’s
+encoding does not match the encoding of the given arguments and return.</p>
+<p>And panics if the <code>NSError**</code> handling functionality described above is
+used, and the error object was unexpectedly <code>NULL</code>.</p>
+<h2 id="safety"><a class="doc-anchor" href="#safety">§</a>Safety</h2>
+<p>Similar to defining and calling an <code>extern</code> function in a foreign function
+interface. In particular, you must uphold the following requirements:</p>
+<ol>
+<li>
+<p>The selector corresponds to a valid method that is available on the
+receiver.</p>
+</li>
+<li>
+<p>The argument types match what the receiver excepts for this selector.</p>
+</li>
+<li>
+<p>The return type match what the receiver returns for this selector.</p>
+</li>
+<li>
+<p>The call must not violate Rust’s mutability rules, for example if
+passing an <code>&amp;T</code>, the Objective-C method must not mutate the variable
+(except if the variable is inside <a href="https://doc.rust-lang.org/1.82.0/core/cell/struct.UnsafeCell.html" title="struct core::cell::UnsafeCell"><code>std::cell::UnsafeCell</code></a> or
+derivatives).</p>
+</li>
+<li>
+<p>If the receiver is a raw pointer it must be valid (aligned,
+dereferenceable, initialized and so on). Messages to <code>null</code> pointers
+are allowed (though heavily discouraged), but <em>only</em> if the return type
+itself is a pointer.</p>
+</li>
+<li>
+<p>The method must not (yet) throw an exception.</p>
+</li>
+<li>
+<p>You must uphold any additional safety requirements (explicit and
+implicit) that the method has. For example:</p>
+<ul>
+<li>Methods that take pointers usually require that the pointer is valid,
+and sometimes non-null.</li>
+<li>Sometimes, a method may only be called on the main thread.</li>
+<li>The lifetime of returned pointers usually follows certain rules, and
+may not be valid outside of an <a href="rc/fn.autoreleasepool.html" title="fn objc2::rc::autoreleasepool"><code>autoreleasepool</code></a> (<a href="macro.msg_send_id.html" title="macro objc2::msg_send_id"><code>msg_send_id!</code></a>
+can greatly help with that).</li>
+</ul>
+</li>
+<li>
+<p>Each out-parameter must have the correct nullability, and the method
+must not have any attributes that changes the how it handles memory
+management for these.</p>
+</li>
+<li>
+<p>TODO: Maybe more?</p>
+</li>
+</ol>
+<h2 id="examples"><a class="doc-anchor" href="#examples">§</a>Examples</h2>
+<p>Sending messages to an object.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::msg_send;
+<span class="kw">use </span>objc2::runtime::NSObject;
+
+<span class="kw">let </span>obj: <span class="kw-2">*mut </span>NSObject;
+<span class="kw">let </span>description: <span class="kw-2">*const </span>NSObject = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[obj, description] };
+<span class="comment">// Usually you'd use msg_send_id here ^
+</span><span class="kw">let _</span>: () = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[obj, setArg1: <span class="number">1i32</span>, arg2: <span class="bool-val">true</span>] };
+<span class="kw">let </span>arg1: i32 = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[obj, getArg1] };
+<span class="kw">let </span>arg2: bool = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[obj, getArg2] };</code></pre></div>
+<p>Sending messages to the direct superclass of an object.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::msg_send;
+
+<span class="kw">let </span>obj: <span class="kw-2">&amp;</span>MyObject; <span class="comment">// Some object that implements ClassType
+</span><span class="kw">let _</span>: () = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="kw">super</span>(obj), someMethod] };</code></pre></div>
+<p>Sending messages to a specific superclass of an object.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::msg_send;
+<span class="kw">use </span>objc2::runtime::{AnyClass, NSObject};
+
+<span class="comment">// Since we specify the superclass ourselves, this doesn't need to
+// implement ClassType
+</span><span class="kw">let </span>obj: <span class="kw-2">*mut </span>NSObject;
+<span class="kw">let </span>superclass: <span class="kw-2">&amp;</span>AnyClass;
+<span class="kw">let </span>arg3: u32 = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="kw">super</span>(obj, superclass), getArg3] };</code></pre></div>
+<p>Sending a message with automatic error handling.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::msg_send;
+<span class="kw">use </span>objc2::rc::Retained;
+
+<span class="kw">let </span>obj: <span class="kw-2">&amp;</span>NSBundle;
+<span class="comment">// The `_` tells the macro that the return type should be `Result`.
+</span><span class="kw">let </span>res: <span class="prelude-ty">Result</span>&lt;(), Retained&lt;NSError&gt;&gt; = <span class="kw">unsafe </span>{
+    <span class="macro">msg_send!</span>[obj, preflightAndReturnError: <span class="kw">_</span>]
+};</code></pre></div>
+<p>Sending a message with an out parameter <em>and</em> automatic error handling.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::msg_send;
+<span class="kw">use </span>objc2::rc::Retained;
+
+<span class="kw">let </span>obj: <span class="kw-2">&amp;</span>NSFileManager;
+<span class="kw">let </span>url: <span class="kw-2">&amp;</span>NSURL;
+<span class="kw">let </span><span class="kw-2">mut </span>result_url: <span class="prelude-ty">Option</span>&lt;Retained&lt;NSURL&gt;&gt; = <span class="prelude-val">None</span>;
+<span class="kw">unsafe </span>{
+    <span class="macro">msg_send!</span>[
+        obj,
+        trashItemAtURL: url,
+        resultingItemURL: <span class="prelude-val">Some</span>(<span class="kw-2">&amp;mut </span>result_url),
+        error: <span class="kw">_
+    </span>]<span class="question-mark">?
+</span><span class="comment">//   ^ is possible on error-returning methods, if the return type is specified
+</span>};
+
+<span class="comment">// Use `result_url` here
+</span></code></pre></div>
+</div></details></section></div></main></body></html>

@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["ActivationPolicy","NativeImage"],"trait":["CustomMenuItemExtMacOS","EventLoopExtMacOS","EventLoopWindowTargetExtMacOS","MonitorHandleExtMacOS","WindowBuilderExtMacOS","WindowExtMacOS"]};

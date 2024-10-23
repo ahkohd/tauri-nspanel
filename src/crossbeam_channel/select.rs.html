@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/crossbeam-channel-0.5.12/src/select.rs`."><title>select.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="crossbeam_channel" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../crossbeam_channel/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/crossbeam-channel-0.5.13/src/select.rs`."><title>select.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="crossbeam_channel" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1263,6 +1261,16 @@
 <a href="#1261" id="1261">1261</a>
 <a href="#1262" id="1262">1262</a>
 <a href="#1263" id="1263">1263</a>
+<a href="#1264" id="1264">1264</a>
+<a href="#1265" id="1265">1265</a>
+<a href="#1266" id="1266">1266</a>
+<a href="#1267" id="1267">1267</a>
+<a href="#1268" id="1268">1268</a>
+<a href="#1269" id="1269">1269</a>
+<a href="#1270" id="1270">1270</a>
+<a href="#1271" id="1271">1271</a>
+<a href="#1272" id="1272">1272</a>
+<a href="#1273" id="1273">1273</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Interface to the select mechanism.
 
 </span><span class="kw">use </span>std::fmt;
@@ -1442,6 +1450,7 @@
 </span><span class="kw">fn </span>run_select(
     handles: <span class="kw-2">&amp;mut </span>[(<span class="kw-2">&amp;</span><span class="kw">dyn </span>SelectHandle, usize, <span class="kw-2">*const </span>u8)],
     timeout: Timeout,
+    is_biased: bool,
 ) -&gt; <span class="prelude-ty">Option</span>&lt;(Token, usize, <span class="kw-2">*const </span>u8)&gt; {
     <span class="kw">if </span>handles.is_empty() {
         <span class="comment">// Wait until the timeout and return.
@@ -1458,8 +1467,10 @@
         }
     }
 
-    <span class="comment">// Shuffle the operations for fairness.
-    </span>utils::shuffle(handles);
+    <span class="kw">if </span>!is_biased {
+        <span class="comment">// Shuffle the operations for fairness.
+        </span>utils::shuffle(handles);
+    }
 
     <span class="comment">// Create a token, which serves as a temporary variable that gets initialized in this function
     // and is later used by a call to `channel::read()` or `channel::write()` that completes the
@@ -1590,6 +1601,7 @@
 </span><span class="kw">fn </span>run_ready(
     handles: <span class="kw-2">&amp;mut </span>[(<span class="kw-2">&amp;</span><span class="kw">dyn </span>SelectHandle, usize, <span class="kw-2">*const </span>u8)],
     timeout: Timeout,
+    is_biased: bool,
 ) -&gt; <span class="prelude-ty">Option</span>&lt;usize&gt; {
     <span class="kw">if </span>handles.is_empty() {
         <span class="comment">// Wait until the timeout and return.
@@ -1606,8 +1618,10 @@
         }
     }
 
-    <span class="comment">// Shuffle the operations for fairness.
-    </span>utils::shuffle(handles);
+    <span class="kw">if </span>!is_biased {
+        <span class="comment">// Shuffle the operations for fairness.
+        </span>utils::shuffle(handles);
+    }
 
     <span class="kw">loop </span>{
         <span class="kw">let </span>backoff = Backoff::new();
@@ -1715,8 +1729,9 @@
 </span><span class="attr">#[inline]
 </span><span class="kw">pub fn </span>try_select&lt;<span class="lifetime">'a</span>&gt;(
     handles: <span class="kw-2">&amp;mut </span>[(<span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw">dyn </span>SelectHandle, usize, <span class="kw-2">*const </span>u8)],
+    is_biased: bool,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;SelectedOperation&lt;<span class="lifetime">'a</span>&gt;, TrySelectError&gt; {
-    <span class="kw">match </span>run_select(handles, Timeout::Now) {
+    <span class="kw">match </span>run_select(handles, Timeout::Now, is_biased) {
         <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(TrySelectError),
         <span class="prelude-val">Some</span>((token, index, ptr)) =&gt; <span class="prelude-val">Ok</span>(SelectedOperation {
             token,
@@ -1732,12 +1747,13 @@
 </span><span class="attr">#[inline]
 </span><span class="kw">pub fn </span>select&lt;<span class="lifetime">'a</span>&gt;(
     handles: <span class="kw-2">&amp;mut </span>[(<span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw">dyn </span>SelectHandle, usize, <span class="kw-2">*const </span>u8)],
+    is_biased: bool,
 ) -&gt; SelectedOperation&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">if </span>handles.is_empty() {
         <span class="macro">panic!</span>(<span class="string">"no operations have been added to `Select`"</span>);
     }
 
-    <span class="kw">let </span>(token, index, ptr) = run_select(handles, Timeout::Never).unwrap();
+    <span class="kw">let </span>(token, index, ptr) = run_select(handles, Timeout::Never, is_biased).unwrap();
     SelectedOperation {
         token,
         index,
@@ -1752,10 +1768,11 @@
 </span><span class="kw">pub fn </span>select_timeout&lt;<span class="lifetime">'a</span>&gt;(
     handles: <span class="kw-2">&amp;mut </span>[(<span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw">dyn </span>SelectHandle, usize, <span class="kw-2">*const </span>u8)],
     timeout: Duration,
+    is_biased: bool,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;SelectedOperation&lt;<span class="lifetime">'a</span>&gt;, SelectTimeoutError&gt; {
     <span class="kw">match </span>Instant::now().checked_add(timeout) {
-        <span class="prelude-val">Some</span>(deadline) =&gt; select_deadline(handles, deadline),
-        <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Ok</span>(select(handles)),
+        <span class="prelude-val">Some</span>(deadline) =&gt; select_deadline(handles, deadline, is_biased),
+        <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Ok</span>(select(handles, is_biased)),
     }
 }
 
@@ -1764,8 +1781,9 @@
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>select_deadline&lt;<span class="lifetime">'a</span>&gt;(
     handles: <span class="kw-2">&amp;mut </span>[(<span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw">dyn </span>SelectHandle, usize, <span class="kw-2">*const </span>u8)],
     deadline: Instant,
+    is_biased: bool,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;SelectedOperation&lt;<span class="lifetime">'a</span>&gt;, SelectTimeoutError&gt; {
-    <span class="kw">match </span>run_select(handles, Timeout::At(deadline)) {
+    <span class="kw">match </span>run_select(handles, Timeout::At(deadline), is_biased) {
         <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(SelectTimeoutError),
         <span class="prelude-val">Some</span>((token, index, ptr)) =&gt; <span class="prelude-val">Ok</span>(SelectedOperation {
             token,
@@ -2029,7 +2047,7 @@
     /// }
     /// ```
     </span><span class="kw">pub fn </span>try_select(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;SelectedOperation&lt;<span class="lifetime">'a</span>&gt;, TrySelectError&gt; {
-        try_select(<span class="kw-2">&amp;mut </span><span class="self">self</span>.handles)
+        try_select(<span class="kw-2">&amp;mut </span><span class="self">self</span>.handles, <span class="bool-val">false</span>)
     }
 
     <span class="doccomment">/// Blocks until one of the operations becomes ready and selects it.
@@ -2076,7 +2094,7 @@
     /// }
     /// ```
     </span><span class="kw">pub fn </span>select(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; SelectedOperation&lt;<span class="lifetime">'a</span>&gt; {
-        select(<span class="kw-2">&amp;mut </span><span class="self">self</span>.handles)
+        select(<span class="kw-2">&amp;mut </span><span class="self">self</span>.handles, <span class="bool-val">false</span>)
     }
 
     <span class="doccomment">/// Blocks for a limited time until one of the operations becomes ready and selects it.
@@ -2126,7 +2144,7 @@
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         timeout: Duration,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;SelectedOperation&lt;<span class="lifetime">'a</span>&gt;, SelectTimeoutError&gt; {
-        select_timeout(<span class="kw-2">&amp;mut </span><span class="self">self</span>.handles, timeout)
+        select_timeout(<span class="kw-2">&amp;mut </span><span class="self">self</span>.handles, timeout, <span class="bool-val">false</span>)
     }
 
     <span class="doccomment">/// Blocks until a given deadline, or until one of the operations becomes ready and selects it.
@@ -2178,7 +2196,7 @@
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         deadline: Instant,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;SelectedOperation&lt;<span class="lifetime">'a</span>&gt;, SelectTimeoutError&gt; {
-        select_deadline(<span class="kw-2">&amp;mut </span><span class="self">self</span>.handles, deadline)
+        select_deadline(<span class="kw-2">&amp;mut </span><span class="self">self</span>.handles, deadline, <span class="bool-val">false</span>)
     }
 
     <span class="doccomment">/// Attempts to find a ready operation without blocking.
@@ -2217,7 +2235,7 @@
     /// }
     /// ```
     </span><span class="kw">pub fn </span>try_ready(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;usize, TryReadyError&gt; {
-        <span class="kw">match </span>run_ready(<span class="kw-2">&amp;mut </span><span class="self">self</span>.handles, Timeout::Now) {
+        <span class="kw">match </span>run_ready(<span class="kw-2">&amp;mut </span><span class="self">self</span>.handles, Timeout::Now, <span class="bool-val">false</span>) {
             <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(TryReadyError),
             <span class="prelude-val">Some</span>(index) =&gt; <span class="prelude-val">Ok</span>(index),
         }
@@ -2270,7 +2288,7 @@
             <span class="macro">panic!</span>(<span class="string">"no operations have been added to `Select`"</span>);
         }
 
-        run_ready(<span class="kw-2">&amp;mut </span><span class="self">self</span>.handles, Timeout::Never).unwrap()
+        run_ready(<span class="kw-2">&amp;mut </span><span class="self">self</span>.handles, Timeout::Never, <span class="bool-val">false</span>).unwrap()
     }
 
     <span class="doccomment">/// Blocks for a limited time until one of the operations becomes ready.
@@ -2363,7 +2381,7 @@
     /// }
     /// ```
     </span><span class="kw">pub fn </span>ready_deadline(<span class="kw-2">&amp;mut </span><span class="self">self</span>, deadline: Instant) -&gt; <span class="prelude-ty">Result</span>&lt;usize, ReadyTimeoutError&gt; {
-        <span class="kw">match </span>run_ready(<span class="kw-2">&amp;mut </span><span class="self">self</span>.handles, Timeout::At(deadline)) {
+        <span class="kw">match </span>run_ready(<span class="kw-2">&amp;mut </span><span class="self">self</span>.handles, Timeout::At(deadline), <span class="bool-val">false</span>) {
             <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(ReadyTimeoutError),
             <span class="prelude-val">Some</span>(index) =&gt; <span class="prelude-val">Ok</span>(index),
         }

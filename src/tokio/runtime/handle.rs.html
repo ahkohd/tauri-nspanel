@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.37.0/src/runtime/handle.rs`."><title>handle.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="tokio" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../tokio/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.41.0/src/runtime/handle.rs`."><title>handle.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="tokio" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -632,9 +630,45 @@
 <a href="#630" id="630">630</a>
 <a href="#631" id="631">631</a>
 <a href="#632" id="632">632</a>
+<a href="#633" id="633">633</a>
+<a href="#634" id="634">634</a>
+<a href="#635" id="635">635</a>
+<a href="#636" id="636">636</a>
+<a href="#637" id="637">637</a>
+<a href="#638" id="638">638</a>
+<a href="#639" id="639">639</a>
+<a href="#640" id="640">640</a>
+<a href="#641" id="641">641</a>
+<a href="#642" id="642">642</a>
+<a href="#643" id="643">643</a>
+<a href="#644" id="644">644</a>
+<a href="#645" id="645">645</a>
+<a href="#646" id="646">646</a>
+<a href="#647" id="647">647</a>
+<a href="#648" id="648">648</a>
+<a href="#649" id="649">649</a>
+<a href="#650" id="650">650</a>
+<a href="#651" id="651">651</a>
+<a href="#652" id="652">652</a>
+<a href="#653" id="653">653</a>
+<a href="#654" id="654">654</a>
+<a href="#655" id="655">655</a>
+<a href="#656" id="656">656</a>
+<a href="#657" id="657">657</a>
+<a href="#658" id="658">658</a>
+<a href="#659" id="659">659</a>
+<a href="#660" id="660">660</a>
+<a href="#661" id="661">661</a>
+<a href="#662" id="662">662</a>
+<a href="#663" id="663">663</a>
+<a href="#664" id="664">664</a>
+<a href="#665" id="665">665</a>
+<a href="#666" id="666">666</a>
+<a href="#667" id="667">667</a>
+<a href="#668" id="668">668</a>
 </pre></div><pre class="rust"><code><span class="attr">#[cfg(tokio_unstable)]
 </span><span class="kw">use </span><span class="kw">crate</span>::runtime;
-<span class="kw">use </span><span class="kw">crate</span>::runtime::{context, scheduler, RuntimeFlavor};
+<span class="kw">use </span><span class="kw">crate</span>::runtime::{context, scheduler, RuntimeFlavor, RuntimeMetrics};
 
 <span class="doccomment">/// Handle to the runtime.
 ///
@@ -650,11 +684,13 @@
 }
 
 <span class="kw">use </span><span class="kw">crate</span>::runtime::task::JoinHandle;
+<span class="kw">use </span><span class="kw">crate</span>::runtime::BOX_FUTURE_THRESHOLD;
 <span class="kw">use </span><span class="kw">crate</span>::util::error::{CONTEXT_MISSING_ERROR, THREAD_LOCAL_DESTROYED_ERROR};
+<span class="kw">use </span><span class="kw">crate</span>::util::trace::SpawnMeta;
 
 <span class="kw">use </span>std::future::Future;
 <span class="kw">use </span>std::marker::PhantomData;
-<span class="kw">use </span>std::{error, fmt};
+<span class="kw">use </span>std::{error, fmt, mem};
 
 <span class="doccomment">/// Runtime context guard.
 ///
@@ -822,7 +858,12 @@
         </span>F: Future + Send + <span class="lifetime">'static</span>,
         F::Output: Send + <span class="lifetime">'static</span>,
     {
-        <span class="self">self</span>.spawn_named(future, <span class="prelude-val">None</span>)
+        <span class="kw">let </span>fut_size = mem::size_of::&lt;F&gt;();
+        <span class="kw">if </span>fut_size &gt; BOX_FUTURE_THRESHOLD {
+            <span class="self">self</span>.spawn_named(Box::pin(future), SpawnMeta::new_unnamed(fut_size))
+        } <span class="kw">else </span>{
+            <span class="self">self</span>.spawn_named(future, SpawnMeta::new_unnamed(fut_size))
+        }
     }
 
     <span class="doccomment">/// Runs the provided function on an executor dedicated to blocking
@@ -877,8 +918,8 @@
     /// # Panics
     ///
     /// This function panics if the provided future panics, if called within an
-    /// asynchronous execution context, or if a timer future is executed on a
-    /// runtime that has been shut down.
+    /// asynchronous execution context, or if a timer future is executed on a runtime that has been
+    /// shut down.
     ///
     /// # Examples
     ///
@@ -925,6 +966,16 @@
     /// [`tokio::time`]: crate::time
     </span><span class="attr">#[track_caller]
     </span><span class="kw">pub fn </span>block_on&lt;F: Future&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, future: F) -&gt; F::Output {
+        <span class="kw">let </span>fut_size = mem::size_of::&lt;F&gt;();
+        <span class="kw">if </span>fut_size &gt; BOX_FUTURE_THRESHOLD {
+            <span class="self">self</span>.block_on_inner(Box::pin(future), SpawnMeta::new_unnamed(fut_size))
+        } <span class="kw">else </span>{
+            <span class="self">self</span>.block_on_inner(future, SpawnMeta::new_unnamed(fut_size))
+        }
+    }
+
+    <span class="attr">#[track_caller]
+    </span><span class="kw">fn </span>block_on_inner&lt;F: Future&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, future: F, _meta: SpawnMeta&lt;<span class="lifetime">'_</span>&gt;) -&gt; F::Output {
         <span class="attr">#[cfg(all(
             tokio_unstable,
             tokio_taskdump,
@@ -936,7 +987,7 @@
 
         <span class="attr">#[cfg(all(tokio_unstable, feature = <span class="string">"tracing"</span>))]
         </span><span class="kw">let </span>future =
-            <span class="kw">crate</span>::util::trace::task(future, <span class="string">"block_on"</span>, <span class="prelude-val">None</span>, <span class="kw">super</span>::task::Id::next().as_u64());
+            <span class="kw">crate</span>::util::trace::task(future, <span class="string">"block_on"</span>, _meta, <span class="kw">super</span>::task::Id::next().as_u64());
 
         <span class="comment">// Enter the runtime context. This sets the current driver handles and
         // prevents blocking an existing runtime.
@@ -946,7 +997,7 @@
     }
 
     <span class="attr">#[track_caller]
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>spawn_named&lt;F&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, future: F, _name: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;) -&gt; JoinHandle&lt;F::Output&gt;
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>spawn_named&lt;F&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, future: F, _meta: SpawnMeta&lt;<span class="lifetime">'_</span>&gt;) -&gt; JoinHandle&lt;F::Output&gt;
     <span class="kw">where
         </span>F: Future + Send + <span class="lifetime">'static</span>,
         F::Output: Send + <span class="lifetime">'static</span>,
@@ -961,8 +1012,33 @@
         ))]
         </span><span class="kw">let </span>future = <span class="kw">super</span>::task::trace::Trace::root(future);
         <span class="attr">#[cfg(all(tokio_unstable, feature = <span class="string">"tracing"</span>))]
-        </span><span class="kw">let </span>future = <span class="kw">crate</span>::util::trace::task(future, <span class="string">"task"</span>, _name, id.as_u64());
+        </span><span class="kw">let </span>future = <span class="kw">crate</span>::util::trace::task(future, <span class="string">"task"</span>, _meta, id.as_u64());
         <span class="self">self</span>.inner.spawn(future, id)
+    }
+
+    <span class="attr">#[track_caller]
+    #[allow(dead_code)]
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>spawn_local_named&lt;F&gt;(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        future: F,
+        _meta: SpawnMeta&lt;<span class="lifetime">'_</span>&gt;,
+    ) -&gt; JoinHandle&lt;F::Output&gt;
+    <span class="kw">where
+        </span>F: Future + <span class="lifetime">'static</span>,
+        F::Output: <span class="lifetime">'static</span>,
+    {
+        <span class="kw">let </span>id = <span class="kw">crate</span>::runtime::task::Id::next();
+        <span class="attr">#[cfg(all(
+            tokio_unstable,
+            tokio_taskdump,
+            feature = <span class="string">"rt"</span>,
+            target_os = <span class="string">"linux"</span>,
+            any(target_arch = <span class="string">"aarch64"</span>, target_arch = <span class="string">"x86"</span>, target_arch = <span class="string">"x86_64"</span>)
+        ))]
+        </span><span class="kw">let </span>future = <span class="kw">super</span>::task::trace::Trace::root(future);
+        <span class="attr">#[cfg(all(tokio_unstable, feature = <span class="string">"tracing"</span>))]
+        </span><span class="kw">let </span>future = <span class="kw">crate</span>::util::trace::task(future, <span class="string">"task"</span>, _meta, id.as_u64());
+        <span class="self">self</span>.inner.spawn_local(future, id)
     }
 
     <span class="doccomment">/// Returns the flavor of the current `Runtime`.
@@ -989,9 +1065,9 @@
     </span><span class="kw">pub fn </span>runtime_flavor(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RuntimeFlavor {
         <span class="kw">match </span><span class="self">self</span>.inner {
             scheduler::Handle::CurrentThread(<span class="kw">_</span>) =&gt; RuntimeFlavor::CurrentThread,
-            <span class="attr">#[cfg(all(feature = <span class="string">"rt-multi-thread"</span>, not(target_os = <span class="string">"wasi"</span>)))]
+            <span class="attr">#[cfg(feature = <span class="string">"rt-multi-thread"</span>)]
             </span>scheduler::Handle::MultiThread(<span class="kw">_</span>) =&gt; RuntimeFlavor::MultiThread,
-            <span class="attr">#[cfg(all(tokio_unstable, feature = <span class="string">"rt-multi-thread"</span>, not(target_os = <span class="string">"wasi"</span>)))]
+            <span class="attr">#[cfg(all(tokio_unstable, feature = <span class="string">"rt-multi-thread"</span>))]
             </span>scheduler::Handle::MultiThreadAlt(<span class="kw">_</span>) =&gt; RuntimeFlavor::MultiThreadAlt,
         }
     }
@@ -1019,25 +1095,19 @@
         </span><span class="kw">pub fn </span>id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; runtime::Id {
             <span class="kw">let </span>owned_id = <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.inner {
                 scheduler::Handle::CurrentThread(handle) =&gt; handle.owned_id(),
-                <span class="attr">#[cfg(all(feature = <span class="string">"rt-multi-thread"</span>, not(target_os = <span class="string">"wasi"</span>)))]
+                <span class="attr">#[cfg(feature = <span class="string">"rt-multi-thread"</span>)]
                 </span>scheduler::Handle::MultiThread(handle) =&gt; handle.owned_id(),
-                <span class="attr">#[cfg(all(tokio_unstable, feature = <span class="string">"rt-multi-thread"</span>, not(target_os = <span class="string">"wasi"</span>)))]
+                <span class="attr">#[cfg(all(tokio_unstable, feature = <span class="string">"rt-multi-thread"</span>))]
                 </span>scheduler::Handle::MultiThreadAlt(handle) =&gt; handle.owned_id(),
             };
             owned_id.into()
         }
     }
-}
 
-<span class="macro">cfg_metrics!</span> {
-    <span class="kw">use </span><span class="kw">crate</span>::runtime::RuntimeMetrics;
-
-    <span class="kw">impl </span>Handle {
-        <span class="doccomment">/// Returns a view that lets you get information about how the runtime
-        /// is performing.
-        </span><span class="kw">pub fn </span>metrics(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RuntimeMetrics {
-            RuntimeMetrics::new(<span class="self">self</span>.clone())
-        }
+    <span class="doccomment">/// Returns a view that lets you get information about how the runtime
+    /// is performing.
+    </span><span class="kw">pub fn </span>metrics(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RuntimeMetrics {
+        RuntimeMetrics::new(<span class="self">self</span>.clone())
     }
 }
 

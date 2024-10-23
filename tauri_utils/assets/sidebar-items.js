@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["CspHash"],"struct":["AssetKey","EmbeddedAssets"],"trait":["Assets"]};
+window.SIDEBAR_ITEMS = {"enum":["CspHash"],"struct":["AssetKey","EmbeddedAssets"],"type":["AssetsIter"]};

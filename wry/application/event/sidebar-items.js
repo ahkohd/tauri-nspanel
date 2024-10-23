@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["DeviceEvent","ElementState","Event","Force","MouseButton","MouseScrollDelta","StartCause","TouchPhase","TrayEvent","WindowEvent"],"struct":["DeviceId","KeyEvent","RawKeyEvent","Rectangle","Touch"],"type":["AxisId","ButtonId"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["Immutable","ImmutableWithMutableSubclass","InteriorMutable","MainThreadOnly","Mutable","MutableWithImmutableSuperclass","Root"],"trait":["CounterpartOrSelf","HasStableHash","IsAllocableAnyThread","IsAllowedMutable","IsIdCloneable","IsMainThreadOnly","IsMutable","IsRetainable","Mutability"]};

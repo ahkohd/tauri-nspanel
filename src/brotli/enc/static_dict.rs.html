@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-3.5.0/src/enc/static_dict.rs`."><title>static_dict.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../brotli/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-7.0.0/src/enc/static_dict.rs`."><title>static_dict.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1402,51 +1400,7 @@
 <a href="#1400" id="1400">1400</a>
 <a href="#1401" id="1401">1401</a>
 <a href="#1402" id="1402">1402</a>
-<a href="#1403" id="1403">1403</a>
-<a href="#1404" id="1404">1404</a>
-<a href="#1405" id="1405">1405</a>
-<a href="#1406" id="1406">1406</a>
-<a href="#1407" id="1407">1407</a>
-<a href="#1408" id="1408">1408</a>
-<a href="#1409" id="1409">1409</a>
-<a href="#1410" id="1410">1410</a>
-<a href="#1411" id="1411">1411</a>
-<a href="#1412" id="1412">1412</a>
-<a href="#1413" id="1413">1413</a>
-<a href="#1414" id="1414">1414</a>
-<a href="#1415" id="1415">1415</a>
-<a href="#1416" id="1416">1416</a>
-<a href="#1417" id="1417">1417</a>
-<a href="#1418" id="1418">1418</a>
-<a href="#1419" id="1419">1419</a>
-<a href="#1420" id="1420">1420</a>
-<a href="#1421" id="1421">1421</a>
-<a href="#1422" id="1422">1422</a>
-<a href="#1423" id="1423">1423</a>
-<a href="#1424" id="1424">1424</a>
-<a href="#1425" id="1425">1425</a>
-<a href="#1426" id="1426">1426</a>
-<a href="#1427" id="1427">1427</a>
-<a href="#1428" id="1428">1428</a>
-<a href="#1429" id="1429">1429</a>
-<a href="#1430" id="1430">1430</a>
-<a href="#1431" id="1431">1431</a>
-<a href="#1432" id="1432">1432</a>
-<a href="#1433" id="1433">1433</a>
-<a href="#1434" id="1434">1434</a>
-<a href="#1435" id="1435">1435</a>
-<a href="#1436" id="1436">1436</a>
-<a href="#1437" id="1437">1437</a>
-<a href="#1438" id="1438">1438</a>
-<a href="#1439" id="1439">1439</a>
-<a href="#1440" id="1440">1440</a>
-<a href="#1441" id="1441">1441</a>
-<a href="#1442" id="1442">1442</a>
-<a href="#1443" id="1443">1443</a>
-<a href="#1444" id="1444">1444</a>
-<a href="#1445" id="1445">1445</a>
-<a href="#1446" id="1446">1446</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>core;
+</pre></div><pre class="rust"><code><span class="kw">use </span>core::cmp::{max, min};
 <span class="kw">pub const </span>kNumDistanceCacheEntries: usize = <span class="number">4</span>;
 
 <span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::dictionary::{
@@ -1589,7 +1543,7 @@
         <span class="kw">return </span><span class="number">0</span>;
     }
     <span class="kw">if </span>limit &lt;= <span class="number">4 </span>|| beyond_ok {
-        <span class="kw">return </span>core::cmp::min(limit, <span class="number">4</span>);
+        <span class="kw">return </span>min(limit, <span class="number">4</span>);
     }
     ComplexFindMatchLengthWithLimit(s1_rest, s2_rest, limit - <span class="number">5</span>) + <span class="number">5
 </span>}
@@ -1682,102 +1636,6 @@
     matched + (limit &amp; <span class="number">7usize</span>) <span class="comment">// made it through the loop
 </span>}
 
-<span class="kw">mod </span>test {
-    <span class="attr">#[allow(unused)]
-    </span><span class="kw">fn </span>construct_situation(seed: <span class="kw-2">&amp;</span>[u8], <span class="kw-2">mut </span>output: <span class="kw-2">&amp;mut </span>[u8], limit: usize, matchfor: usize) {
-        output[..].clone_from_slice(seed);
-        <span class="kw">if </span>matchfor &gt;= limit {
-            <span class="kw">return</span>;
-        }
-        output[matchfor] = output[matchfor].wrapping_add((matchfor <span class="kw">as </span>u8 % <span class="number">253u8</span>).wrapping_add(<span class="number">1</span>));
-    }
-    <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_find_match_length() {
-        <span class="kw">let </span><span class="kw-2">mut </span>a = [<span class="number">91u8</span>; <span class="number">600000</span>];
-        <span class="kw">let </span><span class="kw-2">mut </span>b = [<span class="number">0u8</span>; <span class="number">600000</span>];
-        <span class="kw">for </span>i <span class="kw">in </span><span class="number">1</span>..a.len() {
-            a[i] = (a[i - <span class="number">1</span>] % <span class="number">19u8</span>).wrapping_add(<span class="number">17</span>);
-        }
-        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">0</span>);
-        <span class="macro">assert_eq!</span>(<span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()), <span class="number">0</span>);
-        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">1</span>);
-        <span class="macro">assert_eq!</span>(<span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()), <span class="number">1</span>);
-        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">10</span>);
-        <span class="macro">assert_eq!</span>(<span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()), <span class="number">10</span>);
-        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">9</span>);
-        <span class="macro">assert_eq!</span>(<span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()), <span class="number">9</span>);
-        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">7</span>);
-        <span class="macro">assert_eq!</span>(<span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()), <span class="number">7</span>);
-        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">8</span>);
-        <span class="macro">assert_eq!</span>(<span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()), <span class="number">8</span>);
-        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">48</span>);
-        <span class="macro">assert_eq!</span>(<span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()), <span class="number">48</span>);
-        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">49</span>);
-        <span class="macro">assert_eq!</span>(<span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()), <span class="number">49</span>);
-        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">63</span>);
-        <span class="macro">assert_eq!</span>(<span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()), <span class="number">63</span>);
-        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">222</span>);
-        <span class="macro">assert_eq!</span>(
-            <span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()),
-            <span class="number">222
-        </span>);
-        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">1590</span>);
-        <span class="macro">assert_eq!</span>(
-            <span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()),
-            <span class="number">1590
-        </span>);
-        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">12590</span>);
-        <span class="macro">assert_eq!</span>(
-            <span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()),
-            <span class="number">12590
-        </span>);
-        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">52592</span>);
-        <span class="macro">assert_eq!</span>(
-            <span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()),
-            <span class="number">52592
-        </span>);
-        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">152592</span>);
-        <span class="macro">assert_eq!</span>(
-            <span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()),
-            <span class="number">152592
-        </span>);
-        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">252591</span>);
-        <span class="macro">assert_eq!</span>(
-            <span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()),
-            <span class="number">252591
-        </span>);
-        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">131072</span>);
-        <span class="macro">assert_eq!</span>(
-            <span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()),
-            <span class="number">131072
-        </span>);
-        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">131073</span>);
-        <span class="macro">assert_eq!</span>(
-            <span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()),
-            <span class="number">131073
-        </span>);
-        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">131072 </span>+ <span class="number">64 </span>+ <span class="number">32 </span>+ <span class="number">16 </span>+ <span class="number">8</span>);
-        <span class="macro">assert_eq!</span>(
-            <span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()),
-            <span class="number">131072 </span>+ <span class="number">64 </span>+ <span class="number">32 </span>+ <span class="number">16 </span>+ <span class="number">8
-        </span>);
-        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">272144 </span>+ <span class="number">64 </span>+ <span class="number">32 </span>+ <span class="number">16 </span>+ <span class="number">8 </span>+ <span class="number">1</span>);
-        <span class="macro">assert_eq!</span>(
-            <span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()),
-            <span class="number">272144 </span>+ <span class="number">64 </span>+ <span class="number">32 </span>+ <span class="number">16 </span>+ <span class="number">8 </span>+ <span class="number">1
-        </span>);
-        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">2 </span>* <span class="number">272144 </span>+ <span class="number">64 </span>+ <span class="number">32 </span>+ <span class="number">16 </span>+ <span class="number">8</span>);
-        <span class="macro">assert_eq!</span>(
-            <span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()),
-            <span class="number">2 </span>* <span class="number">272144 </span>+ <span class="number">64 </span>+ <span class="number">32 </span>+ <span class="number">16 </span>+ <span class="number">8
-        </span>);
-        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), a.len());
-        <span class="macro">assert_eq!</span>(
-            <span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()),
-            a.len()
-        );
-    }
-}
 <span class="attr">#[allow(unused)]
 </span><span class="kw">pub fn </span>slowFindMatchLengthWithLimit(s1: <span class="kw-2">&amp;</span>[u8], s2: <span class="kw-2">&amp;</span>[u8], limit: usize) -&gt; usize {
     <span class="kw">for </span>(index, it) <span class="kw">in </span>s1[..limit].iter().zip(s2[..limit].iter()).enumerate() {
@@ -1816,19 +1674,14 @@
                 <span class="number">0
             </span>}
         } <span class="kw">else </span>{
-            <span class="kw">let </span><span class="kw-2">mut </span>i: usize;
-            i = <span class="number">0usize</span>;
-            <span class="kw">while </span>i &lt; w.len() <span class="kw">as </span>usize {
-                {
-                    <span class="kw">if </span>dict[i] <span class="kw">as </span>i32 &gt;= <span class="string">b'a' </span><span class="kw">as </span>i32 &amp;&amp; (dict[i] <span class="kw">as </span>i32 &lt;= <span class="string">b'z' </span><span class="kw">as </span>i32) {
-                        <span class="kw">if </span>dict[i] <span class="kw">as </span>i32 ^ <span class="number">32i32 </span>!= data[i] <span class="kw">as </span>i32 {
-                            <span class="kw">return </span><span class="number">0</span>;
-                        }
-                    } <span class="kw">else if </span>dict[i] <span class="kw">as </span>i32 != data[i] <span class="kw">as </span>i32 {
+            <span class="kw">for </span>i <span class="kw">in </span><span class="number">0usize</span>..w.len() <span class="kw">as </span>usize {
+                <span class="kw">if </span>dict[i] <span class="kw">as </span>i32 &gt;= <span class="string">b'a' </span><span class="kw">as </span>i32 &amp;&amp; (dict[i] <span class="kw">as </span>i32 &lt;= <span class="string">b'z' </span><span class="kw">as </span>i32) {
+                    <span class="kw">if </span>dict[i] <span class="kw">as </span>i32 ^ <span class="number">32i32 </span>!= data[i] <span class="kw">as </span>i32 {
                         <span class="kw">return </span><span class="number">0</span>;
                     }
+                } <span class="kw">else if </span>dict[i] <span class="kw">as </span>i32 != data[i] <span class="kw">as </span>i32 {
+                    <span class="kw">return </span><span class="number">0</span>;
                 }
-                i = i.wrapping_add(<span class="number">1</span>);
             }
             <span class="number">1
         </span>}
@@ -1836,27 +1689,9 @@
 }
 
 <span class="attr">#[allow(unused)]
-</span><span class="kw">fn </span>brotli_min_uint32_t(a: u32, b: u32) -&gt; u32 {
-    <span class="kw">if </span>a &lt; b {
-        a
-    } <span class="kw">else </span>{
-        b
-    }
-}
-
-<span class="attr">#[allow(unused)]
 </span><span class="kw">fn </span>AddMatch(distance: usize, len: usize, len_code: usize, <span class="kw-2">mut </span>matches: <span class="kw-2">&amp;mut </span>[u32]) {
     <span class="kw">let </span>match_: u32 = (distance &lt;&lt; <span class="number">5</span>).wrapping_add(len_code) <span class="kw">as </span>u32;
-    matches[len] = brotli_min_uint32_t(matches[len], match_);
-}
-
-<span class="attr">#[allow(unused)]
-</span><span class="kw">fn </span>brotli_min_size_t(a: usize, b: usize) -&gt; usize {
-    <span class="kw">if </span>a &lt; b {
-        a
-    } <span class="kw">else </span>{
-        b
-    }
+    matches[len] = min(matches[len], match_);
 }
 
 <span class="attr">#[allow(unused)]
@@ -1869,20 +1704,7 @@
 ) -&gt; usize {
     <span class="kw">let </span>offset: usize =
         (dictionary.offsets_by_length[len] <span class="kw">as </span>usize).wrapping_add(len.wrapping_mul(id));
-    FindMatchLengthWithLimit(
-        dictionary.data.split_at(offset).<span class="number">1</span>,
-        data,
-        brotli_min_size_t(len, maxlen),
-    )
-}
-
-<span class="attr">#[allow(unused)]
-</span><span class="kw">fn </span>brotli_max_size_t(a: usize, b: usize) -&gt; usize {
-    <span class="kw">if </span>a &gt; b {
-        a
-    } <span class="kw">else </span>{
-        b
-    }
+    FindMatchLengthWithLimit(dictionary.data.split_at(offset).<span class="number">1</span>, data, min(len, maxlen))
 }
 
 <span class="attr">#[allow(unused)]
@@ -1942,30 +1764,24 @@
                 }
                 minlen = min_length;
                 <span class="kw">if </span>l &gt; <span class="number">9usize </span>{
-                    minlen = brotli_max_size_t(minlen, l.wrapping_sub(<span class="number">9</span>));
+                    minlen = max(minlen, l.wrapping_sub(<span class="number">9</span>));
                 }
-                <span class="kw">let </span>maxlen: usize = brotli_min_size_t(matchlen, l.wrapping_sub(<span class="number">2</span>));
-                len = minlen;
-                <span class="kw">while </span>len &lt;= maxlen {
-                    {
-                        <span class="comment">//eprint!("Ddding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
-                        </span>AddMatch(
-                            id.wrapping_add(
-                                (kOmitLastNTransforms[l.wrapping_sub(len)] <span class="kw">as </span>usize)
-                                    .wrapping_mul(n),
-                            ),
-                            len,
-                            l,
-                            matches,
-                        );
-                        has_found_match = <span class="number">1i32</span>;
-                    }
-                    len = len.wrapping_add(<span class="number">1</span>);
+                <span class="kw">let </span>maxlen: usize = min(matchlen, l.wrapping_sub(<span class="number">2</span>));
+                <span class="kw">for </span>len <span class="kw">in </span>minlen..=maxlen {
+                    <span class="comment">//eprint!("Ddding match {} {} {} {}\n", w.len(), w.transform(), w.idx(), len);
+                    </span>AddMatch(
+                        id.wrapping_add(
+                            (kOmitLastNTransforms[l.wrapping_sub(len)] <span class="kw">as </span>usize).wrapping_mul(n),
+                        ),
+                        len,
+                        l,
+                        matches,
+                    );
+                    has_found_match = <span class="number">1i32</span>;
                 }
+
                 <span class="kw">if </span>matchlen &lt; l || l.wrapping_add(<span class="number">6</span>) &gt;= max_length {
-                    {
-                        <span class="kw">continue</span>;
-                    }
+                    <span class="kw">continue</span>;
                 }
                 <span class="kw">let </span>s: <span class="kw-2">&amp;</span>[u8] = data.split_at(l <span class="kw">as </span>usize).<span class="number">1</span>;
                 <span class="kw">if </span>s[<span class="number">0</span>] <span class="kw">as </span>i32 == <span class="string">b' ' </span><span class="kw">as </span>i32 {
@@ -2572,9 +2388,7 @@
                 );
                 has_found_match = <span class="number">1i32</span>;
                 <span class="kw">if </span>l.wrapping_add(<span class="number">2</span>) &gt;= max_length {
-                    {
-                        <span class="kw">continue</span>;
-                    }
+                    <span class="kw">continue</span>;
                 }
                 <span class="kw">let </span>s: <span class="kw-2">&amp;</span>[u8] = data.split_at(l.wrapping_add(<span class="number">1</span>) <span class="kw">as </span>usize).<span class="number">1</span>;
                 <span class="kw">if </span>s[<span class="number">0</span>] <span class="kw">as </span>i32 == <span class="string">b' ' </span><span class="kw">as </span>i32 {
@@ -2669,9 +2483,7 @@
                 );
                 has_found_match = <span class="number">1i32</span>;
                 <span class="kw">if </span>l.wrapping_add(<span class="number">2</span>) &gt;= max_length {
-                    {
-                        <span class="kw">continue</span>;
-                    }
+                    <span class="kw">continue</span>;
                 }
                 <span class="kw">let </span>s: <span class="kw-2">&amp;</span>[u8] = data.split_at(l.wrapping_add(<span class="number">1</span>)).<span class="number">1</span>;
                 <span class="kw">if </span>s[<span class="number">0</span>] <span class="kw">as </span>i32 == <span class="string">b' ' </span><span class="kw">as </span>i32 {
@@ -2891,5 +2703,103 @@
         }
     }
     has_found_match
+}
+
+<span class="attr">#[cfg(test)]
+</span><span class="kw">mod </span>test {
+    <span class="attr">#[allow(unused)]
+    </span><span class="kw">fn </span>construct_situation(seed: <span class="kw-2">&amp;</span>[u8], <span class="kw-2">mut </span>output: <span class="kw-2">&amp;mut </span>[u8], limit: usize, matchfor: usize) {
+        output[..].clone_from_slice(seed);
+        <span class="kw">if </span>matchfor &gt;= limit {
+            <span class="kw">return</span>;
+        }
+        output[matchfor] = output[matchfor].wrapping_add((matchfor <span class="kw">as </span>u8 % <span class="number">253u8</span>).wrapping_add(<span class="number">1</span>));
+    }
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>test_find_match_length() {
+        <span class="kw">let </span><span class="kw-2">mut </span>a = [<span class="number">91u8</span>; <span class="number">600000</span>];
+        <span class="kw">let </span><span class="kw-2">mut </span>b = [<span class="number">0u8</span>; <span class="number">600000</span>];
+        <span class="kw">for </span>i <span class="kw">in </span><span class="number">1</span>..a.len() {
+            a[i] = (a[i - <span class="number">1</span>] % <span class="number">19u8</span>).wrapping_add(<span class="number">17</span>);
+        }
+        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">0</span>);
+        <span class="macro">assert_eq!</span>(<span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()), <span class="number">0</span>);
+        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">1</span>);
+        <span class="macro">assert_eq!</span>(<span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()), <span class="number">1</span>);
+        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">10</span>);
+        <span class="macro">assert_eq!</span>(<span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()), <span class="number">10</span>);
+        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">9</span>);
+        <span class="macro">assert_eq!</span>(<span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()), <span class="number">9</span>);
+        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">7</span>);
+        <span class="macro">assert_eq!</span>(<span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()), <span class="number">7</span>);
+        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">8</span>);
+        <span class="macro">assert_eq!</span>(<span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()), <span class="number">8</span>);
+        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">48</span>);
+        <span class="macro">assert_eq!</span>(<span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()), <span class="number">48</span>);
+        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">49</span>);
+        <span class="macro">assert_eq!</span>(<span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()), <span class="number">49</span>);
+        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">63</span>);
+        <span class="macro">assert_eq!</span>(<span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()), <span class="number">63</span>);
+        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">222</span>);
+        <span class="macro">assert_eq!</span>(
+            <span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()),
+            <span class="number">222
+        </span>);
+        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">1590</span>);
+        <span class="macro">assert_eq!</span>(
+            <span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()),
+            <span class="number">1590
+        </span>);
+        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">12590</span>);
+        <span class="macro">assert_eq!</span>(
+            <span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()),
+            <span class="number">12590
+        </span>);
+        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">52592</span>);
+        <span class="macro">assert_eq!</span>(
+            <span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()),
+            <span class="number">52592
+        </span>);
+        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">152592</span>);
+        <span class="macro">assert_eq!</span>(
+            <span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()),
+            <span class="number">152592
+        </span>);
+        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">252591</span>);
+        <span class="macro">assert_eq!</span>(
+            <span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()),
+            <span class="number">252591
+        </span>);
+        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">131072</span>);
+        <span class="macro">assert_eq!</span>(
+            <span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()),
+            <span class="number">131072
+        </span>);
+        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">131073</span>);
+        <span class="macro">assert_eq!</span>(
+            <span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()),
+            <span class="number">131073
+        </span>);
+        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">131072 </span>+ <span class="number">64 </span>+ <span class="number">32 </span>+ <span class="number">16 </span>+ <span class="number">8</span>);
+        <span class="macro">assert_eq!</span>(
+            <span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()),
+            <span class="number">131072 </span>+ <span class="number">64 </span>+ <span class="number">32 </span>+ <span class="number">16 </span>+ <span class="number">8
+        </span>);
+        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">272144 </span>+ <span class="number">64 </span>+ <span class="number">32 </span>+ <span class="number">16 </span>+ <span class="number">8 </span>+ <span class="number">1</span>);
+        <span class="macro">assert_eq!</span>(
+            <span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()),
+            <span class="number">272144 </span>+ <span class="number">64 </span>+ <span class="number">32 </span>+ <span class="number">16 </span>+ <span class="number">8 </span>+ <span class="number">1
+        </span>);
+        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), <span class="number">2 </span>* <span class="number">272144 </span>+ <span class="number">64 </span>+ <span class="number">32 </span>+ <span class="number">16 </span>+ <span class="number">8</span>);
+        <span class="macro">assert_eq!</span>(
+            <span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()),
+            <span class="number">2 </span>* <span class="number">272144 </span>+ <span class="number">64 </span>+ <span class="number">32 </span>+ <span class="number">16 </span>+ <span class="number">8
+        </span>);
+        construct_situation(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;mut </span>b[..], a.len(), a.len());
+        <span class="macro">assert_eq!</span>(
+            <span class="kw">super</span>::FindMatchLengthWithLimit(<span class="kw-2">&amp;</span>a[..], <span class="kw-2">&amp;</span>b[..], a.len()),
+            a.len()
+        );
+    }
 }
 </code></pre></div></section></main></body></html>

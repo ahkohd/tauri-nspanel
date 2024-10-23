@@ -1,0 +1,132 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Create a new trait to represent a protocol."><title>extern_protocol in objc2 - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="objc2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-118b08c4c78b968e.js"></script><script defer src="sidebar-items.js"></script><script defer src="../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc macro"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../objc2/index.html">objc2</a><span class="version">0.5.2</span></h2></div><div class="sidebar-elems"></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Macro <a href="index.html">objc2</a>::<wbr><a class="macro" href="#">extern_protocol</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../src/objc2/macros/extern_protocol.rs.html#151-177">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><span class="macro">macro_rules!</span> extern_protocol {
+    (
+        $(<span class="attr">#[<span class="macro-nonterminal">$m</span>:meta]</span>)*
+        <span class="macro-nonterminal">$v</span>:vis <span class="kw">unsafe trait </span><span class="macro-nonterminal">$name</span>:ident $(: <span class="macro-nonterminal">$conforms_to</span>:ident $(+ <span class="macro-nonterminal">$conforms_to_rest</span>:ident)<span class="kw-2">*</span>)<span class="question-mark">? </span>{
+            $(<span class="macro-nonterminal">$methods</span>:tt)*
+        }
+
+        $(<span class="attr">#[<span class="macro-nonterminal">$impl_m</span>:meta]</span>)*
+        <span class="kw">unsafe impl </span>ProtocolType <span class="kw">for dyn </span><span class="macro-nonterminal">$</span><span class="kw">for</span>:<span class="macro-nonterminal">ident </span>{
+            $(<span class="kw">const </span>NAME: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str = <span class="macro-nonterminal">$name_const</span>:expr;)<span class="question-mark">?
+        </span>}
+    ) =&gt; { ... };
+}</pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Create a new trait to represent a protocol.</p>
+<p>This is similar to a <code>@protocol</code> declaration in Objective-C.</p>
+<p>See <a href="https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjectiveC/Chapters/ocProtocols.html">Protocols - The Objective-C Programming Language</a> and
+<a href="https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/WorkingwithProtocols/WorkingwithProtocols.html">Working with Protocols - Programming with Objective-C</a> for
+general information about protocols in Objective-C.</p>
+<p>This macro will create an <code>unsafe</code> trait with methods which all have
+default implementations, such that an external class that conforms to the
+protocol can write <code>unsafe impl MyProtocol for MyClass {}</code>, and get access
+to the functionality exposed by the protocol.</p>
+<p>Note that that conforming to a protocol in a custom object requires
+putting the implementation inside the <a href="macro.declare_class.html" title="macro objc2::declare_class"><code>declare_class!</code></a> invocation.</p>
+<p>Objective-C has a smart feature where you can write <code>id&lt;MyProtocol&gt;</code>, and
+then work with the protocol as-if it was an object; this is very similar
+to <code>dyn</code> traits in Rust, and we implement it in a similar way, see
+<a href="runtime/struct.ProtocolObject.html" title="struct objc2::runtime::ProtocolObject"><code>ProtocolObject</code></a> for details.</p>
+<h2 id="specification"><a class="doc-anchor" href="#specification">§</a>Specification</h2>
+<p>The syntax is similar enough to Rust syntax that if you invoke the macro
+with parentheses (as opposed to curly brackets), <code>rustfmt</code> will be able to
+format the contents.</p>
+<p>This macro creates an <code>unsafe</code> trait with the specified methods. A default
+implementation of the method is generated based on the selector specified
+with <code>#[method(a:selector:)]</code> or <code>#[method_id(a:selector:)]</code>.</p>
+<p>Other protocols that this protocol conforms to / inherits can be specified
+as supertraits.</p>
+<p>The new trait <code>T</code> is automatically implemented for
+<a href="runtime/struct.ProtocolObject.html" title="struct objc2::runtime::ProtocolObject"><code>ProtocolObject&lt;dyn T&gt;</code></a>, which also means that <a href="trait.ProtocolType.html" title="trait objc2::ProtocolType"><code>ProtocolType</code></a> is
+implemented for <code>dyn T</code>.</p>
+<p>Finally, you can use the <code>#[optional]</code> attribute to mark optional methods.
+This currently doesn’t have any effect, but probably will have one in the
+future when implementing protocols in <a href="macro.declare_class.html" title="macro objc2::declare_class"><code>declare_class!</code></a>.</p>
+<p>This macro otherwise shares similarities with <a href="macro.extern_class.html" title="macro objc2::extern_class"><code>extern_class!</code></a> and
+<a href="macro.extern_methods.html" title="macro objc2::extern_methods"><code>extern_methods!</code></a>.</p>
+<h2 id="safety"><a class="doc-anchor" href="#safety">§</a>Safety</h2>
+<p>The following are required for using the macro itself:</p>
+<ul>
+<li>The specified name must be an exisiting Objective-C protocol.</li>
+<li>The protocol must actually inherit/conform to the protocols specified
+as supertraits.</li>
+<li>The protocol’s methods must be correctly specified.</li>
+</ul>
+<p>While the following are required when implementing the <code>unsafe</code> trait for
+a new type:</p>
+<ul>
+<li>The type must represent an object that implements the protocol.</li>
+</ul>
+<h2 id="examples"><a class="doc-anchor" href="#examples">§</a>Examples</h2>
+<p>Create a trait to represent the <code>NSItemProviderWriting</code> protocol.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>std::ffi::c_void;
+<span class="kw">use </span>objc2::ffi::NSInteger;
+<span class="kw">use </span>objc2::rc::Retained;
+<span class="kw">use </span>objc2::runtime::{NSObject, NSObjectProtocol};
+<span class="kw">use </span>objc2::{extern_protocol, ProtocolType};
+
+<span class="comment">// Assume these were correctly defined, as if they came from
+// `objc2-foundation`
+</span><span class="kw">type </span>NSArray&lt;T&gt; = T;
+<span class="kw">type </span>NSString = NSObject;
+<span class="kw">type </span>NSProgress = NSObject;
+<span class="kw">type </span>NSItemProviderRepresentationVisibility = NSInteger;
+
+<span class="macro">extern_protocol!</span>(
+    <span class="doccomment">/// This comment will appear on the trait as expected.
+    </span><span class="kw">pub unsafe trait </span>NSItemProviderWriting: NSObjectProtocol {
+        <span class="comment">//                                  ^^^^^^^^^^^^^^^^
+        // This protocol inherits from the `NSObject` protocol
+
+        // This method we mark as `unsafe`, since we aren't using the correct
+        // type for the completion handler
+        </span><span class="attr">#[method_id(loadDataWithTypeIdentifier:forItemProviderCompletionHandler:)]
+        </span><span class="kw">unsafe fn </span>loadData(
+            <span class="kw-2">&amp;</span><span class="self">self</span>,
+            type_identifier: <span class="kw-2">&amp;</span>NSString,
+            completion_handler: <span class="kw-2">*mut </span>c_void,
+        ) -&gt; <span class="prelude-ty">Option</span>&lt;Retained&lt;NSProgress&gt;&gt;;
+
+        <span class="attr">#[method_id(writableTypeIdentifiersForItemProvider)]
+        </span><span class="kw">fn </span>writableTypeIdentifiersForItemProvider_class()
+            -&gt; Retained&lt;NSArray&lt;NSString&gt;&gt;;
+
+        <span class="comment">// The rest of these are optional, which means that a user of
+        // `declare_class!` would not need to implement them.
+
+        </span><span class="attr">#[optional]
+        #[method_id(writableTypeIdentifiersForItemProvider)]
+        </span><span class="kw">fn </span>writableTypeIdentifiersForItemProvider(<span class="kw-2">&amp;</span><span class="self">self</span>)
+            -&gt; Retained&lt;NSArray&lt;NSString&gt;&gt;;
+
+        <span class="attr">#[optional]
+        #[method(itemProviderVisibilityForRepresentationWithTypeIdentifier:)]
+        </span><span class="kw">fn </span>itemProviderVisibilityForRepresentation_class(
+            type_identifier: <span class="kw-2">&amp;</span>NSString,
+        ) -&gt; NSItemProviderRepresentationVisibility;
+
+        <span class="attr">#[optional]
+        #[method(itemProviderVisibilityForRepresentationWithTypeIdentifier:)]
+        </span><span class="kw">fn </span>itemProviderVisibilityForRepresentation(
+            <span class="kw-2">&amp;</span><span class="self">self</span>,
+            type_identifier: <span class="kw-2">&amp;</span>NSString,
+        ) -&gt; NSItemProviderRepresentationVisibility;
+    }
+
+    <span class="comment">// SAFETY:
+    // - The name is correct
+    // - The protocol does inherit `NSObject`
+    // - The methods are correctly specified
+    </span><span class="kw">unsafe impl </span>ProtocolType <span class="kw">for dyn </span>NSItemProviderWriting {
+        <span class="comment">//                       ^^^ - Remember to add this `dyn`.
+
+        // We could have named the trait something else on the Rust-side,
+        // and then used this to keep it correct from Objective-C.
+        //
+        // const NAME: &amp;'static str = "NSItemProviderWriting";
+    </span>}
+);
+
+<span class="comment">// Types can now implement `NSItemProviderWriting`, and use the methods
+// from it as we specified.</span></code></pre></div>
+<p>See the source code of <code>objc2-foundation</code> for many more examples.</p>
+</div></details></section></div></main></body></html>

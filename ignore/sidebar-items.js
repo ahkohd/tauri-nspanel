@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["Error","Match","WalkState"],"mod":["gitignore","overrides","types"],"struct":["DirEntry","Walk","WalkBuilder","WalkParallel"],"trait":["ParallelVisitor","ParallelVisitorBuilder"]};

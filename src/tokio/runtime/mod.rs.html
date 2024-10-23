@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.37.0/src/runtime/mod.rs`."><title>mod.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="tokio" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../tokio/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.41.0/src/runtime/mod.rs`."><title>mod.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="tokio" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -409,6 +407,22 @@
 <a href="#407" id="407">407</a>
 <a href="#408" id="408">408</a>
 <a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
+<a href="#411" id="411">411</a>
+<a href="#412" id="412">412</a>
+<a href="#413" id="413">413</a>
+<a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! The Tokio runtime.
 //!
 //! Unlike other Rust programs, asynchronous applications require runtime
@@ -783,6 +797,9 @@
 
         <span class="kw">pub use </span><span class="self">self</span>::builder::UnhandledPanic;
         <span class="kw">pub use </span><span class="kw">crate</span>::util::rand::RngSeed;
+
+        <span class="kw">mod </span>local_runtime;
+        <span class="kw">pub use </span>local_runtime::{LocalRuntime, LocalOptions};
     }
 
     <span class="macro">cfg_taskdump!</span> {
@@ -790,30 +807,43 @@
         <span class="kw">pub use </span>dump::Dump;
     }
 
+    <span class="kw">mod </span>task_hooks;
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use </span>task_hooks::{TaskHooks, TaskCallback};
+    <span class="macro">cfg_unstable!</span> {
+        <span class="kw">pub use </span>task_hooks::TaskMeta;
+    }
+    <span class="attr">#[cfg(not(tokio_unstable))]
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use </span>task_hooks::TaskMeta;
+
     <span class="kw">mod </span>handle;
     <span class="kw">pub use </span>handle::{EnterGuard, Handle, TryCurrentError};
 
     <span class="kw">mod </span>runtime;
     <span class="kw">pub use </span>runtime::{Runtime, RuntimeFlavor};
 
+    <span class="doccomment">/// Boundary value to prevent stack overflow caused by a large-sized
+    /// Future being placed in the stack.
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>BOX_FUTURE_THRESHOLD: usize = <span class="kw">if </span><span class="macro">cfg!</span>(debug_assertions)  {
+        <span class="number">2048
+    </span>} <span class="kw">else </span>{
+        <span class="number">16384
+    </span>};
+
     <span class="kw">mod </span>thread_id;
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use </span>thread_id::ThreadId;
 
-    <span class="macro">cfg_metrics!</span> {
-        <span class="kw">mod </span>metrics;
-        <span class="kw">pub use </span>metrics::{RuntimeMetrics, HistogramScale};
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>metrics;
+    <span class="kw">pub use </span>metrics::RuntimeMetrics;
 
-        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use </span>metrics::{MetricsBatch, SchedulerMetrics, WorkerMetrics, HistogramBuilder};
+    <span class="macro">cfg_unstable_metrics!</span> {
+        <span class="kw">pub use </span>metrics::{HistogramScale, HistogramConfiguration, LogHistogram, LogHistogramBuilder, InvalidHistogramConfiguration} ;
 
         <span class="macro">cfg_net!</span> {
-        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use </span>metrics::IoDriverMetrics;
+            <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use </span>metrics::IoDriverMetrics;
         }
     }
 
-    <span class="macro">cfg_not_metrics!</span> {
-        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>metrics;
-        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use </span>metrics::{SchedulerMetrics, WorkerMetrics, MetricsBatch, HistogramBuilder};
-    }
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use </span>metrics::{MetricsBatch, SchedulerMetrics, WorkerMetrics, HistogramBuilder};
 
     <span class="doccomment">/// After thread starts / before thread stops
     </span><span class="kw">type </span>Callback = std::sync::Arc&lt;<span class="kw">dyn </span>Fn() + Send + Sync&gt;;

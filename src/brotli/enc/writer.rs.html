@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-3.5.0/src/enc/writer.rs`."><title>writer.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../brotli/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-7.0.0/src/enc/writer.rs`."><title>writer.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -299,27 +297,49 @@
 <a href="#297" id="297">297</a>
 <a href="#298" id="298">298</a>
 <a href="#299" id="299">299</a>
-</pre></div><pre class="rust"><code><span class="attr">#![cfg_attr(not(feature = <span class="string">"std"</span>), allow(unused_imports))]
-</span><span class="kw">use </span><span class="kw">super</span>::backward_references::BrotliEncoderParams;
-<span class="kw">use </span><span class="kw">super</span>::combined_alloc::BrotliAlloc;
-<span class="kw">use </span><span class="kw">super</span>::encode::{
-    BrotliEncoderCompressStream, BrotliEncoderCreateInstance, BrotliEncoderDestroyInstance,
-    BrotliEncoderHasMoreOutput, BrotliEncoderIsFinished, BrotliEncoderOperation,
-    BrotliEncoderParameter, BrotliEncoderSetParameter, BrotliEncoderStateStruct,
-};
-<span class="kw">use </span><span class="kw">super</span>::interface;
-<span class="kw">pub use </span>alloc::{AllocatedStackMemory, Allocator, SliceWrapper, SliceWrapperMut, StackAllocator};
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>alloc::{Allocator, SliceWrapperMut};
+<span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
+</span><span class="kw">use </span>std::io;
+<span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
+</span><span class="kw">use </span>std::io::{Error, ErrorKind, Write};
+
 <span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
 </span><span class="kw">pub use </span>alloc_stdlib::StandardAlloc;
 <span class="kw">use </span>brotli_decompressor::CustomWrite;
 <span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
 </span><span class="kw">pub use </span>brotli_decompressor::{IntoIoWriter, IoWriterWrapper};
 
-<span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
-</span><span class="kw">use </span>std::io;
-
-<span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
-</span><span class="kw">use </span>std::io::{Error, ErrorKind, Write};
+<span class="kw">use </span><span class="kw">super</span>::backward_references::BrotliEncoderParams;
+<span class="kw">use </span><span class="kw">super</span>::combined_alloc::BrotliAlloc;
+<span class="kw">use </span><span class="kw">super</span>::encode::{
+    BrotliEncoderDestroyInstance, BrotliEncoderOperation, BrotliEncoderParameter,
+    BrotliEncoderStateStruct,
+};
+<span class="kw">use </span><span class="kw">super</span>::interface;
+<span class="kw">use </span><span class="kw">crate</span>::enc::combined_alloc::allocate;
 
 <span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
 </span><span class="kw">pub struct </span>CompressorWriterCustomAlloc&lt;
@@ -343,6 +363,7 @@
             buffer,
             alloc,
             Error::new(ErrorKind::InvalidData, <span class="string">"Invalid Data"</span>),
+            Error::new(ErrorKind::WriteZero, <span class="string">"No room in output."</span>),
             q,
             lgwin,
         ))
@@ -384,7 +405,7 @@
 </span><span class="kw">impl</span>&lt;W: Write&gt; CompressorWriter&lt;W&gt; {
     <span class="kw">pub fn </span>new(w: W, buffer_size: usize, q: u32, lgwin: u32) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>alloc = StandardAlloc::default();
-        <span class="kw">let </span>buffer = &lt;StandardAlloc <span class="kw">as </span>Allocator&lt;u8&gt;&gt;::alloc_cell(
+        <span class="kw">let </span>buffer = allocate::&lt;u8, <span class="kw">_</span>&gt;(
             <span class="kw-2">&amp;mut </span>alloc,
             <span class="kw">if </span>buffer_size == <span class="number">0 </span>{ <span class="number">4096 </span>} <span class="kw">else </span>{ buffer_size },
         );
@@ -429,14 +450,24 @@
     output: <span class="prelude-ty">Option</span>&lt;W&gt;,
     error_if_invalid_data: <span class="prelude-ty">Option</span>&lt;ErrType&gt;,
     state: BrotliEncoderStateStruct&lt;Alloc&gt;,
+    error_if_zero_bytes_written: <span class="prelude-ty">Option</span>&lt;ErrType&gt;,
 }
-<span class="kw">pub fn </span>write_all&lt;ErrType, W: CustomWrite&lt;ErrType&gt;&gt;(
+<span class="kw">pub fn </span>write_all&lt;ErrType, W: CustomWrite&lt;ErrType&gt;, ErrMaker: FnMut() -&gt; <span class="prelude-ty">Option</span>&lt;ErrType&gt;&gt;(
     writer: <span class="kw-2">&amp;mut </span>W,
     <span class="kw-2">mut </span>buf: <span class="kw-2">&amp;</span>[u8],
+    <span class="kw-2">mut </span>error_to_return_if_zero_bytes_written: ErrMaker,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), ErrType&gt; {
     <span class="kw">while </span>!buf.is_empty() {
         <span class="kw">match </span>writer.write(buf) {
-            <span class="prelude-val">Ok</span>(bytes_written) =&gt; buf = <span class="kw-2">&amp;</span>buf[bytes_written..],
+            <span class="prelude-val">Ok</span>(bytes_written) =&gt; <span class="kw">if </span>bytes_written != <span class="number">0 </span>{
+                buf = <span class="kw-2">&amp;</span>buf[bytes_written..]
+            } <span class="kw">else </span>{
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(err) = error_to_return_if_zero_bytes_written() {
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(err);
+                } <span class="kw">else </span>{
+                    <span class="kw">return </span><span class="prelude-val">Ok</span>(());
+                }
+            },
             <span class="prelude-val">Err</span>(e) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(e),
         }
     }
@@ -450,6 +481,7 @@
         buffer: BufferType,
         alloc: Alloc,
         invalid_data_error_type: ErrType,
+        error_if_zero_bytes_written: ErrType,
         q: u32,
         lgwin: u32,
     ) -&gt; <span class="self">Self </span>{
@@ -457,19 +489,14 @@
             output_buffer: buffer,
             total_out: <span class="prelude-val">Some</span>(<span class="number">0</span>),
             output: <span class="prelude-val">Some</span>(w),
-            state: BrotliEncoderCreateInstance(alloc),
+            state: BrotliEncoderStateStruct::new(alloc),
             error_if_invalid_data: <span class="prelude-val">Some</span>(invalid_data_error_type),
+            error_if_zero_bytes_written: <span class="prelude-val">Some</span>(error_if_zero_bytes_written),
         };
-        BrotliEncoderSetParameter(
-            <span class="kw-2">&amp;mut </span>ret.state,
-            BrotliEncoderParameter::BROTLI_PARAM_QUALITY,
-            q,
-        );
-        BrotliEncoderSetParameter(
-            <span class="kw-2">&amp;mut </span>ret.state,
-            BrotliEncoderParameter::BROTLI_PARAM_LGWIN,
-            lgwin,
-        );
+        ret.state
+            .set_parameter(BrotliEncoderParameter::BROTLI_PARAM_QUALITY, q);
+        ret.state
+            .set_parameter(BrotliEncoderParameter::BROTLI_PARAM_LGWIN, lgwin);
 
         ret
     }
@@ -485,8 +512,7 @@
             <span class="kw">let </span><span class="kw-2">mut </span>input_offset: usize = <span class="number">0</span>;
             <span class="kw">let </span><span class="kw-2">mut </span>avail_out: usize = <span class="self">self</span>.output_buffer.slice_mut().len();
             <span class="kw">let </span><span class="kw-2">mut </span>output_offset: usize = <span class="number">0</span>;
-            <span class="kw">let </span>ret = BrotliEncoderCompressStream(
-                <span class="kw-2">&amp;mut </span><span class="self">self</span>.state,
+            <span class="kw">let </span>ret = <span class="self">self</span>.state.compress_stream(
                 op,
                 <span class="kw-2">&amp;mut </span>avail_in,
                 <span class="kw-2">&amp;</span>[],
@@ -498,24 +524,32 @@
                 <span class="kw-2">&amp;mut </span>nop_callback,
             );
             <span class="kw">if </span>output_offset &gt; <span class="number">0 </span>{
+                <span class="kw">let </span>zero_err = <span class="kw-2">&amp;mut </span><span class="self">self</span>.error_if_zero_bytes_written;
+                <span class="kw">let </span>fallback = <span class="kw-2">&amp;mut </span><span class="self">self</span>.error_if_invalid_data;
                 <span class="kw">match </span>write_all(
                     <span class="self">self</span>.output.as_mut().unwrap(),
                     <span class="kw-2">&amp;</span><span class="self">self</span>.output_buffer.slice_mut()[..output_offset],
+                    || {
+                        <span class="kw">if let </span><span class="prelude-val">Some</span>(err) = zero_err.take() {
+                            <span class="kw">return </span><span class="prelude-val">Some</span>(err);
+                        }
+                        fallback.take()
+                    },
                 ) {
                     <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {}
                     <span class="prelude-val">Err</span>(e) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(e),
                 }
             }
-            <span class="kw">if </span>ret &lt;= <span class="number">0 </span>{
+            <span class="kw">if </span>!ret {
                 <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="self">self</span>.error_if_invalid_data.take().unwrap());
             }
             <span class="kw">if let </span>BrotliEncoderOperation::BROTLI_OPERATION_FLUSH = op {
-                <span class="kw">if </span>BrotliEncoderHasMoreOutput(<span class="kw-2">&amp;mut </span><span class="self">self</span>.state) != <span class="number">0 </span>{
+                <span class="kw">if </span><span class="self">self</span>.state.has_more_output() {
                     <span class="kw">continue</span>;
                 }
                 <span class="kw">return </span><span class="prelude-val">Ok</span>(());
             }
-            <span class="kw">if </span>BrotliEncoderIsFinished(<span class="kw-2">&amp;mut </span><span class="self">self</span>.state) != <span class="number">0 </span>{
+            <span class="kw">if </span><span class="self">self</span>.state.is_finished() {
                 <span class="kw">return </span><span class="prelude-val">Ok</span>(());
             }
         }
@@ -563,8 +597,7 @@
         <span class="kw">while </span>avail_in != <span class="number">0 </span>{
             <span class="kw">let </span><span class="kw-2">mut </span>output_offset = <span class="number">0</span>;
             <span class="kw">let </span><span class="kw-2">mut </span>avail_out = <span class="self">self</span>.output_buffer.slice_mut().len();
-            <span class="kw">let </span>ret = BrotliEncoderCompressStream(
-                <span class="kw-2">&amp;mut </span><span class="self">self</span>.state,
+            <span class="kw">let </span>ret = <span class="self">self</span>.state.compress_stream(
                 BrotliEncoderOperation::BROTLI_OPERATION_PROCESS,
                 <span class="kw-2">&amp;mut </span>avail_in,
                 buf,
@@ -576,15 +609,26 @@
                 <span class="kw-2">&amp;mut </span>nop_callback,
             );
             <span class="kw">if </span>output_offset &gt; <span class="number">0 </span>{
+                <span class="kw">let </span>zero_err = <span class="kw-2">&amp;mut </span><span class="self">self</span>.error_if_zero_bytes_written;
+                <span class="kw">let </span>fallback = <span class="kw-2">&amp;mut </span><span class="self">self</span>.error_if_invalid_data;
                 <span class="kw">match </span>write_all(
                     <span class="self">self</span>.output.as_mut().unwrap(),
                     <span class="kw-2">&amp;</span><span class="self">self</span>.output_buffer.slice_mut()[..output_offset],
+                    || {
+                        <span class="kw">if let </span><span class="prelude-val">Some</span>(err) = zero_err.take() {
+                            <span class="kw">return </span><span class="prelude-val">Some</span>(err);
+                        }
+                        fallback.take()
+                    },
+
                 ) {
                     <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {}
-                    <span class="prelude-val">Err</span>(e) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(e),
+                    <span class="prelude-val">Err</span>(e) =&gt; {
+                        <span class="kw">return </span><span class="prelude-val">Err</span>(e)
+                    },
                 }
             }
-            <span class="kw">if </span>ret &lt;= <span class="number">0 </span>{
+            <span class="kw">if </span>!ret {
                 <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="self">self</span>.error_if_invalid_data.take().unwrap());
             }
         }

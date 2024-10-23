@@ -1,0 +1,37 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Create a `NSString` from a static `str`."><title>ns_string in objc2_foundation - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="objc2_foundation" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-118b08c4c78b968e.js"></script><script defer src="sidebar-items.js"></script><script defer src="../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc macro"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../objc2_foundation/index.html">objc2_<wbr>foundation</a><span class="version">0.2.2</span></h2></div><div class="sidebar-elems"></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Macro <a href="index.html">objc2_foundation</a>::<wbr><a class="macro" href="#">ns_string</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../src/objc2_foundation/macros/ns_string.rs.html#70-76">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><span class="macro">macro_rules!</span> ns_string {
+    (<span class="macro-nonterminal">$s</span>:expr) =&gt; { ... };
+}</pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Create a <a href="struct.NSString.html" title="struct objc2_foundation::NSString"><code>NSString</code></a> from a static <a href="https://doc.rust-lang.org/1.82.0/std/primitive.str.html" title="primitive str"><code>str</code></a>.</p>
+<p>Equivalent to the <a href="https://clang.llvm.org/docs/ObjectiveCLiterals.html#boxed-c-strings">boxed C-strings</a> <code>@"string"</code> syntax in Objective-C.</p>
+<h2 id="specification"><a class="doc-anchor" href="#specification">§</a>Specification</h2>
+<p>The macro takes any expression that evaluates to a <code>const</code> <code>&amp;str</code>, and
+produces a <code>&amp;'static NSString</code>.</p>
+<p>The returned string’s encoding is not guaranteed to be UTF-8.</p>
+<p>Strings containing ASCII NUL is allowed, the NUL is preserved as one would
+expect.</p>
+<h2 id="cargo-features"><a class="doc-anchor" href="#cargo-features">§</a>Cargo features</h2>
+<p>If the experimental <code>"unstable-static-nsstring"</code> feature is enabled, this
+will emit statics placed in special sections that will be replaced by dyld
+when the program starts up - which will in turn will cause the runtime
+cost of this macro to be completely non-existant!</p>
+<p>However, it is known to not be completely reliable yet, see <a href="https://github.com/madsmtm/objc2/issues/258">#258</a> for
+details.</p>
+<h2 id="examples"><a class="doc-anchor" href="#examples">§</a>Examples</h2>
+<p>Creating a static <code>NSString</code>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2_foundation::{ns_string, NSString};
+
+<span class="kw">let </span>hello: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>NSString = <span class="macro">ns_string!</span>(<span class="string">"hello"</span>);
+<span class="macro">assert_eq!</span>(hello.to_string(), <span class="string">"hello"</span>);</code></pre></div>
+<p>Creating a <code>NSString</code> from a <code>const</code> <code>&amp;str</code>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">const </span>EXAMPLE: <span class="kw-2">&amp;</span>str = <span class="string">"example"</span>;
+<span class="macro">assert_eq!</span>(<span class="macro">ns_string!</span>(EXAMPLE).to_string(), EXAMPLE);</code></pre></div>
+<p>Creating unicode strings.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">let </span>hello_ru = <span class="macro">ns_string!</span>(<span class="string">"Привет"</span>);
+<span class="macro">assert_eq!</span>(hello_ru.to_string(), <span class="string">"Привет"</span>);</code></pre></div>
+<p>Creating a string containing a NUL byte:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="macro">assert_eq!</span>(<span class="macro">ns_string!</span>(<span class="string">"example\0"</span>).to_string(), <span class="string">"example\0"</span>);
+<span class="macro">assert_eq!</span>(<span class="macro">ns_string!</span>(<span class="string">"exa\0mple"</span>).to_string(), <span class="string">"exa\0mple"</span>);</code></pre></div>
+</div></details></section></div></main></body></html>

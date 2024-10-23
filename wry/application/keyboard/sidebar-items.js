@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["Key","KeyCode","KeyLocation","NativeKeyCode"],"struct":["ModifiersState"]};

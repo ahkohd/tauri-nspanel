@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/json-patch-1.4.0/src/diff.rs`."><title>diff.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="json_patch" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../json_patch/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/json-patch-2.0.0/src/diff.rs`."><title>diff.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="json_patch" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -358,28 +356,11 @@
 <a href="#356" id="356">356</a>
 <a href="#357" id="357">357</a>
 <a href="#358" id="358">358</a>
-<a href="#359" id="359">359</a>
-<a href="#360" id="360">360</a>
-<a href="#361" id="361">361</a>
-<a href="#362" id="362">362</a>
-<a href="#363" id="363">363</a>
-<a href="#364" id="364">364</a>
-<a href="#365" id="365">365</a>
-<a href="#366" id="366">366</a>
-<a href="#367" id="367">367</a>
-<a href="#368" id="368">368</a>
-<a href="#369" id="369">369</a>
-<a href="#370" id="370">370</a>
-<a href="#371" id="371">371</a>
-<a href="#372" id="372">372</a>
-<a href="#373" id="373">373</a>
-<a href="#374" id="374">374</a>
-<a href="#375" id="375">375</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::Patch;
+<span class="kw">use </span>jsonptr::Pointer;
 <span class="kw">use </span>serde_json::{Map, Value};
-<span class="kw">use </span>std::fmt::Write;
 
-<span class="kw">fn </span>diff_impl(left: <span class="kw-2">&amp;</span>Value, right: <span class="kw-2">&amp;</span>Value, pointer: <span class="kw-2">&amp;mut </span>String, patch: <span class="kw-2">&amp;mut </span><span class="kw">super</span>::Patch) {
+<span class="kw">fn </span>diff_impl(left: <span class="kw-2">&amp;</span>Value, right: <span class="kw-2">&amp;</span>Value, pointer: <span class="kw-2">&amp;mut </span>Pointer, patch: <span class="kw-2">&amp;mut </span><span class="kw">super</span>::Patch) {
     <span class="kw">match </span>(left, right) {
         (Value::Object(<span class="kw-2">ref </span>left_obj), Value::Object(<span class="kw-2">ref </span>right_obj)) =&gt; {
             diff_object(left_obj, right_obj, pointer, patch);
@@ -402,12 +383,11 @@
     }
 }
 
-<span class="kw">fn </span>diff_array(left: <span class="kw-2">&amp;</span>[Value], right: <span class="kw-2">&amp;</span>[Value], pointer: <span class="kw-2">&amp;mut </span>String, patch: <span class="kw-2">&amp;mut </span>Patch) {
+<span class="kw">fn </span>diff_array(left: <span class="kw-2">&amp;</span>[Value], right: <span class="kw-2">&amp;</span>[Value], pointer: <span class="kw-2">&amp;mut </span>Pointer, patch: <span class="kw-2">&amp;mut </span>Patch) {
     <span class="kw">let </span>len = left.len().max(right.len());
     <span class="kw">let </span><span class="kw-2">mut </span>shift = <span class="number">0usize</span>;
-    <span class="kw">let </span>prefix = pointer.len();
     <span class="kw">for </span>idx <span class="kw">in </span><span class="number">0</span>..len {
-        <span class="macro">write!</span>(pointer, <span class="string">"/{}"</span>, idx - shift).unwrap();
+        pointer.push_back((idx - shift).into());
         <span class="kw">match </span>(left.get(idx), right.get(idx)) {
             (<span class="prelude-val">Some</span>(left), <span class="prelude-val">Some</span>(right)) =&gt; {
                 <span class="comment">// Both array have an element at this index
@@ -435,21 +415,19 @@
                 <span class="macro">unreachable!</span>()
             }
         }
-        pointer.truncate(prefix);
+        pointer.pop_back();
     }
 }
 
 <span class="kw">fn </span>diff_object(
     left: <span class="kw-2">&amp;</span>Map&lt;String, Value&gt;,
     right: <span class="kw-2">&amp;</span>Map&lt;String, Value&gt;,
-    pointer: <span class="kw-2">&amp;mut </span>String,
+    pointer: <span class="kw-2">&amp;mut </span>Pointer,
     patch: <span class="kw-2">&amp;mut </span>Patch,
 ) {
     <span class="comment">// Add or replace keys in the right object
-    </span><span class="kw">let </span>prefix = pointer.len();
-    <span class="kw">for </span>(key, right_value) <span class="kw">in </span>right {
-        pointer.push(<span class="string">'/'</span>);
-        append_path(pointer, key);
+    </span><span class="kw">for </span>(key, right_value) <span class="kw">in </span>right {
+        pointer.push_back(key.into());
         <span class="kw">match </span>left.get(key) {
             <span class="prelude-val">Some</span>(left_value) =&gt; {
                 diff_impl(left_value, right_value, pointer, patch);
@@ -463,33 +441,19 @@
                     }));
             }
         }
-        pointer.truncate(prefix);
+        pointer.pop_back();
     }
 
     <span class="comment">// Remove keys that are not in the right object
     </span><span class="kw">for </span>key <span class="kw">in </span>left.keys() {
         <span class="kw">if </span>!right.contains_key(key) {
-            pointer.push(<span class="string">'/'</span>);
-            append_path(pointer, key);
+            pointer.push_back(key.into());
             patch
                 .<span class="number">0
                 </span>.push(<span class="kw">super</span>::PatchOperation::Remove(<span class="kw">super</span>::RemoveOperation {
                     path: pointer.clone(),
                 }));
-            pointer.truncate(prefix);
-        }
-    }
-}
-
-<span class="kw">fn </span>append_path(path: <span class="kw-2">&amp;mut </span>String, key: <span class="kw-2">&amp;</span>str) {
-    path.reserve(key.len());
-    <span class="kw">for </span>ch <span class="kw">in </span>key.chars() {
-        <span class="kw">if </span>ch == <span class="string">'~' </span>{
-            <span class="kw-2">*</span>path += <span class="string">"~0"</span>;
-        } <span class="kw">else if </span>ch == <span class="string">'/' </span>{
-            <span class="kw-2">*</span>path += <span class="string">"~1"</span>;
-        } <span class="kw">else </span>{
-            path.push(ch);
+            pointer.pop_back();
         }
     }
 }
@@ -540,8 +504,8 @@
 /// # }
 /// ```
 </span><span class="kw">pub fn </span>diff(left: <span class="kw-2">&amp;</span>Value, right: <span class="kw-2">&amp;</span>Value) -&gt; <span class="kw">super</span>::Patch {
-    <span class="kw">let </span><span class="kw-2">mut </span>patch = <span class="kw">super</span>::Patch(Vec::new());
-    <span class="kw">let </span><span class="kw-2">mut </span>path = String::new();
+    <span class="kw">let </span><span class="kw-2">mut </span>patch = <span class="kw">super</span>::Patch::default();
+    <span class="kw">let </span><span class="kw-2">mut </span>path = Pointer::root();
     diff_impl(left, right, <span class="kw-2">&amp;mut </span>path, <span class="kw-2">&amp;mut </span>patch);
     patch
 }

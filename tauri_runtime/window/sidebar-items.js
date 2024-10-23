@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["CursorIcon","FileDropEvent","WindowEvent"],"fn":["assert_label_is_valid","is_label_valid"],"mod":["dpi"],"struct":["DetachedWindow","JsEventListenerKey","MenuEvent","PendingWindow"]};
+window.SIDEBAR_ITEMS = {"enum":["CursorIcon","DragDropEvent","WebviewEvent","WindowEvent"],"fn":["assert_label_is_valid","is_label_valid"],"struct":["DetachedWindow","PendingWindow","RawWindow","WindowId","WindowSizeConstraints"],"trait":["WindowBuilder","WindowBuilderBase"]};

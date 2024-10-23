@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Cargo features in framework crates"><title>objc2::topics::about_generated::cargo_features - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="objc2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../../../objc2/index.html">objc2</a><span class="version">0.5.2</span></h2></div><h2 class="location"><a href="#">Module cargo_<wbr>features</a></h2><div class="sidebar-elems"><h2><a href="../index.html">In objc2::<wbr>topics::<wbr>about_<wbr>generated</a></h2></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Module <a href="../../../index.html">objc2</a>::<wbr><a href="../../index.html">topics</a>::<wbr><a href="../index.html">about_generated</a>::<wbr><a class="mod" href="#">cargo_features</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../../../../src/objc2/topics/about_generated/mod.rs.html#14">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="cargo-features-in-framework-crates"><a class="doc-anchor" href="#cargo-features-in-framework-crates">§</a>Cargo features in framework crates</h2>
+<p>Each framework crate has a set of Cargo features that control which parts of
+it that is enabled. These are split into two categories; file and dependency
+features.</p>
+<p>This is quite important for compilation speed, but if you don’t want to bother
+with it, such as when just starting a new project and experimenting or when
+running an example, use the <code>"all"</code> feature.</p>
+<h3 id="file-features"><a class="doc-anchor" href="#file-features">§</a>File features</h3>
+<p>Each framework C header corresponds to one Cargo feature, and everything that
+was declared inside of that header is locked behind that Cargo feature.</p>
+<p>As an example, let’s use <code>MetalKit</code>. This framework has four public C headers,
+<code>MTKDefines.h</code>, <code>MTKModel.h</code>, <code>MTKTextureLoader.h</code> and <code>MTKView.h</code>. This in
+turn means we get four Cargo features in <code>objc2-metal-kit</code>, <code>MTKDefines</code>,
+<code>MTKModel</code>, <code>MTKTextureLoader</code> and <code>MTKView</code>, that enables the functionality
+exposed by each of those headers, as well as any required dependency features
+(e.g. <code>MTKModel.h</code> uses <code>MTLDevice</code>, so <code>objc2-metal/MTLDevice</code> is enabled for
+you).</p>
+<h3 id="dependency-features"><a class="doc-anchor" href="#dependency-features">§</a>Dependency features</h3>
+<p>As you can see above, frameworks rarely stand alone, instead they often have
+some sort of dependency on other frameworks. Some of these dependencies are
+considered required, and enabled by default (often <code>objc2-foundation</code>), while
+for some it makes sense to allow control of whether the dependency is enabled.</p>
+<p>Let’s keep using <code>MetalKit</code> as the example. By default, <code>objc2-metal-kit</code> will
+import the dependencies <code>objc2</code>, <code>objc2-foundation</code> and <code>objc2-metal</code>, since
+those are central to how the <code>MetalKit</code> works.</p>
+<p>But it also has an optional dependency on <code>objc2-app-kit</code> and <code>block2</code>, since
+those are not always required; in this case, <code>objc2-app-kit</code> is only needed if
+you want to use the <code>MTKView</code> class, so it would be wasteful to enable the
+dependency if you didn’t need that class.</p>
+<p>Such optional dependencies can be enabled with Cargo features of the same name
+as the dependency.</p>
+</div></details></section></div></main></body></html>

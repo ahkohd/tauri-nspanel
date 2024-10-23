@@ -1,0 +1,159 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Create a new type to represent a class."><title>extern_class in objc2 - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="objc2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-118b08c4c78b968e.js"></script><script defer src="sidebar-items.js"></script><script defer src="../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc macro"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../objc2/index.html">objc2</a><span class="version">0.5.2</span></h2></div><div class="sidebar-elems"></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Macro <a href="index.html">objc2</a>::<wbr><a class="macro" href="#">extern_class</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../src/objc2/macros/extern_class.rs.html#176-257">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><span class="macro">macro_rules!</span> extern_class {
+    (
+        $(<span class="attr">#[<span class="macro-nonterminal">$m</span>:meta]</span>)*
+        <span class="macro-nonterminal">$v</span>:vis <span class="kw">struct </span><span class="macro-nonterminal">$name</span>:ident;
+
+        $(<span class="attr">#[<span class="macro-nonterminal">$impl_m</span>:meta]</span>)*
+        <span class="kw">unsafe impl </span>ClassType <span class="kw">for </span><span class="macro-nonterminal">$</span><span class="kw">for</span>:<span class="macro-nonterminal">ty </span>{
+            $(<span class="attr">#[inherits($(<span class="macro-nonterminal">$inheritance_rest</span>:ty),+)]</span>)<span class="question-mark">?
+            </span><span class="kw">type </span>Super = <span class="macro-nonterminal">$superclass</span>:ty;
+            <span class="kw">type </span>Mutability = <span class="macro-nonterminal">$mutability</span>:ty;
+
+            $(<span class="kw">const </span>NAME: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str = <span class="macro-nonterminal">$name_const</span>:expr;)<span class="question-mark">?
+        </span>}
+    ) =&gt; { ... };
+    (
+        $(<span class="attr">#[<span class="macro-nonterminal">$m</span>:meta]</span>)*
+        <span class="macro-nonterminal">$v</span>:vis <span class="kw">struct </span><span class="macro-nonterminal">$name</span>:ident {
+            $(<span class="macro-nonterminal">$field_vis</span>:vis <span class="macro-nonterminal">$field</span>:ident: <span class="macro-nonterminal">$field_ty</span>:ty,)*
+        }
+
+        $(<span class="attr">#[<span class="macro-nonterminal">$impl_m</span>:meta]</span>)*
+        <span class="kw">unsafe impl </span>ClassType <span class="kw">for </span><span class="macro-nonterminal">$</span><span class="kw">for</span>:<span class="macro-nonterminal">ty </span>{
+            $(<span class="attr">#[inherits($(<span class="macro-nonterminal">$inheritance_rest</span>:ty),+)]</span>)<span class="question-mark">?
+            </span><span class="kw">type </span>Super = <span class="macro-nonterminal">$superclass</span>:ty;
+            <span class="kw">type </span>Mutability = <span class="macro-nonterminal">$mutability</span>:ty;
+
+            $(<span class="kw">const </span>NAME: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str = <span class="macro-nonterminal">$name_const</span>:expr;)<span class="question-mark">?
+        </span>}
+    ) =&gt; { ... };
+}</pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Create a new type to represent a class.</p>
+<p>This is similar to an <code>@interface</code> declaration in Objective-C.</p>
+<p>It is useful for things like <code>objc2-foundation</code>, which needs to create
+interfaces to existing, externally defined classes like <code>NSString</code>,
+<code>NSURL</code> and so on, but can also be useful for users that have custom
+classes written in Objective-C that they want to access from Rust.</p>
+<h2 id="specification"><a class="doc-anchor" href="#specification">§</a>Specification</h2>
+<p>The syntax is similar enough to Rust syntax that if you invoke the macro
+with parentheses (as opposed to curly brackets), <a href="https://github.com/rust-lang/rustfmt/discussions/5437"><code>rustfmt</code> will be able to
+format the contents</a> (so e.g. as <code>extern_class!( ... );</code>).</p>
+<p>The macro creates an opaque struct containing the superclass (which means
+that auto traits are inherited from the superclass), and implements the
+following traits for it to allow easier usage as an Objective-C object:</p>
+<ul>
+<li><a href="encode/trait.RefEncode.html" title="trait objc2::encode::RefEncode"><code>RefEncode</code></a></li>
+<li><a href="trait.Message.html" title="trait objc2::Message"><code>Message</code></a></li>
+<li><a href="trait.ClassType.html" title="trait objc2::ClassType"><code>ClassType</code></a></li>
+<li><a href="https://doc.rust-lang.org/1.82.0/core/ops/deref/trait.Deref.html" title="trait core::ops::deref::Deref"><code>Deref&lt;Target = $superclass&gt;</code></a></li>
+<li><a href="https://doc.rust-lang.org/1.82.0/core/ops/deref/trait.DerefMut.html" title="trait core::ops::deref::DerefMut"><code>DerefMut</code></a></li>
+<li><a href="https://doc.rust-lang.org/1.82.0/core/convert/trait.AsRef.html" title="trait core::convert::AsRef"><code>AsRef&lt;$inheritance_chain&gt;</code></a></li>
+<li><a href="https://doc.rust-lang.org/1.82.0/core/convert/trait.AsMut.html" title="trait core::convert::AsMut"><code>AsMut&lt;$inheritance_chain&gt;</code></a></li>
+<li><a href="https://doc.rust-lang.org/1.82.0/core/borrow/trait.Borrow.html" title="trait core::borrow::Borrow"><code>Borrow&lt;$inheritance_chain&gt;</code></a></li>
+<li><a href="https://doc.rust-lang.org/1.82.0/core/borrow/trait.BorrowMut.html" title="trait core::borrow::BorrowMut"><code>BorrowMut&lt;$inheritance_chain&gt;</code></a></li>
+</ul>
+<p>The macro allows specifying zero-sized fields like <a href="https://doc.rust-lang.org/1.82.0/core/marker/struct.PhantomData.html" title="struct core::marker::PhantomData"><code>PhantomData</code></a> on the
+struct.</p>
+<p>You can add most attributes to the class, including <code>#[cfg(...)]</code>,
+<code>#[derive(...)]</code> and doc comments (but not ABI-modifying attributes like
+<code>#[repr(...)]</code>).</p>
+<h3 id="classtype-implementation"><a class="doc-anchor" href="#classtype-implementation">§</a><code>ClassType</code> implementation</h3>
+<p>The syntax of this macro neatly documents that it implements the
+<a href="trait.ClassType.html" title="trait objc2::ClassType"><code>ClassType</code></a> trait for you, though to do so you need to provide it the
+following:</p>
+<ul>
+<li>
+<p>The <a href="trait.ClassType.html#associatedtype.Super" title="associated type objc2::ClassType::Super"><code>Super</code></a> class.</p>
+<p>Due to Rust trait limitations, specifying e.g. the superclass <code>NSData</code>
+would not give you the ability to convert via. <code>AsRef</code> to <code>NSObject</code>.
+Therefore, you may optionally specify additional parts of the
+inheritance chain using an <code>#[inherits(...)]</code> attribute.</p>
+</li>
+<li>
+<p>The class’ <a href="trait.ClassType.html#associatedtype.Mutability" title="associated type objc2::ClassType::Mutability"><code>Mutability</code></a>.</p>
+</li>
+<li>
+<p>Optionally, the class’ <a href="trait.ClassType.html#associatedconstant.NAME" title="associated constant objc2::ClassType::NAME"><code>NAME</code></a> - if not specified, this will default to
+the struct name.</p>
+</li>
+</ul>
+<p>You may add <code>#[cfg(...)]</code> attributes to the <code>ClassType</code> impl, and then it
+will work as expected. No other attributes are supported.</p>
+<h2 id="safety"><a class="doc-anchor" href="#safety">§</a>Safety</h2>
+<p>This macro implements the three unsafe traits <a href="encode/trait.RefEncode.html" title="trait objc2::encode::RefEncode"><code>RefEncode</code></a>, <a href="trait.Message.html" title="trait objc2::Message"><code>Message</code></a>
+and <a href="trait.ClassType.html" title="trait objc2::ClassType"><code>ClassType</code></a> for you, and while it can ensure most of the required
+properties in those, it cannot ensure all of them.</p>
+<p>In particular, when writing <code>unsafe</code> on <code>impl ClassType</code>, you must ensure
+that:</p>
+<ol>
+<li>
+<p><a href="trait.ClassType.html#associatedtype.Super" title="associated type objc2::ClassType::Super"><code>ClassType::Super</code></a> is correct.</p>
+</li>
+<li>
+<p><a href="trait.ClassType.html#associatedtype.Mutability" title="associated type objc2::ClassType::Mutability"><code>ClassType::Mutability</code></a> is correct.</p>
+<p>See <a href="trait.ClassType.html#safety" title="trait objc2::ClassType"><code>ClassType</code>’s safety section</a> for further
+details on what this entails.</p>
+</li>
+</ol>
+<h2 id="examples"><a class="doc-anchor" href="#examples">§</a>Examples</h2>
+<p>Create a new type to represent the <code>NSFormatter</code> class (for demonstration,
+<code>objc2_foundation::NSFormatter</code> exist for exactly this purpose).</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2_foundation::{NSCoding, NSCopying, NSObjectProtocol};
+<span class="kw">use </span>objc2::rc::Retained;
+<span class="kw">use </span>objc2::runtime::NSObject;
+<span class="kw">use </span>objc2::{extern_class, msg_send_id, mutability, ClassType};
+
+<span class="macro">extern_class!</span>(
+    <span class="doccomment">/// An example description.
+    </span><span class="attr">#[derive(PartialEq, Eq, Hash)] </span><span class="comment">// Uses the superclass' implementation
+    // Specify the class and struct name to be used
+    </span><span class="kw">pub struct </span>NSFormatter;
+
+    <span class="comment">// Specify the superclass, in this case `NSObject`
+    </span><span class="kw">unsafe impl </span>ClassType <span class="kw">for </span>NSFormatter {
+        <span class="kw">type </span>Super = NSObject;
+        <span class="kw">type </span>Mutability = mutability::InteriorMutable;
+        <span class="comment">// Optionally, specify the name of the class, if it differs from
+        // the struct name.
+        // const NAME: &amp;'static str = "NSFormatter";
+    </span>}
+);
+
+<span class="comment">// Note: We have to specify the protocols for the superclasses as well,
+// since Rust doesn't do inheritance.
+</span><span class="kw">unsafe impl </span>NSObjectProtocol <span class="kw">for </span>NSFormatter {}
+<span class="kw">unsafe impl </span>NSCopying <span class="kw">for </span>NSFormatter {}
+<span class="kw">unsafe impl </span>NSCoding <span class="kw">for </span>NSFormatter {}
+
+<span class="kw">fn </span>main() {
+    <span class="comment">// Provided by the implementation of `ClassType`
+    </span><span class="kw">let </span>cls = NSFormatter::class();
+
+    <span class="comment">// `NSFormatter` implements `Message`:
+    </span><span class="kw">let </span>obj: Retained&lt;NSFormatter&gt; = <span class="kw">unsafe </span>{ <span class="macro">msg_send_id!</span>[cls, new] };
+}</code></pre></div>
+<p>Represent the <code>NSDateFormatter</code> class, using the <code>NSFormatter</code> type we
+declared previously to specify as its superclass.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2_foundation::{NSCoding, NSCopying, NSObjectProtocol};
+<span class="kw">use </span>objc2::runtime::NSObject;
+<span class="kw">use </span>objc2::{extern_class, mutability, ClassType};
+
+<span class="macro">extern_class!</span>(
+    <span class="attr">#[derive(PartialEq, Eq, Hash)]
+    </span><span class="kw">pub struct </span>NSDateFormatter;
+
+    <span class="kw">unsafe impl </span>ClassType <span class="kw">for </span>NSDateFormatter {
+        <span class="comment">// Specify the correct inheritance chain
+        </span><span class="attr">#[inherits(NSObject)]
+        </span><span class="kw">type </span>Super = NSFormatter;
+        <span class="kw">type </span>Mutability = mutability::InteriorMutable;
+    }
+);
+
+<span class="comment">// Similarly, we can specify the protocols that this implements here:
+</span><span class="kw">unsafe impl </span>NSObjectProtocol <span class="kw">for </span>NSFormatter {}
+<span class="kw">unsafe impl </span>NSCopying <span class="kw">for </span>NSDateFormatter {}
+<span class="kw">unsafe impl </span>NSCoding <span class="kw">for </span>NSDateFormatter {}</code></pre></div>
+<p>See the source code of <code>objc2-foundation</code> for many more examples.</p>
+</div></details></section></div></main></body></html>

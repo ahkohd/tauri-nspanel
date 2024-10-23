@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unicode-normalization-0.1.23/src/normalize.rs`."><title>normalize.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="unicode_normalization" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="icon" href="https://unicode-rs.github.io/unicode-rs_sm.png"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../unicode_normalization/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unicode-normalization-0.1.24/src/normalize.rs`."><title>normalize.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="unicode_normalization" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="icon" href="https://unicode-rs.github.io/unicode-rs_sm.png"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -201,6 +199,29 @@
 <a href="#199" id="199">199</a>
 <a href="#200" id="200">200</a>
 <a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright 2012-2015 The Rust Project Developers. See the COPYRIGHT
 // file at the top-level directory of this distribution and at
 // http://rust-lang.org/COPYRIGHT.
@@ -217,7 +238,7 @@
     compatibility_fully_decomposed, composition_table,
 };
 
-<span class="kw">use </span>core::{char, ops::FnMut};
+<span class="kw">use </span>core::char;
 
 <span class="doccomment">/// Compute canonical Unicode decomposition for character.
 /// See [Unicode Standard Annex #15](http://www.unicode.org/reports/tr15/)
@@ -274,6 +295,7 @@
 }
 
 <span class="attr">#[inline]
+#[allow(unsafe_code)]
 </span><span class="kw">fn </span>decompose&lt;D, F&gt;(c: char, decompose_char: D, <span class="kw-2">mut </span>emit_char: F)
 <span class="kw">where
     </span>D: Fn(char) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span>[char]&gt;,
@@ -287,7 +309,10 @@
 
     <span class="comment">// Perform decomposition for Hangul
     </span><span class="kw">if </span>is_hangul_syllable(c) {
-        decompose_hangul(c, emit_char);
+        <span class="comment">// Safety: Hangul Syllables invariant checked by is_hangul_syllable above
+        </span><span class="kw">unsafe </span>{
+            decompose_hangul(c, emit_char);
+        }
         <span class="kw">return</span>;
     }
 
@@ -326,32 +351,42 @@
 <span class="kw">const </span>V_LAST: u32 = V_BASE + V_COUNT - <span class="number">1</span>;
 <span class="kw">const </span>T_LAST: u32 = T_BASE + T_COUNT - <span class="number">1</span>;
 
-<span class="comment">// Composition only occurs for `TPart`s in `U+11A8 ... U+11C2`,
-// i.e. `T_BASE + 1 ... T_LAST`.
+<span class="comment">// Composition only occurs for `TPart`s in `U+11A8 ..= U+11C2`,
+// i.e. `T_BASE + 1 ..= T_LAST`.
 </span><span class="kw">const </span>T_FIRST: u32 = T_BASE + <span class="number">1</span>;
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>is_hangul_syllable(c: char) -&gt; bool {
-    (c <span class="kw">as </span>u32) &gt;= S_BASE &amp;&amp; (c <span class="kw">as </span>u32) &lt; (S_BASE + S_COUNT)
+<span class="comment">// Safety-usable invariant: This ensures that c is a valid Hangul Syllable character (U+AC00..U+D7AF)
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>is_hangul_syllable(c: char) -&gt; bool {
+    <span class="comment">// Safety: This checks the range 0xAC00 (S_BASE) to 0xD7A4 (S_BASE + S_COUNT), upholding the safety-usable invariant
+    </span>(c <span class="kw">as </span>u32) &gt;= S_BASE &amp;&amp; (c <span class="kw">as </span>u32) &lt; (S_BASE + S_COUNT)
 }
 
 <span class="comment">// Decompose a precomposed Hangul syllable
-</span><span class="attr">#[allow(unsafe_code)]
+// Safety: `s` MUST be a valid Hangul Syllable character, between U+AC00..U+D7AF
+</span><span class="attr">#[allow(unsafe_code, unused_unsafe)]
 #[inline(always)]
-</span><span class="kw">fn </span>decompose_hangul&lt;F&gt;(s: char, <span class="kw-2">mut </span>emit_char: F)
+</span><span class="kw">unsafe fn </span>decompose_hangul&lt;F&gt;(s: char, <span class="kw-2">mut </span>emit_char: F)
 <span class="kw">where
     </span>F: FnMut(char),
 {
-    <span class="kw">let </span>s_index = s <span class="kw">as </span>u32 - S_BASE;
-    <span class="kw">let </span>l_index = s_index / N_COUNT;
+    <span class="comment">// This will be at most 0x2baf, the size of the Hangul Syllables block
+    </span><span class="kw">let </span>s_index = s <span class="kw">as </span>u32 - S_BASE;
+    <span class="comment">// This will be at most 0x2baf / (21 * 28), 19
+    </span><span class="kw">let </span>l_index = s_index / N_COUNT;
     <span class="kw">unsafe </span>{
-        emit_char(char::from_u32_unchecked(L_BASE + l_index));
+        <span class="comment">// Safety: L_BASE (0x1100) plus at most 19 is still going to be in range for a valid Unicode code point in the BMP (&lt; 0xD800)
+        </span>emit_char(char::from_u32_unchecked(L_BASE + l_index));
 
-        <span class="kw">let </span>v_index = (s_index % N_COUNT) / T_COUNT;
-        emit_char(char::from_u32_unchecked(V_BASE + v_index));
+        <span class="comment">// Safety: This will be at most (N_COUNT - 1) / T_COUNT = (V*T - 1) / T, which gives us an upper bound of V_COUNT = 21
+        </span><span class="kw">let </span>v_index = (s_index % N_COUNT) / T_COUNT;
+        <span class="comment">// Safety: V_BASE (0x1161) plus at most 21 is still going to be in range for a valid Unicode code point in the BMP (&lt; 0xD800)
+        </span>emit_char(char::from_u32_unchecked(V_BASE + v_index));
 
-        <span class="kw">let </span>t_index = s_index % T_COUNT;
+        <span class="comment">// Safety: This will be at most T_COUNT - 1 (27)
+        </span><span class="kw">let </span>t_index = s_index % T_COUNT;
         <span class="kw">if </span>t_index &gt; <span class="number">0 </span>{
-            emit_char(char::from_u32_unchecked(T_BASE + t_index));
+            <span class="comment">// Safety: T_BASE (0x11A7) plus at most 27 is still going to be in range for a valid Unicode code point in the BMP (&lt; 0xD800)
+            </span>emit_char(char::from_u32_unchecked(T_BASE + t_index));
         }
     }
 }
@@ -375,16 +410,25 @@
     <span class="kw">let </span>(a, b) = (a <span class="kw">as </span>u32, b <span class="kw">as </span>u32);
     <span class="kw">match </span>(a, b) {
         <span class="comment">// Compose a leading consonant and a vowel together into an LV_Syllable
-        </span>(L_BASE...L_LAST, V_BASE...V_LAST) =&gt; {
-            <span class="kw">let </span>l_index = a - L_BASE;
+        </span>(L_BASE..=L_LAST, V_BASE..=V_LAST) =&gt; {
+            <span class="comment">// Safety: based on the above bounds, l_index will be less than or equal to L_COUNT (19)
+            // and v_index will be &lt;= V_COUNT (21)
+            </span><span class="kw">let </span>l_index = a - L_BASE;
             <span class="kw">let </span>v_index = b - V_BASE;
-            <span class="kw">let </span>lv_index = l_index * N_COUNT + v_index * T_COUNT;
-            <span class="kw">let </span>s = S_BASE + lv_index;
-            <span class="prelude-val">Some</span>(<span class="kw">unsafe </span>{ char::from_u32_unchecked(s) })
+            <span class="comment">// Safety: This will be &lt;= 19 * (20 * 21) + (21 * 20), which is 8400.
+            </span><span class="kw">let </span>lv_index = l_index * N_COUNT + v_index * T_COUNT;
+            <span class="comment">// Safety: This is between 0xAC00 and 0xCCD0, which are in range for Hangul Syllables (U+AC00..U+D7AF) and also in range
+            // for BMP unicode
+            </span><span class="kw">let </span>s = S_BASE + lv_index;
+            <span class="comment">// Safety: We've verified this is in-range
+            </span><span class="prelude-val">Some</span>(<span class="kw">unsafe </span>{ char::from_u32_unchecked(s) })
         }
         <span class="comment">// Compose an LV_Syllable and a trailing consonant into an LVT_Syllable
-        </span>(S_BASE...S_LAST, T_FIRST...T_LAST) <span class="kw">if </span>(a - S_BASE) % T_COUNT == <span class="number">0 </span>=&gt; {
-            <span class="prelude-val">Some</span>(<span class="kw">unsafe </span>{ char::from_u32_unchecked(a + (b - T_BASE)) })
+        </span>(S_BASE..=S_LAST, T_FIRST..=T_LAST) <span class="kw">if </span>(a - S_BASE) % T_COUNT == <span class="number">0 </span>=&gt; {
+            <span class="comment">// Safety: a is between 0xAC00 and (0xAC00 + 19 * 21 * 28). b - T_BASE is between 0 and 19.
+            // Adding a number 0 to 19 to a number that is at largest 0xD7A4 will not go out of bounds to 0xD800 (where the
+            // surrogates start), so this is safe.
+            </span><span class="prelude-val">Some</span>(<span class="kw">unsafe </span>{ char::from_u32_unchecked(a + (b - T_BASE)) })
         }
         <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
     }
@@ -396,7 +440,7 @@
 
     <span class="comment">// Regression test from a bugfix where we were composing an LV_Syllable with
     // T_BASE directly. (We should only compose an LV_Syllable with a character
-    // in the range `T_BASE + 1 ... T_LAST`.)
+    // in the range `T_BASE + 1 ..= T_LAST`.)
     </span><span class="attr">#[test]
     </span><span class="kw">fn </span>test_hangul_composition() {
         <span class="macro">assert_eq!</span>(compose_hangul(<span class="string">'\u{c8e0}'</span>, <span class="string">'\u{11a7}'</span>), <span class="prelude-val">None</span>);

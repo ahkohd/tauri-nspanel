@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-3.5.0/src/enc/backward_references/hash_to_binary_tree.rs`."><title>hash_to_binary_tree.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../../brotli/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/brotli-7.0.0/src/enc/backward_references/hash_to_binary_tree.rs`."><title>hash_to_binary_tree.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="brotli" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -503,39 +501,22 @@
 <a href="#501" id="501">501</a>
 <a href="#502" id="502">502</a>
 <a href="#503" id="503">503</a>
-<a href="#504" id="504">504</a>
-<a href="#505" id="505">505</a>
-<a href="#506" id="506">506</a>
-<a href="#507" id="507">507</a>
-<a href="#508" id="508">508</a>
-<a href="#509" id="509">509</a>
-<a href="#510" id="510">510</a>
-<a href="#511" id="511">511</a>
-</pre></div><pre class="rust"><code><span class="attr">#![allow(dead_code, unused_imports)]
-</span><span class="kw">use super</span>::{
-    kDistanceCacheIndex, kDistanceCacheOffset, kHashMul32, kHashMul64, kHashMul64Long,
-    kInvalidMatch, AnyHasher, BrotliEncoderParams, BrotliHasherParams, CloneWithAlloc, H9Opts,
-    HasherSearchResult, HowPrepared, Struct1,
-};
-<span class="kw">use </span>alloc;
-<span class="kw">use </span>alloc::{Allocator, SliceWrapper, SliceWrapperMut};
+</pre></div><pre class="rust"><code><span class="kw">use </span>alloc::{Allocator, SliceWrapper, SliceWrapperMut};
 <span class="kw">use </span>core;
-<span class="kw">use </span>enc::command::{
-    CombineLengthCodes, Command, CommandCopyLen, ComputeDistanceCode, GetCopyLengthCode,
-    GetInsertLengthCode, InitCommand, PrefixEncodeCopyDistance,
-};
-<span class="kw">use </span>enc::constants::{kCopyExtra, kInsExtra};
-<span class="kw">use </span>enc::dictionary_hash::kStaticDictionaryHash;
-<span class="kw">use </span>enc::literal_cost::BrotliEstimateBitCostsForLiterals;
-<span class="kw">use </span>enc::static_dict::{
-    kBrotliEncDictionary, BrotliDictionary, BrotliFindAllStaticDictionaryMatches,
-};
-<span class="kw">use </span>enc::static_dict::{
-    FindMatchLengthWithLimit, BROTLI_UNALIGNED_LOAD32, BROTLI_UNALIGNED_LOAD64,
-};
-<span class="kw">use </span>enc::util::{brotli_max_size_t, floatX, FastLog2, Log2FloorNonZero};
+<span class="kw">use </span>core::cmp::min;
 
-<span class="kw">pub const </span>kInfinity: floatX = <span class="number">1.7e38 </span><span class="kw">as </span>floatX;
+<span class="kw">use super</span>::{
+    kHashMul32, AnyHasher, BrotliEncoderParams, CloneWithAlloc, H9Opts, HasherSearchResult,
+    HowPrepared, Struct1,
+};
+<span class="kw">use </span><span class="kw">crate</span>::enc::combined_alloc::allocate;
+<span class="kw">use </span><span class="kw">crate</span>::enc::static_dict::{
+    BrotliDictionary, FindMatchLengthWithLimit, BROTLI_UNALIGNED_LOAD32,
+};
+<span class="kw">use </span><span class="kw">crate</span>::enc::util::floatX;
+
+<span class="kw">pub const </span>kInfinity: floatX = <span class="number">1.7e38</span>;
+
 <span class="attr">#[derive(Clone, Copy, Debug)]
 </span><span class="kw">pub enum </span>Union1 {
     cost(floatX),
@@ -714,7 +695,7 @@
     }
 }
 <span class="kw">impl</span>&lt;
-        Alloc: alloc::Allocator&lt;u16&gt; + alloc::Allocator&lt;u32&gt;,
+        Alloc: Allocator&lt;u16&gt; + Allocator&lt;u32&gt;,
         Buckets: Allocable&lt;u32, Alloc&gt; + SliceWrapperMut&lt;u32&gt; + SliceWrapper&lt;u32&gt;,
         Params: H10Params,
     &gt; CloneWithAlloc&lt;Alloc&gt; <span class="kw">for </span>H10&lt;Alloc, Buckets, Params&gt;
@@ -727,7 +708,7 @@
             common: <span class="self">self</span>.common.clone(),
             buckets_: Buckets::new_uninit(m),
             invalid_pos_: <span class="self">self</span>.invalid_pos_,
-            forest: &lt;Alloc <span class="kw">as </span>Allocator&lt;u32&gt;&gt;::alloc_cell(m, <span class="self">self</span>.forest.len()),
+            forest: allocate::&lt;u32, <span class="kw">_</span>&gt;(m, <span class="self">self</span>.forest.len()),
             _params: core::marker::PhantomData::&lt;Params&gt;,
         };
         ret.buckets_
@@ -889,12 +870,16 @@
     </span><span class="kw">pub fn </span>set_length_and_code(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: u32) {
         <span class="kw-2">*</span><span class="self">self</span>.<span class="number">0 </span>= u64::from((<span class="kw-2">*</span><span class="self">self</span>.<span class="number">0</span>) <span class="kw">as </span>u32) | (u64::from(data) &lt;&lt; <span class="number">32</span>);
     }
-}
-
-<span class="attr">#[inline(always)]
-</span><span class="kw">pub fn </span>InitBackwardMatch(xself: <span class="kw-2">&amp;mut </span>BackwardMatchMut, dist: usize, len: usize) {
-    xself.set_distance(dist <span class="kw">as </span>u32);
-    xself.set_length_and_code((len &lt;&lt; <span class="number">5</span>) <span class="kw">as </span>u32);
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">pub fn </span>init(<span class="kw-2">&amp;mut </span><span class="self">self</span>, dist: usize, len: usize) {
+        <span class="self">self</span>.set_distance(dist <span class="kw">as </span>u32);
+        <span class="self">self</span>.set_length_and_code((len &lt;&lt; <span class="number">5</span>) <span class="kw">as </span>u32);
+    }
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>init_dictionary(<span class="kw-2">&amp;mut </span><span class="self">self</span>, dist: usize, len: usize, len_code: usize) {
+        <span class="self">self</span>.set_distance(dist <span class="kw">as </span>u32);
+        <span class="self">self</span>.set_length_and_code((len &lt;&lt; <span class="number">5 </span>| <span class="kw">if </span>len == len_code { <span class="number">0 </span>} <span class="kw">else </span>{ len_code }) <span class="kw">as </span>u32);
+    }
 }
 
 <span class="macro">macro_rules!</span> LeftChildIndexH10 {
@@ -948,78 +933,75 @@ fn RightChildIndexH10&lt;AllocU32: Allocator&lt;u32&gt;,
 <span class="kw">where
     </span>Buckets: PartialEq&lt;Buckets&gt;,
 {
-    <span class="kw">let </span><span class="kw-2">mut </span>matches_offset = <span class="number">0usize</span>;
-    <span class="kw">let </span>cur_ix_masked: usize = cur_ix &amp; ring_buffer_mask;
-    <span class="kw">let </span>max_comp_len: usize = core::cmp::min(max_length, <span class="number">128usize</span>);
+    <span class="kw">let </span><span class="kw-2">mut </span>matches_offset = <span class="number">0_usize</span>;
+    <span class="kw">let </span>cur_ix_masked = cur_ix &amp; ring_buffer_mask;
+    <span class="kw">let </span>max_comp_len = min(max_length, <span class="number">128</span>);
     <span class="kw">let </span>should_reroot_tree = max_length &gt;= <span class="number">128</span>;
     <span class="kw">let </span>key = xself.HashBytes(<span class="kw-2">&amp;</span>data[cur_ix_masked..]);
-    <span class="kw">let </span>forest: <span class="kw-2">&amp;mut </span>[u32] = xself.forest.slice_mut();
-    <span class="kw">let </span><span class="kw-2">mut </span>prev_ix: usize = xself.buckets_.slice()[key] <span class="kw">as </span>usize;
-    <span class="kw">let </span><span class="kw-2">mut </span>node_left: usize = <span class="macro">LeftChildIndexH10!</span>(xself, cur_ix);
-    <span class="kw">let </span><span class="kw-2">mut </span>node_right: usize = <span class="macro">RightChildIndexH10!</span>(xself, cur_ix);
-    <span class="kw">let </span><span class="kw-2">mut </span>best_len_left: usize = <span class="number">0usize</span>;
-    <span class="kw">let </span><span class="kw-2">mut </span>best_len_right: usize = <span class="number">0usize</span>;
-    <span class="kw">let </span><span class="kw-2">mut </span>depth_remaining: usize;
+    <span class="kw">let </span>forest = xself.forest.slice_mut();
+    <span class="kw">let </span><span class="kw-2">mut </span>prev_ix = xself.buckets_.slice()[key] <span class="kw">as </span>usize;
+    <span class="kw">let </span><span class="kw-2">mut </span>node_left = <span class="macro">LeftChildIndexH10!</span>(xself, cur_ix);
+    <span class="kw">let </span><span class="kw-2">mut </span>node_right = <span class="macro">RightChildIndexH10!</span>(xself, cur_ix);
+    <span class="kw">let </span><span class="kw-2">mut </span>best_len_left = <span class="number">0_usize</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>best_len_right = <span class="number">0_usize</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>depth_remaining = <span class="number">64_usize</span>;
+
     <span class="kw">if </span>should_reroot_tree {
         xself.buckets_.slice_mut()[key] = cur_ix <span class="kw">as </span>u32;
     }
-    depth_remaining = <span class="number">64usize</span>;
-    <span class="lifetime">'break16</span>: <span class="kw">loop </span>{
-        {
-            <span class="kw">let </span>backward: usize = cur_ix.wrapping_sub(prev_ix);
-            <span class="kw">let </span>prev_ix_masked: usize = prev_ix &amp; ring_buffer_mask;
-            <span class="kw">if </span>backward == <span class="number">0usize </span>|| backward &gt; max_backward || depth_remaining == <span class="number">0usize </span>{
-                <span class="kw">if </span>should_reroot_tree {
-                    forest[node_left] = xself.invalid_pos_;
-                    forest[node_right] = xself.invalid_pos_;
-                }
-                <span class="kw">break </span><span class="lifetime">'break16</span>;
-            }
-            {
-                <span class="kw">let </span>cur_len: usize = core::cmp::min(best_len_left, best_len_right);
 
-                <span class="kw">let </span>len: usize = cur_len.wrapping_add(FindMatchLengthWithLimit(
-                    <span class="kw-2">&amp;</span>data[cur_ix_masked.wrapping_add(cur_len)..],
-                    <span class="kw-2">&amp;</span>data[prev_ix_masked.wrapping_add(cur_len)..],
-                    max_length.wrapping_sub(cur_len),
-                ));
-                <span class="kw">if </span>matches_offset != matches.len() &amp;&amp; (len &gt; <span class="kw-2">*</span>best_len) {
-                    <span class="kw-2">*</span>best_len = len;
-                    InitBackwardMatch(
-                        <span class="kw-2">&amp;mut </span>BackwardMatchMut(<span class="kw-2">&amp;mut </span>matches[matches_offset]),
-                        backward,
-                        len,
-                    );
-                    matches_offset += <span class="number">1</span>;
-                }
-                <span class="kw">if </span>len &gt;= max_comp_len {
-                    <span class="kw">if </span>should_reroot_tree {
-                        forest[node_left] = forest[<span class="macro">LeftChildIndexH10!</span>(xself, prev_ix)];
-                        forest[node_right] = forest[<span class="macro">RightChildIndexH10!</span>(xself, prev_ix)];
-                    }
-                    <span class="kw">break </span><span class="lifetime">'break16</span>;
-                }
-                <span class="kw">if </span>data[cur_ix_masked.wrapping_add(len)] <span class="kw">as </span>i32
-                    &gt; data[prev_ix_masked.wrapping_add(len)] <span class="kw">as </span>i32
-                {
-                    best_len_left = len;
-                    <span class="kw">if </span>should_reroot_tree {
-                        forest[node_left] = prev_ix <span class="kw">as </span>u32;
-                    }
-                    node_left = <span class="macro">RightChildIndexH10!</span>(xself, prev_ix);
-                    prev_ix = forest[node_left] <span class="kw">as </span>usize;
-                } <span class="kw">else </span>{
-                    best_len_right = len;
-                    <span class="kw">if </span>should_reroot_tree {
-                        forest[node_right] = prev_ix <span class="kw">as </span>u32;
-                    }
-                    node_right = <span class="macro">LeftChildIndexH10!</span>(xself, prev_ix);
-                    prev_ix = forest[node_right] <span class="kw">as </span>usize;
-                }
+    <span class="kw">loop </span>{
+        <span class="kw">let </span>backward = cur_ix.wrapping_sub(prev_ix);
+        <span class="kw">let </span>prev_ix_masked = prev_ix &amp; ring_buffer_mask;
+        <span class="kw">if </span>backward == <span class="number">0 </span>|| backward &gt; max_backward || depth_remaining == <span class="number">0 </span>{
+            <span class="kw">if </span>should_reroot_tree {
+                forest[node_left] = xself.invalid_pos_;
+                forest[node_right] = xself.invalid_pos_;
             }
+            <span class="kw">break</span>;
         }
+
+        <span class="kw">let </span>cur_len = min(best_len_left, best_len_right);
+
+        <span class="kw">let </span>len = cur_len.wrapping_add(FindMatchLengthWithLimit(
+            <span class="kw-2">&amp;</span>data[cur_ix_masked.wrapping_add(cur_len)..],
+            <span class="kw-2">&amp;</span>data[prev_ix_masked.wrapping_add(cur_len)..],
+            max_length.wrapping_sub(cur_len),
+        ));
+
+        <span class="kw">if </span>matches_offset != matches.len() &amp;&amp; len &gt; <span class="kw-2">*</span>best_len {
+            <span class="kw-2">*</span>best_len = len;
+            BackwardMatchMut(<span class="kw-2">&amp;mut </span>matches[matches_offset]).init(backward, len);
+            matches_offset += <span class="number">1</span>;
+        }
+
+        <span class="kw">if </span>len &gt;= max_comp_len {
+            <span class="kw">if </span>should_reroot_tree {
+                forest[node_left] = forest[<span class="macro">LeftChildIndexH10!</span>(xself, prev_ix)];
+                forest[node_right] = forest[<span class="macro">RightChildIndexH10!</span>(xself, prev_ix)];
+            }
+            <span class="kw">break</span>;
+        }
+
+        <span class="kw">if </span>data[cur_ix_masked.wrapping_add(len)] &gt; data[prev_ix_masked.wrapping_add(len)] {
+            best_len_left = len;
+            <span class="kw">if </span>should_reroot_tree {
+                forest[node_left] = prev_ix <span class="kw">as </span>u32;
+            }
+            node_left = <span class="macro">RightChildIndexH10!</span>(xself, prev_ix);
+            prev_ix = forest[node_left] <span class="kw">as </span>usize;
+        } <span class="kw">else </span>{
+            best_len_right = len;
+            <span class="kw">if </span>should_reroot_tree {
+                forest[node_right] = prev_ix <span class="kw">as </span>u32;
+            }
+            node_right = <span class="macro">LeftChildIndexH10!</span>(xself, prev_ix);
+            prev_ix = forest[node_right] <span class="kw">as </span>usize;
+        }
+
         depth_remaining = depth_remaining.wrapping_sub(<span class="number">1</span>);
     }
+
     matches_offset
 }
 </code></pre></div></section></main></body></html>

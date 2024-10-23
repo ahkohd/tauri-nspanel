@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["ShortcutManagerError"],"struct":["GlobalShortcut","ShortcutManager"]};

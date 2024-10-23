@@ -1,0 +1,1 @@
+searchState.loadedDescShard("tauri_macros", 0, "Mark a function as a command handler. It creates a wrapper …\nAccepts a closure-like syntax to call arbitrary code on a …\nReads a Tauri config file and generates a <code>::tauri::Context</code> …\nAccepts a list of command functions. Creates a handler …\nConvert a .png or .ico icon to an Image for things like …")

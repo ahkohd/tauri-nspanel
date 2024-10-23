@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/http-0.2.12/src/header/map.rs`."><title>map.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="http" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../http/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/http-1.1.0/src/header/map.rs`."><title>map.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="http" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -3901,16 +3899,8 @@
 <a href="#3899" id="3899">3899</a>
 <a href="#3900" id="3900">3900</a>
 <a href="#3901" id="3901">3901</a>
-<a href="#3902" id="3902">3902</a>
-<a href="#3903" id="3903">3903</a>
-<a href="#3904" id="3904">3904</a>
-<a href="#3905" id="3905">3905</a>
-<a href="#3906" id="3906">3906</a>
-<a href="#3907" id="3907">3907</a>
-<a href="#3908" id="3908">3908</a>
-<a href="#3909" id="3909">3909</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
-<span class="kw">use </span>std::collections::hash_map::RandomState;
+</pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::hash_map::RandomState;
+<span class="kw">use </span>std::collections::HashMap;
 <span class="kw">use </span>std::convert::TryFrom;
 <span class="kw">use </span>std::hash::{BuildHasher, Hash, Hasher};
 <span class="kw">use </span>std::iter::{FromIterator, FusedIterator};
@@ -3919,15 +3909,15 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::Error;
 
-<span class="kw">use </span><span class="kw">super</span>::HeaderValue;
 <span class="kw">use </span><span class="kw">super</span>::name::{HdrName, HeaderName, InvalidHeaderName};
+<span class="kw">use </span><span class="kw">super</span>::HeaderValue;
 
 <span class="kw">pub use </span><span class="self">self</span>::as_header_name::AsHeaderName;
 <span class="kw">pub use </span><span class="self">self</span>::into_header_name::IntoHeaderName;
 
 <span class="doccomment">/// A set of HTTP headers
 ///
-/// `HeaderMap` is an multimap of [`HeaderName`] to values.
+/// `HeaderMap` is a multimap of [`HeaderName`] to values.
 ///
 /// [`HeaderName`]: struct.HeaderName.html
 ///
@@ -4370,7 +4360,7 @@
     /// allocations before `capacity` headers are stored in the map.
     ///
     /// More capacity than requested may be allocated.
-    /// 
+    ///
     /// # Panics
     ///
     /// This method panics if capacity exceeds max `HeaderMap` capacity.
@@ -4626,7 +4616,7 @@
                 <span class="kw">return </span><span class="prelude-val">Err</span>(MaxSizeReached::new());
             }
 
-            <span class="kw">if </span><span class="self">self</span>.entries.len() == <span class="number">0 </span>{
+            <span class="kw">if </span><span class="self">self</span>.entries.is_empty() {
                 <span class="self">self</span>.mask = cap <span class="kw">as </span>Size - <span class="number">1</span>;
                 <span class="self">self</span>.indices = <span class="macro">vec!</span>[Pos::none(); cap].into_boxed_slice();
                 <span class="self">self</span>.entries = Vec::with_capacity(usable_capacity(cap));
@@ -4944,7 +4934,9 @@
         </span><span class="kw">let </span>entries = <span class="kw-2">&amp;mut </span><span class="self">self</span>.entries[..] <span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">_</span>;
         <span class="kw">let </span>extra_values = <span class="kw-2">&amp;mut </span><span class="self">self</span>.extra_values <span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">_</span>;
         <span class="kw">let </span>len = <span class="self">self</span>.entries.len();
-        <span class="kw">unsafe </span>{ <span class="self">self</span>.entries.set_len(<span class="number">0</span>); }
+        <span class="kw">unsafe </span>{
+            <span class="self">self</span>.entries.set_len(<span class="number">0</span>);
+        }
 
         Drain {
             idx: <span class="number">0</span>,
@@ -5081,22 +5073,22 @@
             danger,
             Entry::Vacant(VacantEntry {
                 map: <span class="self">self</span>,
-                hash: hash,
+                hash,
                 key: key.into(),
-                probe: probe,
-                danger: danger,
+                probe,
+                danger,
             }),
             Entry::Occupied(OccupiedEntry {
                 map: <span class="self">self</span>,
                 index: pos,
-                probe: probe,
+                probe,
             }),
             Entry::Vacant(VacantEntry {
                 map: <span class="self">self</span>,
-                hash: hash,
+                hash,
                 key: key.into(),
-                probe: probe,
-                danger: danger,
+                probe,
+                danger,
             })
         ))
     }
@@ -5235,14 +5227,12 @@
         <span class="kw">let </span>raw_links = <span class="self">self</span>.raw_links();
         <span class="kw">let </span>extra_values = <span class="kw-2">&amp;mut </span><span class="self">self</span>.extra_values;
 
-        <span class="kw">let </span>next = links.map(|l| {
-            drain_all_extra_values(raw_links, extra_values, l.next)
-                .into_iter()
-        });
+        <span class="kw">let </span>next =
+            links.map(|l| drain_all_extra_values(raw_links, extra_values, l.next).into_iter());
 
         ValueDrain {
             first: <span class="prelude-val">Some</span>(old),
-            next: next,
+            next,
             lt: PhantomData,
         }
     }
@@ -5408,7 +5398,7 @@
 
         <span class="kw">if </span>danger || num_displaced &gt;= DISPLACEMENT_THRESHOLD {
             <span class="comment">// Increase danger level
-            </span><span class="self">self</span>.danger.to_yellow();
+            </span><span class="self">self</span>.danger.set_yellow();
         }
 
         <span class="prelude-val">Ok</span>(index)
@@ -5490,7 +5480,7 @@
 
         <span class="comment">// backward shift deletion in self.indices
         // after probe, shift all non-ideally placed indices backward
-        </span><span class="kw">if </span><span class="self">self</span>.entries.len() &gt; <span class="number">0 </span>{
+        </span><span class="kw">if </span>!<span class="self">self</span>.entries.is_empty() {
             <span class="kw">let </span><span class="kw-2">mut </span>last_probe = probe;
             <span class="kw">let </span><span class="kw-2">mut </span>probe = probe + <span class="number">1</span>;
 
@@ -5544,9 +5534,9 @@
         }
 
         <span class="self">self</span>.entries.push(Bucket {
-            hash: hash,
-            key: key,
-            value: value,
+            hash,
+            key,
+            value,
             links: <span class="prelude-val">None</span>,
         });
 
@@ -5608,7 +5598,7 @@
 
             <span class="kw">if </span>load_factor &gt;= LOAD_FACTOR_THRESHOLD {
                 <span class="comment">// Transition back to green danger level
-                </span><span class="self">self</span>.danger.to_green();
+                </span><span class="self">self</span>.danger.set_green();
 
                 <span class="comment">// Double the capacity
                 </span><span class="kw">let </span>new_cap = <span class="self">self</span>.indices.len() * <span class="number">2</span>;
@@ -5616,7 +5606,7 @@
                 <span class="comment">// Grow the capacity
                 </span><span class="self">self</span>.try_grow(new_cap)<span class="question-mark">?</span>;
             } <span class="kw">else </span>{
-                <span class="self">self</span>.danger.to_red();
+                <span class="self">self</span>.danger.set_red();
 
                 <span class="comment">// Rebuild hash table
                 </span><span class="kw">for </span>index <span class="kw">in </span><span class="self">self</span>.indices.iter_mut() {
@@ -5691,9 +5681,8 @@
 </span><span class="kw">fn </span>remove_extra_value&lt;T&gt;(
     <span class="kw-2">mut </span>raw_links: RawLinks&lt;T&gt;,
     extra_values: <span class="kw-2">&amp;mut </span>Vec&lt;ExtraValue&lt;T&gt;&gt;,
-    idx: usize)
-    -&gt; ExtraValue&lt;T&gt;
-{
+    idx: usize,
+) -&gt; ExtraValue&lt;T&gt; {
     <span class="kw">let </span>prev;
     <span class="kw">let </span>next;
 
@@ -5714,8 +5703,7 @@
         (Link::Entry(prev), Link::Extra(next)) =&gt; {
             <span class="macro">debug_assert!</span>(raw_links[prev].is_some());
 
-            raw_links[prev].as_mut().unwrap()
-                .next = next;
+            raw_links[prev].as_mut().unwrap().next = next;
 
             <span class="macro">debug_assert!</span>(extra_values.len() &gt; next);
             extra_values[next].prev = Link::Entry(prev);
@@ -5723,8 +5711,7 @@
         (Link::Extra(prev), Link::Entry(next)) =&gt; {
             <span class="macro">debug_assert!</span>(raw_links[next].is_some());
 
-            raw_links[next].as_mut().unwrap()
-                .tail = prev;
+            raw_links[next].as_mut().unwrap().tail = prev;
 
             <span class="macro">debug_assert!</span>(extra_values.len() &gt; prev);
             extra_values[prev].next = Link::Entry(next);
@@ -5812,9 +5799,8 @@
 <span class="kw">fn </span>drain_all_extra_values&lt;T&gt;(
     raw_links: RawLinks&lt;T&gt;,
     extra_values: <span class="kw-2">&amp;mut </span>Vec&lt;ExtraValue&lt;T&gt;&gt;,
-    <span class="kw-2">mut </span>head: usize)
-    -&gt; Vec&lt;T&gt;
-{
+    <span class="kw-2">mut </span>head: usize,
+) -&gt; Vec&lt;T&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>vec = Vec::new();
     <span class="kw">loop </span>{
         <span class="kw">let </span>extra = remove_extra_value(raw_links, extra_values, head);
@@ -5936,17 +5922,17 @@
 /// assert_eq!(headers["X-Custom-Header"], "my value");
 /// ```
 </span><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, K, V, T&gt; TryFrom&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>HashMap&lt;K, V&gt;&gt; <span class="kw">for </span>HeaderMap&lt;T&gt;
-    <span class="kw">where
-        </span>K: Eq + Hash,
-        HeaderName: TryFrom&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>K&gt;,
-        &lt;HeaderName <span class="kw">as </span>TryFrom&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>K&gt;&gt;::Error: Into&lt;<span class="kw">crate</span>::Error&gt;,
-        T: TryFrom&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>V&gt;,
-        T::Error: Into&lt;<span class="kw">crate</span>::Error&gt;,
+<span class="kw">where
+    </span>K: Eq + Hash,
+    HeaderName: TryFrom&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>K&gt;,
+    &lt;HeaderName <span class="kw">as </span>TryFrom&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>K&gt;&gt;::Error: Into&lt;<span class="kw">crate</span>::Error&gt;,
+    T: TryFrom&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>V&gt;,
+    T::Error: Into&lt;<span class="kw">crate</span>::Error&gt;,
 {
     <span class="kw">type </span>Error = Error;
 
     <span class="kw">fn </span>try_from(c: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>HashMap&lt;K, V&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Error&gt; {
-        c.into_iter()
+        c.iter()
             .map(|(k, v)| -&gt; <span class="kw">crate</span>::Result&lt;(HeaderName, T)&gt; {
                 <span class="kw">let </span>name = TryFrom::try_from(k).map_err(Into::into)<span class="question-mark">?</span>;
                 <span class="kw">let </span>value = TryFrom::try_from(v).map_err(Into::into)<span class="question-mark">?</span>;
@@ -6083,7 +6069,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, K, T&gt; ops::Index&lt;K&gt; <span class="kw">for </span>HeaderMap&lt;T&gt;
+<span class="kw">impl</span>&lt;K, T&gt; ops::Index&lt;K&gt; <span class="kw">for </span>HeaderMap&lt;T&gt;
 <span class="kw">where
     </span>K: AsHeaderName,
 {
@@ -6133,7 +6119,7 @@
         <span class="prelude-val">Some</span>(links) =&gt; {
             <span class="kw">let </span>idx = extra.len();
             extra.push(ExtraValue {
-                value: value,
+                value,
                 prev: Link::Extra(links.tail),
                 next: Link::Entry(entry_idx),
             });
@@ -6145,7 +6131,7 @@
         <span class="prelude-val">None </span>=&gt; {
             <span class="kw">let </span>idx = extra.len();
             extra.push(ExtraValue {
-                value: value,
+                value,
                 prev: Link::Entry(entry_idx),
                 next: Link::Entry(entry_idx),
             });
@@ -6287,6 +6273,18 @@
     <span class="kw">fn </span>size_hint(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (usize, <span class="prelude-ty">Option</span>&lt;usize&gt;) {
         <span class="self">self</span>.inner.size_hint()
     }
+
+    <span class="kw">fn </span>nth(<span class="kw-2">&amp;mut </span><span class="self">self</span>, n: usize) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
+        <span class="self">self</span>.inner.nth(n).map(|b| <span class="kw-2">&amp;</span>b.key)
+    }
+
+    <span class="kw">fn </span>count(<span class="self">self</span>) -&gt; usize {
+        <span class="self">self</span>.inner.count()
+    }
+
+    <span class="kw">fn </span>last(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
+        <span class="self">self</span>.inner.last().map(|b| <span class="kw-2">&amp;</span>b.key)
+    }
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T&gt; ExactSizeIterator <span class="kw">for </span>Keys&lt;<span class="lifetime">'a</span>, T&gt; {}
@@ -6334,9 +6332,7 @@
             <span class="comment">// Remove the extra value
 
             </span><span class="kw">let </span>raw_links = RawLinks(<span class="self">self</span>.entries);
-            <span class="kw">let </span>extra = <span class="kw">unsafe </span>{
-                remove_extra_value(raw_links, <span class="kw-2">&amp;mut *</span><span class="self">self</span>.extra_values, next)
-            };
+            <span class="kw">let </span>extra = <span class="kw">unsafe </span>{ remove_extra_value(raw_links, <span class="kw-2">&amp;mut *</span><span class="self">self</span>.extra_values, next) };
 
             <span class="kw">match </span>extra.next {
                 Link::Extra(idx) =&gt; <span class="self">self</span>.next = <span class="prelude-val">Some</span>(idx),
@@ -6705,7 +6701,7 @@
 
         <span class="prelude-val">Ok</span>(OccupiedEntry {
             map: <span class="self">self</span>.map,
-            index: index,
+            index,
             probe: <span class="self">self</span>.probe,
         })
     }
@@ -7111,7 +7107,7 @@
     /// assert_eq!("earth", map["host"]);
     /// ```
     </span><span class="kw">pub fn </span>insert(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: T) -&gt; T {
-        <span class="self">self</span>.map.insert_occupied(<span class="self">self</span>.index, value.into())
+        <span class="self">self</span>.map.insert_occupied(<span class="self">self</span>.index, value)
     }
 
     <span class="doccomment">/// Sets the value of the entry.
@@ -7137,7 +7133,7 @@
     /// assert_eq!("earth", map["host"]);
     /// ```
     </span><span class="kw">pub fn </span>insert_mult(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: T) -&gt; ValueDrain&lt;<span class="lifetime">'_</span>, T&gt; {
-        <span class="self">self</span>.map.insert_occupied_mult(<span class="self">self</span>.index, value.into())
+        <span class="self">self</span>.map.insert_occupied_mult(<span class="self">self</span>.index, value)
     }
 
     <span class="doccomment">/// Insert the value into the entry.
@@ -7164,7 +7160,7 @@
     </span><span class="kw">pub fn </span>append(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: T) {
         <span class="kw">let </span>idx = <span class="self">self</span>.index;
         <span class="kw">let </span>entry = <span class="kw-2">&amp;mut </span><span class="self">self</span>.map.entries[idx];
-        append_value(idx, entry, <span class="kw-2">&amp;mut </span><span class="self">self</span>.map.extra_values, value.into());
+        append_value(idx, entry, <span class="kw-2">&amp;mut </span><span class="self">self</span>.map.extra_values, value);
     }
 
     <span class="doccomment">/// Remove the entry from the map.
@@ -7229,10 +7225,9 @@
         <span class="kw">let </span>raw_links = <span class="self">self</span>.map.raw_links();
         <span class="kw">let </span>extra_values = <span class="kw-2">&amp;mut </span><span class="self">self</span>.map.extra_values;
 
-        <span class="kw">let </span>next = <span class="self">self</span>.map.entries[<span class="self">self</span>.index].links.map(|l| {
-            drain_all_extra_values(raw_links, extra_values, l.next)
-                .into_iter()
-        });
+        <span class="kw">let </span>next = <span class="self">self</span>.map.entries[<span class="self">self</span>.index]
+            .links
+            .map(|l| drain_all_extra_values(raw_links, extra_values, l.next).into_iter());
 
         <span class="kw">let </span>entry = <span class="self">self</span>.map.remove_found(<span class="self">self</span>.probe, <span class="self">self</span>.index);
 
@@ -7343,12 +7338,12 @@
             <span class="comment">// Exactly 1
             </span>(<span class="kw-2">&amp;</span><span class="prelude-val">Some</span>(<span class="kw">_</span>), <span class="kw-2">&amp;</span><span class="prelude-val">None</span>) =&gt; (<span class="number">1</span>, <span class="prelude-val">Some</span>(<span class="number">1</span>)),
             <span class="comment">// 1 + extras
-            </span>(<span class="kw-2">&amp;</span><span class="prelude-val">Some</span>(<span class="kw">_</span>), <span class="kw-2">&amp;</span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>extras)) =&gt; {
+            </span>(<span class="kw-2">&amp;</span><span class="prelude-val">Some</span>(<span class="kw">_</span>), <span class="prelude-val">Some</span>(extras)) =&gt; {
                 <span class="kw">let </span>(l, u) = extras.size_hint();
                 (l + <span class="number">1</span>, u.map(|u| u + <span class="number">1</span>))
-            },
+            }
             <span class="comment">// Extras only
-            </span>(<span class="kw-2">&amp;</span><span class="prelude-val">None</span>, <span class="kw-2">&amp;</span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>extras)) =&gt; extras.size_hint(),
+            </span>(<span class="kw-2">&amp;</span><span class="prelude-val">None</span>, <span class="prelude-val">Some</span>(extras)) =&gt; extras.size_hint(),
             <span class="comment">// No more
             </span>(<span class="kw-2">&amp;</span><span class="prelude-val">None</span>, <span class="kw-2">&amp;</span><span class="prelude-val">None</span>) =&gt; (<span class="number">0</span>, <span class="prelude-val">Some</span>(<span class="number">0</span>)),
         }
@@ -7359,7 +7354,7 @@
 
 <span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T&gt; Drop <span class="kw">for </span>ValueDrain&lt;<span class="lifetime">'a</span>, T&gt; {
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="kw">while let </span><span class="prelude-val">Some</span>(<span class="kw">_</span>) = <span class="self">self</span>.next() {}
+        <span class="kw">for _ in </span><span class="self">self</span>.by_ref() {}
     }
 }
 
@@ -7380,17 +7375,13 @@
     <span class="kw">type </span>Output = <span class="prelude-ty">Option</span>&lt;Links&gt;;
 
     <span class="kw">fn </span>index(<span class="kw-2">&amp;</span><span class="self">self</span>, idx: usize) -&gt; <span class="kw-2">&amp;</span><span class="self">Self</span>::Output {
-        <span class="kw">unsafe </span>{
-            <span class="kw-2">&amp;</span>(<span class="kw-2">*</span><span class="self">self</span>.<span class="number">0</span>)[idx].links
-        }
+        <span class="kw">unsafe </span>{ <span class="kw-2">&amp;</span>(<span class="kw-2">*</span><span class="self">self</span>.<span class="number">0</span>)[idx].links }
     }
 }
 
 <span class="kw">impl</span>&lt;T&gt; ops::IndexMut&lt;usize&gt; <span class="kw">for </span>RawLinks&lt;T&gt; {
     <span class="kw">fn </span>index_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, idx: usize) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Output {
-        <span class="kw">unsafe </span>{
-            <span class="kw-2">&amp;mut </span>(<span class="kw-2">*</span><span class="self">self</span>.<span class="number">0</span>)[idx].links
-        }
+        <span class="kw">unsafe </span>{ <span class="kw-2">&amp;mut </span>(<span class="kw-2">*</span><span class="self">self</span>.<span class="number">0</span>)[idx].links }
     }
 }
 
@@ -7402,7 +7393,7 @@
         <span class="macro">debug_assert!</span>(index &lt; MAX_SIZE);
         Pos {
             index: index <span class="kw">as </span>Size,
-            hash: hash,
+            hash,
         }
     }
 
@@ -7436,34 +7427,25 @@
 
 <span class="kw">impl </span>Danger {
     <span class="kw">fn </span>is_red(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
-            Danger::Red(<span class="kw">_</span>) =&gt; <span class="bool-val">true</span>,
-            <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
-        }
+        <span class="macro">matches!</span>(<span class="kw-2">*</span><span class="self">self</span>, Danger::Red(<span class="kw">_</span>))
     }
 
-    <span class="kw">fn </span>to_red(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+    <span class="kw">fn </span>set_red(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="macro">debug_assert!</span>(<span class="self">self</span>.is_yellow());
         <span class="kw-2">*</span><span class="self">self </span>= Danger::Red(RandomState::new());
     }
 
     <span class="kw">fn </span>is_yellow(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
-            Danger::Yellow =&gt; <span class="bool-val">true</span>,
-            <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
+        <span class="macro">matches!</span>(<span class="kw-2">*</span><span class="self">self</span>, Danger::Yellow)
+    }
+
+    <span class="kw">fn </span>set_yellow(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="kw">if let </span>Danger::Green = <span class="kw-2">*</span><span class="self">self </span>{
+            <span class="kw-2">*</span><span class="self">self </span>= Danger::Yellow;
         }
     }
 
-    <span class="kw">fn </span>to_yellow(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
-            Danger::Green =&gt; {
-                <span class="kw-2">*</span><span class="self">self </span>= Danger::Yellow;
-            }
-            <span class="kw">_ </span>=&gt; {}
-        }
-    }
-
-    <span class="kw">fn </span>to_green(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+    <span class="kw">fn </span>set_green(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="macro">debug_assert!</span>(<span class="self">self</span>.is_yellow());
         <span class="kw-2">*</span><span class="self">self </span>= Danger::Green;
     }
@@ -7728,7 +7710,7 @@
         }
 
         <span class="kw">fn </span>as_str(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
-            &lt;HeaderName&gt;::as_str(<span class="kw-2">*</span><span class="self">self</span>)
+            &lt;HeaderName&gt;::as_str(<span class="self">self</span>)
         }
     }
 
@@ -7784,7 +7766,7 @@
         }
 
         <span class="kw">fn </span>as_str(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
-            <span class="kw-2">*</span><span class="self">self
+            <span class="self">self
         </span>}
     }
 

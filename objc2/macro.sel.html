@@ -1,0 +1,94 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Register a selector with the Objective-C runtime."><title>sel in objc2 - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="objc2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-118b08c4c78b968e.js"></script><script defer src="sidebar-items.js"></script><script defer src="../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc macro"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../objc2/index.html">objc2</a><span class="version">0.5.2</span></h2></div><div class="sidebar-elems"></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Macro <a href="index.html">objc2</a>::<wbr><a class="macro" href="#">sel</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../src/objc2/macros/mod.rs.html#222-256">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><span class="macro">macro_rules!</span> sel {
+    (new) =&gt; { ... };
+    (init) =&gt; { ... };
+    (alloc) =&gt; { ... };
+    (dealloc) =&gt; { ... };
+    (<span class="macro-nonterminal">$sel</span>:ident) =&gt; { ... };
+    ($(<span class="macro-nonterminal">$sel</span>:ident :)<span class="kw-2">*</span>) =&gt; { ... };
+    ($(<span class="macro-nonterminal">$sel</span>:tt)<span class="kw-2">*</span>) =&gt; { ... };
+}</pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Register a selector with the Objective-C runtime.</p>
+<p>Returns the <a href="runtime/struct.Sel.html" title="struct objc2::runtime::Sel"><code>Sel</code></a> corresponding to the specified selector.</p>
+<h2 id="panics"><a class="doc-anchor" href="#panics">§</a>Panics</h2>
+<p>Panics if the runtime failed allocating space for the selector.</p>
+<h2 id="specification"><a class="doc-anchor" href="#specification">§</a>Specification</h2>
+<p>This has similar syntax and functionality as the <code>@selector</code> directive in
+Objective-C.</p>
+<p>This calls <a href="runtime/struct.Sel.html#method.register" title="associated function objc2::runtime::Sel::register"><code>Sel::register</code></a> internally. The result is cached for
+efficiency. The cache for certain common selectors (<code>alloc</code>, <code>init</code> and
+<code>new</code>) is deduplicated to reduce code-size.</p>
+<p>Non-ascii identifiers are ill-tested, if supported at all.</p>
+<h2 id="features"><a class="doc-anchor" href="#features">§</a>Features</h2>
+<p>If the experimental <code>"unstable-static-sel"</code> feature is enabled, this will
+emit special statics that will be replaced by the dynamic linker (dyld)
+when the program starts up - in exactly the same manner as normal
+Objective-C code does.
+This should be significantly faster (and allow better native debugging),
+however due to the Rust compilation model, and since we don’t have
+low-level control over it, it is currently unlikely that this will work
+correctly in all cases.
+See the source code and <a href="https://github.com/rust-lang/rust/issues/53929">rust-lang/rust#53929</a> for more info.</p>
+<p>Concretely, this may fail at:</p>
+<ul>
+<li>link-time (likely)</li>
+<li>dynamic link-time/just before the program is run (fairly likely)</li>
+<li>runtime, causing UB (unlikely)</li>
+</ul>
+<p>The <code>"unstable-static-sel-inlined"</code> feature is the even more extreme
+version - it yields the best performance and is closest to real
+Objective-C code, but probably won’t work unless your code and its
+inlining is written in a very certain way.</p>
+<p>Enabling LTO greatly increases the chance that these features work.</p>
+<h2 id="examples"><a class="doc-anchor" href="#examples">§</a>Examples</h2>
+<p>Get a few different selectors:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::sel;
+<span class="kw">let </span>sel = <span class="macro">sel!</span>(alloc);
+<span class="kw">let </span>sel = <span class="macro">sel!</span>(description);
+<span class="kw">let </span>sel = <span class="macro">sel!</span>(_privateMethod);
+<span class="kw">let </span>sel = <span class="macro">sel!</span>(storyboardWithName:bundle:);
+<span class="kw">let </span>sel = <span class="macro">sel!</span>(
+    otherEventWithType:
+    location:
+    modifierFlags:
+    timestamp:
+    windowNumber:
+    context:
+    subtype:
+    data1:
+    data2:
+);</code></pre></div>
+<p>Whitespace is ignored:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">let </span>sel1 = <span class="macro">sel!</span>(setObject:forKey:);
+<span class="kw">let </span>sel2 = <span class="macro">sel!</span>(  setObject  :
+
+    forKey  : );
+<span class="macro">assert_eq!</span>(sel1, sel2);</code></pre></div>
+<p>Invalid selector:</p>
+
+<div class="example-wrap compile_fail"><a href="#" class="tooltip" title="This example deliberately fails to compile">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="kw">let </span>sel = <span class="macro">sel!</span>(aSelector:withoutTrailingColon);</code></pre></div>
+<p>A selector with internal colons:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">let </span>sel = <span class="macro">sel!</span>(sel::with:::multiple:internal::::colons:::);
+
+<span class="comment">// Yes, that is possible! The following Objective-C would work:
+//
+// @interface MyThing: NSObject
+// + (void)test:(int)a :(int)b arg:(int)c :(int)d;
+// @end</span></code></pre></div>
+<p>Unsupported usage that you may run into when using macros - fails to
+compile when the <code>"unstable-static-sel"</code> feature is enabled.</p>
+<p>Instead, define a wrapper function that retrieves the selector.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::sel;
+<span class="macro">macro_rules!</span> x {
+    (<span class="macro-nonterminal">$x</span>:ident) =&gt; {
+        <span class="comment">// One of these is fine
+        </span><span class="macro">sel!</span>(<span class="macro-nonterminal">$x</span>);
+        <span class="comment">// But using the identifier again in the same way is not!
+        </span><span class="macro">sel!</span>(<span class="macro-nonterminal">$x</span>);
+    };
+}
+<span class="comment">// Identifier `abc`
+</span><span class="macro">x!</span>(abc);</code></pre></div>
+</div></details></section></div></main></body></html>

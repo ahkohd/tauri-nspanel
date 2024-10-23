@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Error","NSVisualEffectMaterial","NSVisualEffectState"],"fn":["apply_acrylic","apply_blur","apply_mica","apply_tabbed","apply_vibrancy","clear_acrylic","clear_blur","clear_mica","clear_tabbed"],"type":["Color"]};

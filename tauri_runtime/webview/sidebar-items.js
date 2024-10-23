@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["WebviewAttributes"],"trait":["WindowBuilder","WindowBuilderBase"],"type":["WebviewIpcHandler"]};
+window.SIDEBAR_ITEMS = {"enum":["DownloadEvent","PageLoadEvent"],"struct":["DetachedWebview","PendingWebview","WebviewAttributes"],"type":["WebviewIpcHandler"]};

@@ -1,0 +1,1 @@
+searchState.loadedDescShard("unic_ucd_version", 0, "UNIC — UCD — Core\nUNIC component description.\nUNIC component name.\nUNIC component version.\nThe Version of The Unicode Standard of the Unicode …\nRepresents a <em>Unicode Version</em> type.\nReturns the argument unchanged.\nCalls <code>U::from(self)</code>.\nMajor version.\nMicro (or Update) version.\nMinor version.")

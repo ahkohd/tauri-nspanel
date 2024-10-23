@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-util-0.3.30/src/stream/futures_unordered/mod.rs`."><title>mod.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="futures_util" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../../futures_util/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/futures-util-0.3.31/src/stream/futures_unordered/mod.rs`."><title>mod.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="futures_util" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -652,6 +650,28 @@
 <a href="#650" id="650">650</a>
 <a href="#651" id="651">651</a>
 <a href="#652" id="652">652</a>
+<a href="#653" id="653">653</a>
+<a href="#654" id="654">654</a>
+<a href="#655" id="655">655</a>
+<a href="#656" id="656">656</a>
+<a href="#657" id="657">657</a>
+<a href="#658" id="658">658</a>
+<a href="#659" id="659">659</a>
+<a href="#660" id="660">660</a>
+<a href="#661" id="661">661</a>
+<a href="#662" id="662">662</a>
+<a href="#663" id="663">663</a>
+<a href="#664" id="664">664</a>
+<a href="#665" id="665">665</a>
+<a href="#666" id="666">666</a>
+<a href="#667" id="667">667</a>
+<a href="#668" id="668">668</a>
+<a href="#669" id="669">669</a>
+<a href="#670" id="670">670</a>
+<a href="#671" id="671">671</a>
+<a href="#672" id="672">672</a>
+<a href="#673" id="673">673</a>
+<a href="#674" id="674">674</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! An unbounded set of futures.
 //!
 //! This module is only available when the `std` or `alloc` feature of this
@@ -910,16 +930,6 @@
         // `wake` from doing any work in the future
         </span><span class="kw">let </span>prev = task.queued.swap(<span class="bool-val">true</span>, SeqCst);
 
-        <span class="comment">// Drop the future, even if it hasn't finished yet. This is safe
-        // because we're dropping the future on the thread that owns
-        // `FuturesUnordered`, which correctly tracks `Fut`'s lifetimes and
-        // such.
-        </span><span class="kw">unsafe </span>{
-            <span class="comment">// Set to `None` rather than `take()`ing to prevent moving the
-            // future.
-            </span><span class="kw-2">*</span>task.future.get() = <span class="prelude-val">None</span>;
-        }
-
         <span class="comment">// If the queued flag was previously set, then it means that this task
         // is still in our internal ready to run queue. We then transfer
         // ownership of our reference count to the ready to run queue, and it'll
@@ -931,8 +941,25 @@
         // enqueue the task, so our task will never see the ready to run queue
         // again. The task itself will be deallocated once all reference counts
         // have been dropped elsewhere by the various wakers that contain it.
-        </span><span class="kw">if </span>prev {
-            mem::forget(task);
+        //
+        // Use ManuallyDrop to transfer the reference count ownership before
+        // dropping the future so unwinding won't release the reference count.
+        </span><span class="kw">let </span>md_slot;
+        <span class="kw">let </span>task = <span class="kw">if </span>prev {
+            md_slot = mem::ManuallyDrop::new(task);
+            <span class="kw-2">&amp;*</span>md_slot
+        } <span class="kw">else </span>{
+            <span class="kw-2">&amp;</span>task
+        };
+
+        <span class="comment">// Drop the future, even if it hasn't finished yet. This is safe
+        // because we're dropping the future on the thread that owns
+        // `FuturesUnordered`, which correctly tracks `Fut`'s lifetimes and
+        // such.
+        </span><span class="kw">unsafe </span>{
+            <span class="comment">// Set to `None` rather than `take()`ing to prevent moving the
+            // future.
+            </span><span class="kw-2">*</span>task.future.get() = <span class="prelude-val">None</span>;
         }
     }
 
@@ -978,35 +1005,37 @@
     /// This method is unsafe because it has be guaranteed that `task` is a
     /// valid pointer.
     </span><span class="kw">unsafe fn </span>unlink(<span class="kw-2">&amp;mut </span><span class="self">self</span>, task: <span class="kw-2">*const </span>Task&lt;Fut&gt;) -&gt; Arc&lt;Task&lt;Fut&gt;&gt; {
-        <span class="comment">// Compute the new list length now in case we're removing the head node
-        // and won't be able to retrieve the correct length later.
-        </span><span class="kw">let </span>head = <span class="kw-2">*</span><span class="self">self</span>.head_all.get_mut();
-        <span class="macro">debug_assert!</span>(!head.is_null());
-        <span class="kw">let </span>new_len = <span class="kw-2">*</span>(<span class="kw-2">*</span>head).len_all.get() - <span class="number">1</span>;
+        <span class="kw">unsafe </span>{
+            <span class="comment">// Compute the new list length now in case we're removing the head node
+            // and won't be able to retrieve the correct length later.
+            </span><span class="kw">let </span>head = <span class="kw-2">*</span><span class="self">self</span>.head_all.get_mut();
+            <span class="macro">debug_assert!</span>(!head.is_null());
+            <span class="kw">let </span>new_len = <span class="kw-2">*</span>(<span class="kw-2">*</span>head).len_all.get() - <span class="number">1</span>;
 
-        <span class="kw">let </span>task = Arc::from_raw(task);
-        <span class="kw">let </span>next = task.next_all.load(Relaxed);
-        <span class="kw">let </span>prev = <span class="kw-2">*</span>task.prev_all.get();
-        task.next_all.store(<span class="self">self</span>.pending_next_all(), Relaxed);
-        <span class="kw-2">*</span>task.prev_all.get() = ptr::null_mut();
+            <span class="kw">let </span>task = Arc::from_raw(task);
+            <span class="kw">let </span>next = task.next_all.load(Relaxed);
+            <span class="kw">let </span>prev = <span class="kw-2">*</span>task.prev_all.get();
+            task.next_all.store(<span class="self">self</span>.pending_next_all(), Relaxed);
+            <span class="kw-2">*</span>task.prev_all.get() = ptr::null_mut();
 
-        <span class="kw">if </span>!next.is_null() {
-            <span class="kw-2">*</span>(<span class="kw-2">*</span>next).prev_all.get() = prev;
+            <span class="kw">if </span>!next.is_null() {
+                <span class="kw-2">*</span>(<span class="kw-2">*</span>next).prev_all.get() = prev;
+            }
+
+            <span class="kw">if </span>!prev.is_null() {
+                (<span class="kw-2">*</span>prev).next_all.store(next, Relaxed);
+            } <span class="kw">else </span>{
+                <span class="kw-2">*</span><span class="self">self</span>.head_all.get_mut() = next;
+            }
+
+            <span class="comment">// Store the new list length in the head node.
+            </span><span class="kw">let </span>head = <span class="kw-2">*</span><span class="self">self</span>.head_all.get_mut();
+            <span class="kw">if </span>!head.is_null() {
+                <span class="kw-2">*</span>(<span class="kw-2">*</span>head).len_all.get() = new_len;
+            }
+
+            task
         }
-
-        <span class="kw">if </span>!prev.is_null() {
-            (<span class="kw-2">*</span>prev).next_all.store(next, Relaxed);
-        } <span class="kw">else </span>{
-            <span class="kw-2">*</span><span class="self">self</span>.head_all.get_mut() = next;
-        }
-
-        <span class="comment">// Store the new list length in the head node.
-        </span><span class="kw">let </span>head = <span class="kw-2">*</span><span class="self">self</span>.head_all.get_mut();
-        <span class="kw">if </span>!head.is_null() {
-            <span class="kw-2">*</span>(<span class="kw-2">*</span>head).len_all.get() = new_len;
-        }
-
-        task
     }
 
     <span class="doccomment">/// Returns the reserved value for `Task::next_all` to indicate a pending
@@ -1163,7 +1192,8 @@
                 <span class="comment">// We are only interested in whether the future is awoken before it
                 // finishes polling, so reset the flag here.
                 </span>task.woken.store(<span class="bool-val">false</span>, Relaxed);
-                <span class="kw">let </span>waker = Task::waker_ref(task);
+                <span class="comment">// SAFETY: see the comments of Bomb and this block.
+                </span><span class="kw">let </span>waker = <span class="kw">unsafe </span>{ Task::waker_ref(task) };
                 <span class="kw">let </span><span class="kw-2">mut </span>cx = Context::from_waker(<span class="kw-2">&amp;</span>waker);
 
                 <span class="comment">// Safety: We won't move the future ever again
@@ -1218,17 +1248,29 @@
 
 <span class="kw">impl</span>&lt;Fut&gt; Drop <span class="kw">for </span>FuturesUnordered&lt;Fut&gt; {
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="comment">// Before the strong reference to the queue is dropped we need all
+        // futures to be dropped. See note at the bottom of this method.
+        //
+        // If there is a panic before this completes, we leak the queue.
+        </span><span class="kw">struct </span>LeakQueueOnDrop&lt;<span class="lifetime">'a</span>, Fut&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>FuturesUnordered&lt;Fut&gt;);
+        <span class="kw">impl</span>&lt;Fut&gt; Drop <span class="kw">for </span>LeakQueueOnDrop&lt;<span class="lifetime">'_</span>, Fut&gt; {
+            <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+                mem::forget(Arc::clone(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>.ready_to_run_queue));
+            }
+        }
+        <span class="kw">let </span>guard = LeakQueueOnDrop(<span class="self">self</span>);
         <span class="comment">// When a `FuturesUnordered` is dropped we want to drop all futures
         // associated with it. At the same time though there may be tons of
         // wakers flying around which contain `Task&lt;Fut&gt;` references
         // inside them. We'll let those naturally get deallocated.
-        </span><span class="kw">while </span>!<span class="self">self</span>.head_all.get_mut().is_null() {
-            <span class="kw">let </span>head = <span class="kw-2">*</span><span class="self">self</span>.head_all.get_mut();
-            <span class="kw">let </span>task = <span class="kw">unsafe </span>{ <span class="self">self</span>.unlink(head) };
-            <span class="self">self</span>.release_task(task);
+        </span><span class="kw">while </span>!guard.<span class="number">0</span>.head_all.get_mut().is_null() {
+            <span class="kw">let </span>head = <span class="kw-2">*</span>guard.<span class="number">0</span>.head_all.get_mut();
+            <span class="kw">let </span>task = <span class="kw">unsafe </span>{ guard.<span class="number">0</span>.unlink(head) };
+            guard.<span class="number">0</span>.release_task(task);
         }
+        mem::forget(guard); <span class="comment">// safe to release strong reference to queue
 
-        <span class="comment">// Note that at this point we could still have a bunch of tasks in the
+        // Note that at this point we could still have a bunch of tasks in the
         // ready to run queue. None of those tasks, however, have futures
         // associated with them so they're safe to destroy on any thread. At
         // this point the `FuturesUnordered` struct, the owner of the one strong

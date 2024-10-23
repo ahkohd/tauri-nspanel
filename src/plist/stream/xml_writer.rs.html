@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/plist-1.6.1/src/stream/xml_writer.rs`."><title>xml_writer.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="plist" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../plist/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/plist-1.7.0/src/stream/xml_writer.rs`."><title>xml_writer.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="plist" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -473,18 +471,36 @@
 <a href="#471" id="471">471</a>
 <a href="#472" id="472">472</a>
 <a href="#473" id="473">473</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>base64::{engine::general_purpose::STANDARD <span class="kw">as </span>base64_standard, Engine};
+<a href="#474" id="474">474</a>
+<a href="#475" id="475">475</a>
+<a href="#476" id="476">476</a>
+<a href="#477" id="477">477</a>
+<a href="#478" id="478">478</a>
+<a href="#479" id="479">479</a>
+<a href="#480" id="480">480</a>
+<a href="#481" id="481">481</a>
+<a href="#482" id="482">482</a>
+<a href="#483" id="483">483</a>
+<a href="#484" id="484">484</a>
+<a href="#485" id="485">485</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>base64::{engine::general_purpose::STANDARD <span class="kw">as </span>BASE64_STANDARD, Engine};
 <span class="kw">use </span>quick_xml::{
     events::{BytesEnd, BytesStart, BytesText, Event <span class="kw">as </span>XmlEvent},
     Error <span class="kw">as </span>XmlWriterError, Writer <span class="kw">as </span>EventWriter,
 };
-<span class="kw">use </span>std::{borrow::Cow, io::Write};
+<span class="kw">use </span>std::{
+    borrow::Cow,
+    io::{<span class="self">self</span>, Write},
+};
 
 <span class="kw">use crate</span>::{
-    error::{<span class="self">self</span>, Error, ErrorKind, EventKind},
+    error::{<span class="self">self</span>, from_io_without_position, Error, ErrorKind, EventKind},
     stream::{Writer, XmlWriteOptions},
     Date, Integer, Uid,
 };
+
+<span class="kw">const </span>DATA_MAX_LINE_CHARS: usize = <span class="number">68</span>;
+<span class="kw">const </span>DATA_MAX_LINE_BYTES: usize = <span class="number">51</span>;
 
 <span class="kw">static </span>XML_PROLOGUE: <span class="kw-2">&amp;</span>[u8] = <span class="string">br#"&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;
@@ -500,6 +516,8 @@
 <span class="kw">pub struct </span>XmlWriter&lt;W: Write&gt; {
     xml_writer: EventWriter&lt;W&gt;,
     write_root_element: bool,
+    indent_char: u8,
+    indent_count: usize,
     started_plist: bool,
     stack: Vec&lt;Element&gt;,
     expecting_key: bool,
@@ -519,15 +537,17 @@
     }
 
     <span class="kw">pub fn </span>new_with_options(writer: W, opts: <span class="kw-2">&amp;</span>XmlWriteOptions) -&gt; XmlWriter&lt;W&gt; {
-        <span class="kw">let </span>xml_writer = <span class="kw">if </span>opts.indent_amount == <span class="number">0 </span>{
+        <span class="kw">let </span>xml_writer = <span class="kw">if </span>opts.indent_count == <span class="number">0 </span>{
             EventWriter::new(writer)
         } <span class="kw">else </span>{
-            EventWriter::new_with_indent(writer, opts.indent_char, opts.indent_amount)
+            EventWriter::new_with_indent(writer, opts.indent_char, opts.indent_count)
         };
 
         XmlWriter {
             xml_writer,
             write_root_element: opts.root_element,
+            indent_char: opts.indent_char,
+            indent_count: opts.indent_count,
             started_plist: <span class="bool-val">false</span>,
             stack: Vec::new(),
             expecting_key: <span class="bool-val">false</span>,
@@ -541,9 +561,9 @@
     }
 
     <span class="kw">fn </span>write_element_and_value(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name: <span class="kw-2">&amp;</span>str, value: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
-        <span class="self">self</span>.start_element(name)<span class="question-mark">?</span>;
-        <span class="self">self</span>.write_value(value)<span class="question-mark">?</span>;
-        <span class="self">self</span>.end_element(name)<span class="question-mark">?</span>;
+        <span class="self">self</span>.xml_writer
+            .create_element(name)
+            .write_text_content(BytesText::new(value))<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
     }
 
@@ -556,12 +576,6 @@
     <span class="kw">fn </span>end_element(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
         <span class="self">self</span>.xml_writer
             .write_event(XmlEvent::End(BytesEnd::new(name)))<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(())
-    }
-
-    <span class="kw">fn </span>write_value(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
-        <span class="self">self</span>.xml_writer
-            .write_event(XmlEvent::Text(BytesText::new(value)))<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
     }
 
@@ -707,8 +721,19 @@
 
     <span class="kw">fn </span>write_data(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: Cow&lt;[u8]&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
         <span class="self">self</span>.write_value_event(EventKind::Data, |this| {
-            <span class="kw">let </span>base64_data = base64_encode_plist(<span class="kw-2">&amp;</span>value, this.stack.len());
-            this.write_element_and_value(<span class="string">"data"</span>, <span class="kw-2">&amp;</span>base64_data)
+            this.xml_writer
+                .create_element(<span class="string">"data"</span>)
+                .write_inner_content(|xml_writer| {
+                    write_data_base64(
+                        <span class="kw-2">&amp;</span>value,
+                        <span class="bool-val">true</span>,
+                        this.indent_char,
+                        this.stack.len() * this.indent_count,
+                        xml_writer.get_mut(),
+                    )
+                    .map_err(from_io_without_position)
+                })
+                .map(|<span class="kw">_</span>| ())
         })
     }
 
@@ -762,50 +787,47 @@
     }
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>base64_encode_plist(data: <span class="kw-2">&amp;</span>[u8], indent: usize) -&gt; String {
+<span class="attr">#[cfg(feature = <span class="string">"serde"</span>)]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>encode_data_base64(data: <span class="kw-2">&amp;</span>[u8]) -&gt; String {
+    <span class="comment">// Pre-allocate space for the base64 encoded data.
+    </span><span class="kw">let </span>num_lines = (data.len() + DATA_MAX_LINE_BYTES - <span class="number">1</span>) / DATA_MAX_LINE_BYTES;
+    <span class="kw">let </span>max_len = num_lines * (DATA_MAX_LINE_CHARS + <span class="number">1</span>);
+
+    <span class="kw">let </span><span class="kw-2">mut </span>base64 = Vec::with_capacity(max_len);
+    write_data_base64(data, <span class="bool-val">false</span>, <span class="string">b'\t'</span>, <span class="number">0</span>, <span class="kw-2">&amp;mut </span>base64).expect(<span class="string">"writing to a vec cannot fail"</span>);
+    String::from_utf8(base64).expect(<span class="string">"encoded base64 is ascii"</span>)
+}
+
+<span class="kw">fn </span>write_data_base64(
+    data: <span class="kw-2">&amp;</span>[u8],
+    write_initial_newline: bool,
+    indent_char: u8,
+    indent_repeat: usize,
+    <span class="kw-2">mut </span>writer: <span class="kw">impl </span>Write,
+) -&gt; io::Result&lt;()&gt; {
     <span class="comment">// XML plist data elements are always formatted by apple tools as
     // &lt;data&gt;
     // AAAA..AA (68 characters per line)
     // &lt;/data&gt;
-    // Allocate space for base 64 string and line endings up front
-    </span><span class="kw">const </span>LINE_LEN: usize = <span class="number">68</span>;
-    <span class="kw">let </span><span class="kw-2">mut </span>line_ending = Vec::with_capacity(<span class="number">1 </span>+ indent);
-    line_ending.push(<span class="string">b'\n'</span>);
-    (<span class="number">0</span>..indent).for_each(|<span class="kw">_</span>| line_ending.push(<span class="string">b'\t'</span>));
+    </span><span class="kw">let </span><span class="kw-2">mut </span>encoded = [<span class="number">0</span>; DATA_MAX_LINE_CHARS];
+    <span class="kw">for </span>(i, line) <span class="kw">in </span>data.chunks(DATA_MAX_LINE_BYTES).enumerate() {
+        <span class="comment">// Write newline
+        </span><span class="kw">if </span>write_initial_newline || i &gt; <span class="number">0 </span>{
+            writer.write_all(<span class="kw-2">&amp;</span>[<span class="string">b'\n'</span>])<span class="question-mark">?</span>;
+        }
 
-    <span class="comment">// Find the max length of `data` encoded as a base 64 string with padding
-    </span><span class="kw">let </span>base64_max_string_len = data.len() * <span class="number">4 </span>/ <span class="number">3 </span>+ <span class="number">4</span>;
+        <span class="comment">// Write indent
+        </span><span class="kw">for _ in </span><span class="number">0</span>..indent_repeat {
+            writer.write_all(<span class="kw-2">&amp;</span>[indent_char])<span class="question-mark">?</span>;
+        }
 
-    <span class="comment">// Find the max length of the formatted base 64 string as: max length of the base 64 string
-    // + line endings and indents at the start of the string and after every line
-    </span><span class="kw">let </span>base64_max_string_len_with_formatting =
-        base64_max_string_len + (<span class="number">2 </span>+ base64_max_string_len / LINE_LEN) * line_ending.len();
-
-    <span class="kw">let </span><span class="kw-2">mut </span>output = <span class="macro">vec!</span>[<span class="number">0</span>; base64_max_string_len_with_formatting];
-
-    <span class="comment">// Start output with a line ending and indent
-    </span>output[..line_ending.len()].copy_from_slice(<span class="kw-2">&amp;</span>line_ending);
-
-    <span class="comment">// Encode `data` as a base 64 string
-    </span><span class="kw">let </span>base64_string_len = base64_standard
-        .encode_slice(data, <span class="kw-2">&amp;mut </span>output[line_ending.len()..])
-        .expect(<span class="string">"encoding slice fits base64 buffer"</span>);
-
-    <span class="comment">// Line wrap the base 64 encoded string
-    </span><span class="kw">let </span>line_wrap_len = line_wrap::line_wrap(
-        <span class="kw-2">&amp;mut </span>output[line_ending.len()..],
-        base64_string_len,
-        LINE_LEN,
-        <span class="kw-2">&amp;</span>line_wrap::SliceLineEnding::new(<span class="kw-2">&amp;</span>line_ending).expect(<span class="string">"not empty"</span>),
-    );
-
-    <span class="comment">// Add the final line ending and indent
-    </span>output[line_ending.len() + base64_string_len + line_wrap_len..][..line_ending.len()]
-        .copy_from_slice(<span class="kw-2">&amp;</span>line_ending);
-
-    <span class="comment">// Ensure output is the correct length
-    </span>output.truncate(base64_string_len + line_wrap_len + <span class="number">2 </span>* line_ending.len());
-    String::from_utf8(output).expect(<span class="string">"base 64 string must be valid utf8"</span>)
+        <span class="comment">// Write bytes
+        </span><span class="kw">let </span>encoded_len = BASE64_STANDARD
+            .encode_slice(line, <span class="kw-2">&amp;mut </span>encoded)
+            .expect(<span class="string">"encoded base64 max line length is known"</span>);
+        writer.write_all(<span class="kw-2">&amp;</span>encoded[..encoded_len])<span class="question-mark">?</span>;
+    }
+    <span class="prelude-val">Ok</span>(())
 }
 
 <span class="attr">#[cfg(test)]

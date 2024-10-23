@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/png-0.17.13/src/encoder.rs`."><title>encoder.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="png" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../png/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/png-0.17.14/src/encoder.rs`."><title>encoder.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="png" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2385,34 +2383,6 @@
 <a href="#2383" id="2383">2383</a>
 <a href="#2384" id="2384">2384</a>
 <a href="#2385" id="2385">2385</a>
-<a href="#2386" id="2386">2386</a>
-<a href="#2387" id="2387">2387</a>
-<a href="#2388" id="2388">2388</a>
-<a href="#2389" id="2389">2389</a>
-<a href="#2390" id="2390">2390</a>
-<a href="#2391" id="2391">2391</a>
-<a href="#2392" id="2392">2392</a>
-<a href="#2393" id="2393">2393</a>
-<a href="#2394" id="2394">2394</a>
-<a href="#2395" id="2395">2395</a>
-<a href="#2396" id="2396">2396</a>
-<a href="#2397" id="2397">2397</a>
-<a href="#2398" id="2398">2398</a>
-<a href="#2399" id="2399">2399</a>
-<a href="#2400" id="2400">2400</a>
-<a href="#2401" id="2401">2401</a>
-<a href="#2402" id="2402">2402</a>
-<a href="#2403" id="2403">2403</a>
-<a href="#2404" id="2404">2404</a>
-<a href="#2405" id="2405">2405</a>
-<a href="#2406" id="2406">2406</a>
-<a href="#2407" id="2407">2407</a>
-<a href="#2408" id="2408">2408</a>
-<a href="#2409" id="2409">2409</a>
-<a href="#2410" id="2410">2410</a>
-<a href="#2411" id="2411">2411</a>
-<a href="#2412" id="2412">2412</a>
-<a href="#2413" id="2413">2413</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>borrow::Cow;
 <span class="kw">use </span>io::{Read, Write};
 <span class="kw">use </span>ops::{Deref, DerefMut};
@@ -2722,9 +2692,6 @@
     /// The default filter is [`FilterType::Sub`] which provides a basic prediction algorithm for
     /// sample values based on the previous. For a potentially better compression ratio, at the
     /// cost of more complex processing, try out [`FilterType::Paeth`].
-    ///
-    /// [`FilterType::Sub`]: enum.FilterType.html#variant.Sub
-    /// [`FilterType::Paeth`]: enum.FilterType.html#variant.Paeth
     </span><span class="kw">pub fn </span>set_filter(<span class="kw-2">&amp;mut </span><span class="self">self</span>, filter: FilterType) {
         <span class="self">self</span>.options.filter = filter;
     }
@@ -2735,8 +2702,7 @@
     /// based on heuristics which minimize the file size for compression rather
     /// than use a single filter for the entire image. The default method is
     /// [`AdaptiveFilterType::NonAdaptive`].
-    ///
-    /// [`AdaptiveFilterType::NonAdaptive`]: enum.AdaptiveFilterType.html
+
     </span><span class="kw">pub fn </span>set_adaptive_filter(<span class="kw-2">&amp;mut </span><span class="self">self</span>, adaptive_filter: AdaptiveFilterType) {
         <span class="self">self</span>.options.adaptive_filter = adaptive_filter;
     }
@@ -2748,7 +2714,7 @@
     ///
     /// If the denominator is 0, it is to be treated as if it were 100
     /// (that is, the numerator then specifies 1/100ths of a second).
-    /// If the the value of the numerator is 0 the decoder should render the next frame
+    /// If the value of the numerator is 0 the decoder should render the next frame
     /// as quickly as possible, though viewers may impose a reasonable lower bound.
     ///
     /// The default value is 0 for both the numerator and denominator.
@@ -2756,9 +2722,8 @@
     /// This method will return an error if the image is not animated.
     /// (see [`set_animated`])
     ///
-    /// [`write_header`]: struct.Encoder.html#method.write_header
-    /// [`set_animated`]: struct.Encoder.html#method.set_animated
-    /// [`Writer::set_frame_delay`]: struct.Writer#method.set_frame_delay
+    /// [`write_header`]: Self::write_header
+    /// [`set_animated`]: Self::set_animated
     </span><span class="kw">pub fn </span>set_frame_delay(<span class="kw-2">&amp;mut </span><span class="self">self</span>, numerator: u16, denominator: u16) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>fctl) = <span class="self">self</span>.info.frame_control {
             fctl.delay_den = denominator;
@@ -2789,11 +2754,8 @@
     /// This method will return an error if the image is not animated.
     /// (see [`set_animated`])
     ///
-    /// [`BlendOP`]: enum.BlendOp.html
-    /// [`BlendOP::Source`]: enum.BlendOp.html#variant.Source
-    /// [`write_header`]: struct.Encoder.html#method.write_header
-    /// [`set_animated`]: struct.Encoder.html#method.set_animated
-    /// [`Writer::set_blend_op`]: struct.Writer#method.set_blend_op
+    /// [`write_header`]: Self::write_header
+    /// [`set_animated`]: Self::set_animated
     </span><span class="kw">pub fn </span>set_blend_op(<span class="kw-2">&amp;mut </span><span class="self">self</span>, op: BlendOp) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>fctl) = <span class="self">self</span>.info.frame_control {
             fctl.blend_op = op;
@@ -2821,13 +2783,8 @@
     /// This method will return an error if the image is not animated.
     /// (see [`set_animated`])
     ///
-    /// [`DisposeOp`]: ../common/enum.BlendOp.html
-    /// [`DisposeOp::Previous`]: ../common/enum.BlendOp.html#variant.Previous
-    /// [`DisposeOp::Background`]: ../common/enum.BlendOp.html#variant.Background
-    /// [`DisposeOp::None`]: ../common/enum.BlendOp.html#variant.None
-    /// [`write_header`]: struct.Encoder.html#method.write_header
-    /// [`set_animated`]: struct.Encoder.html#method.set_animated
-    /// [`Writer::set_dispose_op`]: struct.Writer#method.set_dispose_op
+    /// [`set_animated`]: Self::set_animated
+    /// [`write_header`]: Self::write_header
     </span><span class="kw">pub fn </span>set_dispose_op(<span class="kw-2">&amp;mut </span><span class="self">self</span>, op: DisposeOp) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>fctl) = <span class="self">self</span>.info.frame_control {
             fctl.dispose_op = op;
@@ -3067,9 +3024,9 @@
         }
     }
 
-    <span class="kw">const </span>MAX_IDAT_CHUNK_LEN: u32 = std::u32::MAX &gt;&gt; <span class="number">1</span>;
+    <span class="kw">const </span>MAX_IDAT_CHUNK_LEN: u32 = u32::MAX &gt;&gt; <span class="number">1</span>;
     <span class="attr">#[allow(non_upper_case_globals)]
-    </span><span class="kw">const </span>MAX_fdAT_CHUNK_LEN: u32 = (std::u32::MAX &gt;&gt; <span class="number">1</span>) - <span class="number">4</span>;
+    </span><span class="kw">const </span>MAX_fdAT_CHUNK_LEN: u32 = (u32::MAX &gt;&gt; <span class="number">1</span>) - <span class="number">4</span>;
 
     <span class="doccomment">/// Writes the next image data.
     </span><span class="kw">pub fn </span>write_image_data(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
@@ -3237,9 +3194,6 @@
     /// The default filter is [`FilterType::Sub`] which provides a basic prediction algorithm for
     /// sample values based on the previous. For a potentially better compression ratio, at the
     /// cost of more complex processing, try out [`FilterType::Paeth`].
-    ///
-    /// [`FilterType::Sub`]: enum.FilterType.html#variant.Sub
-    /// [`FilterType::Paeth`]: enum.FilterType.html#variant.Paeth
     </span><span class="kw">pub fn </span>set_filter(<span class="kw-2">&amp;mut </span><span class="self">self</span>, filter: FilterType) {
         <span class="self">self</span>.options.filter = filter;
     }
@@ -3250,8 +3204,6 @@
     /// based on heuristics which minimize the file size for compression rather
     /// than use a single filter for the entire image. The default method is
     /// [`AdaptiveFilterType::NonAdaptive`].
-    ///
-    /// [`AdaptiveFilterType::NonAdaptive`]: enum.AdaptiveFilterType.html
     </span><span class="kw">pub fn </span>set_adaptive_filter(<span class="kw-2">&amp;mut </span><span class="self">self</span>, adaptive_filter: AdaptiveFilterType) {
         <span class="self">self</span>.options.adaptive_filter = adaptive_filter;
     }
@@ -3261,7 +3213,7 @@
     ///
     /// If the denominator is 0, it is to be treated as if it were 100
     /// (that is, the numerator then specifies 1/100ths of a second).
-    /// If the the value of the numerator is 0 the decoder should render the next frame
+    /// If the value of the numerator is 0 the decoder should render the next frame
     /// as quickly as possible, though viewers may impose a reasonable lower bound.
     ///
     /// This method will return an error if the image is not animated.
@@ -3339,7 +3291,7 @@
     ///
     /// This method will return an error if the image is not animated.
     ///
-    /// [`reset_frame_position`]: struct.Writer.html#method.reset_frame_position
+    /// [`reset_frame_position`]: Writer::reset_frame_position
     </span><span class="kw">pub fn </span>reset_frame_dimension(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>fctl) = <span class="self">self</span>.info.frame_control {
             fctl.width = <span class="self">self</span>.info.width - fctl.x_offset;
@@ -3356,7 +3308,7 @@
     ///
     /// This method will return an error if the image is not animated.
     ///
-    /// [`set_frame_position(0, 0)`]: struct.Writer.html#method.set_frame_position
+    /// [`set_frame_position(0, 0)`]: Writer::set_frame_position
     </span><span class="kw">pub fn </span>reset_frame_position(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>fctl) = <span class="self">self</span>.info.frame_control {
             fctl.x_offset = <span class="number">0</span>;
@@ -3380,8 +3332,6 @@
     /// of each play.*
     ///
     /// This method will return an error if the image is not animated.
-    ///
-    /// [`BlendOP`]: enum.BlendOp.html
     </span><span class="kw">pub fn </span>set_blend_op(<span class="kw-2">&amp;mut </span><span class="self">self</span>, op: BlendOp) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>fctl) = <span class="self">self</span>.info.frame_control {
             fctl.blend_op = op;
@@ -3402,10 +3352,6 @@
     /// it will be treated as [`DisposeOp::Background`].*
     ///
     /// This method will return an error if the image is not animated.
-    ///
-    /// [`DisposeOp`]: ../common/enum.BlendOp.html
-    /// [`DisposeOp::Previous`]: ../common/enum.BlendOp.html#variant.Previous
-    /// [`DisposeOp::Background`]: ../common/enum.BlendOp.html#variant.Background
     </span><span class="kw">pub fn </span>set_dispose_op(<span class="kw-2">&amp;mut </span><span class="self">self</span>, op: DisposeOp) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>fctl) = <span class="self">self</span>.info.frame_control {
             fctl.dispose_op = op;
@@ -3431,7 +3377,7 @@
     ///
     /// See [`stream_writer`].
     ///
-    /// [`stream_writer`]: #fn.stream_writer
+    /// [`stream_writer`]: Self::stream_writer
     </span><span class="kw">pub fn </span>stream_writer_with_size(<span class="kw-2">&amp;mut </span><span class="self">self</span>, size: usize) -&gt; <span class="prelude-ty">Result</span>&lt;StreamWriter&lt;W&gt;&gt; {
         StreamWriter::new(ChunkOutput::Borrowed(<span class="self">self</span>), size)
     }
@@ -3439,8 +3385,10 @@
     <span class="doccomment">/// Turn this into a stream writer for image data.
     ///
     /// This allows you to create images that do not fit in memory. The default
-    /// chunk size is 4K, use `stream_writer_with_size` to set another chunk
+    /// chunk size is 4K, use [`stream_writer_with_size`] to set another chunk
     /// size.
+    ///
+    /// [`stream_writer_with_size`]: Self::stream_writer_with_size
     </span><span class="kw">pub fn </span>into_stream_writer(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;StreamWriter&lt;<span class="lifetime">'static</span>, W&gt;&gt; {
         <span class="self">self</span>.into_stream_writer_with_size(DEFAULT_BUFFER_LENGTH)
     }
@@ -3449,7 +3397,7 @@
     ///
     /// See [`into_stream_writer`].
     ///
-    /// [`into_stream_writer`]: #fn.into_stream_writer
+    /// [`into_stream_writer`]: Self::into_stream_writer
     </span><span class="kw">pub fn </span>into_stream_writer_with_size(<span class="self">self</span>, size: usize) -&gt; <span class="prelude-ty">Result</span>&lt;StreamWriter&lt;<span class="lifetime">'static</span>, W&gt;&gt; {
         StreamWriter::new(ChunkOutput::Owned(<span class="self">self</span>), size)
     }
@@ -3534,7 +3482,7 @@
         //
         // TODO (maybe): find a way to hold two chunks at a time if `usize`
         //               is 64 bits.
-        </span><span class="kw">const </span>CAP: usize = std::u32::MAX <span class="kw">as </span>usize &gt;&gt; <span class="number">1</span>;
+        </span><span class="kw">const </span>CAP: usize = u32::MAX <span class="kw">as </span>usize &gt;&gt; <span class="number">1</span>;
         <span class="kw">let </span>curr_chunk = <span class="kw">if </span>writer.images_written == <span class="number">0 </span>{
             chunk::IDAT
         } <span class="kw">else </span>{
@@ -3597,7 +3545,7 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="doccomment">/// Set the `FrameControl` for the following frame
+    <span class="doccomment">/// Set the [`FrameControl`] for the following frame
     ///
     /// It will ignore the `sequence_number` of the parameter
     /// as it is updated internally.
@@ -3714,9 +3662,10 @@
 <span class="doccomment">/// Streaming PNG writer
 ///
 /// This may silently fail in the destructor, so it is a good idea to call
-/// [`finish`](#method.finish) or [`flush`] before dropping.
+/// [`finish`] or [`flush`] before dropping.
 ///
-/// [`flush`]: https://doc.rust-lang.org/stable/std/io/trait.Write.html#tymethod.flush
+/// [`finish`]: Self::finish
+/// [`flush`]: Write::flush
 </span><span class="kw">pub struct </span>StreamWriter&lt;<span class="lifetime">'a</span>, W: Write&gt; {
     <span class="doccomment">/// The option here is needed in order to access the inner `ChunkWriter` in-between
     /// each frame, which is needed for writing the fcTL chunks between each frame
@@ -3782,11 +3731,11 @@
     <span class="doccomment">/// Set the used filter type for the next frame.
     ///
     /// The default filter is [`FilterType::Sub`] which provides a basic prediction algorithm for
-    /// sample values based on the previous. For a potentially better compression ratio, at the
-    /// cost of more complex processing, try out [`FilterType::Paeth`].
+    /// sample values based on the previous.
     ///
-    /// [`FilterType::Sub`]: enum.FilterType.html#variant.Sub
-    /// [`FilterType::Paeth`]: enum.FilterType.html#variant.Paeth
+    /// For optimal compression ratio you should enable adaptive filtering
+    /// instead of setting a single filter for the entire image, see
+    /// [set_adaptive_filter](Self::set_adaptive_filter).
     </span><span class="kw">pub fn </span>set_filter(<span class="kw-2">&amp;mut </span><span class="self">self</span>, filter: FilterType) {
         <span class="self">self</span>.filter = filter;
     }
@@ -3795,10 +3744,9 @@
     ///
     /// Adaptive filtering attempts to select the best filter for each line
     /// based on heuristics which minimize the file size for compression rather
-    /// than use a single filter for the entire image. The default method is
-    /// [`AdaptiveFilterType::NonAdaptive`].
+    /// than use a single filter for the entire image.
     ///
-    /// [`AdaptiveFilterType::NonAdaptive`]: enum.AdaptiveFilterType.html
+    /// The default method is [`AdaptiveFilterType::NonAdaptive`].
     </span><span class="kw">pub fn </span>set_adaptive_filter(<span class="kw-2">&amp;mut </span><span class="self">self</span>, adaptive_filter: AdaptiveFilterType) {
         <span class="self">self</span>.adaptive_filter = adaptive_filter;
     }
@@ -3808,7 +3756,7 @@
     ///
     /// If the denominator is 0, it is to be treated as if it were 100
     /// (that is, the numerator then specifies 1/100ths of a second).
-    /// If the the value of the numerator is 0 the decoder should render the next frame
+    /// If the value of the numerator is 0 the decoder should render the next frame
     /// as quickly as possible, though viewers may impose a reasonable lower bound.
     ///
     /// This method will return an error if the image is not animated.
@@ -3882,7 +3830,7 @@
     ///
     /// This method will return an error if the image is not animated.
     ///
-    /// [`reset_frame_position`]: struct.Writer.html#method.reset_frame_position
+    /// [`reset_frame_position`]: Writer::reset_frame_position
     </span><span class="kw">pub fn </span>reset_frame_dimension(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>fctl) = <span class="self">self</span>.fctl {
             fctl.width = <span class="self">self</span>.width - fctl.x_offset;
@@ -3899,7 +3847,7 @@
     ///
     /// This method will return an error if the image is not animated.
     ///
-    /// [`set_frame_position(0, 0)`]: struct.Writer.html#method.set_frame_position
+    /// [`set_frame_position(0, 0)`]: Writer::set_frame_position
     </span><span class="kw">pub fn </span>reset_frame_position(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>fctl) = <span class="self">self</span>.fctl {
             fctl.x_offset = <span class="number">0</span>;
@@ -3923,8 +3871,6 @@
     /// of each play.*
     ///
     /// This method will return an error if the image is not animated.
-    ///
-    /// [`BlendOP`]: enum.BlendOp.html
     </span><span class="kw">pub fn </span>set_blend_op(<span class="kw-2">&amp;mut </span><span class="self">self</span>, op: BlendOp) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>fctl) = <span class="self">self</span>.fctl {
             fctl.blend_op = op;
@@ -3945,10 +3891,6 @@
     /// it will be treated as [`DisposeOp::Background`].*
     ///
     /// This method will return an error if the image is not animated.
-    ///
-    /// [`DisposeOp`]: ../common/enum.BlendOp.html
-    /// [`DisposeOp::Previous`]: ../common/enum.BlendOp.html#variant.Previous
-    /// [`DisposeOp::Background`]: ../common/enum.BlendOp.html#variant.Background
     </span><span class="kw">pub fn </span>set_dispose_op(<span class="kw-2">&amp;mut </span><span class="self">self</span>, op: DisposeOp) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>fctl) = <span class="self">self</span>.fctl {
             fctl.dispose_op = op;
@@ -4131,9 +4073,9 @@
     <span class="kw">use </span><span class="kw">crate</span>::Decoder;
 
     <span class="kw">use </span>rand::{thread_rng, Rng};
+    <span class="kw">use </span>std::cmp;
     <span class="kw">use </span>std::fs::File;
-    <span class="kw">use </span>std::io::{Cursor, Write};
-    <span class="kw">use </span>std::{cmp, io};
+    <span class="kw">use </span>std::io::Cursor;
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>roundtrip() {

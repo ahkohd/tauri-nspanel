@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"macro":["pin","task_local"],"mod":["fs","io","net","runtime","stream","sync","task"]};
+window.SIDEBAR_ITEMS = {"macro":["pin","task_local"],"mod":["fs","io","net","runtime","stream","sync","task","time"]};

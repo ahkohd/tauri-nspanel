@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["NsReader","Reader"],"type":["Span"]};
+window.SIDEBAR_ITEMS = {"enum":["ElementParser"],"struct":["Config","NsReader","PiParser","Reader"],"trait":["Parser"],"type":["Span"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["CSP_TOKEN","SCRIPT_NONCE_TOKEN","STYLE_NONCE_TOKEN"],"enum":["IsolationSide","PatternObject"],"fn":["inject_csp","inject_csp_token","inject_nonce_token","inline_isolation","parse","serialize_node"],"struct":["NodeRef"]};
+window.SIDEBAR_ITEMS = {"constant":["SCRIPT_NONCE_TOKEN","STYLE_NONCE_TOKEN"],"enum":["IsolationSide","PatternObject"],"fn":["inject_csp","inject_nonce_token","inline_isolation","parse","serialize_node"],"struct":["NodeRef"]};

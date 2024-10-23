@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/raw-window-handle-0.5.2/src/unix.rs`."><title>unix.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="raw_window_handle" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../raw_window_handle/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/raw-window-handle-0.6.2/src/unix.rs`."><title>unix.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="raw_window_handle" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -250,22 +248,85 @@
 <a href="#248" id="248">248</a>
 <a href="#249" id="249">249</a>
 <a href="#250" id="250">250</a>
+<a href="#251" id="251">251</a>
+<a href="#252" id="252">252</a>
+<a href="#253" id="253">253</a>
+<a href="#254" id="254">254</a>
+<a href="#255" id="255">255</a>
+<a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
+<a href="#263" id="263">263</a>
+<a href="#264" id="264">264</a>
+<a href="#265" id="265">265</a>
+<a href="#266" id="266">266</a>
+<a href="#267" id="267">267</a>
+<a href="#268" id="268">268</a>
+<a href="#269" id="269">269</a>
+<a href="#270" id="270">270</a>
+<a href="#271" id="271">271</a>
+<a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
+<a href="#274" id="274">274</a>
+<a href="#275" id="275">275</a>
+<a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>core::ffi::{c_int, c_ulong, c_void};
-<span class="kw">use </span>core::ptr;
+<span class="kw">use </span>core::num::NonZeroU32;
+<span class="kw">use </span>core::ptr::NonNull;
 
 <span class="doccomment">/// Raw display handle for Xlib.
-///
-/// ## Construction
-/// ```
-/// # use raw_window_handle::XlibDisplayHandle;
-/// let display_handle = XlibDisplayHandle::empty();
-/// /* set fields */
-/// ```
 </span><span class="attr">#[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 </span><span class="kw">pub struct </span>XlibDisplayHandle {
     <span class="doccomment">/// A pointer to an Xlib `Display`.
-    </span><span class="kw">pub </span>display: <span class="kw-2">*mut </span>c_void,
+    ///
+    /// It is strongly recommended to set this value, however it may be set to
+    /// `None` to request the default display when using EGL.
+    </span><span class="kw">pub </span>display: <span class="prelude-ty">Option</span>&lt;NonNull&lt;c_void&gt;&gt;,
 
     <span class="doccomment">/// An X11 screen to use with this display handle.
     ///
@@ -275,14 +336,29 @@
     </span><span class="kw">pub </span>screen: c_int,
 }
 
+<span class="kw">impl </span>XlibDisplayHandle {
+    <span class="doccomment">/// Create a new handle to a display.
+    ///
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use core::ffi::c_void;
+    /// # use core::ptr::NonNull;
+    /// # use raw_window_handle::XlibDisplayHandle;
+    /// #
+    /// let display: NonNull&lt;c_void&gt;;
+    /// let screen;
+    /// # display = NonNull::from(&amp;()).cast();
+    /// # screen = 0;
+    /// let handle = XlibDisplayHandle::new(Some(display), screen);
+    /// ```
+    </span><span class="kw">pub fn </span>new(display: <span class="prelude-ty">Option</span>&lt;NonNull&lt;c_void&gt;&gt;, screen: c_int) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{ display, screen }
+    }
+}
+
 <span class="doccomment">/// Raw window handle for Xlib.
-///
-/// ## Construction
-/// ```
-/// # use raw_window_handle::XlibWindowHandle;
-/// let window_handle = XlibWindowHandle::empty();
-/// /* set fields */
-/// ```
 </span><span class="attr">#[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 </span><span class="kw">pub struct </span>XlibWindowHandle {
@@ -292,19 +368,39 @@
     </span><span class="kw">pub </span>visual_id: c_ulong,
 }
 
+<span class="kw">impl </span>XlibWindowHandle {
+    <span class="doccomment">/// Create a new handle to a window.
+    ///
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use core::ffi::c_ulong;
+    /// # use raw_window_handle::XlibWindowHandle;
+    /// #
+    /// let window: c_ulong;
+    /// # window = 0;
+    /// let mut handle = XlibWindowHandle::new(window);
+    /// // Optionally set the visual ID.
+    /// handle.visual_id = 0;
+    /// ```
+    </span><span class="kw">pub fn </span>new(window: c_ulong) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            window,
+            visual_id: <span class="number">0</span>,
+        }
+    }
+}
+
 <span class="doccomment">/// Raw display handle for Xcb.
-///
-/// ## Construction
-/// ```
-/// # use raw_window_handle::XcbDisplayHandle;
-/// let display_handle = XcbDisplayHandle::empty();
-/// /* set fields */
-/// ```
 </span><span class="attr">#[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 </span><span class="kw">pub struct </span>XcbDisplayHandle {
     <span class="doccomment">/// A pointer to an X server `xcb_connection_t`.
-    </span><span class="kw">pub </span>connection: <span class="kw-2">*mut </span>c_void,
+    ///
+    /// It is strongly recommended to set this value, however it may be set to
+    /// `None` to request the default display when using EGL.
+    </span><span class="kw">pub </span>connection: <span class="prelude-ty">Option</span>&lt;NonNull&lt;c_void&gt;&gt;,
 
     <span class="doccomment">/// An X11 screen to use with this display handle.
     ///
@@ -314,76 +410,146 @@
     </span><span class="kw">pub </span>screen: c_int,
 }
 
+<span class="kw">impl </span>XcbDisplayHandle {
+    <span class="doccomment">/// Create a new handle to a connection and screen.
+    ///
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use core::ffi::c_void;
+    /// # use core::ptr::NonNull;
+    /// # use raw_window_handle::XcbDisplayHandle;
+    /// #
+    /// let connection: NonNull&lt;c_void&gt;;
+    /// let screen;
+    /// # connection = NonNull::from(&amp;()).cast();
+    /// # screen = 0;
+    /// let handle = XcbDisplayHandle::new(Some(connection), screen);
+    /// ```
+    </span><span class="kw">pub fn </span>new(connection: <span class="prelude-ty">Option</span>&lt;NonNull&lt;c_void&gt;&gt;, screen: c_int) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{ connection, screen }
+    }
+}
+
 <span class="doccomment">/// Raw window handle for Xcb.
-///
-/// ## Construction
-/// ```
-/// # use raw_window_handle::XcbWindowHandle;
-/// let window_handle = XcbWindowHandle::empty();
-/// /* set fields */
-/// ```
 </span><span class="attr">#[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 </span><span class="kw">pub struct </span>XcbWindowHandle {
     <span class="doccomment">/// An X11 `xcb_window_t`.
-    </span><span class="kw">pub </span>window: u32, <span class="comment">// Based on xproto.h
-    </span><span class="doccomment">/// An X11 `xcb_visualid_t`, or 0 if unknown.
-    </span><span class="kw">pub </span>visual_id: u32,
+    </span><span class="kw">pub </span>window: NonZeroU32, <span class="comment">// Based on xproto.h
+    </span><span class="doccomment">/// An X11 `xcb_visualid_t`.
+    </span><span class="kw">pub </span>visual_id: <span class="prelude-ty">Option</span>&lt;NonZeroU32&gt;,
+}
+
+<span class="kw">impl </span>XcbWindowHandle {
+    <span class="doccomment">/// Create a new handle to a window.
+    ///
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use core::num::NonZeroU32;
+    /// # use raw_window_handle::XcbWindowHandle;
+    /// #
+    /// let window: NonZeroU32;
+    /// # window = NonZeroU32::new(1).unwrap();
+    /// let mut handle = XcbWindowHandle::new(window);
+    /// // Optionally set the visual ID.
+    /// handle.visual_id = None;
+    /// ```
+    </span><span class="kw">pub fn </span>new(window: NonZeroU32) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            window,
+            visual_id: <span class="prelude-val">None</span>,
+        }
+    }
 }
 
 <span class="doccomment">/// Raw display handle for Wayland.
-///
-/// ## Construction
-/// ```
-/// # use raw_window_handle::WaylandDisplayHandle;
-/// let display_handle = WaylandDisplayHandle::empty();
-/// /* set fields */
-/// ```
 </span><span class="attr">#[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 </span><span class="kw">pub struct </span>WaylandDisplayHandle {
     <span class="doccomment">/// A pointer to a `wl_display`.
-    </span><span class="kw">pub </span>display: <span class="kw-2">*mut </span>c_void,
+    </span><span class="kw">pub </span>display: NonNull&lt;c_void&gt;,
+}
+
+<span class="kw">impl </span>WaylandDisplayHandle {
+    <span class="doccomment">/// Create a new display handle.
+    ///
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use core::ffi::c_void;
+    /// # use core::ptr::NonNull;
+    /// # use raw_window_handle::WaylandDisplayHandle;
+    /// #
+    /// let display: NonNull&lt;c_void&gt;;
+    /// # display = NonNull::from(&amp;()).cast();
+    /// let handle = WaylandDisplayHandle::new(display);
+    /// ```
+    </span><span class="kw">pub fn </span>new(display: NonNull&lt;c_void&gt;) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{ display }
+    }
 }
 
 <span class="doccomment">/// Raw window handle for Wayland.
-///
-/// ## Construction
-/// ```
-/// # use raw_window_handle::WaylandWindowHandle;
-/// let window_handle = WaylandWindowHandle::empty();
-/// /* set fields */
-/// ```
 </span><span class="attr">#[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 </span><span class="kw">pub struct </span>WaylandWindowHandle {
     <span class="doccomment">/// A pointer to a `wl_surface`.
-    </span><span class="kw">pub </span>surface: <span class="kw-2">*mut </span>c_void,
+    </span><span class="kw">pub </span>surface: NonNull&lt;c_void&gt;,
+}
+
+<span class="kw">impl </span>WaylandWindowHandle {
+    <span class="doccomment">/// Create a new handle to a surface.
+    ///
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use core::ffi::c_void;
+    /// # use core::ptr::NonNull;
+    /// # use raw_window_handle::WaylandWindowHandle;
+    /// #
+    /// let surface: NonNull&lt;c_void&gt;;
+    /// # surface = NonNull::from(&amp;()).cast();
+    /// let handle = WaylandWindowHandle::new(surface);
+    /// ```
+    </span><span class="kw">pub fn </span>new(surface: NonNull&lt;c_void&gt;) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{ surface }
+    }
 }
 
 <span class="doccomment">/// Raw display handle for the Linux Kernel Mode Set/Direct Rendering Manager.
-///
-/// ## Construction
-/// ```
-/// # use raw_window_handle::DrmDisplayHandle;
-/// let display_handle = DrmDisplayHandle::empty();
-/// /* set fields */
-/// ```
 </span><span class="attr">#[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 </span><span class="kw">pub struct </span>DrmDisplayHandle {
     <span class="doccomment">/// The drm file descriptor.
+    </span><span class="comment">// TODO: Use `std::os::fd::RawFd`?
     </span><span class="kw">pub </span>fd: i32,
 }
 
+<span class="kw">impl </span>DrmDisplayHandle {
+    <span class="doccomment">/// Create a new handle to a file descriptor.
+    ///
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use raw_window_handle::DrmDisplayHandle;
+    /// #
+    /// let fd: i32;
+    /// # fd = 0;
+    /// let handle = DrmDisplayHandle::new(fd);
+    /// ```
+    </span><span class="kw">pub fn </span>new(fd: i32) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{ fd }
+    }
+}
+
 <span class="doccomment">/// Raw window handle for the Linux Kernel Mode Set/Direct Rendering Manager.
-///
-/// ## Construction
-/// ```
-/// # use raw_window_handle::DrmWindowHandle;
-/// let handle = DrmWindowHandle::empty();
-/// /* set fields */
-/// ```
 </span><span class="attr">#[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 </span><span class="kw">pub struct </span>DrmWindowHandle {
@@ -391,113 +557,77 @@
     </span><span class="kw">pub </span>plane: u32,
 }
 
+<span class="kw">impl </span>DrmWindowHandle {
+    <span class="doccomment">/// Create a new handle to a plane.
+    ///
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use raw_window_handle::DrmWindowHandle;
+    /// #
+    /// let plane: u32;
+    /// # plane = 0;
+    /// let handle = DrmWindowHandle::new(plane);
+    /// ```
+    </span><span class="kw">pub fn </span>new(plane: u32) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{ plane }
+    }
+}
+
 <span class="doccomment">/// Raw display handle for the Linux Generic Buffer Manager.
-///
-/// ## Construction
-/// ```
-/// # use raw_window_handle::GbmDisplayHandle;
-/// let display_handle = GbmDisplayHandle::empty();
-/// /* set fields */
-/// ```
 </span><span class="attr">#[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 </span><span class="kw">pub struct </span>GbmDisplayHandle {
     <span class="doccomment">/// The gbm device.
-    </span><span class="kw">pub </span>gbm_device: <span class="kw-2">*mut </span>c_void,
+    </span><span class="kw">pub </span>gbm_device: NonNull&lt;c_void&gt;,
+}
+
+<span class="kw">impl </span>GbmDisplayHandle {
+    <span class="doccomment">/// Create a new handle to a device.
+    ///
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use core::ffi::c_void;
+    /// # use core::ptr::NonNull;
+    /// # use raw_window_handle::GbmDisplayHandle;
+    /// #
+    /// let ptr: NonNull&lt;c_void&gt;;
+    /// # ptr = NonNull::from(&amp;()).cast();
+    /// let handle = GbmDisplayHandle::new(ptr);
+    /// ```
+    </span><span class="kw">pub fn </span>new(gbm_device: NonNull&lt;c_void&gt;) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{ gbm_device }
+    }
 }
 
 <span class="doccomment">/// Raw window handle for the Linux Generic Buffer Manager.
-///
-/// ## Construction
-/// ```
-/// # use raw_window_handle::GbmWindowHandle;
-/// let handle = GbmWindowHandle::empty();
-/// /* set fields */
-/// ```
 </span><span class="attr">#[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 </span><span class="kw">pub struct </span>GbmWindowHandle {
     <span class="doccomment">/// The gbm surface.
-    </span><span class="kw">pub </span>gbm_surface: <span class="kw-2">*mut </span>c_void,
-}
-
-<span class="kw">impl </span>XlibDisplayHandle {
-    <span class="kw">pub fn </span>empty() -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            display: ptr::null_mut(),
-            screen: <span class="number">0</span>,
-        }
-    }
-}
-
-<span class="kw">impl </span>XlibWindowHandle {
-    <span class="kw">pub fn </span>empty() -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            window: <span class="number">0</span>,
-            visual_id: <span class="number">0</span>,
-        }
-    }
-}
-
-<span class="kw">impl </span>XcbDisplayHandle {
-    <span class="kw">pub fn </span>empty() -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            connection: ptr::null_mut(),
-            screen: <span class="number">0</span>,
-        }
-    }
-}
-
-<span class="kw">impl </span>XcbWindowHandle {
-    <span class="kw">pub fn </span>empty() -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            window: <span class="number">0</span>,
-            visual_id: <span class="number">0</span>,
-        }
-    }
-}
-
-<span class="kw">impl </span>WaylandDisplayHandle {
-    <span class="kw">pub fn </span>empty() -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            display: ptr::null_mut(),
-        }
-    }
-}
-
-<span class="kw">impl </span>WaylandWindowHandle {
-    <span class="kw">pub fn </span>empty() -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            surface: ptr::null_mut(),
-        }
-    }
-}
-
-<span class="kw">impl </span>DrmDisplayHandle {
-    <span class="kw">pub fn </span>empty() -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{ fd: <span class="number">0 </span>}
-    }
-}
-
-<span class="kw">impl </span>DrmWindowHandle {
-    <span class="kw">pub fn </span>empty() -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{ plane: <span class="number">0 </span>}
-    }
-}
-
-<span class="kw">impl </span>GbmDisplayHandle {
-    <span class="kw">pub fn </span>empty() -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            gbm_device: ptr::null_mut(),
-        }
-    }
+    </span><span class="kw">pub </span>gbm_surface: NonNull&lt;c_void&gt;,
 }
 
 <span class="kw">impl </span>GbmWindowHandle {
-    <span class="kw">pub fn </span>empty() -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            gbm_surface: ptr::null_mut(),
-        }
+    <span class="doccomment">/// Create a new handle to a surface.
+    ///
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use core::ffi::c_void;
+    /// # use core::ptr::NonNull;
+    /// # use raw_window_handle::GbmWindowHandle;
+    /// #
+    /// let ptr: NonNull&lt;c_void&gt;;
+    /// # ptr = NonNull::from(&amp;()).cast();
+    /// let handle = GbmWindowHandle::new(ptr);
+    /// ```
+    </span><span class="kw">pub fn </span>new(gbm_surface: NonNull&lt;c_void&gt;) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{ gbm_surface }
     }
 }
 </code></pre></div></section></main></body></html>

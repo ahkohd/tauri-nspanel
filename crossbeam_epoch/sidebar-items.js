@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["default_collector","is_pinned","pin","unprotected"],"struct":["Atomic","Collector","CompareExchangeError","Guard","LocalHandle","Owned","Shared"],"trait":["CompareAndSetOrdering","Pointable","Pointer"],"type":["CompareAndSetError"]};

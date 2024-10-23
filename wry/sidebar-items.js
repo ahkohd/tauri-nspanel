@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Error","Value"],"mod":["application","webview"],"type":["Result"]};
+window.SIDEBAR_ITEMS = {"enum":["DragDropEvent","Error","PageLoadEvent","ProxyConfig","Theme"],"fn":["webview_version"],"struct":["PrintMargin","PrintOptions","ProxyEndpoint","Rect","RequestAsyncResponder","WebContext","WebView","WebViewAttributes","WebViewBuilder","WryWebView"],"trait":["WebViewBuilderExtDarwin","WebViewExtMacOS"],"type":["RGBA","Result","WebViewId"]};

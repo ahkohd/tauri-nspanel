@@ -1,0 +1,35 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Gets a reference to an `AnyClass` from the given name."><title>class in objc2 - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="objc2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-118b08c4c78b968e.js"></script><script defer src="sidebar-items.js"></script><script defer src="../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc macro"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../objc2/index.html">objc2</a><span class="version">0.5.2</span></h2></div><div class="sidebar-elems"></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Macro <a href="index.html">objc2</a>::<wbr><a class="macro" href="#">class</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../src/objc2/macros/mod.rs.html#72-79">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><span class="macro">macro_rules!</span> class {
+    (<span class="macro-nonterminal">$name</span>:ident) =&gt; { ... };
+}</pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Gets a reference to an <a href="runtime/struct.AnyClass.html" title="struct objc2::runtime::AnyClass"><code>AnyClass</code></a> from the given name.</p>
+<p>If you have an object that implements <a href="trait.ClassType.html" title="trait objc2::ClassType"><code>ClassType</code></a>, consider using the
+<a href="trait.ClassType.html#tymethod.class" title="associated function objc2::ClassType::class"><code>ClassType::class</code></a> method instead.</p>
+<h2 id="panics"><a class="doc-anchor" href="#panics">§</a>Panics</h2>
+<p>Panics if no class with the given name can be found.</p>
+<p>To dynamically check for a class that may not exist, use <a href="runtime/struct.AnyClass.html#method.get" title="associated function objc2::runtime::AnyClass::get"><code>AnyClass::get</code></a>.</p>
+<h2 id="features"><a class="doc-anchor" href="#features">§</a>Features</h2>
+<p>If the experimental <code>"unstable-static-class"</code> feature is enabled, this
+will emit special statics that will be replaced by dyld when the program
+starts up.</p>
+<p>Errors that were previously runtime panics may now turn into linker errors
+if you try to use a class which is not available. Additionally, you may
+have to call <code>msg_send![cls, class]</code> on the result if you want to use it
+in a dynamic context (e.g. dynamically declaring classes).</p>
+<p>See the <a href="macro.sel.html#features" title="macro objc2::sel">corresponding section</a> in the <a href="macro.sel.html" title="macro objc2::sel"><code>sel!</code></a> macro for
+more details on the limitations of this. The
+<code>"unstable-static-class-inlined"</code> corresponds to the
+<code>"unstable-static-sel-inlined"</code> feature here.</p>
+<h2 id="examples"><a class="doc-anchor" href="#examples">§</a>Examples</h2>
+<p>Get and compare the class with one returned from <a href="trait.ClassType.html#tymethod.class" title="associated function objc2::ClassType::class"><code>ClassType::class</code></a>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::runtime::NSObject;
+<span class="kw">use </span>objc2::{class, ClassType};
+
+<span class="kw">let </span>cls1 = <span class="macro">class!</span>(NSObject);
+<span class="kw">let </span>cls2 = NSObject::class();
+<span class="macro">assert_eq!</span>(cls1, cls2);</code></pre></div>
+<p>Try to get a non-existing class (this will panic, or fail to link).</p>
+
+<div class="example-wrap should_panic"><a href="#" class="tooltip" title="This example panics">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::class;
+
+<span class="kw">let _ </span>= <span class="macro">class!</span>(NonExistantClass);</code></pre></div>
+</div></details></section></div></main></body></html>

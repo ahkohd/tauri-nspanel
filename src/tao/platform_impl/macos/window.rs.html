@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tao-0.16.9/src/platform_impl/macos/window.rs`."><title>window.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="tao" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../../tao/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tao-0.30.3/src/platform_impl/macos/window.rs`."><title>window.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="tao" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1600,6 +1598,114 @@
 <a href="#1598" id="1598">1598</a>
 <a href="#1599" id="1599">1599</a>
 <a href="#1600" id="1600">1600</a>
+<a href="#1601" id="1601">1601</a>
+<a href="#1602" id="1602">1602</a>
+<a href="#1603" id="1603">1603</a>
+<a href="#1604" id="1604">1604</a>
+<a href="#1605" id="1605">1605</a>
+<a href="#1606" id="1606">1606</a>
+<a href="#1607" id="1607">1607</a>
+<a href="#1608" id="1608">1608</a>
+<a href="#1609" id="1609">1609</a>
+<a href="#1610" id="1610">1610</a>
+<a href="#1611" id="1611">1611</a>
+<a href="#1612" id="1612">1612</a>
+<a href="#1613" id="1613">1613</a>
+<a href="#1614" id="1614">1614</a>
+<a href="#1615" id="1615">1615</a>
+<a href="#1616" id="1616">1616</a>
+<a href="#1617" id="1617">1617</a>
+<a href="#1618" id="1618">1618</a>
+<a href="#1619" id="1619">1619</a>
+<a href="#1620" id="1620">1620</a>
+<a href="#1621" id="1621">1621</a>
+<a href="#1622" id="1622">1622</a>
+<a href="#1623" id="1623">1623</a>
+<a href="#1624" id="1624">1624</a>
+<a href="#1625" id="1625">1625</a>
+<a href="#1626" id="1626">1626</a>
+<a href="#1627" id="1627">1627</a>
+<a href="#1628" id="1628">1628</a>
+<a href="#1629" id="1629">1629</a>
+<a href="#1630" id="1630">1630</a>
+<a href="#1631" id="1631">1631</a>
+<a href="#1632" id="1632">1632</a>
+<a href="#1633" id="1633">1633</a>
+<a href="#1634" id="1634">1634</a>
+<a href="#1635" id="1635">1635</a>
+<a href="#1636" id="1636">1636</a>
+<a href="#1637" id="1637">1637</a>
+<a href="#1638" id="1638">1638</a>
+<a href="#1639" id="1639">1639</a>
+<a href="#1640" id="1640">1640</a>
+<a href="#1641" id="1641">1641</a>
+<a href="#1642" id="1642">1642</a>
+<a href="#1643" id="1643">1643</a>
+<a href="#1644" id="1644">1644</a>
+<a href="#1645" id="1645">1645</a>
+<a href="#1646" id="1646">1646</a>
+<a href="#1647" id="1647">1647</a>
+<a href="#1648" id="1648">1648</a>
+<a href="#1649" id="1649">1649</a>
+<a href="#1650" id="1650">1650</a>
+<a href="#1651" id="1651">1651</a>
+<a href="#1652" id="1652">1652</a>
+<a href="#1653" id="1653">1653</a>
+<a href="#1654" id="1654">1654</a>
+<a href="#1655" id="1655">1655</a>
+<a href="#1656" id="1656">1656</a>
+<a href="#1657" id="1657">1657</a>
+<a href="#1658" id="1658">1658</a>
+<a href="#1659" id="1659">1659</a>
+<a href="#1660" id="1660">1660</a>
+<a href="#1661" id="1661">1661</a>
+<a href="#1662" id="1662">1662</a>
+<a href="#1663" id="1663">1663</a>
+<a href="#1664" id="1664">1664</a>
+<a href="#1665" id="1665">1665</a>
+<a href="#1666" id="1666">1666</a>
+<a href="#1667" id="1667">1667</a>
+<a href="#1668" id="1668">1668</a>
+<a href="#1669" id="1669">1669</a>
+<a href="#1670" id="1670">1670</a>
+<a href="#1671" id="1671">1671</a>
+<a href="#1672" id="1672">1672</a>
+<a href="#1673" id="1673">1673</a>
+<a href="#1674" id="1674">1674</a>
+<a href="#1675" id="1675">1675</a>
+<a href="#1676" id="1676">1676</a>
+<a href="#1677" id="1677">1677</a>
+<a href="#1678" id="1678">1678</a>
+<a href="#1679" id="1679">1679</a>
+<a href="#1680" id="1680">1680</a>
+<a href="#1681" id="1681">1681</a>
+<a href="#1682" id="1682">1682</a>
+<a href="#1683" id="1683">1683</a>
+<a href="#1684" id="1684">1684</a>
+<a href="#1685" id="1685">1685</a>
+<a href="#1686" id="1686">1686</a>
+<a href="#1687" id="1687">1687</a>
+<a href="#1688" id="1688">1688</a>
+<a href="#1689" id="1689">1689</a>
+<a href="#1690" id="1690">1690</a>
+<a href="#1691" id="1691">1691</a>
+<a href="#1692" id="1692">1692</a>
+<a href="#1693" id="1693">1693</a>
+<a href="#1694" id="1694">1694</a>
+<a href="#1695" id="1695">1695</a>
+<a href="#1696" id="1696">1696</a>
+<a href="#1697" id="1697">1697</a>
+<a href="#1698" id="1698">1698</a>
+<a href="#1699" id="1699">1699</a>
+<a href="#1700" id="1700">1700</a>
+<a href="#1701" id="1701">1701</a>
+<a href="#1702" id="1702">1702</a>
+<a href="#1703" id="1703">1703</a>
+<a href="#1704" id="1704">1704</a>
+<a href="#1705" id="1705">1705</a>
+<a href="#1706" id="1706">1706</a>
+<a href="#1707" id="1707">1707</a>
+<a href="#1708" id="1708">1708</a>
 </pre></div><pre class="rust"><code><span class="comment">// Copyright 2014-2021 The winit contributors
 // Copyright 2021-2023 Tauri Programme within The Commons Conservancy
 // SPDX-License-Identifier: Apache-2.0
@@ -1615,10 +1721,6 @@
   },
 };
 
-<span class="kw">use </span>raw_window_handle::{
-  AppKitDisplayHandle, AppKitWindowHandle, RawDisplayHandle, RawWindowHandle,
-};
-
 <span class="kw">use crate</span>::{
   dpi::{
     LogicalPosition, LogicalSize, PhysicalPosition, PhysicalSize, Position, Size, Size::Logical,
@@ -1629,26 +1731,30 @@
   platform::macos::WindowExtMacOS,
   platform_impl::platform::{
     app_state::AppState,
-    ffi, menu,
+    ffi,
     monitor::{<span class="self">self</span>, MonitorHandle, VideoMode},
     util::{<span class="self">self</span>, IdRef},
     view::{<span class="self">self</span>, new_view, CursorState},
     window_delegate::new_delegate,
     OsError,
   },
+  platform_impl::set_progress_indicator,
   window::{
-    CursorIcon, Fullscreen, Theme, UserAttentionType, WindowAttributes, WindowId <span class="kw">as </span>RootWindowId,
+    CursorIcon, Fullscreen, ProgressBarState, ResizeDirection, Theme, UserAttentionType,
+    WindowAttributes, WindowId <span class="kw">as </span>RootWindowId, WindowSizeConstraints,
   },
 };
 <span class="kw">use </span>cocoa::{
   appkit::{
     <span class="self">self</span>, CGFloat, NSApp, NSApplication, NSApplicationPresentationOptions, NSColor, NSEvent,
-    NSRequestUserAttentionType, NSScreen, NSView, NSWindow, NSWindowButton,
-    NSWindowCollectionBehavior, NSWindowOrderingMode, NSWindowStyleMask,
+    NSEventModifierFlags, NSEventSubtype, NSEventType, NSRequestUserAttentionType, NSScreen,
+    NSView, NSWindow, NSWindowButton, NSWindowCollectionBehavior, NSWindowOrderingMode,
+    NSWindowStyleMask,
   },
   base::{id, nil},
   foundation::{
-    NSArray, NSAutoreleasePool, NSDictionary, NSPoint, NSRect, NSSize, NSString, NSUInteger,
+    NSArray, NSAutoreleasePool, NSDictionary, NSInteger, NSPoint, NSRect, NSSize, NSString,
+    NSTimeInterval, NSUInteger,
   },
 };
 <span class="kw">use </span>core_graphics::display::{CGDisplay, CGDisplayMode};
@@ -1657,7 +1763,7 @@
   runtime::{Class, Object, Sel, BOOL, NO, YES},
 };
 
-<span class="kw">use super</span>::{util::ns_string_to_rust, Menu};
+<span class="kw">use super</span>::{util::ns_string_to_rust, view::ViewState};
 
 <span class="attr">#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 </span><span class="kw">pub struct </span>Id(<span class="kw">pub </span>usize);
@@ -1693,6 +1799,7 @@
   <span class="kw">pub </span>resize_increments: <span class="prelude-ty">Option</span>&lt;LogicalSize&lt;f64&gt;&gt;,
   <span class="kw">pub </span>disallow_hidpi: bool,
   <span class="kw">pub </span>has_shadow: bool,
+  <span class="kw">pub </span>traffic_light_inset: <span class="prelude-ty">Option</span>&lt;Position&gt;,
   <span class="kw">pub </span>automatic_tabbing: bool,
   <span class="kw">pub </span>tabbing_identifier: <span class="prelude-ty">Option</span>&lt;String&gt;,
 }
@@ -1711,6 +1818,7 @@
       resize_increments: <span class="prelude-val">None</span>,
       disallow_hidpi: <span class="bool-val">false</span>,
       has_shadow: <span class="bool-val">true</span>,
+      traffic_light_inset: <span class="prelude-val">None</span>,
       automatic_tabbing: <span class="bool-val">true</span>,
       tabbing_identifier: <span class="prelude-val">None</span>,
     }
@@ -1725,6 +1833,14 @@
   ns_view.non_nil().map(|ns_view| {
     <span class="kw">if </span>!pl_attribs.disallow_hidpi {
       ns_view.setWantsBestResolutionOpenGLSurface_(YES);
+    }
+
+    <span class="kw">if let </span><span class="prelude-val">Some</span>(position) = pl_attribs.traffic_light_inset {
+      <span class="kw">let </span>state_ptr: <span class="kw-2">*mut </span>c_void = <span class="kw-2">*</span>(<span class="kw-2">**</span>ns_view).get_ivar(<span class="string">"taoState"</span>);
+      <span class="kw">let </span>state = <span class="kw-2">&amp;mut *</span>(state_ptr <span class="kw">as </span><span class="kw-2">*mut </span>ViewState);
+      <span class="kw">let </span>scale_factor = NSWindow::backingScaleFactor(ns_window);
+      <span class="kw">let </span>position = position.to_logical(scale_factor);
+      state.traffic_light_inset = <span class="prelude-val">Some</span>(position);
     }
 
     <span class="comment">// On Mojave, views automatically become layer-backed shortly after being added to
@@ -1762,13 +1878,14 @@
       <span class="prelude-val">None </span>=&gt; {
         <span class="kw">let </span>screen = NSScreen::mainScreen(nil);
         <span class="kw">let </span>scale_factor = NSScreen::backingScaleFactor(screen) <span class="kw">as </span>f64;
-        <span class="kw">let </span>(width, height) = <span class="kw">match </span>attrs.inner_size {
-          <span class="prelude-val">Some</span>(size) =&gt; {
-            <span class="kw">let </span>logical = size.to_logical(scale_factor);
-            (logical.width, logical.height)
-          }
-          <span class="prelude-val">None </span>=&gt; (<span class="number">800.0</span>, <span class="number">600.0</span>),
-        };
+        <span class="kw">let </span>desired_size = attrs
+          .inner_size
+          .unwrap_or_else(|| PhysicalSize::new(<span class="number">800</span>, <span class="number">600</span>).into());
+        <span class="kw">let </span>(width, height): (f64, f64) = attrs
+          .inner_size_constraints
+          .clamp(desired_size, scale_factor)
+          .to_logical::&lt;f64&gt;(scale_factor)
+          .into();
         <span class="kw">let </span>(left, bottom) = <span class="kw">match </span>attrs.position {
           <span class="prelude-val">Some</span>(position) =&gt; {
             <span class="kw">let </span>logical = util::window_position(position.to_logical(scale_factor));
@@ -1896,9 +2013,6 @@
       <span class="kw">if </span>attrs.position.is_none() {
         ns_window.center();
       }
-      <span class="kw">if let </span><span class="prelude-val">Some</span>(window_menu) = attrs.window_menu.clone() {
-        menu::initialize(window_menu);
-      }
 
       ns_window
     });
@@ -1931,17 +2045,20 @@
   }
 }
 
-<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>set_ns_theme(theme: Theme) {
-  <span class="kw">let </span>name = <span class="kw">match </span>theme {
-    Theme::Dark =&gt; <span class="string">"NSAppearanceNameDarkAqua"</span>,
-    Theme::Light =&gt; <span class="string">"NSAppearanceNameAqua"</span>,
-  };
+<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>set_ns_theme(theme: <span class="prelude-ty">Option</span>&lt;Theme&gt;) {
   <span class="kw">unsafe </span>{
     <span class="kw">let </span>app_class = <span class="macro">class!</span>(NSApplication);
     <span class="kw">let </span>app: id = <span class="macro">msg_send!</span>[app_class, sharedApplication];
     <span class="kw">let </span>has_theme: BOOL = <span class="macro">msg_send!</span>[app, respondsToSelector: <span class="macro">sel!</span>(effectiveAppearance)];
     <span class="kw">if </span>has_theme == YES {
-      <span class="kw">let </span>name = NSString::alloc(nil).init_str(name);
+      <span class="kw">let </span>name = <span class="kw">if let </span><span class="prelude-val">Some</span>(theme) = theme {
+        NSString::alloc(nil).init_str(<span class="kw">match </span>theme {
+          Theme::Dark =&gt; <span class="string">"NSAppearanceNameDarkAqua"</span>,
+          Theme::Light =&gt; <span class="string">"NSAppearanceNameAqua"</span>,
+        })
+      } <span class="kw">else </span>{
+        nil
+      };
       <span class="kw">let </span>appearance: id = <span class="macro">msg_send!</span>[<span class="macro">class!</span>(NSAppearance), appearanceNamed: name];
       <span class="kw">let _</span>: () = <span class="macro">msg_send!</span>[app, setAppearance: appearance];
     }
@@ -2059,11 +2176,8 @@
     <span class="kw-2">mut </span>win_attribs: WindowAttributes,
     pl_attribs: PlatformSpecificWindowBuilderAttributes,
   ) -&gt; <span class="prelude-ty">Result</span>&lt;(Arc&lt;<span class="self">Self</span>&gt;, IdRef), RootOsError&gt; {
-    <span class="kw">unsafe </span>{
-      <span class="kw">let </span>is_main_thread: BOOL = <span class="macro">msg_send!</span>(<span class="macro">class!</span>(NSThread), isMainThread);
-      <span class="kw">if </span>is_main_thread == NO {
-        <span class="macro">panic!</span>(<span class="string">"Windows can only be created on the main thread on macOS"</span>);
-      }
+    <span class="kw">if </span>!util::is_main_thread() {
+      <span class="macro">panic!</span>(<span class="string">"Windows can only be created on the main thread on macOS"</span>);
     }
     <span class="macro">trace!</span>(<span class="string">"Creating new window"</span>);
 
@@ -2095,14 +2209,18 @@
         ns_window.setBackgroundColor_(NSColor::clearColor(nil));
       }
 
-      win_attribs.min_inner_size.map(|dim| {
-        <span class="kw">let </span>logical_dim = dim.to_logical(scale_factor);
-        set_min_inner_size(<span class="kw-2">*</span>ns_window, logical_dim)
-      });
-      win_attribs.max_inner_size.map(|dim| {
-        <span class="kw">let </span>logical_dim = dim.to_logical(scale_factor);
-        set_max_inner_size(<span class="kw-2">*</span>ns_window, logical_dim)
-      });
+      <span class="kw">if </span>win_attribs.inner_size_constraints.has_min() {
+        <span class="kw">let </span>min_size = win_attribs
+          .inner_size_constraints
+          .min_size_logical(scale_factor);
+        set_min_inner_size(<span class="kw-2">*</span>ns_window, min_size);
+      }
+      <span class="kw">if </span>win_attribs.inner_size_constraints.has_max() {
+        <span class="kw">let </span>max_size = win_attribs
+          .inner_size_constraints
+          .max_size_logical(scale_factor);
+        set_max_inner_size(<span class="kw-2">*</span>ns_window, max_size);
+      }
 
       <span class="comment">// register for drag and drop operations.
       </span><span class="kw">let </span>() = <span class="macro">msg_send!</span>[
@@ -2140,7 +2258,7 @@
 
     <span class="kw">match </span>cloned_preferred_theme {
       <span class="prelude-val">Some</span>(theme) =&gt; {
-        set_ns_theme(theme);
+        set_ns_theme(<span class="prelude-val">Some</span>(theme));
         <span class="kw">let </span><span class="kw-2">mut </span>state = window.shared_state.lock().unwrap();
         state.current_theme = theme.clone();
       }
@@ -2202,18 +2320,10 @@
     }
   }
 
-  <span class="kw">pub fn </span>set_menu(<span class="kw-2">&amp;</span><span class="self">self</span>, menu: <span class="prelude-ty">Option</span>&lt;Menu&gt;) {
-    <span class="comment">// TODO if None we should set an empty menu
-    // On windows we can remove it, in macOS we can't
-    </span><span class="kw">if let </span><span class="prelude-val">Some</span>(menu) = menu {
-      menu::initialize(menu);
-    }
-  }
-
   <span class="kw">pub fn </span>set_visible(<span class="kw-2">&amp;</span><span class="self">self</span>, visible: bool) {
     <span class="kw">match </span>visible {
-      <span class="bool-val">true </span>=&gt; <span class="kw">unsafe </span>{ util::make_key_and_order_front_async(<span class="kw-2">*</span><span class="self">self</span>.ns_window) },
-      <span class="bool-val">false </span>=&gt; <span class="kw">unsafe </span>{ util::order_out_async(<span class="kw-2">*</span><span class="self">self</span>.ns_window) },
+      <span class="bool-val">true </span>=&gt; <span class="kw">unsafe </span>{ util::make_key_and_order_front_sync(<span class="kw-2">*</span><span class="self">self</span>.ns_window) },
+      <span class="bool-val">false </span>=&gt; <span class="kw">unsafe </span>{ util::order_out_sync(<span class="kw-2">*</span><span class="self">self</span>.ns_window) },
     }
   }
 
@@ -2222,7 +2332,8 @@
   </span><span class="kw">pub fn </span>set_focus(<span class="kw-2">&amp;</span><span class="self">self</span>) {
     <span class="kw">unsafe </span>{
       <span class="kw">let </span>is_minimized: BOOL = <span class="macro">msg_send!</span>[<span class="kw-2">*</span><span class="self">self</span>.ns_window, isMiniaturized];
-      <span class="kw">if </span>is_minimized == NO {
+      <span class="kw">let </span>is_visible: BOOL = <span class="macro">msg_send!</span>[<span class="kw-2">*</span><span class="self">self</span>.ns_window, isVisible];
+      <span class="kw">if </span>is_minimized == NO &amp;&amp; is_visible == YES {
         util::set_focus(<span class="kw-2">*</span><span class="self">self</span>.ns_window);
       }
     }
@@ -2297,24 +2408,34 @@
   }
 
   <span class="kw">pub fn </span>set_min_inner_size(<span class="kw-2">&amp;</span><span class="self">self</span>, dimensions: <span class="prelude-ty">Option</span>&lt;Size&gt;) {
+    <span class="kw">let </span>dimensions = dimensions.unwrap_or(Logical(LogicalSize {
+      width: <span class="number">0.0</span>,
+      height: <span class="number">0.0</span>,
+    }));
+    <span class="kw">let </span>scale_factor = <span class="self">self</span>.scale_factor();
     <span class="kw">unsafe </span>{
-      <span class="kw">let </span>dimensions = dimensions.unwrap_or(Logical(LogicalSize {
-        width: <span class="number">0.0</span>,
-        height: <span class="number">0.0</span>,
-      }));
-      <span class="kw">let </span>scale_factor = <span class="self">self</span>.scale_factor();
       set_min_inner_size(<span class="kw-2">*</span><span class="self">self</span>.ns_window, dimensions.to_logical(scale_factor));
     }
   }
 
   <span class="kw">pub fn </span>set_max_inner_size(<span class="kw-2">&amp;</span><span class="self">self</span>, dimensions: <span class="prelude-ty">Option</span>&lt;Size&gt;) {
+    <span class="kw">let </span>dimensions = dimensions.unwrap_or(Logical(LogicalSize {
+      width: std::f32::MAX <span class="kw">as </span>f64,
+      height: std::f32::MAX <span class="kw">as </span>f64,
+    }));
+    <span class="kw">let </span>scale_factor = <span class="self">self</span>.scale_factor();
     <span class="kw">unsafe </span>{
-      <span class="kw">let </span>dimensions = dimensions.unwrap_or(Logical(LogicalSize {
-        width: std::f32::MAX <span class="kw">as </span>f64,
-        height: std::f32::MAX <span class="kw">as </span>f64,
-      }));
-      <span class="kw">let </span>scale_factor = <span class="self">self</span>.scale_factor();
       set_max_inner_size(<span class="kw-2">*</span><span class="self">self</span>.ns_window, dimensions.to_logical(scale_factor));
+    }
+  }
+
+  <span class="kw">pub fn </span>set_inner_size_constraints(<span class="kw-2">&amp;</span><span class="self">self</span>, constraints: WindowSizeConstraints) {
+    <span class="kw">let </span>scale_factor = <span class="self">self</span>.scale_factor();
+    <span class="kw">unsafe </span>{
+      <span class="kw">let </span>min_size = constraints.min_size_logical(scale_factor);
+      set_min_inner_size(<span class="kw-2">*</span><span class="self">self</span>.ns_window, min_size);
+      <span class="kw">let </span>max_size = constraints.max_size_logical(scale_factor);
+      set_max_inner_size(<span class="kw-2">*</span><span class="self">self</span>.ns_window, max_size);
     }
   }
 
@@ -2334,7 +2455,7 @@
       } <span class="kw">else </span>{
         mask &amp;= !NSWindowStyleMask::NSResizableWindowMask;
       }
-      <span class="self">self</span>.set_style_mask_async(mask);
+      <span class="self">self</span>.set_style_mask_sync(mask);
     } <span class="comment">// Otherwise, we don't change the mask until we exit fullscreen.
   </span>}
 
@@ -2346,7 +2467,7 @@
     } <span class="kw">else </span>{
       mask &amp;= !NSWindowStyleMask::NSMiniaturizableWindowMask;
     }
-    <span class="self">self</span>.set_style_mask_async(mask);
+    <span class="self">self</span>.set_style_mask_sync(mask);
   }
 
   <span class="attr">#[inline]
@@ -2367,7 +2488,7 @@
     } <span class="kw">else </span>{
       mask &amp;= !NSWindowStyleMask::NSClosableWindowMask;
     }
-    <span class="self">self</span>.set_style_mask_async(mask);
+    <span class="self">self</span>.set_style_mask_sync(mask);
   }
 
   <span class="kw">pub fn </span>set_cursor_icon(<span class="kw-2">&amp;</span><span class="self">self</span>, cursor: CursorIcon) {
@@ -2406,6 +2527,11 @@
   }
 
   <span class="attr">#[inline]
+  </span><span class="kw">pub fn </span>cursor_position(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;PhysicalPosition&lt;f64&gt;, ExternalError&gt; {
+    util::cursor_position()
+  }
+
+  <span class="attr">#[inline]
   </span><span class="kw">pub fn </span>scale_factor(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; f64 {
     <span class="kw">unsafe </span>{ NSWindow::backingScaleFactor(<span class="kw-2">*</span><span class="self">self</span>.ns_window) <span class="kw">as _ </span>}
   }
@@ -2431,11 +2557,37 @@
   <span class="attr">#[inline]
   </span><span class="kw">pub fn </span>drag_window(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), ExternalError&gt; {
     <span class="kw">unsafe </span>{
-      <span class="kw">let </span>event: id = <span class="macro">msg_send!</span>[NSApp(), currentEvent];
+      <span class="kw">let </span><span class="kw-2">mut </span>event: id = <span class="macro">msg_send!</span>[NSApp(), currentEvent];
+
+      <span class="kw">let </span>event_type: NSUInteger = <span class="macro">msg_send!</span>[event, <span class="kw">type</span>];
+      <span class="kw">if </span>event_type == <span class="number">0x15 </span>{
+        <span class="kw">let </span>mouse_location: NSPoint = <span class="macro">msg_send!</span>[<span class="macro">class!</span>(NSEvent), mouseLocation];
+        <span class="kw">let </span>event_modifier_flags: NSEventModifierFlags = <span class="macro">msg_send!</span>[event, modifierFlags];
+        <span class="kw">let </span>event_timestamp: NSTimeInterval = <span class="macro">msg_send!</span>[event, timestamp];
+        <span class="kw">let </span>event_window_number: NSInteger = <span class="macro">msg_send!</span>[event, windowNumber];
+
+        event = <span class="macro">msg_send!</span>[
+            <span class="macro">class!</span>(NSEvent),
+            mouseEventWithType: NSEventType::NSLeftMouseDown
+            location: mouse_location
+            modifierFlags: event_modifier_flags
+            timestamp: event_timestamp
+            windowNumber: event_window_number
+            context: nil
+            eventNumber: NSEventSubtype::NSWindowExposedEventType
+            clickCount: <span class="number">1
+            </span>pressure: <span class="number">1.0
+        </span>];
+      }
+
       <span class="kw">let _</span>: () = <span class="macro">msg_send!</span>[<span class="kw-2">*</span><span class="self">self</span>.ns_window, performWindowDragWithEvent: event];
     }
 
     <span class="prelude-val">Ok</span>(())
+  }
+
+  <span class="kw">pub fn </span>drag_resize_window(<span class="kw-2">&amp;</span><span class="self">self</span>, _direction: ResizeDirection) -&gt; <span class="prelude-ty">Result</span>&lt;(), ExternalError&gt; {
+    <span class="prelude-val">Err</span>(ExternalError::NotSupported(NotSupportedError::new()))
   }
 
   <span class="attr">#[inline]
@@ -2544,6 +2696,11 @@
   </span><span class="kw">pub fn </span>is_visible(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
     <span class="kw">let </span>is_visible: BOOL = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="kw-2">*</span><span class="self">self</span>.ns_window, isVisible] };
     is_visible == YES
+  }
+
+  <span class="attr">#[inline]
+  </span><span class="kw">pub fn </span>is_always_on_top(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+    <span class="kw">unsafe </span>{ <span class="self">self</span>.ns_window.level() == ffi::kCGFloatingWindowLevelKey }
   }
 
   <span class="attr">#[inline]
@@ -2894,18 +3051,6 @@
   }
 
   <span class="attr">#[inline]
-  </span><span class="kw">pub fn </span>hide_menu(<span class="kw-2">&amp;</span><span class="self">self</span>) {}
-
-  <span class="attr">#[inline]
-  </span><span class="kw">pub fn </span>show_menu(<span class="kw-2">&amp;</span><span class="self">self</span>) {}
-
-  <span class="attr">#[inline]
-  </span><span class="kw">pub fn </span>is_menu_visible(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-    <span class="macro">warn!</span>(<span class="string">"`Window::is_menu_visible` always return true on macOS"</span>);
-    <span class="bool-val">true
-  </span>}
-
-  <span class="attr">#[inline]
   </span><span class="comment">// Allow directly accessing the current monitor internally without unwrapping.
   </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>current_monitor_inner(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RootMonitorHandle {
     <span class="kw">unsafe </span>{
@@ -2940,23 +3085,58 @@
     <span class="prelude-val">Some</span>(RootMonitorHandle { inner: monitor })
   }
 
-  <span class="attr">#[inline]
-  </span><span class="kw">pub fn </span>raw_window_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RawWindowHandle {
-    <span class="kw">let </span><span class="kw-2">mut </span>window_handle = AppKitWindowHandle::empty();
-    window_handle.ns_window = <span class="kw-2">*</span><span class="self">self</span>.ns_window <span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">_</span>;
-    window_handle.ns_view = <span class="kw-2">*</span><span class="self">self</span>.ns_view <span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">_</span>;
-    RawWindowHandle::AppKit(window_handle)
+  <span class="attr">#[cfg(feature = <span class="string">"rwh_04"</span>)]
+  #[inline]
+  </span><span class="kw">pub fn </span>raw_window_handle_rwh_04(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; rwh_04::RawWindowHandle {
+    <span class="kw">let </span><span class="kw-2">mut </span>window_handle = rwh_04::AppKitHandle::empty();
+    window_handle.ns_window = <span class="self">self</span>.ns_window();
+    window_handle.ns_view = <span class="self">self</span>.ns_view();
+    rwh_04::RawWindowHandle::AppKit(window_handle)
   }
 
-  <span class="attr">#[inline]
-  </span><span class="kw">pub fn </span>raw_display_handle(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RawDisplayHandle {
-    RawDisplayHandle::AppKit(AppKitDisplayHandle::empty())
+  <span class="attr">#[cfg(feature = <span class="string">"rwh_05"</span>)]
+  #[inline]
+  </span><span class="kw">pub fn </span>raw_window_handle_rwh_05(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; rwh_05::RawWindowHandle {
+    <span class="kw">let </span><span class="kw-2">mut </span>window_handle = rwh_05::AppKitWindowHandle::empty();
+    window_handle.ns_window = <span class="self">self</span>.ns_window();
+    window_handle.ns_view = <span class="self">self</span>.ns_view();
+    rwh_05::RawWindowHandle::AppKit(window_handle)
+  }
+
+  <span class="attr">#[cfg(feature = <span class="string">"rwh_05"</span>)]
+  #[inline]
+  </span><span class="kw">pub fn </span>raw_display_handle_rwh_05(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; rwh_05::RawDisplayHandle {
+    rwh_05::RawDisplayHandle::AppKit(rwh_05::AppKitDisplayHandle::empty())
+  }
+
+  <span class="attr">#[cfg(feature = <span class="string">"rwh_06"</span>)]
+  #[inline]
+  </span><span class="kw">pub fn </span>raw_window_handle_rwh_06(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;rwh_06::RawWindowHandle, rwh_06::HandleError&gt; {
+    <span class="kw">let </span>window_handle = rwh_06::AppKitWindowHandle::new({
+      <span class="kw">let </span>ptr = <span class="self">self</span>.ns_view();
+      std::ptr::NonNull::new(ptr).expect(<span class="string">"Id&lt;T&gt; should never be null"</span>)
+    });
+    <span class="prelude-val">Ok</span>(rwh_06::RawWindowHandle::AppKit(window_handle))
+  }
+
+  <span class="attr">#[cfg(feature = <span class="string">"rwh_06"</span>)]
+  #[inline]
+  </span><span class="kw">pub fn </span>raw_display_handle_rwh_06(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;rwh_06::RawDisplayHandle, rwh_06::HandleError&gt; {
+    <span class="prelude-val">Ok</span>(rwh_06::RawDisplayHandle::AppKit(
+      rwh_06::AppKitDisplayHandle::new(),
+    ))
   }
 
   <span class="attr">#[inline]
   </span><span class="kw">pub fn </span>theme(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Theme {
     <span class="kw">let </span>state = <span class="self">self</span>.shared_state.lock().unwrap();
     state.current_theme
+  }
+
+  <span class="kw">pub fn </span>set_theme(<span class="kw-2">&amp;</span><span class="self">self</span>, theme: <span class="prelude-ty">Option</span>&lt;Theme&gt;) {
+    set_ns_theme(theme);
+    <span class="kw">let </span><span class="kw-2">mut </span>state = <span class="self">self</span>.shared_state.lock().unwrap();
+    state.current_theme = theme.unwrap_or_else(get_ns_theme);
   }
 
   <span class="kw">pub fn </span>set_content_protection(<span class="kw-2">&amp;</span><span class="self">self</span>, enabled: bool) {
@@ -2978,6 +3158,10 @@
       <span class="self">self</span>.ns_window.setCollectionBehavior_(collection_behavior)
     }
   }
+
+  <span class="kw">pub fn </span>set_progress_bar(<span class="kw-2">&amp;</span><span class="self">self</span>, progress: ProgressBarState) {
+    set_progress_indicator(progress);
+  }
 }
 
 <span class="kw">impl </span>WindowExtMacOS <span class="kw">for </span>UnownedWindow {
@@ -2988,8 +3172,8 @@
 
   <span class="attr">#[inline]
   </span><span class="kw">fn </span>ns_view(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">*mut </span>c_void {
-    <span class="kw-2">*</span><span class="self">self</span>.ns_view <span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">_
-  </span>}
+    <span class="kw">unsafe </span>{ (<span class="kw-2">*</span><span class="self">self</span>.ns_window).contentView() <span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">_ </span>}
+  }
 
   <span class="attr">#[inline]
   </span><span class="kw">fn </span>simple_fullscreen(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
@@ -3095,6 +3279,16 @@
   }
 
   <span class="attr">#[inline]
+  </span><span class="kw">fn </span>set_traffic_light_inset&lt;P: Into&lt;Position&gt;&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, position: P) {
+    <span class="kw">let </span>position: Position = position.into();
+    <span class="kw">unsafe </span>{
+      <span class="kw">let </span>state_ptr: <span class="kw-2">*mut </span>c_void = <span class="kw-2">*</span>(<span class="kw-2">**</span><span class="self">self</span>.ns_view).get_ivar(<span class="string">"taoState"</span>);
+      <span class="kw">let </span>state = <span class="kw-2">&amp;mut *</span>(state_ptr <span class="kw">as </span><span class="kw-2">*mut </span>ViewState);
+      state.traffic_light_inset = <span class="prelude-val">Some</span>(position.to_logical(<span class="self">self</span>.scale_factor()));
+    }
+  }
+
+  <span class="attr">#[inline]
   </span><span class="kw">fn </span>set_is_document_edited(<span class="kw-2">&amp;</span><span class="self">self</span>, edited: bool) {
     <span class="kw">unsafe </span>{
       <span class="self">self
@@ -3139,6 +3333,26 @@
     <span class="kw">unsafe </span>{
       <span class="kw">let </span>tabbing_identifier = NSWindow::tabbingIdentifier(<span class="kw-2">*</span><span class="self">self</span>.ns_window);
       ns_string_to_rust(tabbing_identifier)
+    }
+  }
+
+  <span class="attr">#[inline]
+  </span><span class="kw">fn </span>set_fullsize_content_view(<span class="kw-2">&amp;</span><span class="self">self</span>, fullsize: bool) {
+    <span class="kw">let </span><span class="kw-2">mut </span>mask = <span class="kw">unsafe </span>{ <span class="self">self</span>.ns_window.styleMask() };
+    <span class="kw">if </span>fullsize {
+      mask |= NSWindowStyleMask::NSFullSizeContentViewWindowMask;
+    } <span class="kw">else </span>{
+      mask &amp;= !NSWindowStyleMask::NSFullSizeContentViewWindowMask;
+    }
+    <span class="self">self</span>.set_style_mask_sync(mask);
+  }
+
+  <span class="attr">#[inline]
+  </span><span class="kw">fn </span>set_titlebar_transparent(<span class="kw-2">&amp;</span><span class="self">self</span>, transparent: bool) {
+    <span class="kw">unsafe </span>{
+      <span class="self">self
+        </span>.ns_window
+        .setTitlebarAppearsTransparent_(transparent <span class="kw">as </span>BOOL);
     }
   }
 }

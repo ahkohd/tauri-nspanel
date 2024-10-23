@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["accelerator","clipboard","dpi","error","event","event_loop","global_shortcut","keyboard","menu","monitor","platform","window"],"struct":["TrayId"]};
+window.SIDEBAR_ITEMS = {"mod":["error","event","event_loop","keyboard","monitor","platform","window"]};

@@ -1,0 +1,76 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Execute `f` in the context of a new autorelease pool. The pool is drained after the execution of `f` completes."><title>autoreleasepool in objc2::rc - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="objc2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="sidebar-items.js"></script><script defer src="../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc fn"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../objc2/index.html">objc2</a><span class="version">0.5.2</span></h2></div><div class="sidebar-elems"><h2><a href="index.html">In objc2::<wbr>rc</a></h2></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Function <a href="../index.html">objc2</a>::<wbr><a href="index.html">rc</a>::<wbr><a class="fn" href="#">autoreleasepool</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../../src/objc2/rc/autorelease.rs.html#425-441">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><code>pub fn autoreleasepool&lt;T, F&gt;(f: F) -&gt; T<div class="where">where
+    for&lt;'pool&gt; F: <a class="trait" href="trait.AutoreleaseSafe.html" title="trait objc2::rc::AutoreleaseSafe">AutoreleaseSafe</a> + <a class="trait" href="https://doc.rust-lang.org/1.82.0/core/ops/function/trait.FnOnce.html" title="trait core::ops::function::FnOnce">FnOnce</a>(<a class="struct" href="struct.AutoreleasePool.html" title="struct objc2::rc::AutoreleasePool">AutoreleasePool</a>&lt;'pool&gt;) -&gt; T,</div></code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Execute <code>f</code> in the context of a new autorelease pool. The pool is drained
+after the execution of <code>f</code> completes.</p>
+<p>This corresponds to <code>@autoreleasepool</code> blocks in Objective-C and Swift.</p>
+<p>The pool is passed as a parameter to the closure to give you a lifetime
+parameter that autoreleased objects can refer to.</p>
+<p>Note that this is mostly useful for preventing leaks (as any Objective-C
+method may autorelease internally - see also <a href="fn.autoreleasepool_leaking.html" title="fn objc2::rc::autoreleasepool_leaking"><code>autoreleasepool_leaking</code></a>).
+If implementing an interface to an object, you should try to return
+retained pointers with <a href="../macro.msg_send_id.html" title="macro objc2::msg_send_id"><code>msg_send_id!</code></a> wherever you can instead, since
+it is usually more efficient, and having to use this function can be quite
+cumbersome for users.</p>
+<h2 id="restrictions"><a class="doc-anchor" href="#restrictions">§</a>Restrictions</h2>
+<p>The given parameter must not be used in an inner <code>autoreleasepool</code> - doing
+so will panic with debug assertions enabled, and be a compile error in a
+future release.</p>
+<p>Note that this means that <strong>this function is currently unsound</strong>, since it
+doesn’t disallow wrong usage in all cases. Enabling the assertions in
+release mode would be prohibitively expensive though, so this is the
+least-bad solution.</p>
+<p>You can try to compile your crate with the <code>"unstable-autoreleasesafe"</code>
+crate feature enabled on nightly Rust - if your crate compiles with that,
+its autoreleasepool usage is guaranteed to be correct.</p>
+<h2 id="examples"><a class="doc-anchor" href="#examples">§</a>Examples</h2>
+<p>Basic usage:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::rc::{autoreleasepool, Retained};
+<span class="kw">use </span>objc2::runtime::NSObject;
+
+autoreleasepool(|pool| {
+    <span class="comment">// Create `obj` and autorelease it to the pool
+    </span><span class="kw">let </span>obj = Retained::autorelease(NSObject::new(), pool);
+    <span class="comment">// We now have a reference that we can freely use
+    </span><span class="macro">println!</span>(<span class="string">"{obj:?}"</span>);
+    <span class="comment">// `obj` is deallocated when the pool ends
+</span>});
+<span class="comment">// And is no longer usable outside the closure</span></code></pre></div>
+<p>Fails to compile because <code>obj</code> does not live long enough for us to take it
+out of the pool:</p>
+
+<div class="example-wrap compile_fail"><a href="#" class="tooltip" title="This example deliberately fails to compile">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::rc::{autoreleasepool, Retained};
+<span class="kw">use </span>objc2::runtime::NSObject;
+
+<span class="kw">let </span>obj = autoreleasepool(|pool| {
+    Retained::autorelease(NSObject::new(), pool)
+});</code></pre></div>
+<p>Fails to compile with the <code>"unstable-autoreleasesafe"</code> feature enabled, or
+panics with debug assertions enabled, because we tried to pass an outer
+pool to an inner pool:</p>
+
+<div class="example-wrap should_panic"><a href="#" class="tooltip" title="This example panics">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="kw">use </span>objc2::rc::{autoreleasepool, Retained};
+<span class="kw">use </span>objc2::runtime::NSObject;
+
+autoreleasepool(|outer_pool| {
+    <span class="kw">let </span>obj = autoreleasepool(|inner_pool| {
+        Retained::autorelease(NSObject::new(), outer_pool)
+    });
+    <span class="comment">// `obj` could wrongly be used here because its lifetime was
+    // assigned to the outer pool, even though it was released by the
+    // inner pool already.
+</span>});</code></pre></div>
+<p>It is impossible to extend the lifetime of the pool.</p>
+
+<div class="example-wrap compile_fail"><a href="#" class="tooltip" title="This example deliberately fails to compile">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="kw">use </span>std::cell::RefCell;
+<span class="kw">use </span>objc2::rc::{autoreleasepool, AutoreleasePool};
+
+<span class="macro">thread_local!</span> {
+    <span class="kw">static </span>POOL: RefCell&lt;<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span>AutoreleasePool&lt;<span class="lifetime">'static</span>&gt;&gt;&gt; = RefCell::new(<span class="prelude-val">None</span>);
+}
+
+autoreleasepool(|pool| {
+    POOL.with(|p| {
+        <span class="kw-2">*</span>p.borrow_mut() = <span class="prelude-val">Some</span>(Box::leak(Box::new(pool)))
+    });
+});</code></pre></div>
+</div></details></section></div></main></body></html>

@@ -1,6 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-runtime-0.14.3/src/window.rs`."><title>window.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tauri_runtime" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../tauri_runtime/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/Users/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-runtime-2.1.1/src/window.rs`."><title>window.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="tauri_runtime" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="icon" href="https://github.com/tauri-apps/tauri/raw/dev/.github/icon.png"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -397,36 +395,199 @@
 <a href="#395" id="395">395</a>
 <a href="#396" id="396">396</a>
 <a href="#397" id="397">397</a>
-</pre></div><pre class="rust"><code><span class="comment">// Copyright 2019-2023 Tauri Programme within The Commons Conservancy
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
+<a href="#411" id="411">411</a>
+<a href="#412" id="412">412</a>
+<a href="#413" id="413">413</a>
+<a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
+<a href="#436" id="436">436</a>
+<a href="#437" id="437">437</a>
+<a href="#438" id="438">438</a>
+<a href="#439" id="439">439</a>
+<a href="#440" id="440">440</a>
+<a href="#441" id="441">441</a>
+<a href="#442" id="442">442</a>
+<a href="#443" id="443">443</a>
+<a href="#444" id="444">444</a>
+<a href="#445" id="445">445</a>
+<a href="#446" id="446">446</a>
+<a href="#447" id="447">447</a>
+<a href="#448" id="448">448</a>
+<a href="#449" id="449">449</a>
+<a href="#450" id="450">450</a>
+<a href="#451" id="451">451</a>
+<a href="#452" id="452">452</a>
+<a href="#453" id="453">453</a>
+<a href="#454" id="454">454</a>
+<a href="#455" id="455">455</a>
+<a href="#456" id="456">456</a>
+<a href="#457" id="457">457</a>
+<a href="#458" id="458">458</a>
+<a href="#459" id="459">459</a>
+<a href="#460" id="460">460</a>
+<a href="#461" id="461">461</a>
+<a href="#462" id="462">462</a>
+<a href="#463" id="463">463</a>
+<a href="#464" id="464">464</a>
+<a href="#465" id="465">465</a>
+<a href="#466" id="466">466</a>
+<a href="#467" id="467">467</a>
+<a href="#468" id="468">468</a>
+<a href="#469" id="469">469</a>
+<a href="#470" id="470">470</a>
+<a href="#471" id="471">471</a>
+<a href="#472" id="472">472</a>
+<a href="#473" id="473">473</a>
+<a href="#474" id="474">474</a>
+<a href="#475" id="475">475</a>
+<a href="#476" id="476">476</a>
+<a href="#477" id="477">477</a>
+<a href="#478" id="478">478</a>
+<a href="#479" id="479">479</a>
+<a href="#480" id="480">480</a>
+<a href="#481" id="481">481</a>
+<a href="#482" id="482">482</a>
+<a href="#483" id="483">483</a>
+<a href="#484" id="484">484</a>
+<a href="#485" id="485">485</a>
+<a href="#486" id="486">486</a>
+<a href="#487" id="487">487</a>
+<a href="#488" id="488">488</a>
+<a href="#489" id="489">489</a>
+<a href="#490" id="490">490</a>
+<a href="#491" id="491">491</a>
+<a href="#492" id="492">492</a>
+<a href="#493" id="493">493</a>
+<a href="#494" id="494">494</a>
+<a href="#495" id="495">495</a>
+<a href="#496" id="496">496</a>
+<a href="#497" id="497">497</a>
+<a href="#498" id="498">498</a>
+<a href="#499" id="499">499</a>
+<a href="#500" id="500">500</a>
+<a href="#501" id="501">501</a>
+<a href="#502" id="502">502</a>
+<a href="#503" id="503">503</a>
+<a href="#504" id="504">504</a>
+<a href="#505" id="505">505</a>
+<a href="#506" id="506">506</a>
+<a href="#507" id="507">507</a>
+<a href="#508" id="508">508</a>
+<a href="#509" id="509">509</a>
+<a href="#510" id="510">510</a>
+<a href="#511" id="511">511</a>
+<a href="#512" id="512">512</a>
+<a href="#513" id="513">513</a>
+<a href="#514" id="514">514</a>
+<a href="#515" id="515">515</a>
+<a href="#516" id="516">516</a>
+<a href="#517" id="517">517</a>
+<a href="#518" id="518">518</a>
+<a href="#519" id="519">519</a>
+<a href="#520" id="520">520</a>
+<a href="#521" id="521">521</a>
+<a href="#522" id="522">522</a>
+<a href="#523" id="523">523</a>
+<a href="#524" id="524">524</a>
+<a href="#525" id="525">525</a>
+<a href="#526" id="526">526</a>
+<a href="#527" id="527">527</a>
+<a href="#528" id="528">528</a>
+<a href="#529" id="529">529</a>
+<a href="#530" id="530">530</a>
+<a href="#531" id="531">531</a>
+<a href="#532" id="532">532</a>
+<a href="#533" id="533">533</a>
+<a href="#534" id="534">534</a>
+<a href="#535" id="535">535</a>
+<a href="#536" id="536">536</a>
+<a href="#537" id="537">537</a>
+<a href="#538" id="538">538</a>
+<a href="#539" id="539">539</a>
+<a href="#540" id="540">540</a>
+<a href="#541" id="541">541</a>
+<a href="#542" id="542">542</a>
+<a href="#543" id="543">543</a>
+<a href="#544" id="544">544</a>
+<a href="#545" id="545">545</a>
+<a href="#546" id="546">546</a>
+<a href="#547" id="547">547</a>
+<a href="#548" id="548">548</a>
+<a href="#549" id="549">549</a>
+<a href="#550" id="550">550</a>
+<a href="#551" id="551">551</a>
+<a href="#552" id="552">552</a>
+<a href="#553" id="553">553</a>
+<a href="#554" id="554">554</a>
+<a href="#555" id="555">555</a>
+<a href="#556" id="556">556</a>
+<a href="#557" id="557">557</a>
+<a href="#558" id="558">558</a>
+<a href="#559" id="559">559</a>
+<a href="#560" id="560">560</a>
+<a href="#561" id="561">561</a>
+<a href="#562" id="562">562</a>
+<a href="#563" id="563">563</a>
+<a href="#564" id="564">564</a>
+<a href="#565" id="565">565</a>
+<a href="#566" id="566">566</a>
+<a href="#567" id="567">567</a>
+</pre></div><pre class="rust"><code><span class="comment">// Copyright 2019-2024 Tauri Programme within The Commons Conservancy
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-License-Identifier: MIT
 
-</span><span class="doccomment">//! A layer between raw [`Runtime`] webview windows and Tauri.
+</span><span class="doccomment">//! A layer between raw [`Runtime`] windows and Tauri.
 
 </span><span class="kw">use crate</span>::{
-  http::{Request <span class="kw">as </span>HttpRequest, Response <span class="kw">as </span>HttpResponse},
-  menu::{Menu, MenuEntry, MenuHash, MenuId},
-  webview::{WebviewAttributes, WebviewIpcHandler},
-  Dispatch, Runtime, UserEvent, WindowBuilder,
+  webview::{DetachedWebview, PendingWebview},
+  Icon, Runtime, UserEvent, WindowDispatch,
 };
+
+<span class="kw">use </span>dpi::PixelUnit;
 <span class="kw">use </span>serde::{Deserialize, Deserializer, Serialize};
 <span class="kw">use </span>tauri_utils::{config::WindowConfig, Theme};
-<span class="kw">use </span>url::Url;
+<span class="attr">#[cfg(windows)]
+</span><span class="kw">use </span>windows::Win32::Foundation::HWND;
 
 <span class="kw">use </span>std::{
-  collections::{HashMap, HashSet},
   hash::{Hash, Hasher},
+  marker::PhantomData,
   path::PathBuf,
-  sync::{mpsc::Sender, Arc, Mutex},
+  sync::mpsc::Sender,
 };
-
-<span class="kw">type </span>UriSchemeProtocol =
-  <span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>HttpRequest) -&gt; <span class="prelude-ty">Result</span>&lt;HttpResponse, Box&lt;<span class="kw">dyn </span>std::error::Error&gt;&gt; + Send + Sync + <span class="lifetime">'static</span>;
-
-<span class="kw">type </span>WebResourceRequestHandler = <span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>HttpRequest, <span class="kw-2">&amp;mut </span>HttpResponse) + Send + Sync;
-
-<span class="doccomment">/// UI scaling utilities.
-</span><span class="kw">pub mod </span>dpi;
 
 <span class="doccomment">/// An event from a window.
 </span><span class="attr">#[derive(Debug, Clone)]
@@ -459,50 +620,54 @@
     <span class="doccomment">/// The window inner size.
     </span>new_inner_size: dpi::PhysicalSize&lt;u32&gt;,
   },
-  <span class="doccomment">/// An event associated with the file drop action.
-  </span>FileDrop(FileDropEvent),
+  <span class="doccomment">/// An event associated with the drag and drop action.
+  </span>DragDrop(DragDropEvent),
   <span class="doccomment">/// The system window theme has changed.
   ///
   /// Applications might wish to react to this to change the theme of the content of the window when the system changes the window theme.
   </span>ThemeChanged(Theme),
 }
 
-<span class="doccomment">/// The file drop event payload.
+<span class="doccomment">/// An event from a window.
+</span><span class="attr">#[derive(Debug, Clone)]
+</span><span class="kw">pub enum </span>WebviewEvent {
+  <span class="doccomment">/// An event associated with the drag and drop action.
+  </span>DragDrop(DragDropEvent),
+}
+
+<span class="doccomment">/// The drag drop event payload.
 </span><span class="attr">#[derive(Debug, Clone)]
 #[non_exhaustive]
-</span><span class="kw">pub enum </span>FileDropEvent {
-  <span class="doccomment">/// The file(s) have been dragged onto the window, but have not been dropped yet.
-  </span>Hovered(Vec&lt;PathBuf&gt;),
-  <span class="doccomment">/// The file(s) have been dropped onto the window.
-  </span>Dropped(Vec&lt;PathBuf&gt;),
-  <span class="doccomment">/// The file drop was aborted.
-  </span>Cancelled,
-}
-
-<span class="doccomment">/// A menu event.
-</span><span class="attr">#[derive(Debug, Serialize)]
-#[serde(rename_all = <span class="string">"camelCase"</span>)]
-</span><span class="kw">pub struct </span>MenuEvent {
-  <span class="kw">pub </span>menu_item_id: u16,
-}
-
-<span class="kw">fn </span>get_menu_ids(map: <span class="kw-2">&amp;mut </span>HashMap&lt;MenuHash, MenuId&gt;, menu: <span class="kw-2">&amp;</span>Menu) {
-  <span class="kw">for </span>item <span class="kw">in </span><span class="kw-2">&amp;</span>menu.items {
-    <span class="kw">match </span>item {
-      MenuEntry::CustomItem(c) =&gt; {
-        map.insert(c.id, c.id_str.clone());
-      }
-      MenuEntry::Submenu(s) =&gt; get_menu_ids(map, <span class="kw-2">&amp;</span>s.inner),
-      <span class="kw">_ </span>=&gt; {}
-    }
-  }
+</span><span class="kw">pub enum </span>DragDropEvent {
+  <span class="doccomment">/// A drag operation has entered the webview.
+  </span>Enter {
+    <span class="doccomment">/// List of paths that are being dragged onto the webview.
+    </span>paths: Vec&lt;PathBuf&gt;,
+    <span class="doccomment">/// The position of the mouse cursor.
+    </span>position: dpi::PhysicalPosition&lt;f64&gt;,
+  },
+  <span class="doccomment">/// A drag operation is moving over the webview.
+  </span>Over {
+    <span class="doccomment">/// The position of the mouse cursor.
+    </span>position: dpi::PhysicalPosition&lt;f64&gt;,
+  },
+  <span class="doccomment">/// The file(s) have been dropped onto the webview.
+  </span>Drop {
+    <span class="doccomment">/// List of paths that are being dropped onto the window.
+    </span>paths: Vec&lt;PathBuf&gt;,
+    <span class="doccomment">/// The position of the mouse cursor.
+    </span>position: dpi::PhysicalPosition&lt;f64&gt;,
+  },
+  <span class="doccomment">/// The drag operation has been cancelled or left the window.
+  </span>Leave,
 }
 
 <span class="doccomment">/// Describes the appearance of the mouse cursor.
 </span><span class="attr">#[non_exhaustive]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Default, Copy, Clone, PartialEq, Eq, Hash)]
 </span><span class="kw">pub enum </span>CursorIcon {
   <span class="doccomment">/// The platform-dependent default cursor.
+  </span><span class="attr">#[default]
   </span>Default,
   <span class="doccomment">/// A simple crosshair.
   </span>Crosshair,
@@ -604,44 +769,254 @@
   }
 }
 
-<span class="kw">impl </span>Default <span class="kw">for </span>CursorIcon {
-  <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
-    CursorIcon::Default
-  }
+<span class="doccomment">/// Window size constraints
+</span><span class="attr">#[derive(Clone, Copy, PartialEq, Debug, Default, Serialize, Deserialize)]
+#[serde(rename_all = <span class="string">"camelCase"</span>)]
+</span><span class="kw">pub struct </span>WindowSizeConstraints {
+  <span class="doccomment">/// The minimum width a window can be, If this is `None`, the window will have no minimum width.
+  ///
+  /// The default is `None`.
+  </span><span class="kw">pub </span>min_width: <span class="prelude-ty">Option</span>&lt;PixelUnit&gt;,
+  <span class="doccomment">/// The minimum height a window can be, If this is `None`, the window will have no minimum height.
+  ///
+  /// The default is `None`.
+  </span><span class="kw">pub </span>min_height: <span class="prelude-ty">Option</span>&lt;PixelUnit&gt;,
+  <span class="doccomment">/// The maximum width a window can be, If this is `None`, the window will have no maximum width.
+  ///
+  /// The default is `None`.
+  </span><span class="kw">pub </span>max_width: <span class="prelude-ty">Option</span>&lt;PixelUnit&gt;,
+  <span class="doccomment">/// The maximum height a window can be, If this is `None`, the window will have no maximum height.
+  ///
+  /// The default is `None`.
+  </span><span class="kw">pub </span>max_height: <span class="prelude-ty">Option</span>&lt;PixelUnit&gt;,
 }
 
-<span class="doccomment">/// A webview window that has yet to be built.
+<span class="doccomment">/// Do **NOT** implement this trait except for use in a custom [`Runtime`]
+///
+/// This trait is separate from [`WindowBuilder`] to prevent "accidental" implementation.
+</span><span class="kw">pub trait </span>WindowBuilderBase: std::fmt::Debug + Clone + Sized {}
+
+<span class="doccomment">/// A builder for all attributes related to a single window.
+///
+/// This trait is only meant to be implemented by a custom [`Runtime`]
+/// and not by applications.
+</span><span class="kw">pub trait </span>WindowBuilder: WindowBuilderBase {
+  <span class="doccomment">/// Initializes a new window attributes builder.
+  </span><span class="kw">fn </span>new() -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Initializes a new window builder from a [`WindowConfig`]
+  </span><span class="kw">fn </span>with_config(config: <span class="kw-2">&amp;</span>WindowConfig) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Show window in the center of the screen.
+  </span><span class="attr">#[must_use]
+  </span><span class="kw">fn </span>center(<span class="self">self</span>) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// The initial position of the window's.
+  </span><span class="attr">#[must_use]
+  </span><span class="kw">fn </span>position(<span class="self">self</span>, x: f64, y: f64) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Window size.
+  </span><span class="attr">#[must_use]
+  </span><span class="kw">fn </span>inner_size(<span class="self">self</span>, width: f64, height: f64) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Window min inner size.
+  </span><span class="attr">#[must_use]
+  </span><span class="kw">fn </span>min_inner_size(<span class="self">self</span>, min_width: f64, min_height: f64) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Window max inner size.
+  </span><span class="attr">#[must_use]
+  </span><span class="kw">fn </span>max_inner_size(<span class="self">self</span>, max_width: f64, max_height: f64) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Window inner size constraints.
+  </span><span class="attr">#[must_use]
+  </span><span class="kw">fn </span>inner_size_constraints(<span class="self">self</span>, constraints: WindowSizeConstraints) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Whether the window is resizable or not.
+  /// When resizable is set to false, native window's maximize button is automatically disabled.
+  </span><span class="attr">#[must_use]
+  </span><span class="kw">fn </span>resizable(<span class="self">self</span>, resizable: bool) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Whether the window's native maximize button is enabled or not.
+  /// If resizable is set to false, this setting is ignored.
+  ///
+  /// ## Platform-specific
+  ///
+  /// - **macOS:** Disables the "zoom" button in the window titlebar, which is also used to enter fullscreen mode.
+  /// - **Linux / iOS / Android:** Unsupported.
+  </span><span class="attr">#[must_use]
+  </span><span class="kw">fn </span>maximizable(<span class="self">self</span>, maximizable: bool) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Whether the window's native minimize button is enabled or not.
+  ///
+  /// ## Platform-specific
+  ///
+  /// - **Linux / iOS / Android:** Unsupported.
+  </span><span class="attr">#[must_use]
+  </span><span class="kw">fn </span>minimizable(<span class="self">self</span>, minimizable: bool) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Whether the window's native close button is enabled or not.
+  ///
+  /// ## Platform-specific
+  ///
+  /// - **Linux:** "GTK+ will do its best to convince the window manager not to show a close button.
+  ///   Depending on the system, this function may not have any effect when called on a window that is already visible"
+  /// - **iOS / Android:** Unsupported.
+  </span><span class="attr">#[must_use]
+  </span><span class="kw">fn </span>closable(<span class="self">self</span>, closable: bool) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// The title of the window in the title bar.
+  </span><span class="attr">#[must_use]
+  </span><span class="kw">fn </span>title&lt;S: Into&lt;String&gt;&gt;(<span class="self">self</span>, title: S) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Whether to start the window in fullscreen or not.
+  </span><span class="attr">#[must_use]
+  </span><span class="kw">fn </span>fullscreen(<span class="self">self</span>, fullscreen: bool) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Whether the window will be initially focused or not.
+  </span><span class="attr">#[must_use]
+  </span><span class="kw">fn </span>focused(<span class="self">self</span>, focused: bool) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Whether the window should be maximized upon creation.
+  </span><span class="attr">#[must_use]
+  </span><span class="kw">fn </span>maximized(<span class="self">self</span>, maximized: bool) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Whether the window should be immediately visible upon creation.
+  </span><span class="attr">#[must_use]
+  </span><span class="kw">fn </span>visible(<span class="self">self</span>, visible: bool) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Whether the window should be transparent. If this is true, writing colors
+  /// with alpha values different than `1.0` will produce a transparent window.
+  </span><span class="attr">#[cfg(any(not(target_os = <span class="string">"macos"</span>), feature = <span class="string">"macos-private-api"</span>))]
+  #[cfg_attr(
+    docsrs,
+    doc(cfg(any(not(target_os = <span class="string">"macos"</span>), feature = <span class="string">"macos-private-api"</span>)))
+  )]
+  #[must_use]
+  </span><span class="kw">fn </span>transparent(<span class="self">self</span>, transparent: bool) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Whether the window should have borders and bars.
+  </span><span class="attr">#[must_use]
+  </span><span class="kw">fn </span>decorations(<span class="self">self</span>, decorations: bool) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Whether the window should always be below other windows.
+  </span><span class="attr">#[must_use]
+  </span><span class="kw">fn </span>always_on_bottom(<span class="self">self</span>, always_on_bottom: bool) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Whether the window should always be on top of other windows.
+  </span><span class="attr">#[must_use]
+  </span><span class="kw">fn </span>always_on_top(<span class="self">self</span>, always_on_top: bool) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Whether the window should be visible on all workspaces or virtual desktops.
+  </span><span class="attr">#[must_use]
+  </span><span class="kw">fn </span>visible_on_all_workspaces(<span class="self">self</span>, visible_on_all_workspaces: bool) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Prevents the window contents from being captured by other apps.
+  </span><span class="attr">#[must_use]
+  </span><span class="kw">fn </span>content_protected(<span class="self">self</span>, protected: bool) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Sets the window icon.
+  </span><span class="kw">fn </span>icon(<span class="self">self</span>, icon: Icon) -&gt; <span class="kw">crate</span>::Result&lt;<span class="self">Self</span>&gt;;
+
+  <span class="doccomment">/// Sets whether or not the window icon should be added to the taskbar.
+  </span><span class="attr">#[must_use]
+  </span><span class="kw">fn </span>skip_taskbar(<span class="self">self</span>, skip: bool) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Sets whether or not the window has shadow.
+  ///
+  /// ## Platform-specific
+  ///
+  /// - **Windows:**
+  ///   - `false` has no effect on decorated window, shadows are always ON.
+  ///   - `true` will make undecorated window have a 1px white border,
+  ///     and on Windows 11, it will have a rounded corners.
+  /// - **Linux:** Unsupported.
+  </span><span class="attr">#[must_use]
+  </span><span class="kw">fn </span>shadow(<span class="self">self</span>, enable: bool) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Set an owner to the window to be created.
+  ///
+  /// From MSDN:
+  /// - An owned window is always above its owner in the z-order.
+  /// - The system automatically destroys an owned window when its owner is destroyed.
+  /// - An owned window is hidden when its owner is minimized.
+  ///
+  /// For more information, see &lt;https://docs.microsoft.com/en-us/windows/win32/winmsg/window-features#owned-windows&gt;
+  </span><span class="attr">#[cfg(windows)]
+  #[must_use]
+  </span><span class="kw">fn </span>owner(<span class="self">self</span>, owner: HWND) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Sets a parent to the window to be created.
+  ///
+  /// A child window has the WS_CHILD style and is confined to the client area of its parent window.
+  ///
+  /// For more information, see &lt;https://docs.microsoft.com/en-us/windows/win32/winmsg/window-features#child-windows&gt;
+  </span><span class="attr">#[cfg(windows)]
+  #[must_use]
+  </span><span class="kw">fn </span>parent(<span class="self">self</span>, parent: HWND) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Sets a parent to the window to be created.
+  ///
+  /// See &lt;https://developer.apple.com/documentation/appkit/nswindow/1419152-addchildwindow?language=objc&gt;
+  </span><span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
+  #[must_use]
+  </span><span class="kw">fn </span>parent(<span class="self">self</span>, parent: <span class="kw-2">*mut </span>std::ffi::c_void) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Sets the window to be created transient for parent.
+  ///
+  /// See &lt;https://docs.gtk.org/gtk3/method.Window.set_transient_for.html&gt;
+  </span><span class="attr">#[cfg(any(
+    target_os = <span class="string">"linux"</span>,
+    target_os = <span class="string">"dragonfly"</span>,
+    target_os = <span class="string">"freebsd"</span>,
+    target_os = <span class="string">"netbsd"</span>,
+    target_os = <span class="string">"openbsd"
+  </span>))]
+  </span><span class="kw">fn </span>transient_for(<span class="self">self</span>, parent: <span class="kw-2">&amp;</span><span class="kw">impl </span>gtk::glib::IsA&lt;gtk::Window&gt;) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Enables or disables drag and drop support.
+  </span><span class="attr">#[cfg(windows)]
+  #[must_use]
+  </span><span class="kw">fn </span>drag_and_drop(<span class="self">self</span>, enabled: bool) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Hide the titlebar. Titlebar buttons will still be visible.
+  </span><span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
+  #[must_use]
+  </span><span class="kw">fn </span>title_bar_style(<span class="self">self</span>, style: tauri_utils::TitleBarStyle) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Hide the window title.
+  </span><span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
+  #[must_use]
+  </span><span class="kw">fn </span>hidden_title(<span class="self">self</span>, hidden: bool) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Defines the window [tabbing identifier] for macOS.
+  ///
+  /// Windows with matching tabbing identifiers will be grouped together.
+  /// If the tabbing identifier is not set, automatic tabbing will be disabled.
+  ///
+  /// [tabbing identifier]: &lt;https://developer.apple.com/documentation/appkit/nswindow/1644704-tabbingidentifier&gt;
+  </span><span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
+  #[must_use]
+  </span><span class="kw">fn </span>tabbing_identifier(<span class="self">self</span>, identifier: <span class="kw-2">&amp;</span>str) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Forces a theme or uses the system settings if None was provided.
+  </span><span class="kw">fn </span>theme(<span class="self">self</span>, theme: <span class="prelude-ty">Option</span>&lt;Theme&gt;) -&gt; <span class="self">Self</span>;
+
+  <span class="doccomment">/// Whether the icon was set or not.
+  </span><span class="kw">fn </span>has_icon(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool;
+
+  <span class="kw">fn </span>get_theme(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Theme&gt;;
+}
+
+<span class="doccomment">/// A window that has yet to be built.
 </span><span class="kw">pub struct </span>PendingWindow&lt;T: UserEvent, R: Runtime&lt;T&gt;&gt; {
   <span class="doccomment">/// The label that the window will be named.
   </span><span class="kw">pub </span>label: String,
 
   <span class="doccomment">/// The [`WindowBuilder`] that the window will be created with.
-  </span><span class="kw">pub </span>window_builder: &lt;R::Dispatcher <span class="kw">as </span>Dispatch&lt;T&gt;&gt;::WindowBuilder,
+  </span><span class="kw">pub </span>window_builder: &lt;R::WindowDispatcher <span class="kw">as </span>WindowDispatch&lt;T&gt;&gt;::WindowBuilder,
 
-  <span class="doccomment">/// The [`WebviewAttributes`] that the webview will be created with.
-  </span><span class="kw">pub </span>webview_attributes: WebviewAttributes,
-
-  <span class="kw">pub </span>uri_scheme_protocols: HashMap&lt;String, Box&lt;UriSchemeProtocol&gt;&gt;,
-
-  <span class="comment">// Whether custom protocols on windows should use http://&lt;scheme&gt;.localhost/ instead of https://&lt;scheme&gt;.localhost/
-  </span><span class="kw">pub </span>http_scheme: bool,
-
-  <span class="doccomment">/// How to handle IPC calls on the webview window.
-  </span><span class="kw">pub </span>ipc_handler: <span class="prelude-ty">Option</span>&lt;WebviewIpcHandler&lt;T, R&gt;&gt;,
-
-  <span class="doccomment">/// Maps runtime id to a string menu id.
-  </span><span class="kw">pub </span>menu_ids: Arc&lt;Mutex&lt;HashMap&lt;MenuHash, MenuId&gt;&gt;&gt;,
-
-  <span class="doccomment">/// A HashMap mapping JS event names with associated listener ids.
-  </span><span class="kw">pub </span>js_event_listeners: Arc&lt;Mutex&lt;HashMap&lt;JsEventListenerKey, HashSet&lt;u32&gt;&gt;&gt;&gt;,
-
-  <span class="doccomment">/// A handler to decide if incoming url is allowed to navigate.
-  </span><span class="kw">pub </span>navigation_handler: <span class="prelude-ty">Option</span>&lt;Box&lt;<span class="kw">dyn </span>Fn(Url) -&gt; bool + Send&gt;&gt;,
-
-  <span class="kw">pub </span>web_resource_request_handler: <span class="prelude-ty">Option</span>&lt;Box&lt;WebResourceRequestHandler&gt;&gt;,
-
-  <span class="doccomment">/// The resolved URL to load on the webview.
-  </span><span class="kw">pub </span>url: String,
+  <span class="doccomment">/// The webview that gets added to the window. Optional in case you want to use child webviews or other window content instead.
+  </span><span class="kw">pub </span>webview: <span class="prelude-ty">Option</span>&lt;PendingWebview&lt;T, R&gt;&gt;,
 }
 
 <span class="kw">pub fn </span>is_label_valid(label: <span class="kw-2">&amp;</span>str) -&gt; bool {
@@ -658,124 +1033,62 @@
 }
 
 <span class="kw">impl</span>&lt;T: UserEvent, R: Runtime&lt;T&gt;&gt; PendingWindow&lt;T, R&gt; {
-  <span class="doccomment">/// Create a new [`PendingWindow`] with a label and starting url.
+  <span class="doccomment">/// Create a new [`PendingWindow`] with a label from the given [`WindowBuilder`].
   </span><span class="kw">pub fn </span>new(
-    window_builder: &lt;R::Dispatcher <span class="kw">as </span>Dispatch&lt;T&gt;&gt;::WindowBuilder,
-    webview_attributes: WebviewAttributes,
+    window_builder: &lt;R::WindowDispatcher <span class="kw">as </span>WindowDispatch&lt;T&gt;&gt;::WindowBuilder,
     label: <span class="kw">impl </span>Into&lt;String&gt;,
   ) -&gt; <span class="kw">crate</span>::Result&lt;<span class="self">Self</span>&gt; {
-    <span class="kw">let </span><span class="kw-2">mut </span>menu_ids = HashMap::new();
-    <span class="kw">if let </span><span class="prelude-val">Some</span>(menu) = window_builder.get_menu() {
-      get_menu_ids(<span class="kw-2">&amp;mut </span>menu_ids, menu);
-    }
     <span class="kw">let </span>label = label.into();
     <span class="kw">if </span>!is_label_valid(<span class="kw-2">&amp;</span>label) {
       <span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::InvalidWindowLabel)
     } <span class="kw">else </span>{
       <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
         window_builder,
-        webview_attributes,
-        uri_scheme_protocols: Default::default(),
         label,
-        ipc_handler: <span class="prelude-val">None</span>,
-        menu_ids: Arc::new(Mutex::new(menu_ids)),
-        js_event_listeners: Default::default(),
-        navigation_handler: Default::default(),
-        web_resource_request_handler: Default::default(),
-        url: <span class="string">"tauri://localhost"</span>.to_string(),
-        http_scheme: <span class="bool-val">false</span>,
+        webview: <span class="prelude-val">None</span>,
       })
     }
   }
 
-  <span class="doccomment">/// Create a new [`PendingWindow`] from a [`WindowConfig`] with a label and starting url.
-  </span><span class="kw">pub fn </span>with_config(
-    window_config: WindowConfig,
-    webview_attributes: WebviewAttributes,
-    label: <span class="kw">impl </span>Into&lt;String&gt;,
-  ) -&gt; <span class="kw">crate</span>::Result&lt;<span class="self">Self</span>&gt; {
-    <span class="kw">let </span>window_builder =
-      &lt;&lt;R::Dispatcher <span class="kw">as </span>Dispatch&lt;T&gt;&gt;::WindowBuilder&gt;::with_config(window_config);
-    <span class="kw">let </span><span class="kw-2">mut </span>menu_ids = HashMap::new();
-    <span class="kw">if let </span><span class="prelude-val">Some</span>(menu) = window_builder.get_menu() {
-      get_menu_ids(<span class="kw-2">&amp;mut </span>menu_ids, menu);
-    }
-    <span class="kw">let </span>label = label.into();
-    <span class="kw">if </span>!is_label_valid(<span class="kw-2">&amp;</span>label) {
-      <span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::InvalidWindowLabel)
-    } <span class="kw">else </span>{
-      <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
-        window_builder,
-        webview_attributes,
-        uri_scheme_protocols: Default::default(),
-        label,
-        ipc_handler: <span class="prelude-val">None</span>,
-        menu_ids: Arc::new(Mutex::new(menu_ids)),
-        js_event_listeners: Default::default(),
-        navigation_handler: Default::default(),
-        web_resource_request_handler: Default::default(),
-        url: <span class="string">"tauri://localhost"</span>.to_string(),
-        http_scheme: <span class="bool-val">false</span>,
-      })
-    }
-  }
-
-  <span class="attr">#[must_use]
-  </span><span class="kw">pub fn </span>set_menu(<span class="kw-2">mut </span><span class="self">self</span>, menu: Menu) -&gt; <span class="self">Self </span>{
-    <span class="kw">let </span><span class="kw-2">mut </span>menu_ids = HashMap::new();
-    get_menu_ids(<span class="kw-2">&amp;mut </span>menu_ids, <span class="kw-2">&amp;</span>menu);
-    <span class="kw-2">*</span><span class="self">self</span>.menu_ids.lock().unwrap() = menu_ids;
-    <span class="self">self</span>.window_builder = <span class="self">self</span>.window_builder.menu(menu);
+  <span class="doccomment">/// Sets a webview to be created on the window.
+  </span><span class="kw">pub fn </span>set_webview(<span class="kw-2">&amp;mut </span><span class="self">self</span>, webview: PendingWebview&lt;T, R&gt;) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self </span>{
+    <span class="self">self</span>.webview.replace(webview);
     <span class="self">self
   </span>}
+}
 
-  <span class="kw">pub fn </span>register_uri_scheme_protocol&lt;
-    N: Into&lt;String&gt;,
-    H: Fn(<span class="kw-2">&amp;</span>HttpRequest) -&gt; <span class="prelude-ty">Result</span>&lt;HttpResponse, Box&lt;<span class="kw">dyn </span>std::error::Error&gt;&gt; + Send + Sync + <span class="lifetime">'static</span>,
-  &gt;(
-    <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-    uri_scheme: N,
-    protocol: H,
-  ) {
-    <span class="kw">let </span>uri_scheme = uri_scheme.into();
-    <span class="self">self
-      </span>.uri_scheme_protocols
-      .insert(uri_scheme, Box::new(<span class="kw">move </span>|data| (protocol)(data)));
+<span class="doccomment">/// Identifier of a window.
+</span><span class="attr">#[derive(Debug, Clone, Copy, Hash, Eq, PartialEq, Ord, PartialOrd)]
+</span><span class="kw">pub struct </span>WindowId(u32);
+
+<span class="kw">impl </span>From&lt;u32&gt; <span class="kw">for </span>WindowId {
+  <span class="kw">fn </span>from(value: u32) -&gt; <span class="self">Self </span>{
+    <span class="self">Self</span>(value)
   }
 }
 
-<span class="doccomment">/// Key for a JS event listener.
-</span><span class="attr">#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-</span><span class="kw">pub struct </span>JsEventListenerKey {
-  <span class="doccomment">/// The associated window label.
-  </span><span class="kw">pub </span>window_label: <span class="prelude-ty">Option</span>&lt;String&gt;,
-  <span class="doccomment">/// The event name.
-  </span><span class="kw">pub </span>event: String,
-}
-
-<span class="doccomment">/// A webview window that is not yet managed by Tauri.
+<span class="doccomment">/// A window that is not yet managed by Tauri.
 </span><span class="attr">#[derive(Debug)]
 </span><span class="kw">pub struct </span>DetachedWindow&lt;T: UserEvent, R: Runtime&lt;T&gt;&gt; {
+  <span class="doccomment">/// The identifier of the window.
+  </span><span class="kw">pub </span>id: WindowId,
   <span class="doccomment">/// Name of the window
   </span><span class="kw">pub </span>label: String,
 
-  <span class="doccomment">/// The [`Dispatch`](crate::Dispatch) associated with the window.
-  </span><span class="kw">pub </span>dispatcher: R::Dispatcher,
+  <span class="doccomment">/// The [`WindowDispatch`] associated with the window.
+  </span><span class="kw">pub </span>dispatcher: R::WindowDispatcher,
 
-  <span class="doccomment">/// Maps runtime id to a string menu id.
-  </span><span class="kw">pub </span>menu_ids: Arc&lt;Mutex&lt;HashMap&lt;MenuHash, MenuId&gt;&gt;&gt;,
-
-  <span class="doccomment">/// A HashMap mapping JS event names with associated listener ids.
-  </span><span class="kw">pub </span>js_event_listeners: Arc&lt;Mutex&lt;HashMap&lt;JsEventListenerKey, HashSet&lt;u32&gt;&gt;&gt;&gt;,
+  <span class="doccomment">/// The webview dispatcher in case this window has an attached webview.
+  </span><span class="kw">pub </span>webview: <span class="prelude-ty">Option</span>&lt;DetachedWebview&lt;T, R&gt;&gt;,
 }
 
 <span class="kw">impl</span>&lt;T: UserEvent, R: Runtime&lt;T&gt;&gt; Clone <span class="kw">for </span>DetachedWindow&lt;T, R&gt; {
   <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
     <span class="self">Self </span>{
+      id: <span class="self">self</span>.id,
       label: <span class="self">self</span>.label.clone(),
       dispatcher: <span class="self">self</span>.dispatcher.clone(),
-      menu_ids: <span class="self">self</span>.menu_ids.clone(),
-      js_event_listeners: <span class="self">self</span>.js_event_listeners.clone(),
+      webview: <span class="self">self</span>.webview.clone(),
     }
   }
 }
@@ -793,5 +1106,30 @@
   </span><span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; bool {
     <span class="self">self</span>.label.eq(<span class="kw-2">&amp;</span>other.label)
   }
+}
+
+<span class="doccomment">/// A raw window type that contains fields to access
+/// the HWND on Windows, gtk::ApplicationWindow on Linux and
+/// NSView on macOS.
+</span><span class="kw">pub struct </span>RawWindow&lt;<span class="lifetime">'a</span>&gt; {
+  <span class="attr">#[cfg(windows)]
+  </span><span class="kw">pub </span>hwnd: isize,
+  <span class="attr">#[cfg(any(
+    target_os = <span class="string">"linux"</span>,
+    target_os = <span class="string">"dragonfly"</span>,
+    target_os = <span class="string">"freebsd"</span>,
+    target_os = <span class="string">"netbsd"</span>,
+    target_os = <span class="string">"openbsd"
+  </span>))]
+  </span><span class="kw">pub </span>gtk_window: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>gtk::ApplicationWindow,
+  <span class="attr">#[cfg(any(
+    target_os = <span class="string">"linux"</span>,
+    target_os = <span class="string">"dragonfly"</span>,
+    target_os = <span class="string">"freebsd"</span>,
+    target_os = <span class="string">"netbsd"</span>,
+    target_os = <span class="string">"openbsd"
+  </span>))]
+  </span><span class="kw">pub </span>default_vbox: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>gtk::Box&gt;,
+  <span class="kw">pub </span>_marker: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>PhantomData&lt;()&gt;,
 }
 </code></pre></div></section></main></body></html>

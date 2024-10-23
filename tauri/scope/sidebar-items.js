@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["FsScopeEvent"],"mod":["ipc"],"struct":["FsScope","GlobPattern","HttpScope"]};
+window.SIDEBAR_ITEMS = {"mod":["fs"],"struct":["Scopes"],"type":["ScopeEventId"]};
