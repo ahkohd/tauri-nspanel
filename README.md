@@ -104,8 +104,19 @@ panel.close();
 The following are projects related to this plugin:
 
 - [tauri-plugin-spotlight](https://github.com/zzzze/tauri-plugin-spotlight)
-- [tauri-nspanel-example](https://github.com/ahkohd/tauri-nspanel/tree/main/examples/vanilla)
+- [tauri-nspanel-example](https://github.com/ahkohd/tauri-nspanel/tree/v2/examples/vanilla)
 - [tauri-macos-spotlight-example](https://github.com/ahkohd/tauri-macos-spotlight-example)
+
+# Showcase
+
+Here are some notable projects using `tauri-nspanel`
+
+- [Cap](https://github.com/CapSoftware/Cap)
+- [EcoPaste](https://github.com/EcoPasteHub/EcoPaste)
+- [Overlayed](https://github.com/overlayeddev/overlayed)
+- [Lume](https://github.com/lumehq/lume)
+- [Verve](https://github.com/ParthJadhav/verve)
+- [Buffer](https://buffer.md)
 
 # Contributing
 
