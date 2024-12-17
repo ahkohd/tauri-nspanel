@@ -1,13 +1,6 @@
 Convert a Tauri window ([`NSWindow`](https://developer.apple.com/documentation/appkit/nswindow)) to panel ([`NSPanel`](https://developer.apple.com/documentation/appkit/nspanel))
 
 # Install
-
-There are three general methods of installation that we can recommend.
-
-- Use crates.io and npm (easiest, and requires you to trust that our publishing pipeline worked)
-- Pull sources directly from Github using git tags / revision hashes (most secure)
-- Git submodule install this repo in your tauri project and then use file protocol to ingest the source (most secure, but inconvenient to use)
-
 Install the plugin by adding the following to your `Cargo.toml` file:
 
 ```toml
