@@ -4,7 +4,7 @@
 )]
 
 use tauri::{AppHandle, Manager, Window, Wry};
-use tauri_nspanel::{panel_delegate, ManagerExt, WindowExt};
+use tauri_nspanel::{panel_delegate, ManagerExt, WindowExt, cocoa::appkit::NSWindowCollectionBehavior};
 
 fn main() {
     tauri::Builder::default()
@@ -15,6 +15,9 @@ fn main() {
             close_panel
         ])
         .setup(|app| {
+            // Set activation poicy to Accessory to prevent the app icon from showing on the dock
+            app.set_activation_policy(tauri::ActivationPolicy::Accessory);
+
             let window = app.handle().get_window("main").unwrap();
             init(window);
             Ok(())
@@ -44,6 +47,25 @@ fn init(window: Window<Wry>) {
             _ => (),
         }
     }));
+
+    // Set the window to float level
+    #[allow(non_upper_case_globals)]
+    const NSFloatWindowLevel: i32 = 4;
+
+    panel.set_level(NSFloatWindowLevel);
+
+    #[allow(non_upper_case_globals)]
+    const NSWindowStyleMaskNonActivatingPanel: i32 = 1 << 7;
+    // Ensures the panel cannot activate the app
+    panel.set_style_mask(NSWindowStyleMaskNonActivatingPanel);
+
+    // Allows the panel to:
+    // - display on the same space as the full screen window
+    // - join all spaces
+    panel.set_collection_behaviour(
+      NSWindowCollectionBehavior::NSWindowCollectionBehaviorFullScreenAuxiliary |
+      NSWindowCollectionBehavior::NSWindowCollectionBehaviorCanJoinAllSpaces
+    );
 
     panel.set_delegate(delegate);
 }
