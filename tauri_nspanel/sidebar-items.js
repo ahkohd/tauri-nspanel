@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Error"],"externcrate":["block","cocoa","objc","objc_foundation","objc_id","tauri"],"fn":["init"],"macro":["panel_delegate"],"mod":["raw_nspanel"],"struct":["Store","WebviewPanelConfig","WebviewPanelManager"],"trait":["ManagerExt","WebviewWindowExt"],"type":["Panel"]};

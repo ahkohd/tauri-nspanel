@@ -1,0 +1,9 @@
+(function() {
+    var implementors = Object.fromEntries([["tauri_nspanel",[["impl Message for <a class=\"struct\" href=\"tauri_nspanel/raw_nspanel/struct.RawNSPanel.html\" title=\"struct tauri_nspanel::raw_nspanel::RawNSPanel\">RawNSPanel</a>"]]]]);
+    if (window.register_implementors) {
+        window.register_implementors(implementors);
+    } else {
+        window.pending_implementors = implementors;
+    }
+})()
+//{"start":57,"fragment_lengths":[189]}
