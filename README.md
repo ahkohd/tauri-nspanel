@@ -6,6 +6,9 @@ Install the plugin by adding the following to your `Cargo.toml` file:
 ```toml
 [dependencies]
 tauri-nspanel = { git = "https://github.com/ahkohd/tauri-nspanel", branch = "v1" }
+
+[features]
+cargo-clippy = []
 ```
 
 # Usage
