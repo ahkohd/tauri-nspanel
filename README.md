@@ -89,7 +89,7 @@ To ensure that your NSPanel is fully released:
 ```rust
 // ...
 
-panel.released_when_closed(true);
+panel.set_released_when_closed(true);
 panel.close();
 ```
 

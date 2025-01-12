@@ -4,7 +4,9 @@
 )]
 
 use tauri::{AppHandle, Manager, WebviewWindow};
-use tauri_nspanel::{panel_delegate, ManagerExt, WebviewWindowExt, cocoa::appkit::NSWindowCollectionBehavior};
+use tauri_nspanel::{
+  cocoa::appkit::NSWindowCollectionBehavior, panel_delegate, ManagerExt, WebviewWindowExt,
+};
 
 fn main() {
   tauri::Builder::default()
@@ -66,8 +68,8 @@ fn init(app_handle: &AppHandle) {
   // - display on the same space as the full screen window
   // - join all spaces
   panel.set_collection_behaviour(
-    NSWindowCollectionBehavior::NSWindowCollectionBehaviorFullScreenAuxiliary |
-    NSWindowCollectionBehavior::NSWindowCollectionBehaviorCanJoinAllSpaces
+    NSWindowCollectionBehavior::NSWindowCollectionBehaviorFullScreenAuxiliary
+      | NSWindowCollectionBehavior::NSWindowCollectionBehaviorCanJoinAllSpaces,
   );
 
   panel.set_delegate(delegate);
@@ -91,7 +93,7 @@ fn hide_panel(handle: AppHandle) {
 fn close_panel(handle: AppHandle) {
   let panel = handle.get_webview_panel("main").unwrap();
 
-  panel.released_when_closed(true);
+  panel.set_released_when_closed(true);
 
   panel.close();
 }

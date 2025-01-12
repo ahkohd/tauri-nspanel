@@ -70,7 +70,7 @@ fn hide_panel(handle: AppHandle) {
 fn close_panel(handle: AppHandle) {
   let panel = handle.get_webview_panel("main").unwrap();
 
-  panel.released_when_closed(true);
+  panel.set_released_when_closed(true);
 
   panel.close();
 }
