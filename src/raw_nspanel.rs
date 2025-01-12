@@ -116,6 +116,11 @@ impl RawNSPanel {
         flag == YES
     }
 
+    pub fn is_floating_panel(&self) -> bool {
+        let flag: BOOL = unsafe { msg_send![self, isFloatingPanel] };
+        flag == YES
+    }
+
     pub fn make_key_window(&self) {
         let _: () = unsafe { msg_send![self, makeKeyWindow] };
     }
@@ -180,8 +185,52 @@ impl RawNSPanel {
         let _: () = unsafe { msg_send![self, setCanBecomeMainWindow: value] };
     }
 
-    pub fn released_when_closed(&self, value: bool) {
+    pub fn set_floating_panel(&self, value: bool) {
+        let _: () = unsafe { msg_send![self, setFloatingPanel: value] };
+    }
+
+    pub fn set_accepts_mouse_moved_events(&self, value: bool) {
+        let _: () = unsafe { msg_send![self, setAcceptsMouseMovedEvents: value] };
+    }
+
+    pub fn set_ignore_mouse_events(&self, value: bool) {
+        let _: () = unsafe { msg_send![self, setIgnoresMouseEvents: value] };
+    }
+
+    pub fn set_hides_on_deactivate(&self, value: bool) {
+        let _: () = unsafe { msg_send![self, setHidesOnDeactivate: value] };
+    }
+
+    pub fn set_moveable_by_window_background(&self, value: bool) {
+        let _: () = unsafe { msg_send![self, setMovableByWindowBackground: value] };
+    }
+
+    pub fn set_becomes_key_only_if_needed(&self, value: bool) {
+        let _: () = unsafe { msg_send![self, setBecomesKeyOnlyIfNeeded: value] };
+    }
+
+    pub fn set_works_when_modal(&self, value: bool) {
+        let _: () = unsafe { msg_send![self, setWorksWhenModal: value] };
+    }
+
+    pub fn set_opaque(&self, value: bool) {
+        let _: () = unsafe { msg_send![self, setOpaque: value] };
+    }
+
+    pub fn set_has_shadow(&self, value: bool) {
+        let _: () = unsafe { msg_send![self, setHasShadow: value] };
+    }
+
+    pub fn set_released_when_closed(&self, value: bool) {
         let _: () = unsafe { msg_send![self, setReleasedWhenClosed: value] };
+    }
+
+    #[deprecated(
+        since = "2.0.1",
+        note = "Use set_released_when_closed(bool) instead. This method will be removed in a future version."
+    )]
+    pub fn released_when_closed(&self, value: bool) {
+        self.set_released_when_closed(value);
     }
 
     pub fn close(&self) {
