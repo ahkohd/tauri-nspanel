@@ -49,14 +49,26 @@ impl RawNSPanel {
         unsafe {
             cls.add_ivar::<BOOL>("can_become_key_window");
 
+            cls.add_ivar::<BOOL>("can_become_main_window");
+
             cls.add_method(
                 sel!(setCanBecomeKeyWindow:),
                 Self::handle_set_can_become_key_window as extern "C" fn(&mut Object, Sel, BOOL),
             );
 
             cls.add_method(
+                sel!(setCanBecomeMainWindow:),
+                Self::handle_set_can_become_main_window as extern "C" fn(&mut Object, Sel, BOOL),
+            );
+
+            cls.add_method(
                 sel!(canBecomeKeyWindow),
                 Self::can_become_key_window as extern "C" fn(&Object, Sel) -> BOOL,
+            );
+
+            cls.add_method(
+                sel!(canBecomeMainWindow),
+                Self::can_become_main_window as extern "C" fn(&Object, Sel) -> BOOL,
             );
 
             cls.add_method(
@@ -72,6 +84,10 @@ impl RawNSPanel {
         unsafe { *this.get_ivar::<BOOL>("can_become_key_window") }
     }
 
+    extern "C" fn can_become_main_window(this: &Object, _: Sel) -> BOOL {
+        unsafe { *this.get_ivar::<BOOL>("can_become_main_window") }
+    }
+
     extern "C" fn dealloc(this: &mut Object, _cmd: Sel) {
         unsafe {
             let superclass = class!(NSObject);
@@ -83,6 +99,10 @@ impl RawNSPanel {
 
     extern "C" fn handle_set_can_become_key_window(this: &mut Object, _: Sel, value: BOOL) {
         unsafe { this.set_ivar::<BOOL>("can_become_key_window", value) };
+    }
+
+    extern "C" fn handle_set_can_become_main_window(this: &mut Object, _: Sel, value: BOOL) {
+        unsafe { this.set_ivar::<BOOL>("can_become_main_window", value) };
     }
 
     pub fn show(&self) {
@@ -156,6 +176,10 @@ impl RawNSPanel {
         let _: () = unsafe { msg_send![self, setCanBecomeKeyWindow: value] };
     }
 
+    pub fn set_can_become_main_window(&self, value: bool) {
+        let _: () = unsafe { msg_send![self, setCanBecomeMainWindow: value] };
+    }
+
     pub fn released_when_closed(&self, value: bool) {
         let _: () = unsafe { msg_send![self, setReleasedWhenClosed: value] };
     }
@@ -201,6 +225,9 @@ impl RawNSPanel {
 
             // By the default, the panel can become the key window
             panel.set_can_become_key_window(true);
+
+            // By the default, the panel can't become at the main window
+            panel.set_can_become_main_window(false);
 
             // Add a tracking area to the panel's content view,
             // so that we can receive mouse events such as mouseEntered and mouseExited
