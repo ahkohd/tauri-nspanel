@@ -1,7 +1,7 @@
 use bitflags::bitflags;
 use cocoa::{
     appkit::{NSView, NSViewHeightSizable, NSViewWidthSizable, NSWindowCollectionBehavior},
-    base::{id, nil, BOOL, NO, YES},
+    base::{id, nil, BOOL, YES},
     foundation::NSRect,
 };
 use objc::{
@@ -42,25 +42,18 @@ impl INSObject for RawNSPanel {
 }
 
 impl RawNSPanel {
-    /// Returns YES to ensure that RawNSPanel can become a key window
-    extern "C" fn can_become_key_window(_: &Object, _: Sel) -> BOOL {
-        YES
-    }
-
-    extern "C" fn dealloc(this: &mut Object, _cmd: Sel) {
-        unsafe {
-            let superclass = class!(NSObject);
-            let dealloc: extern "C" fn(&mut Object, Sel) =
-                msg_send![super(this, superclass), dealloc];
-            dealloc(this, _cmd);
-        }
-    }
-
     fn define_class() -> &'static Class {
         let mut cls = ClassDecl::new(CLS_NAME, class!(NSPanel))
             .unwrap_or_else(|| panic!("Unable to register {} class", CLS_NAME));
 
         unsafe {
+            cls.add_ivar::<BOOL>("can_become_key_window");
+
+            cls.add_method(
+                sel!(setCanBecomeKeyWindow:),
+                Self::handle_set_can_become_key_window as extern "C" fn(&mut Object, Sel, BOOL),
+            );
+
             cls.add_method(
                 sel!(canBecomeKeyWindow),
                 Self::can_become_key_window as extern "C" fn(&Object, Sel) -> BOOL,
@@ -73,6 +66,23 @@ impl RawNSPanel {
         }
 
         cls.register()
+    }
+
+    extern "C" fn can_become_key_window(this: &Object, _: Sel) -> BOOL {
+        unsafe { *this.get_ivar::<BOOL>("can_become_key_window") }
+    }
+
+    extern "C" fn dealloc(this: &mut Object, _cmd: Sel) {
+        unsafe {
+            let superclass = class!(NSObject);
+            let dealloc: extern "C" fn(&mut Object, Sel) =
+                msg_send![super(this, superclass), dealloc];
+            dealloc(this, _cmd);
+        }
+    }
+
+    extern "C" fn handle_set_can_become_key_window(this: &mut Object, _: Sel, value: BOOL) {
+        unsafe { this.set_ivar::<BOOL>("can_become_key_window", value) };
     }
 
     pub fn show(&self) {
@@ -142,8 +152,12 @@ impl RawNSPanel {
         let _: () = unsafe { msg_send![self, setDelegate: delegate] };
     }
 
-    pub fn released_when_closed(&self, flag: bool) {
-        let _: () = unsafe { msg_send![self, setReleasedWhenClosed: if flag {YES} else {NO}] };
+    pub fn set_can_become_key_window(&self, value: bool) {
+        let _: () = unsafe { msg_send![self, setCanBecomeKeyWindow: value] };
+    }
+
+    pub fn released_when_closed(&self, value: bool) {
+        let _: () = unsafe { msg_send![self, setReleasedWhenClosed: value] };
     }
 
     pub fn close(&self) {
@@ -179,9 +193,14 @@ impl RawNSPanel {
     pub fn from_window<R: Runtime>(window: WebviewWindow<R>) -> Id<Self> {
         let nswindow: id = window.ns_window().unwrap() as _;
         let nspanel_class: id = unsafe { msg_send![Self::class(), class] };
+
         unsafe {
             object_setClass(nswindow, nspanel_class);
+
             let panel = Id::from_retained_ptr(nswindow as *mut RawNSPanel);
+
+            // By the default, the panel can become the key window
+            panel.set_can_become_key_window(true);
 
             // Add a tracking area to the panel's content view,
             // so that we can receive mouse events such as mouseEntered and mouseExited
