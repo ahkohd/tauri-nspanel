@@ -89,7 +89,7 @@ To ensure that your NSPanel is fully released:
 ```rust
 // ...
 
-panel.released_when_closed(true);
+panel.set_released_when_closed(true);
 panel.close();
 ```
 6. See the [examples](/examples) to learn how to use `tauri-nspanel`. For more information on panel methods, please refer to the [documentation page](https://ahkohd.github.io/tauri-nspanel/tauri_nspanel/raw_nspanel/struct.RawNSPanel.html).

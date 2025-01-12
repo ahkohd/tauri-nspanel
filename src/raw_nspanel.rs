@@ -1,7 +1,7 @@
 use bitflags::bitflags;
 use cocoa::{
     appkit::{NSView, NSViewHeightSizable, NSViewWidthSizable, NSWindowCollectionBehavior},
-    base::{id, nil, BOOL, NO, YES},
+    base::{id, nil, BOOL, YES},
     foundation::NSRect,
 };
 use objc::{
@@ -42,28 +42,33 @@ impl INSObject for RawNSPanel {
 }
 
 impl RawNSPanel {
-    /// Returns YES to ensure that RawNSPanel can become a key window
-    extern "C" fn can_become_key_window(_: &Object, _: Sel) -> BOOL {
-        YES
-    }
-
-    extern "C" fn dealloc(this: &mut Object, _cmd: Sel) {
-        unsafe {
-            let superclass = class!(NSObject);
-            let dealloc: extern "C" fn(&mut Object, Sel) =
-                msg_send![super(this, superclass), dealloc];
-            dealloc(this, _cmd);
-        }
-    }
-
     fn define_class() -> &'static Class {
         let mut cls = ClassDecl::new(CLS_NAME, class!(NSPanel))
             .unwrap_or_else(|| panic!("Unable to register {} class", CLS_NAME));
 
         unsafe {
+            cls.add_ivar::<BOOL>("can_become_key_window");
+
+            cls.add_ivar::<BOOL>("can_become_main_window");
+
+            cls.add_method(
+                sel!(setCanBecomeKeyWindow:),
+                Self::handle_set_can_become_key_window as extern "C" fn(&mut Object, Sel, BOOL),
+            );
+
+            cls.add_method(
+                sel!(setCanBecomeMainWindow:),
+                Self::handle_set_can_become_main_window as extern "C" fn(&mut Object, Sel, BOOL),
+            );
+
             cls.add_method(
                 sel!(canBecomeKeyWindow),
                 Self::can_become_key_window as extern "C" fn(&Object, Sel) -> BOOL,
+            );
+
+            cls.add_method(
+                sel!(canBecomeMainWindow),
+                Self::can_become_main_window as extern "C" fn(&Object, Sel) -> BOOL,
             );
 
             cls.add_method(
@@ -75,6 +80,35 @@ impl RawNSPanel {
         cls.register()
     }
 
+    extern "C" fn handle_set_can_become_key_window(this: &mut Object, _: Sel, value: BOOL) {
+        unsafe {
+            this.set_ivar::<BOOL>("can_become_key_window", value);
+        }
+    }
+
+    extern "C" fn handle_set_can_become_main_window(this: &mut Object, _: Sel, value: BOOL) {
+        unsafe {
+            this.set_ivar::<BOOL>("can_become_main_window", value);
+        }
+    }
+
+    extern "C" fn can_become_key_window(this: &Object, _: Sel) -> BOOL {
+        unsafe { *this.get_ivar::<BOOL>("can_become_key_window") }
+    }
+
+    extern "C" fn can_become_main_window(this: &Object, _: Sel) -> BOOL {
+        unsafe { *this.get_ivar::<BOOL>("can_become_main_window") }
+    }
+
+    extern "C" fn dealloc(this: &mut Object, _cmd: Sel) {
+        unsafe {
+            let superclass = class!(NSObject);
+            let dealloc: extern "C" fn(&mut Object, Sel) =
+                msg_send![super(this, superclass), dealloc];
+            dealloc(this, _cmd);
+        }
+    }
+
     pub fn show(&self) {
         self.make_first_responder(Some(self.content_view()));
         self.order_front_regardless();
@@ -83,6 +117,11 @@ impl RawNSPanel {
 
     pub fn is_visible(&self) -> bool {
         let flag: BOOL = unsafe { msg_send![self, isVisible] };
+        flag == YES
+    }
+
+    pub fn is_floating_panel(&self) -> bool {
+        let flag: BOOL = unsafe { msg_send![self, isFloatingPanel] };
         flag == YES
     }
 
@@ -142,8 +181,60 @@ impl RawNSPanel {
         let _: () = unsafe { msg_send![self, setDelegate: delegate] };
     }
 
-    pub fn released_when_closed(&self, flag: bool) {
-        let _: () = unsafe { msg_send![self, setReleasedWhenClosed: if flag {YES} else {NO}] };
+    pub fn set_can_become_key_window(&self, value: bool) {
+        let _: () = unsafe { msg_send![self, setCanBecomeKeyWindow: value] };
+    }
+
+    pub fn set_can_become_main_window(&self, value: bool) {
+        let _: () = unsafe { msg_send![self, setCanBecomeMainWindow: value] };
+    }
+
+    pub fn set_floating_panel(&self, value: bool) {
+        let _: () = unsafe { msg_send![self, setFloatingPanel: value] };
+    }
+
+    pub fn set_accepts_mouse_moved_events(&self, value: bool) {
+        let _: () = unsafe { msg_send![self, setAcceptsMouseMovedEvents: value] };
+    }
+
+    pub fn set_ignore_mouse_events(&self, value: bool) {
+        let _: () = unsafe { msg_send![self, setIgnoresMouseEvents: value] };
+    }
+
+    pub fn set_hides_on_deactivate(&self, value: bool) {
+        let _: () = unsafe { msg_send![self, setHidesOnDeactivate: value] };
+    }
+
+    pub fn set_moveable_by_window_background(&self, value: bool) {
+        let _: () = unsafe { msg_send![self, setMovableByWindowBackground: value] };
+    }
+
+    pub fn set_becomes_key_only_if_needed(&self, value: bool) {
+        let _: () = unsafe { msg_send![self, setBecomesKeyOnlyIfNeeded: value] };
+    }
+
+    pub fn set_works_when_modal(&self, value: bool) {
+        let _: () = unsafe { msg_send![self, setWorksWhenModal: value] };
+    }
+
+    pub fn set_opaque(&self, value: bool) {
+        let _: () = unsafe { msg_send![self, setOpaque: value] };
+    }
+
+    pub fn set_has_shadow(&self, value: bool) {
+        let _: () = unsafe { msg_send![self, setHasShadow: value] };
+    }
+
+    pub fn set_released_when_closed(&self, value: bool) {
+        let _: () = unsafe { msg_send![self, setReleasedWhenClosed: value] };
+    }
+
+    #[deprecated(
+        since = "0.0.1",
+        note = "Use set_released_when_closed(bool) instead. This method will be removed in a future version."
+    )]
+    pub fn released_when_closed(&self, value: bool) {
+        self.set_released_when_closed(value);
     }
 
     pub fn close(&self) {
@@ -179,9 +270,17 @@ impl RawNSPanel {
     pub fn from_window<R: Runtime>(window: Window<R>) -> Id<Self> {
         let nswindow: id = window.ns_window().unwrap() as _;
         let nspanel_class: id = unsafe { msg_send![Self::class(), class] };
+
         unsafe {
             object_setClass(nswindow, nspanel_class);
+
             let panel = Id::from_retained_ptr(nswindow as *mut RawNSPanel);
+
+            // By default, allow the panel to become the key window
+            panel.set_can_become_key_window(true);
+
+            // By default, a panel cannot become the main window
+            panel.set_can_become_main_window(false);
 
             // Add a tracking area to the panel's content view,
             // so that we can receive mouse events such as mouseEntered and mouseExited
