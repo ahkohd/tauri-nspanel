@@ -242,53 +242,7 @@
 <a href="#241" id="241">241</a>
 <a href="#242" id="242">242</a>
 <a href="#243" id="243">243</a>
-<a href="#244" id="244">244</a>
-<a href="#245" id="245">245</a>
-<a href="#246" id="246">246</a>
-<a href="#247" id="247">247</a>
-<a href="#248" id="248">248</a>
-<a href="#249" id="249">249</a>
-<a href="#250" id="250">250</a>
-<a href="#251" id="251">251</a>
-<a href="#252" id="252">252</a>
-<a href="#253" id="253">253</a>
-<a href="#254" id="254">254</a>
-<a href="#255" id="255">255</a>
-<a href="#256" id="256">256</a>
-<a href="#257" id="257">257</a>
-<a href="#258" id="258">258</a>
-<a href="#259" id="259">259</a>
-<a href="#260" id="260">260</a>
-<a href="#261" id="261">261</a>
-<a href="#262" id="262">262</a>
-<a href="#263" id="263">263</a>
-<a href="#264" id="264">264</a>
-<a href="#265" id="265">265</a>
-<a href="#266" id="266">266</a>
-<a href="#267" id="267">267</a>
-<a href="#268" id="268">268</a>
-<a href="#269" id="269">269</a>
-<a href="#270" id="270">270</a>
-<a href="#271" id="271">271</a>
-<a href="#272" id="272">272</a>
-<a href="#273" id="273">273</a>
-<a href="#274" id="274">274</a>
-<a href="#275" id="275">275</a>
-<a href="#276" id="276">276</a>
-<a href="#277" id="277">277</a>
-<a href="#278" id="278">278</a>
-<a href="#279" id="279">279</a>
-<a href="#280" id="280">280</a>
-<a href="#281" id="281">281</a>
-<a href="#282" id="282">282</a>
-<a href="#283" id="283">283</a>
-<a href="#284" id="284">284</a>
-<a href="#285" id="285">285</a>
-<a href="#286" id="286">286</a>
-<a href="#287" id="287">287</a>
-<a href="#288" id="288">288</a>
-<a href="#289" id="289">289</a>
-<a href="#290" id="290">290</a></pre></div><pre class="rust"><code><span class="kw">use </span>bitflags::bitflags;
+<a href="#244" id="244">244</a></pre></div><pre class="rust"><code><span class="kw">use </span>bitflags::bitflags;
 <span class="kw">use </span>cocoa::{
     appkit::{NSView, NSViewHeightSizable, NSViewWidthSizable, NSWindowCollectionBehavior},
     base::{id, nil, BOOL, YES},
@@ -332,50 +286,9 @@
 }
 
 <span class="kw">impl </span>RawNSPanel {
-    <span class="kw">fn </span>define_class() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>Class {
-        <span class="kw">let </span><span class="kw-2">mut </span>cls = ClassDecl::new(CLS_NAME, <span class="macro">class!</span>(NSPanel))
-            .unwrap_or_else(|| <span class="macro">panic!</span>(<span class="string">"Unable to register {} class"</span>, CLS_NAME));
-
-        <span class="kw">unsafe </span>{
-            cls.add_ivar::&lt;BOOL&gt;(<span class="string">"can_become_key_window"</span>);
-
-            cls.add_ivar::&lt;BOOL&gt;(<span class="string">"can_become_main_window"</span>);
-
-            cls.add_method(
-                <span class="macro">sel!</span>(setCanBecomeKeyWindow:),
-                <span class="self">Self</span>::handle_set_can_become_key_window <span class="kw">as extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">&amp;mut </span>Object, Sel, BOOL),
-            );
-
-            cls.add_method(
-                <span class="macro">sel!</span>(setCanBecomeMainWindow:),
-                <span class="self">Self</span>::handle_set_can_become_main_window <span class="kw">as extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">&amp;mut </span>Object, Sel, BOOL),
-            );
-
-            cls.add_method(
-                <span class="macro">sel!</span>(canBecomeKeyWindow),
-                <span class="self">Self</span>::can_become_key_window <span class="kw">as extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">&amp;</span>Object, Sel) -&gt; BOOL,
-            );
-
-            cls.add_method(
-                <span class="macro">sel!</span>(canBecomeMainWindow),
-                <span class="self">Self</span>::can_become_main_window <span class="kw">as extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">&amp;</span>Object, Sel) -&gt; BOOL,
-            );
-
-            cls.add_method(
-                <span class="macro">sel!</span>(dealloc),
-                <span class="self">Self</span>::dealloc <span class="kw">as extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">&amp;mut </span>Object, Sel),
-            );
-        }
-
-        cls.register()
-    }
-
-    <span class="kw">extern </span><span class="string">"C" </span><span class="kw">fn </span>can_become_key_window(this: <span class="kw-2">&amp;</span>Object, <span class="kw">_</span>: Sel) -&gt; BOOL {
-        <span class="kw">unsafe </span>{ <span class="kw-2">*</span>this.get_ivar::&lt;BOOL&gt;(<span class="string">"can_become_key_window"</span>) }
-    }
-
-    <span class="kw">extern </span><span class="string">"C" </span><span class="kw">fn </span>can_become_main_window(this: <span class="kw-2">&amp;</span>Object, <span class="kw">_</span>: Sel) -&gt; BOOL {
-        <span class="kw">unsafe </span>{ <span class="kw-2">*</span>this.get_ivar::&lt;BOOL&gt;(<span class="string">"can_become_main_window"</span>) }
+    <span class="doccomment">/// Returns YES to ensure that RawNSPanel can become a key window
+    </span><span class="kw">extern </span><span class="string">"C" </span><span class="kw">fn </span>can_become_key_window(<span class="kw">_</span>: <span class="kw-2">&amp;</span>Object, <span class="kw">_</span>: Sel) -&gt; BOOL {
+        YES
     }
 
     <span class="kw">extern </span><span class="string">"C" </span><span class="kw">fn </span>dealloc(this: <span class="kw-2">&amp;mut </span>Object, _cmd: Sel) {
@@ -387,12 +300,23 @@
         }
     }
 
-    <span class="kw">extern </span><span class="string">"C" </span><span class="kw">fn </span>handle_set_can_become_key_window(this: <span class="kw-2">&amp;mut </span>Object, <span class="kw">_</span>: Sel, value: BOOL) {
-        <span class="kw">unsafe </span>{ this.set_ivar::&lt;BOOL&gt;(<span class="string">"can_become_key_window"</span>, value) };
-    }
+    <span class="kw">fn </span>define_class() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">'static </span>Class {
+        <span class="kw">let </span><span class="kw-2">mut </span>cls = ClassDecl::new(CLS_NAME, <span class="macro">class!</span>(NSPanel))
+            .unwrap_or_else(|| <span class="macro">panic!</span>(<span class="string">"Unable to register {} class"</span>, CLS_NAME));
 
-    <span class="kw">extern </span><span class="string">"C" </span><span class="kw">fn </span>handle_set_can_become_main_window(this: <span class="kw-2">&amp;mut </span>Object, <span class="kw">_</span>: Sel, value: BOOL) {
-        <span class="kw">unsafe </span>{ this.set_ivar::&lt;BOOL&gt;(<span class="string">"can_become_main_window"</span>, value) };
+        <span class="kw">unsafe </span>{
+            cls.add_method(
+                <span class="macro">sel!</span>(canBecomeKeyWindow),
+                <span class="self">Self</span>::can_become_key_window <span class="kw">as extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">&amp;</span>Object, Sel) -&gt; BOOL,
+            );
+
+            cls.add_method(
+                <span class="macro">sel!</span>(dealloc),
+                <span class="self">Self</span>::dealloc <span class="kw">as extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">&amp;mut </span>Object, Sel),
+            );
+        }
+
+        cls.register()
     }
 
     <span class="kw">pub fn </span>show(<span class="kw-2">&amp;</span><span class="self">self</span>) {
@@ -465,14 +389,6 @@
 
     <span class="kw">pub fn </span>set_delegate&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, delegate: Id&lt;T&gt;) {
         <span class="kw">let _</span>: () = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="self">self</span>, setDelegate: delegate] };
-    }
-
-    <span class="kw">pub fn </span>set_can_become_key_window(<span class="kw-2">&amp;</span><span class="self">self</span>, value: bool) {
-        <span class="kw">let _</span>: () = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="self">self</span>, setCanBecomeKeyWindow: value] };
-    }
-
-    <span class="kw">pub fn </span>set_can_become_main_window(<span class="kw-2">&amp;</span><span class="self">self</span>, value: bool) {
-        <span class="kw">let _</span>: () = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="self">self</span>, setCanBecomeMainWindow: value] };
     }
 
     <span class="kw">pub fn </span>set_floating_panel(<span class="kw-2">&amp;</span><span class="self">self</span>, value: bool) {
@@ -556,17 +472,9 @@
     </span><span class="kw">pub fn </span>from_window&lt;R: Runtime&gt;(window: WebviewWindow&lt;R&gt;) -&gt; Id&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span>nswindow: id = window.ns_window().unwrap() <span class="kw">as _</span>;
         <span class="kw">let </span>nspanel_class: id = <span class="kw">unsafe </span>{ <span class="macro">msg_send!</span>[<span class="self">Self</span>::class(), class] };
-
         <span class="kw">unsafe </span>{
             object_setClass(nswindow, nspanel_class);
-
             <span class="kw">let </span>panel = Id::from_retained_ptr(nswindow <span class="kw">as </span><span class="kw-2">*mut </span>RawNSPanel);
-
-            <span class="comment">// By the default, the panel can become the key window
-            </span>panel.set_can_become_key_window(<span class="bool-val">true</span>);
-
-            <span class="comment">// By the default, the panel can't become at the main window
-            </span>panel.set_can_become_main_window(<span class="bool-val">false</span>);
 
             <span class="comment">// Add a tracking area to the panel's content view,
             // so that we can receive mouse events such as mouseEntered and mouseExited
