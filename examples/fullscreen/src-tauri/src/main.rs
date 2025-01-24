@@ -85,6 +85,6 @@ fn hide_panel(handle: AppHandle<Wry>) {
 #[tauri::command]
 fn close_panel(handle: AppHandle<Wry>) {
     let panel = handle.get_panel("main").unwrap();
-    panel.released_when_closed(true);
+    panel.set_released_when_closed(true);
     panel.close();
 }
