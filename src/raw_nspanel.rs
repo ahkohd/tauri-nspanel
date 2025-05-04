@@ -2,7 +2,7 @@ use bitflags::bitflags;
 use cocoa::{
     appkit::{NSView, NSViewHeightSizable, NSViewWidthSizable, NSWindowCollectionBehavior},
     base::{id, nil, BOOL, YES},
-    foundation::NSRect,
+    foundation::{NSRect, NSUInteger},
 };
 use objc::{
     class,
@@ -224,6 +224,27 @@ impl RawNSPanel {
         let () = unsafe { msg_send![view, addTrackingArea: track_view] };
     }
 
+    /// Enables the webview (and any other subviews) to automatically resize with its parent window.
+    pub fn auto_resize(&self) {
+        let content_view: id = self.content_view();
+
+        let subviews: id = unsafe { msg_send![content_view, subviews] };
+
+        let count: NSUInteger = unsafe { msg_send![subviews, count] };
+
+        for i in 0..count {
+            let view: id = unsafe { msg_send![subviews, objectAtIndex: i] };
+
+            if view.is_null() {
+                continue;
+            }
+
+            let _: () = unsafe {
+                msg_send![view, setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable]
+            };
+        }
+    }
+
     /// Create an NSPanel from a Tauri Webview Window
     pub fn from_window<R: Runtime>(window: WebviewWindow<R>) -> Id<Self> {
         let nswindow: id = window.ns_window().unwrap() as _;
@@ -235,6 +256,9 @@ impl RawNSPanel {
             // Add a tracking area to the panel's content view,
             // so that we can receive mouse events such as mouseEntered and mouseExited
             panel.add_tracking_area();
+
+            // Sets the webview to automatically grow and shrink its size and position when the parent window resizes.
+            panel.auto_resize();
 
             panel
         }
