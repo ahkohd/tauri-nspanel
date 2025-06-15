@@ -1,3 +1,5 @@
+#![allow(deprecated)]
+
 use bitflags::bitflags;
 use cocoa::{
     appkit::{NSView, NSViewHeightSizable, NSViewWidthSizable, NSWindowCollectionBehavior},

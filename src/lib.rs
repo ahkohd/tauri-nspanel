@@ -1,3 +1,5 @@
+#![allow(deprecated)]
+
 mod macros;
 pub mod raw_nspanel;
 
