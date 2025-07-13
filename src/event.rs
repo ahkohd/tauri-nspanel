@@ -1,0 +1,222 @@
+/// Macro to create a custom event handler for panels
+///
+/// This creates an NSWindowDelegate that responds to window events with type-safe callbacks.
+///
+/// This macro generates a type-safe delegate class with strongly typed callbacks.
+/// Users specify parameter types directly in the macro, and callbacks receive
+/// properly typed arguments instead of raw pointers.
+///
+/// # References
+///
+/// - [objc2 NSWindowDelegate trait documentation](https://docs.rs/objc2-app-kit/0.3.1/objc2_app_kit/trait.NSWindowDelegate.html)
+/// - [Apple NSWindowDelegate documentation](https://developer.apple.com/documentation/appkit/nswindowdelegate)
+///
+/// # Selector Generation Rules
+///
+/// The macro generates Objective-C selectors based on how you declare the methods:
+///
+/// - **Single parameter**: `methodName(param: Type)` → `methodName:`
+///   - Example: `windowDidBecomeKey(notification: &NSNotification)` → `windowDidBecomeKey:`
+///
+/// - **Multiple parameters**: `methodName(first: Type1, second: Type2)` → `methodName:second:`
+///   - Example: `windowWillResize(window: &NSWindow, to_size: &NSSize)` → `windowWillResize:toSize:`
+///   - The first parameter is always anonymous (`:`) in the selector
+///   - Subsequent parameters use their names as selector parts
+///
+/// **Parameter Naming**: The macro automatically converts snake_case to camelCase:
+/// - `to_size` → `toSize`
+/// - `to_object` → `toObject`
+/// - `for_client` → `forClient`
+///
+/// You can use Rust's conventional snake_case naming and the macro will generate
+/// the correct camelCase selectors to match Apple's NSWindowDelegate signatures.
+///
+/// **Important**: Always check the references above to ensure your method names and
+/// parameter names match the exact NSWindowDelegate protocol signatures.
+///
+/// Usage:
+/// ```
+/// use tauri_nspanel::tauri_panel;
+///
+/// tauri_panel! {
+///     panel_event!(MyPanelEventHandler {
+///         windowDidBecomeKey(notification: &NSNotification) -> (),
+///         windowShouldClose(window: &NSWindow) -> Bool,
+///         windowWillResize(window: &NSWindow, to_size: &NSSize) -> NSSize,
+///         windowWillReturnFieldEditor(sender: &NSWindow, client: Option<&AnyObject>) -> Option<Retained<NSObject>>
+///     })
+/// }
+///
+/// let handler = MyPanelEventHandler::new();
+///
+/// handler.window_did_become_key(|notification| {
+///     // notification is already typed as &NSNotification
+///     println!("Window became key: {:?}", notification);
+/// });
+///
+/// handler.window_should_close(|window| {
+///     // window is already typed as &NSWindow
+///     println!("Should close window: {:?}?", window);
+///     Bool::new(true) // Allow closing
+/// });
+/// ```
+///
+/// # Type Specification
+///
+/// You must specify the exact types for parameters, including references:
+/// - Object types usually take references: `&NSWindow`, `&NSNotification`
+/// - Value types also take references: `&NSSize`, `&NSRect`, `&NSPoint`
+/// - Optional parameters: `Option<&AnyObject>`
+/// - The macro does NOT automatically add references
+///
+/// ## Return Values
+/// Methods must specify their return type explicitly:
+/// - `-> ()` for void methods (no return value)
+/// - `-> Bool` for BOOL returns (objc2 Bool type)
+/// - `-> Option<Retained<NSObject>>` for nullable object returns
+/// - `-> NSSize` for NSSize value returns
+/// - `-> NSRect` for NSRect value returns
+/// - `-> NSPoint` for NSPoint value returns
+/// - Other types as needed by the delegate method
+///
+/// The macro handles conversion between Rust types and Objective-C types automatically.
+#[macro_export]
+macro_rules! panel_event {
+    (
+        $handler_name:ident {
+            $(
+                $method:ident ( $first_param:ident : $first_type:ty $(, $param:ident : $param_type:ty)* $(,)? ) -> $return_type:ty
+            ),* $(,)?
+        }
+    ) => {
+        $crate::pastey::paste! {
+                // Generate typed callback signatures for each method
+                $(
+                    pub type [<$handler_name $method Callback>] = std::boxed::Box<
+                        dyn Fn($first_type $(, $param_type)*) -> $return_type
+                    >;
+                )*
+
+                struct [<$handler_name Ivars>] {
+                   $(
+                       [<$method:snake>]: std::cell::Cell<Option<[<$handler_name $method Callback>]>>,
+                   )*
+                }
+
+                #[allow(clippy::unused_unit)]
+                define_class!(
+                    #[unsafe(super(NSObject))]
+                    #[name = stringify!($handler_name)]
+                    #[thread_kind = MainThreadOnly]
+
+                    #[ivars = [<$handler_name Ivars>]]
+                    struct $handler_name;
+
+                    unsafe impl NSObjectProtocol for $handler_name {}
+
+                    unsafe impl NSWindowDelegate for $handler_name {
+                        $(
+                            #[doc = concat!(" Objective-C delegate method: ", stringify!($method), ":", $(stringify!([<$param:lower_camel>]), ":"),*)]
+                            #[unsafe(method($method:$([<$param:lower_camel>]:)*))]
+                            fn [<__ $method:snake>](&self, [<$first_param:lower_camel>]: $first_type $(, [<$param:lower_camel>]: $param_type )* ) -> $return_type {
+                                // Take the callback from the cell temporarily
+                                let callback = self.ivars().[<$method:snake>].take();
+                                if let Some(callback) = callback {
+                                    // Call the callback with typed parameters
+                                    let result = callback([<$first_param:lower_camel>] $(, [<$param:lower_camel>])*);
+                                    
+                                    // Put the callback back
+                                    self.ivars().[<$method:snake>].set(Some(callback));
+                                    
+                                    result
+                                } else {
+                                    // Return default value for the type
+                                    Default::default()
+                                }
+                            }
+                        )*
+                    }
+                );
+
+                impl $handler_name {
+                    /// Create a new event handler instance
+                    pub fn new() -> Retained<Self> {
+                        unsafe {
+                            // Get main thread marker
+                            let mtm = MainThreadMarker::new().expect("Must be on main thread");
+
+                            // Allocate instance
+                            let this = Self::alloc(mtm);
+                            // Set ivars
+                            let this = this.set_ivars([<$handler_name Ivars>] {
+                                $(
+                                    [<$method:snake>]: std::cell::Cell::new(None),
+                                )*
+                            });
+                            // Initialize
+                            msg_send![super(this), init]
+                        }
+                    }
+
+                    $(
+                        #[doc = " A callback for the `" $method "` event"]
+                        pub fn [<$method:snake>]<F>(&self, callback: F)
+                        where
+                            F: Fn($first_type $(, $param_type)*) -> $return_type + 'static
+                        {
+                            let boxed_callback: [<$handler_name $method Callback>] = std::boxed::Box::new(callback);
+
+                            // Store new callback
+                            self.ivars().[<$method:snake>].set(Some(boxed_callback));
+                        }
+                    )*
+
+                    /// Convert to a ProtocolObject for use with NSWindow
+                    pub fn as_protocol_object(&self) -> &ProtocolObject<dyn NSWindowDelegate> {
+                        unsafe {
+                            ProtocolObject::from_ref(self)
+                        }
+                    }
+                }
+
+        }
+    };
+}
+
+// Example usage:
+//
+// use tauri_nspanel::tauri_panel;
+//
+// tauri_panel! {
+//     panel_event!(MyPanelEventHandler {
+//         windowDidBecomeKey(notification: &NSNotification) -> (),
+//         windowWillClose(window: &NSWindow) -> (),
+//         windowShouldClose(window: &NSWindow) -> Bool,
+//         windowWillResize(window: &NSWindow, to_size: &NSSize) -> NSSize
+//     })
+// }
+//
+// let handler = MyPanelEventHandler::new();
+//
+// // Example: Handle windowDidBecomeKey notification
+// handler.window_did_become_key(|notification| {
+//     println!("Window became key with notification: {:?}", notification);
+// });
+//
+// // Example: Handle windowShouldClose with bool return
+// handler.window_should_close(|window| {
+//     println!("Should close window?");
+//     Bool::new(true) // Allow closing
+// });
+//
+// // Example: Handle windowWillResize with NSSize return
+// handler.window_will_resize(|window, proposed_size| {
+//     // Enforce minimum size
+//     NSSize {
+//         width: proposed_size.width.max(200.0),
+//         height: proposed_size.height.max(100.0),
+//     }
+// });
+//
+// // Use with panel
+// panel.set_event_handler(Some(handler.as_protocol_object()));

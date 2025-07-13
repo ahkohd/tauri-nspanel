@@ -4,7 +4,22 @@
 )]
 
 use tauri::{AppHandle, Manager, WebviewWindow};
-use tauri_nspanel::{panel_delegate, ManagerExt, WebviewWindowExt};
+use tauri_nspanel::{tauri_panel, ManagerExt, WebviewWindowExt};
+
+// Define custom panel class and event handler
+tauri_panel! {
+    panel!(Panel {
+        config: {
+            canBecomeKeyWindow: true,
+            canBecomeMainWindow: false
+        }
+    })
+
+    panel_event!(PanelEventHandler {
+        windowDidBecomeKey(notification: &NSNotification) -> (),
+        windowDidResignKey(notification: &NSNotification) -> ()
+    })
+}
 
 fn main() {
   tauri::Builder::default()
@@ -26,30 +41,28 @@ fn main() {
 fn init(app_handle: &AppHandle) {
   let window: WebviewWindow = app_handle.get_webview_window("main").unwrap();
 
-  let panel = window.to_panel().unwrap();
+  let panel = window.to_panel::<Panel>().unwrap();
 
-  let delegate = panel_delegate!(MyPanelDelegate {
-    window_did_become_key,
-    window_did_resign_key
-  });
+  println!("panel class name: {:?}", panel.as_panel().class().name());
+  println!("panel can become key?: {}", panel.can_become_key_window());
+  println!("panel can become main?: {}", panel.can_become_main_window());
+
+  let handler = PanelEventHandler::new();
 
   let handle = app_handle.to_owned();
 
-  delegate.set_listener(Box::new(move |delegate_name: String| {
-    match delegate_name.as_str() {
-      "window_did_become_key" => {
-        let app_name = handle.package_info().name.to_owned();
+  handler.window_did_become_key(move |notification| {
+    let app_name = handle.package_info().name.to_owned();
 
-        println!("[info]: {:?} panel becomes key window!", app_name);
-      }
-      "window_did_resign_key" => {
-        println!("[info]: panel resigned from key window!");
-      }
-      _ => (),
-    }
-  }));
+    unsafe { println!("[info]: Notification name: {:?}", notification.name()) };
+    println!("[info]: {:?} panel becomes key window!", app_name);
+  });
 
-  panel.set_delegate(delegate);
+  handler.window_did_resign_key(|_notification| {
+    println!("[info]: panel resigned from key window!");
+  });
+
+  panel.set_event_handler(Some(handler.as_protocol_object()));
 }
 
 #[tauri::command]
@@ -63,14 +76,12 @@ fn show_panel(handle: AppHandle) {
 fn hide_panel(handle: AppHandle) {
   let panel = handle.get_webview_panel("main").unwrap();
 
-  panel.order_out(None);
+  panel.hide();
 }
 
 #[tauri::command]
 fn close_panel(handle: AppHandle) {
   let panel = handle.get_webview_panel("main").unwrap();
-
   panel.set_released_when_closed(true);
-
   panel.close();
 }

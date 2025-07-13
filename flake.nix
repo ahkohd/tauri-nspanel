@@ -18,7 +18,7 @@
       };
 
       rustToolchainExtensions = [ "rust-src" "rust-analyzer" "clippy" ];
-      rustToolchain = pkgs.rust-bin.stable.latest.default.override {
+      rustToolchain = pkgs.rust-bin.nightly.latest.default.override {
         targets = [ "aarch64-apple-darwin" ];
         extensions = rustToolchainExtensions;
       };
@@ -29,7 +29,15 @@
 
       buildInputs = p: with p; [ apple-sdk_12 ];
 
-      commonPackages = p: with p; [ cargo-tauri nodejs_22 corepack_22 bacon ];
+      commonPackages = p:
+        with p; [
+          cargo-tauri
+          nodejs_22
+          corepack_22
+          cargo-expand
+          cargo-watch
+          bacon
+        ];
 
     in {
       devShells = {
