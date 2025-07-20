@@ -31,9 +31,9 @@ use tauri::{
 pub use builder::{CollectionBehavior, PanelBuilder, PanelLevel, StyleMask, TrackingAreaOptions};
 
 // Re-export commonly used types for convenience
+pub use objc2::runtime::AnyObject;
 pub use objc2_app_kit::{NSPanel, NSView, NSWindow};
 pub use objc2_foundation::{NSNotification, NSObject, NSPoint, NSRect, NSSize};
-pub use objc2::runtime::AnyObject;
 
 /// Trait for event handlers that can be used with panels
 pub trait EventHandler {

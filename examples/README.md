@@ -1,22 +1,41 @@
 # Examples
 
-These examples demonstrate how to use [tauri-nspanel](https://github.com/ahkohd/tauri-nspanel) with the new v2 API:
+These examples demonstrate various features and use cases of [tauri-nspanel](https://github.com/ahkohd/tauri-nspanel):
 
-- [vanilla](./vanilla/): Basic panel setup using the PanelBuilder API
-- [fullscreen](./fullscreen/): Create a panel that can display over fullscreen windows
-- [panel_builder](./panel_builder.rs): Complete example showing custom panel classes, delegates, and both creation methods
+## Full Tauri Applications
 
-## Running the examples
+- [basic](./basic/): Basic panel setup in a vanilla JavaScript Tauri app
+- [panel_builder](./panel_builder/): Basic panel setup using `PanelBuilder`
+- [fullscreen](./fullscreen/): Panel that displays over fullscreen windows
+- [mouse_tracking](./mouse_tracking/): Mouse tracking events with enter/exit/move callbacks
+- [hover_activate](./hover_activate/): Auto-activate panel on mouse hover
 
-To run an example:
+## Standalone Rust Examples
+
+- [panel_macro](./panel_macro.rs): Basic panel creation with the macro
+- [panel_builder](./panel_builder.rs): Using the PanelBuilder API
+- [panel_levels](./panel_levels.rs): Demonstrating different window levels
+- [collection_behavior](./collection_behavior.rs): Combining collection behaviors
+- [builder_with_custom_panel](./builder_with_custom_panel.rs): Using custom panel classes with PanelBuilder
+- [panel_event_macro](./panel_event_macro.rs): Event handling with delegates
+
+## Running the Examples
+
+### Full Tauri Applications
 
 ```bash
-cd examples/vanilla
-cargo tauri dev
+# For any of the full Tauri app examples:
+cd examples/mouse_tracking  # or basic, panel_builder, fullscreen, hover_activate
+npm install
+npm run tauri dev
 ```
 
-For the standalone Rust example:
+### Standalone Rust Examples
 
 ```bash
+# From the root directory:
+cargo run --example panel_macro
 cargo run --example panel_builder
+cargo run --example panel_levels
+# etc.
 ```

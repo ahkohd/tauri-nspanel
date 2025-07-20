@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Panel</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            user-select: none;
+            overflow: hidden;
+        }
+        
+        .drag-region {
+            height: 32px;
+            background: linear-gradient(to bottom, #e8e8e8, #d8d8d8);
+            border-bottom: 1px solid #b8b8b8;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            cursor: move;
+            font-size: 13px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .drag-region:hover {
+            background: linear-gradient(to bottom, #f0f0f0, #e0e0e0);
+        }
+        
+        .panel-content {
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h2 {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+            color: #333;
+        }
+        
+        .info {
+            margin: 15px 0;
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .info code {
+            background-color: #e0e0e0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: "SF Mono", Monaco, monospace;
+            font-size: 12px;
+        }
+        
+        .controls {
+            margin-top: 20px;
+        }
+        
+        button {
+            background-color: #007AFF;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            margin: 0 5px;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: #0051D5;
+        }
+        
+        button:active {
+            background-color: #0041A8;
+        }
+        
+        .status {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #888;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div data-tauri-drag-region class="drag-region">
+        ↔ Mini Panel - Drag to Move
+    </div>
+    
+    <div class="panel-content">
+        <h2>PanelBuilder Demo</h2>
+        
+        <div class="info">
+            This panel was created using:<br>
+            <code>PanelBuilder::new()</code><br>
+            <br>
+            Features:<br>
+            • Floating window level<br>
+            • Non-activating panel<br>
+            • Draggable title bar<br>
+            • Resizable borders
+        </div>
+        
+        <div class="controls">
+            <button onclick="hidePanel()">Hide Panel</button>
+            <button onclick="showMainWindow()">Show Main</button>
+        </div>
+        
+        <div class="status" id="status">
+            Click anywhere to test focus behavior
+        </div>
+    </div>
+
+    <script>
+        const { invoke } = window.__TAURI_INTERNALS__;
+        
+        async function hidePanel() {
+            try {
+                await invoke('hide_panel');
+            } catch (error) {
+                console.error('Error hiding panel:', error);
+            }
+        }
+        
+        async function showMainWindow() {
+            // Show the main window if it exists
+            try {
+                const { WebviewWindow } = window.__TAURI__.window;
+                const mainWindow = WebviewWindow.getByLabel('main');
+                if (mainWindow) {
+                    await mainWindow.show();
+                }
+            } catch (error) {
+                console.error('Error showing main window:', error);
+            }
+        }
+        
+        // Update status when panel is clicked
+        document.body.addEventListener('click', (e) => {
+            if (!e.target.matches('button')) {
+                document.getElementById('status').textContent = 
+                    'Panel clicked - check console for focus events';
+            }
+        });
+        
+        // Log when window gains/loses focus
+        window.addEventListener('focus', () => {
+            console.log('Mini panel gained focus');
+        });
+        
+        window.addEventListener('blur', () => {
+            console.log('Mini panel lost focus');
+        });
+    </script>
+</body>
+</html>

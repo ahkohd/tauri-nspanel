@@ -10,19 +10,20 @@ use tauri_nspanel::{
 };
 
 tauri_panel! {
-    panel!(BasicPanel {
+    panel!(MouseTrackingPanel {
         config: {
             canBecomeKeyWindow: true,
+            canBecomeMainWindow: false,
             isFloatingPanel: true
         }
         with: {
-            // Enable mouse tracking for the panel's content view
-            // This allows the panel to receive mouse events even when not key/active
+            // Enable mouse tracking for the panel
             tracking_area: {
                 options: TrackingAreaOptions::new()
                     .active_always()           // Track mouse even when app is not active
                     .mouse_entered_and_exited() // Get notified when mouse enters/exits
-                    .mouse_moved(),             // Track mouse movement
+                    .mouse_moved()             // Track mouse movement
+                    .cursor_update(),          // Track cursor updates
                 auto_resize: true               // Resize tracking area with window
             }
         }
@@ -57,9 +58,30 @@ fn main() {
 fn init(app_handle: &AppHandle) {
   let window: WebviewWindow = app_handle.get_webview_window("main").unwrap();
 
-  let panel = window.to_panel::<BasicPanel>().unwrap();
+  let panel = window.to_panel::<MouseTrackingPanel>().unwrap();
 
   let handler = MyPanelEventHandler::new();
+
+  // Set up mouse event callbacks on the handler
+  handler.on_mouse_entered(|_event| {
+    println!("🐭 Mouse entered the panel!");
+    // In a real app, you could emit a Tauri event here to notify the frontend
+  });
+
+  handler.on_mouse_exited(|_event| {
+    println!("👋 Mouse exited the panel!");
+  });
+
+  handler.on_mouse_moved(|event| {
+    // Get the mouse location relative to the window
+    let location = unsafe { event.locationInWindow() };
+    println!("🏃 Mouse moved to: x={}, y={}", location.x, location.y);
+  });
+
+  handler.on_cursor_update(|_event| {
+    println!("👆 Cursor update requested");
+    // Here you could change the cursor based on what the mouse is hovering over
+  });
 
   let handle = app_handle.to_owned();
 
@@ -90,12 +112,7 @@ fn init(app_handle: &AppHandle) {
 
   panel.set_event_handler(Some(handler.as_protocol_object()));
 
-  // Note: The tracking area is configured in the panel definition above.
-  // Mouse events (mouseEntered, mouseExited, mouseMoved) will be sent to the
-  // panel's content view. To handle these events, you would need to:
-  // 1. Create a custom NSView subclass that overrides these methods
-  // 2. Use JavaScript in your webview to listen for mouse events
-  // 3. Or use Tauri's event system to communicate mouse positions
+  println!("Mouse tracking panel initialized! Move your mouse over the panel to see events.");
 }
 
 #[tauri::command]

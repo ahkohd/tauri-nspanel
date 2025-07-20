@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Mini Panel</title>
+        <style>
+            body {
+                margin: 0;
+                padding: 10px;
+                font-family:
+                    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                    sans-serif;
+                background-color: rgba(240, 240, 240, 0.95);
+                color: #333;
+                user-select: none;
+            }
+
+            .panel-content {
+                text-align: center;
+            }
+
+            h2 {
+                margin-top: 0;
+                color: #555;
+                font-size: 16px;
+            }
+
+            .info {
+                margin: 15px 0;
+                font-size: 14px;
+                color: #666;
+            }
+
+            .controls {
+                margin-top: 5px;
+            }
+
+            button {
+                background-color: #007aff;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 6px;
+                font-size: 14px;
+                cursor: pointer;
+                margin: 0 5px;
+            }
+
+            button:hover {
+                background-color: #0051d5;
+            }
+
+            button:active {
+                background-color: #0041a8;
+            }
+
+            .status {
+                margin-top: 15px;
+                font-size: 12px;
+                color: #888;
+            }
+
+            .drag-region {
+                height: 30px;
+                background-color: rgba(200, 200, 200, 0.5);
+                color: #777;
+                margin-bottom: 10px;
+                border-radius: 10px;
+                cursor: move;
+                text-align: center;
+                font-size: 12px;
+                line-height: 30px;
+                user-select: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div data-tauri-drag-region class="drag-region">drag region</div>
+        <div class="panel-content">
+            <h2>Mini Panel</h2>
+            <textarea autofocus>Hover to activate panel</textarea>
+            <div class="controls">
+                <button onclick="hidePanel()">Hide Panel</button>
+            </div>
+            <div class="status" id="status">
+                Hover or click to test key window behavior
+            </div>
+        </div>
+
+        <script>
+            const { invoke } = window.__TAURI_INTERNALS__;
+
+            async function hidePanel() {
+                await invoke("hide_panel");
+            }
+
+            // Update status when mouse enters/leaves
+            document.body.addEventListener("mouseenter", () => {
+                document.getElementById("status").textContent =
+                    "Mouse inside panel";
+            });
+
+            document.body.addEventListener("mouseleave", () => {
+                document.getElementById("status").textContent =
+                    "Mouse outside panel";
+            });
+
+            // Log when clicked
+            document.body.addEventListener("click", () => {
+                console.log("Panel clicked - check if it became key window");
+            });
+        </script>
+    </body>
+</html>

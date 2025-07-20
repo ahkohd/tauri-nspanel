@@ -21,6 +21,14 @@ pub use objc2_app_kit::{
 /// - `config`: Override NSPanel methods that return boolean values
 /// - `with`: Optional configurations (tracking_area, etc.)
 ///
+/// ## Mouse Tracking:
+/// When you enable tracking_area in the `with` section, mouse event callbacks become available
+/// on your event handler. You can set callbacks for:
+/// - `on_mouse_entered()` - Called when mouse enters the panel
+/// - `on_mouse_exited()` - Called when mouse exits the panel
+/// - `on_mouse_moved()` - Called when mouse moves within the panel
+/// - `on_cursor_update()` - Called when cursor needs to be updated
+///
 /// ## Usage:
 /// ```rust
 /// use tauri_nspanel::{panel, panel_event};
@@ -37,7 +45,8 @@ pub use objc2_app_kit::{
 ///     with: {
 ///         tracking_area: {
 ///             options: NSTrackingAreaOptions::NSTrackingActiveAlways
-///                    | NSTrackingAreaOptions::NSTrackingMouseEnteredAndExited,
+///                    | NSTrackingAreaOptions::NSTrackingMouseEnteredAndExited
+///                    | NSTrackingAreaOptions::NSTrackingMouseMoved,
 ///             auto_resize: true,
 ///         }
 ///     }
@@ -59,6 +68,17 @@ pub use objc2_app_kit::{
 ///         println!("Panel became key window");
 ///         None
 ///     });
+///     
+///     // If tracking_area is enabled, you can set mouse event callbacks
+///     handler.on_mouse_entered(|event| {
+///         println!("Mouse entered the panel");
+///     });
+///     
+///     handler.on_mouse_moved(|event| {
+///         let location = unsafe { event.locationInWindow() };
+///         println!("Mouse moved to: x={}, y={}", location.x, location.y);
+///     });
+///     
 ///     panel.set_event_handler(Some(handler.as_protocol_object()));
 ///     
 ///     Ok(())
@@ -116,6 +136,75 @@ macro_rules! panel {
                             $value
                         }
                     )*)?
+
+                    // Mouse tracking methods - forward to delegate if set
+                    #[unsafe(method(mouseEntered:))]
+                    fn __mouse_entered(&self, event: &$crate::objc2_app_kit::NSEvent) {
+                        unsafe {
+                            let ivars = self.ivars();
+                            let delegate_ptr = ivars.event_handler.get();
+                            if !delegate_ptr.is_null() {
+                                let delegate = delegate_ptr as *const $crate::objc2_foundation::NSObject;
+                                // Check if delegate responds to selector before calling
+                                let selector = $crate::objc2::sel!(mouseEntered:);
+                                let responds: bool = $crate::objc2::msg_send![delegate, respondsToSelector: selector];
+                                if responds {
+                                    let _: () = $crate::objc2::msg_send![delegate, mouseEntered: event];
+                                }
+                            }
+                        }
+                    }
+
+                    #[unsafe(method(mouseExited:))]
+                    fn __mouse_exited(&self, event: &$crate::objc2_app_kit::NSEvent) {
+                        unsafe {
+                            let ivars = self.ivars();
+                            let delegate_ptr = ivars.event_handler.get();
+                            if !delegate_ptr.is_null() {
+                                let delegate = delegate_ptr as *const $crate::objc2_foundation::NSObject;
+                                // Check if delegate responds to selector before calling
+                                let selector = $crate::objc2::sel!(mouseExited:);
+                                let responds: bool = $crate::objc2::msg_send![delegate, respondsToSelector: selector];
+                                if responds {
+                                    let _: () = $crate::objc2::msg_send![delegate, mouseExited: event];
+                                }
+                            }
+                        }
+                    }
+
+                    #[unsafe(method(mouseMoved:))]
+                    fn __mouse_moved(&self, event: &$crate::objc2_app_kit::NSEvent) {
+                        unsafe {
+                            let ivars = self.ivars();
+                            let delegate_ptr = ivars.event_handler.get();
+                            if !delegate_ptr.is_null() {
+                                let delegate = delegate_ptr as *const $crate::objc2_foundation::NSObject;
+                                // Check if delegate responds to selector before calling
+                                let selector = $crate::objc2::sel!(mouseMoved:);
+                                let responds: bool = $crate::objc2::msg_send![delegate, respondsToSelector: selector];
+                                if responds {
+                                    let _: () = $crate::objc2::msg_send![delegate, mouseMoved: event];
+                                }
+                            }
+                        }
+                    }
+
+                    #[unsafe(method(cursorUpdate:))]
+                    fn __cursor_update(&self, event: &$crate::objc2_app_kit::NSEvent) {
+                        unsafe {
+                            let ivars = self.ivars();
+                            let delegate_ptr = ivars.event_handler.get();
+                            if !delegate_ptr.is_null() {
+                                let delegate = delegate_ptr as *const $crate::objc2_foundation::NSObject;
+                                // Check if delegate responds to selector before calling
+                                let selector = $crate::objc2::sel!(cursorUpdate:);
+                                let responds: bool = $crate::objc2::msg_send![delegate, respondsToSelector: selector];
+                                if responds {
+                                    let _: () = $crate::objc2::msg_send![delegate, cursorUpdate: event];
+                                }
+                            }
+                        }
+                    }
                 }
             );
 
@@ -141,6 +230,7 @@ macro_rules! panel {
                     let label = window.label().to_string();
                     <Self as $crate::FromWindow<R>>::from_window(window.clone(), label)
                 }
+
             }
 
             // Implement Panel trait

@@ -236,6 +236,7 @@ The `panel_event!` macro creates an NSWindowDelegate that handles window events.
 - Automatically converts method names to proper Objective-C selectors
 - Requires explicit return type declarations for all methods
 - Supports both void (`-> ()`) and value-returning delegate methods
+- **Mouse tracking**: When you enable `tracking_area` in your panel configuration, mouse event callbacks become available
 
 **Selector generation rules:**
 - Single parameter: `methodName(param)` → `methodName:`
@@ -243,6 +244,66 @@ The `panel_event!` macro creates an NSWindowDelegate that handles window events.
 - Snake_case is automatically converted to camelCase: `to_size` → `toSize`
 
 See the [objc2-app-kit NSWindowDelegate documentation](https://docs.rs/objc2-app-kit/0.3.1/objc2_app_kit/trait.NSWindowDelegate.html) for the complete list of available delegate methods.
+
+#### Mouse tracking events
+
+When you enable `tracking_area` in your panel configuration, the following mouse event callbacks become available on your event handler:
+
+- `on_mouse_entered()` - Called when the mouse enters the panel
+- `on_mouse_exited()` - Called when the mouse exits the panel  
+- `on_mouse_moved()` - Called when the mouse moves within the panel
+- `on_cursor_update()` - Called when the cursor needs to be updated
+
+Example with mouse tracking:
+
+```rust
+tauri_panel! {
+    panel!(MouseTrackingPanel {
+        config: {
+            canBecomeKeyWindow: true
+        }
+        with: {
+            tracking_area: {
+                options: TrackingAreaOptions::new()
+                    .active_always()
+                    .mouse_entered_and_exited()
+                    .mouse_moved()
+                    .cursor_update(),
+                auto_resize: true
+            }
+        }
+    })
+    
+    panel_event!(MouseTrackingPanelDelegate {
+        windowDidBecomeKey(notification: &NSNotification) -> ()
+    })
+}
+
+// Create the event handler and set up mouse callbacks
+let handler = MouseTrackingPanelDelegate::new();
+
+// These methods are available when tracking_area is enabled
+handler.on_mouse_entered(|event| {
+    println!("Mouse entered the panel");
+});
+
+handler.on_mouse_exited(|event| {
+    println!("Mouse exited the panel");
+});
+
+handler.on_mouse_moved(|event| {
+    let location = unsafe { event.locationInWindow() };
+    println!("Mouse moved to: x={}, y={}", location.x, location.y);
+});
+
+handler.on_cursor_update(|event| {
+    println!("Cursor update requested");
+    // You could change the cursor here based on hover state
+});
+
+// Attach the handler to your panel
+panel.set_event_handler(Some(handler.as_protocol_object()));
+```
 
 Example usage:
 
@@ -292,16 +353,10 @@ handler.window_will_resize(|sender, to_size| {
     }
 });
 
-// Option 1: Set event handler using PanelBuilder
 let panel = PanelBuilder::<_, MyInteractivePanel>::new(app.handle(), "my-panel")
     .url(WebviewUrl::App("panel.html".into()))
-    .event_handler(handler.as_protocol_object())
     .build()?;
 
-// Option 2: Set event handler after building
-let panel = PanelBuilder::<_, MyInteractivePanel>::new(app.handle(), "my-panel")
-    .url(WebviewUrl::App("panel.html".into()))
-    .build()?;
 panel.set_event_handler(Some(handler.as_protocol_object()));
 ```
 
@@ -472,12 +527,17 @@ Available style mask options:
 ## Examples
 
 Check out the [examples](/examples) directory for complete working examples:
-- [`panel_macro.rs`](/examples/panel_macro.rs) - Basic panel creation with the macro
-- [`panel_builder.rs`](/examples/panel_builder.rs) - Using the PanelBuilder API
-- [`panel_levels.rs`](/examples/panel_levels.rs) - Demonstrating different window levels  
-- [`collection_behavior.rs`](/examples/collection_behavior.rs) - Combining collection behaviors
-- [`builder_with_custom_panel.rs`](/examples/builder_with_custom_panel.rs) - Using custom panel classes with PanelBuilder
-- [`panel_event_macro.rs`](/examples/panel_event_macro.rs) - Event handling with delegates
+- [`basic/`](/examples/basic/) - Basic panel setup in a vanilla JavaScript Tauri app
+- [`panel_builder/`](/examples/panel_builder/) - Basic panel setup using `PanelBuilder`
+- [`panel_macro`](/examples/panel_macro.rs) - Basic panel creation with the macro
+- [`panel_builder`](/examples/panel_builder.rs) - Using the PanelBuilder API
+- [`panel_levels`](/examples/panel_levels.rs) - Demonstrating different window levels  
+- [`collection_behavior`](/examples/collection_behavior.rs) - Combining collection behaviors
+- [`builder_with_custom_panel`](/examples/builder_with_custom_panel.rs) - Using custom panel classes with PanelBuilder
+- [`panel_event_macro`](/examples/panel_event_macro.rs) - Event handling with delegates
+- [`fullscreen/`](/examples/fullscreen/) - Panel behavior with fullscreen windows (full Tauri app example)
+- [`mouse_tracking/`](/examples/mouse_tracking/) - Mouse tracking events with panels (full Tauri app example with mouse enter/exit/move callbacks)
+- [`hover_activate/`](/examples/hover_activate/) - Auto-activate panel on hover using mouse tracking (full Tauri app example)
 
 ## Thread Safety
 

@@ -101,6 +101,11 @@ macro_rules! panel_event {
                    $(
                        [<$method:snake>]: std::cell::Cell<Option<[<$handler_name $method Callback>]>>,
                    )*
+                   // Mouse event callbacks
+                   mouse_entered_callback: std::cell::Cell<Option<Box<dyn Fn(&$crate::objc2_app_kit::NSEvent)>>>,
+                   mouse_exited_callback: std::cell::Cell<Option<Box<dyn Fn(&$crate::objc2_app_kit::NSEvent)>>>,
+                   mouse_moved_callback: std::cell::Cell<Option<Box<dyn Fn(&$crate::objc2_app_kit::NSEvent)>>>,
+                   cursor_update_callback: std::cell::Cell<Option<Box<dyn Fn(&$crate::objc2_app_kit::NSEvent)>>>,
                 }
 
                 #[allow(clippy::unused_unit)]
@@ -124,10 +129,10 @@ macro_rules! panel_event {
                                 if let Some(callback) = callback {
                                     // Call the callback with typed parameters
                                     let result = callback([<$first_param:lower_camel>] $(, [<$param:lower_camel>])*);
-                                    
+
                                     // Put the callback back
                                     self.ivars().[<$method:snake>].set(Some(callback));
-                                    
+
                                     result
                                 } else {
                                     // Return default value for the type
@@ -135,6 +140,45 @@ macro_rules! panel_event {
                                 }
                             }
                         )*
+                    }
+
+                    impl $handler_name {
+                        // Mouse event methods
+                        #[unsafe(method(mouseEntered:))]
+                        fn mouse_entered(&self, event: &$crate::objc2_app_kit::NSEvent) {
+                            let ivars = self.ivars();
+                            if let Some(callback) = ivars.mouse_entered_callback.take() {
+                                callback(event);
+                                ivars.mouse_entered_callback.set(Some(callback));
+                            }
+                        }
+
+                        #[unsafe(method(mouseExited:))]
+                        fn mouse_exited(&self, event: &$crate::objc2_app_kit::NSEvent) {
+                            let ivars = self.ivars();
+                            if let Some(callback) = ivars.mouse_exited_callback.take() {
+                                callback(event);
+                                ivars.mouse_exited_callback.set(Some(callback));
+                            }
+                        }
+
+                        #[unsafe(method(mouseMoved:))]
+                        fn mouse_moved(&self, event: &$crate::objc2_app_kit::NSEvent) {
+                            let ivars = self.ivars();
+                            if let Some(callback) = ivars.mouse_moved_callback.take() {
+                                callback(event);
+                                ivars.mouse_moved_callback.set(Some(callback));
+                            }
+                        }
+
+                        #[unsafe(method(cursorUpdate:))]
+                        fn cursor_update(&self, event: &$crate::objc2_app_kit::NSEvent) {
+                            let ivars = self.ivars();
+                            if let Some(callback) = ivars.cursor_update_callback.take() {
+                                callback(event);
+                                ivars.cursor_update_callback.set(Some(callback));
+                            }
+                        }
                     }
                 );
 
@@ -152,6 +196,10 @@ macro_rules! panel_event {
                                 $(
                                     [<$method:snake>]: std::cell::Cell::new(None),
                                 )*
+                                mouse_entered_callback: std::cell::Cell::new(None),
+                                mouse_exited_callback: std::cell::Cell::new(None),
+                                mouse_moved_callback: std::cell::Cell::new(None),
+                                cursor_update_callback: std::cell::Cell::new(None),
                             });
                             // Initialize
                             msg_send![super(this), init]
@@ -170,6 +218,39 @@ macro_rules! panel_event {
                             self.ivars().[<$method:snake>].set(Some(boxed_callback));
                         }
                     )*
+
+                    // Mouse event handlers
+                    /// Set the mouse entered callback
+                    pub fn on_mouse_entered<F>(&self, callback: F)
+                    where
+                        F: Fn(&$crate::objc2_app_kit::NSEvent) + 'static
+                    {
+                        self.ivars().mouse_entered_callback.set(Some(Box::new(callback)));
+                    }
+
+                    /// Set the mouse exited callback
+                    pub fn on_mouse_exited<F>(&self, callback: F)
+                    where
+                        F: Fn(&$crate::objc2_app_kit::NSEvent) + 'static
+                    {
+                        self.ivars().mouse_exited_callback.set(Some(Box::new(callback)));
+                    }
+
+                    /// Set the mouse moved callback
+                    pub fn on_mouse_moved<F>(&self, callback: F)
+                    where
+                        F: Fn(&$crate::objc2_app_kit::NSEvent) + 'static
+                    {
+                        self.ivars().mouse_moved_callback.set(Some(Box::new(callback)));
+                    }
+
+                    /// Set the cursor update callback
+                    pub fn on_cursor_update<F>(&self, callback: F)
+                    where
+                        F: Fn(&$crate::objc2_app_kit::NSEvent) + 'static
+                    {
+                        self.ivars().cursor_update_callback.set(Some(Box::new(callback)));
+                    }
 
                     /// Convert to a ProtocolObject for use with NSWindow
                     pub fn as_protocol_object(&self) -> &ProtocolObject<dyn NSWindowDelegate> {

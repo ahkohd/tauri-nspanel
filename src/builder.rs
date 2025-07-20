@@ -1,11 +1,10 @@
 use std::sync::Arc;
 
-use objc2::{runtime::ProtocolObject, ClassType};
-use objc2_app_kit::NSWindowDelegate;
+use objc2::ClassType;
 use objc2_foundation;
 use tauri::{AppHandle, Manager, Position, Runtime, Size, WebviewUrl, WebviewWindowBuilder};
 
-use crate::{EventHandler, FromWindow, Panel, WebviewPanelManager};
+use crate::{FromWindow, Panel, WebviewPanelManager};
 
 /// Type alias for window configuration function
 type WindowConfigFn<'a, R> = Box<
@@ -20,12 +19,12 @@ type WindowConfigFn<'a, R> = Box<
 pub enum PanelLevel {
     /// Normal window level (0)
     Normal,
-    /// Floating window level (3)
-    Floating,
     /// Submenu window level (3)
     Submenu,
     /// Torn-off menu window level (3)
     TornOffMenu,
+    /// Floating window level (4)
+    Floating,
     /// Modal panel window level (8)
     ModalPanel,
     /// Utility window level (19)
@@ -520,7 +519,6 @@ pub struct PanelBuilder<'a, R: Runtime, T: FromWindow<R> + 'static> {
     title: Option<String>,
     position: Option<Position>,
     size: Option<Size>,
-    delegate: Option<ProtocolObject<dyn NSWindowDelegate>>,
     pub(crate) panel_config: PanelConfig,
     window_fn: Option<WindowConfigFn<'a, R>>,
     _phantom: std::marker::PhantomData<T>,
@@ -536,7 +534,6 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
             title: None,
             position: None,
             size: None,
-            delegate: None,
             panel_config: PanelConfig::default(),
             window_fn: None,
             _phantom: std::marker::PhantomData,
@@ -736,12 +733,6 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
         self
     }
 
-    /// Set the event handler (window delegate)
-    pub fn event_handler(mut self, handler: impl EventHandler) -> Self {
-        self.delegate = Some(handler.as_delegate());
-        self
-    }
-
     /// Apply a custom configuration function to the WebviewWindowBuilder
     ///
     /// This allows access to any Tauri window configuration not exposed by the panel builder.
@@ -905,11 +896,6 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
                 // Add tracking area
                 let _: () = objc2::msg_send![&content_view, addTrackingArea: &*tracking_area];
             }
-        }
-
-        // Set event handler if provided
-        if let Some(delegate) = self.delegate {
-            panel.set_event_handler(Some(&delegate));
         }
 
         // Register with manager
