@@ -32,7 +32,7 @@ pub use builder::{CollectionBehavior, PanelBuilder, PanelLevel, StyleMask, Track
 
 // Re-export commonly used types for convenience
 pub use objc2::runtime::AnyObject;
-pub use objc2_app_kit::{NSPanel, NSView, NSWindow};
+pub use objc2_app_kit::{NSPanel, NSResponder, NSView, NSWindow};
 pub use objc2_foundation::{NSNotification, NSObject, NSPoint, NSRect, NSSize};
 
 /// Trait for event handlers that can be used with panels
@@ -151,6 +151,9 @@ pub trait Panel: Send + Sync {
 
     /// Set the style mask
     fn set_style_mask(&self, style_mask: objc2_app_kit::NSWindowStyleMask);
+
+    /// Make a view the first responder
+    fn make_first_responder(&self, responder: Option<&objc2_app_kit::NSResponder>) -> bool;
 }
 
 /// Trait for panels that can be created from a window

@@ -1,6 +1,8 @@
 # tauri-nspanel
 
-Create macOS panels for your Tauri app. Convert a regular window into a panel, or create new panels with the panel builder.
+Create macOS panels for your Tauri app. Convert a regular window into a panel, or configure a new window with the panel builder.
+
+> **Note**: For the previous version, see the [v2 branch](https://github.com/ahkohd/tauri-nspanel/tree/v2).
 
 ## What are panels?
 
@@ -133,18 +135,12 @@ let panel = PanelBuilder::<_, AdvancedPanel>::new(app.handle(), "advanced-panel"
             .can_join_all_spaces()
             .stationary()
     )
-    .tracking_area(
-        TrackingAreaOptions::new()
-            .active_always()
-            .mouse_entered_and_exited()
-            .mouse_moved(),
-        true  // auto_resize
-    )
     .alpha_value(0.95)
     .has_shadow(true)
     .with_window(|window| {
         // Access any Tauri window configuration
         window
+            .decorations(false)
             .min_inner_size(300.0, 200.0)
             .max_inner_size(800.0, 600.0)
             .resizable(false)
