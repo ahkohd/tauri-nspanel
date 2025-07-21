@@ -111,7 +111,7 @@ fn init(app_handle: &AppHandle) {
 fn show_panel(handle: AppHandle) {
   let panel = handle.get_webview_panel("main").unwrap();
 
-  panel.show();
+  panel.show_and_make_key();
 }
 
 #[tauri::command]

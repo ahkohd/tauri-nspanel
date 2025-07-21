@@ -51,26 +51,23 @@ fn init(app_handle: &AppHandle) {
       y: 100.0,
     }))
     .size(Size::Logical(LogicalSize::<f64> {
-      width: 300.0,
-      height: 200.0,
+      width: 350.0,
+      height: 350.0,
     }))
     .level(PanelLevel::Floating)
     .has_shadow(true)
+    .collection_behavior(
+      CollectionBehavior::new()
+        .can_join_all_spaces()
+        .stationary()
+        .into(),
+    )
+    .hides_on_deactivate(false)
+    .works_when_modal(true)
+    .with_window(|w| w.decorations(false))
+    .style_mask(StyleMask::empty().nonactivating_panel().resizable().into())
     .build()
     .expect("Failed to create mini panel");
-
-  // Configure panel behavior
-  panel.set_style_mask(StyleMask::empty().nonactivating_panel().resizable().into());
-
-  panel.set_collection_behavior(
-    CollectionBehavior::new()
-      .can_join_all_spaces()
-      .stationary()
-      .into(),
-  );
-
-  panel.set_hides_on_deactivate(false);
-  panel.set_works_when_modal(true);
 
   // Print panel info
   println!("Panel created with PanelBuilder!");
@@ -98,13 +95,13 @@ fn init(app_handle: &AppHandle) {
   panel.set_event_handler(Some(handler.as_protocol_object()));
 
   // Show the panel
-  panel.show();
+  panel.show_and_make_key();
 }
 
 #[tauri::command]
 fn show_panel(handle: AppHandle) {
   let panel = handle.get_webview_panel("mini-panel").unwrap();
-  panel.show();
+  panel.show_and_make_key();
 }
 
 #[tauri::command]

@@ -1,10 +1,8 @@
 use std::sync::Arc;
 
-use objc2::ClassType;
-use objc2_foundation;
-use tauri::{AppHandle, Manager, Position, Runtime, Size, WebviewUrl, WebviewWindowBuilder};
+use tauri::{AppHandle, Position, Runtime, Size, WebviewUrl, WebviewWindowBuilder};
 
-use crate::{FromWindow, Panel, WebviewPanelManager};
+use crate::{FromWindow, Panel, WebviewWindowExt};
 
 /// Type alias for window configuration function
 type WindowConfigFn<'a, R> = Box<
@@ -476,8 +474,6 @@ pub(crate) struct PanelConfig {
     pub content_size: Option<Size>,
     pub style_mask: Option<StyleMask>,
     pub collection_behavior: Option<CollectionBehavior>,
-    pub tracking_area_options: Option<TrackingAreaOptions>,
-    pub tracking_area_auto_resize: bool,
 }
 
 /// Builder for creating panels with Tauri-like API
@@ -705,34 +701,6 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
         self
     }
 
-    /// Add a tracking area to the panel's content view
-    ///
-    /// Tracking areas enable mouse event tracking within the panel. The `auto_resize`
-    /// parameter determines whether the content view should automatically resize with
-    /// the window.
-    ///
-    /// # Arguments
-    /// - `options`: The tracking area options specifying which events to track
-    /// - `auto_resize`: Whether to enable auto-resizing for the content view
-    ///
-    /// # Example
-    /// ```rust
-    /// PanelBuilder::new(&app, "my-panel")
-    ///     .tracking_area(
-    ///         TrackingAreaOptions::new()
-    ///             .active_always()
-    ///             .mouse_entered_and_exited()
-    ///             .mouse_moved(),
-    ///         true  // auto_resize
-    ///     )
-    ///     .build()
-    /// ```
-    pub fn tracking_area(mut self, options: TrackingAreaOptions, auto_resize: bool) -> Self {
-        self.panel_config.tracking_area_options = Some(options);
-        self.panel_config.tracking_area_auto_resize = auto_resize;
-        self
-    }
-
     /// Apply a custom configuration function to the WebviewWindowBuilder
     ///
     /// This allows access to any Tauri window configuration not exposed by the panel builder.
@@ -808,9 +776,8 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
         // Build the window
         let window = window_builder.build()?;
 
-        // Convert to panel using the generic type
-        let panel = T::from_window(window, self.label.clone())?;
-        let panel = Arc::new(panel) as Arc<dyn Panel>;
+        // Convert to panel
+        let panel = window.to_panel::<T>().unwrap();
 
         // Apply panel configuration using the Panel trait methods
         if let Some(floating) = self.panel_config.floating {
@@ -849,63 +816,12 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
         if let Some(value) = self.panel_config.works_when_modal {
             panel.set_works_when_modal(value);
         }
-        if let Some(size) = self.panel_config.content_size {
-            let (width, height) = match size {
-                Size::Physical(s) => (s.width as f64, s.height as f64),
-                Size::Logical(s) => (s.width, s.height),
-            };
-            panel.set_content_size(width, height);
-        }
         if let Some(style_mask) = self.panel_config.style_mask {
             panel.set_style_mask(style_mask.0);
         }
         if let Some(behavior) = self.panel_config.collection_behavior {
             panel.set_collection_behavior(behavior.0);
         }
-
-        // Add tracking area if configured
-        // This still needs unsafe access since tracking areas aren't part of the Panel trait
-        if let Some(tracking_options) = self.panel_config.tracking_area_options {
-            let ns_panel = panel.as_panel();
-            unsafe {
-                let content_view: objc2::rc::Retained<objc2_app_kit::NSView> =
-                    objc2::msg_send![ns_panel, contentView];
-                let bounds: objc2_foundation::NSRect = objc2::msg_send![&content_view, bounds];
-
-                // Create tracking area
-                let tracking_area: objc2::rc::Retained<objc2_app_kit::NSTrackingArea> = {
-                    let alloc: *mut objc2_app_kit::NSTrackingArea =
-                        objc2::msg_send![objc2_app_kit::NSTrackingArea::class(), alloc];
-                    let area: *mut objc2_app_kit::NSTrackingArea = objc2::msg_send![
-                        alloc,
-                        initWithRect: bounds,
-                        options: tracking_options.0,
-                        owner: &*content_view,
-                        userInfo: objc2::ffi::nil
-                    ];
-                    objc2::rc::Retained::from_raw(area).unwrap()
-                };
-
-                // Set auto-resizing if requested
-                if self.panel_config.tracking_area_auto_resize {
-                    let resize_mask = objc2_app_kit::NSAutoresizingMaskOptions::ViewWidthSizable
-                        | objc2_app_kit::NSAutoresizingMaskOptions::ViewHeightSizable;
-                    let _: () = objc2::msg_send![&content_view, setAutoresizingMask: resize_mask];
-                }
-
-                // Add tracking area
-                let _: () = objc2::msg_send![&content_view, addTrackingArea: &*tracking_area];
-            }
-        }
-
-        // Register with manager
-        let manager = self.handle.state::<WebviewPanelManager>();
-        manager
-            .0
-            .lock()
-            .unwrap()
-            .panels
-            .insert(self.label, panel.clone());
 
         Ok(panel)
     }

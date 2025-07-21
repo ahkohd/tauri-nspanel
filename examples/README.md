@@ -15,6 +15,7 @@ These examples demonstrate various features and use cases of [tauri-nspanel](htt
 - [panel_macro](./panel_macro.rs): Basic panel creation with the macro
 - [panel_builder](./panel_builder.rs): Using the PanelBuilder API
 - [panel_levels](./panel_levels.rs): Demonstrating different window levels
+- [panel_style_mask](./panel_style_mask.rs): Different NSWindowStyleMask configurations for panels
 - [collection_behavior](./collection_behavior.rs): Combining collection behaviors
 - [builder_with_custom_panel](./builder_with_custom_panel.rs): Using custom panel classes with PanelBuilder
 - [panel_event_macro](./panel_event_macro.rs): Event handling with delegates

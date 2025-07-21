@@ -73,8 +73,6 @@ fn create_custom_panels<R: Runtime>(app: &AppHandle<R>) -> Result<(), Box<dyn st
         .title("Interactive Panel")
         .level(PanelLevel::Utility)
         .size(tauri::Size::Logical(tauri::LogicalSize::new(500.0, 400.0)))
-        // Can still add more tracking if needed
-        .tracking_area(TrackingAreaOptions::new().cursor_update(), false)
         .with_window(|window| {
             window
                 .min_inner_size(300.0, 200.0)
@@ -103,4 +101,3 @@ fn main() {
         "To run this in a real app, use the create_custom_panels function in your Tauri setup."
     );
 }
-

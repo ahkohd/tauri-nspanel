@@ -372,7 +372,7 @@ macro_rules! panel {
                     unsafe {
                         let content_view: $crate::objc2::rc::Retained<$crate::objc2_app_kit::NSView> =
                             $crate::objc2::msg_send![&*self.panel, contentView];
-                        let _: () = $crate::objc2::msg_send![&*self.panel, makeFirstResponder: &*content_view];
+                        let _: bool = $crate::objc2::msg_send![&*self.panel, makeFirstResponder: &*content_view];
                         let _: () = $crate::objc2::msg_send![&*self.panel, orderFrontRegardless];
                         let _: () = $crate::objc2::msg_send![&*self.panel, makeKeyWindow];
                     }
@@ -479,6 +479,16 @@ macro_rules! panel {
                 fn set_style_mask(&self, style_mask: $crate::objc2_app_kit::NSWindowStyleMask) {
                     unsafe {
                         let _: () = $crate::objc2::msg_send![&*self.panel, setStyleMask: style_mask];
+                    }
+                }
+
+                fn make_first_responder(&self, responder: Option<&$crate::objc2_app_kit::NSResponder>) -> bool {
+                    unsafe {
+                        let result: bool = match responder {
+                            Some(resp) => $crate::objc2::msg_send![&*self.panel, makeFirstResponder: resp],
+                            None => $crate::objc2::msg_send![&*self.panel, makeFirstResponder: $crate::objc2::ffi::nil],
+                        };
+                        result
                     }
                 }
             }
