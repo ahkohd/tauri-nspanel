@@ -33,6 +33,9 @@ fn main() {
       close_panel
     ])
     .setup(|app| {
+      // Set activation policy to Accessory to prevent the app icon from showing on the dock
+      app.set_activation_policy(tauri::ActivationPolicy::Accessory);
+
       init(app.app_handle());
 
       Ok(())
@@ -56,16 +59,13 @@ fn init(app_handle: &AppHandle) {
     }))
     .level(PanelLevel::Floating)
     .has_shadow(true)
-    .collection_behavior(
-      CollectionBehavior::new()
-        .can_join_all_spaces()
-        .stationary()
-        .into(),
-    )
+    .collection_behavior(CollectionBehavior::new().can_join_all_spaces().stationary())
     .hides_on_deactivate(false)
     .works_when_modal(true)
     .with_window(|w| w.decorations(false))
-    .style_mask(StyleMask::empty().nonactivating_panel().resizable().into())
+    .style_mask(StyleMask::empty().nonactivating_panel().resizable())
+    // Prevent the panel from stealing focus when created (works especially well with Accessory policy)
+    .no_activate(true)
     .build()
     .expect("Failed to create mini panel");
 

@@ -10,6 +10,7 @@ This example demonstrates how to use the `PanelBuilder` API to create NSPanel wi
 - **Adding drag regions** for window movement
 - **Setting up event handlers** for panel lifecycle events
 - **Managing multiple windows** (main window + floating panel)
+- **Preventing focus stealing** - The app uses `ActivationPolicy::Accessory` (no dock icon) and `no_activate(true)` to ensure panels appear without stealing focus
 
 ## Running the Example
 
@@ -21,9 +22,25 @@ npm run tauri dev
 
 ## Key Implementation Details
 
-### 1. Using PanelBuilder
+### 1. Preventing Focus Stealing at Window Creation
 
-Unlike converting an existing window with `window.to_panel()`, PanelBuilder creates panels from scratch:
+Since PanelBuilder creates a regular window first before converting it to a panel, the window creation can steal focus. The example demonstrates how to prevent this:
+
+```rust
+// In setup(), set the app to Accessory mode (no dock icon, doesn't activate)
+app.set_activation_policy(tauri::ActivationPolicy::Accessory);
+
+// When building the panel, use no_activate(true)
+PanelBuilder::new(...)
+    .no_activate(true)  // Temporarily sets activation policy to Prohibited during window creation
+    .build()
+```
+
+This ensures the window is created silently before being converted to a panel, preventing any focus interruption.
+
+### 2. Using PanelBuilder
+
+PanelBuilder provides a convenient API that creates a window and converts it to a panel, applying all configurations in one fluent interface:
 
 ```rust
 let panel = PanelBuilder::<_, MiniPanel>::new(app_handle, "mini-panel")
@@ -49,11 +66,12 @@ let panel = PanelBuilder::<_, MiniPanel>::new(app_handle, "mini-panel")
     .works_when_modal(true)
     .with_window(|w| w.decorations(false))
     .style_mask(StyleMask::empty().nonactivating_panel().resizable().into())
+    .no_activate(true)  // Prevent focus stealing when created
     .build()
     .expect("Failed to create mini panel");
 ```
 
-### 2. Custom Panel Class
+### 3. Custom Panel Class
 
 The example defines a custom panel class with specific configuration:
 
@@ -67,11 +85,11 @@ panel!(MiniPanel {
 })
 ```
 
-### 3. Configuring Panel Behavior
+### 4. Configuring Panel Behavior
 
 The PanelBuilder API allows you to configure all panel properties directly in the builder chain, including style mask, collection behavior, and other settings. This is more convenient than setting them after creation.
 
-### 4. Drag Region
+### 5. Drag Region
 
 The mini panel includes a drag region for window movement:
 
@@ -91,7 +109,7 @@ Required permissions in `capabilities/default.json`:
 }
 ```
 
-### 5. Event Handlers
+### 6. Event Handlers
 
 The example shows how to attach event handlers to the panel:
 
@@ -113,6 +131,8 @@ panel.show_and_make_key();
 ```
 
 ## PanelBuilder API Reference
+
+PanelBuilder creates a window via Tauri's WebviewWindowBuilder, converts it to a panel, and applies all configurations.
 
 ### Builder Methods
 
@@ -137,6 +157,7 @@ panel.show_and_make_key();
 - `movable_by_window_background(bool)` - Allow dragging by background
 - `released_when_closed(bool)` - Release panel when closed
 - `works_when_modal(bool)` - Work with modal dialogs
+- `no_activate(bool)` - Prevent panel from stealing focus when created
 
 #### Advanced Configuration
 - `style_mask(StyleMask)` - Set window style mask

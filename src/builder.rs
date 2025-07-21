@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use objc2_app_kit::{NSApplication, NSApplicationActivationPolicy};
+use objc2_foundation::MainThreadMarker;
 use tauri::{AppHandle, Position, Runtime, Size, WebviewUrl, WebviewWindowBuilder};
 
 use crate::{FromWindow, Panel, WebviewWindowExt};
@@ -474,13 +476,15 @@ pub(crate) struct PanelConfig {
     pub content_size: Option<Size>,
     pub style_mask: Option<StyleMask>,
     pub collection_behavior: Option<CollectionBehavior>,
+    pub no_activate: Option<bool>,
 }
 
 /// Builder for creating panels with Tauri-like API
 ///
-/// The builder provides a fluent interface for creating NSPanel windows with
-/// various configurations. It can work with both the default panel type or
-/// custom panel classes created with the `panel!` macro.
+/// PanelBuilder provides a fluent interface that creates a Tauri window,
+/// converts it to an NSPanel, and applies panel-specific configurations.
+/// It can work with both the default panel type or custom panel classes
+/// created with the `panel!` macro.
 ///
 /// # Type Parameters
 /// - `R`: The Tauri runtime type
@@ -701,6 +705,30 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
         self
     }
 
+    /// Prevent focus stealing during window creation
+    ///
+    /// Since PanelBuilder creates a regular window before converting it to a panel,
+    /// the window creation phase can steal focus. When set to true, the application's
+    /// activation policy is temporarily set to Prohibited during window creation,
+    /// preventing this focus interruption.
+    ///
+    /// This works particularly well with apps that use `ActivationPolicy::Accessory`,
+    /// ensuring the window is created silently before being converted to a panel.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a utility panel that doesn't steal focus
+    /// PanelBuilder::new(&app, "utility")
+    ///     .url(WebviewUrl::App("utility.html".into()))
+    ///     .no_activate(true)
+    ///     .level(PanelLevel::Floating)
+    ///     .build();
+    /// ```
+    pub fn no_activate(mut self, no_activate: bool) -> Self {
+        self.panel_config.no_activate = Some(no_activate);
+        self
+    }
+
     /// Apply a custom configuration function to the WebviewWindowBuilder
     ///
     /// This allows access to any Tauri window configuration not exposed by the panel builder.
@@ -734,7 +762,22 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
     }
 
     /// Build the panel
+    ///
+    /// Creates a Tauri window using the configured properties, converts it to
+    /// an NSPanel, and applies all panel-specific settings.
     pub fn build(self) -> tauri::Result<Arc<dyn Panel>> {
+        // Handle no_activate option by temporarily changing activation policy
+        let original_policy = if self.panel_config.no_activate.unwrap_or(false) {
+            MainThreadMarker::new().map(|mtm| unsafe {
+                let app = NSApplication::sharedApplication(mtm);
+                let current_policy = app.activationPolicy();
+                let _success = app.setActivationPolicy(NSApplicationActivationPolicy::Prohibited);
+                current_policy
+            })
+        } else {
+            None
+        };
+
         // Create a window first
         let mut window_builder = WebviewWindowBuilder::new(
             self.handle,
@@ -821,6 +864,14 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
         }
         if let Some(behavior) = self.panel_config.collection_behavior {
             panel.set_collection_behavior(behavior.0);
+        }
+
+        // Restore original activation policy if we changed it
+        if let Some(policy) = original_policy {
+            if let Some(mtm) = MainThreadMarker::new() {
+                let app = NSApplication::sharedApplication(mtm);
+                let _success = app.setActivationPolicy(policy);
+            }
         }
 
         Ok(panel)
