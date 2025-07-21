@@ -5,8 +5,6 @@ pub mod panel;
 
 // Re-export for macro usage
 #[doc(hidden)]
-pub use block2;
-#[doc(hidden)]
 pub use objc2;
 #[doc(hidden)]
 pub use objc2_app_kit;
