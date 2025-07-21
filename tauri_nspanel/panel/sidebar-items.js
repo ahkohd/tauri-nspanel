@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["NSAutoresizingMaskOptions","NSTrackingAreaOptions","NSWindowCollectionBehavior","NSWindowStyleMask"]};

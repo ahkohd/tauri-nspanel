@@ -1,0 +1,105 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Macro to create a custom NSPanel class"><title>panel in tauri_nspanel - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../static.files/rustdoc-1a91846b.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="tauri_nspanel" data-themes="" data-resource-suffix="" data-rustdoc-version="1.88.0 (6b00bc388 2025-06-23)" data-channel="1.88.0" data-search-js="search-f7877310.js" data-settings-js="settings-5514c975.js" ><script src="../static.files/storage-4e99c027.js"></script><script defer src="sidebar-items.js"></script><script defer src="../static.files/main-7ef8a74a.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-044be391.svg"></head><body class="rustdoc macro"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../tauri_nspanel/index.html">tauri_<wbr>nspanel</a><span class="version">2.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">panel</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#sections" title="Sections:">Sections:</a></li><li><a href="#mouse-tracking" title="Mouse Tracking:">Mouse Tracking:</a></li><li><a href="#usage" title="Usage:">Usage:</a></li><li><a href="#available-methods" title="Available Methods:">Available Methods:</a></li></ul></section><div id="rustdoc-modnav"><h2 class="in-crate"><a href="index.html">In crate tauri_<wbr>nspanel</a></h2></div></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="index.html">tauri_nspanel</a></div><h1>Macro <span class="macro">panel</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../src/tauri_nspanel/panel.rs.html#97-611">Source</a> </span></div><pre class="rust item-decl"><code>macro_rules! panel {
+    (
+        $class_name:ident {
+            $(config: {
+                $($method:ident: $value:expr),* $(,)?
+            })?
+            $(with: {
+                $(tracking_area: {
+                    options: $tracking_options:expr,
+                    auto_resize: $auto_resize:expr $(,)?
+                })?
+            })?
+        }
+    ) =&gt; { ... };
+}</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Macro to create a custom NSPanel class</p>
+<p>This macro generates a custom NSPanel subclass with the specified configuration.
+The first parameter is the name of your custom panel class.</p>
+<p><strong>Implementation Details</strong>:</p>
+<ul>
+<li>The macro generates an internal <code>Raw{ClassName}</code> Objective-C class</li>
+<li>A public <code>{ClassName}</code> wrapper type that implements <code>Send</code> and <code>Sync</code></li>
+<li>All methods are implemented on the wrapper type</li>
+</ul>
+<p><strong>Thread Safety</strong>: The wrapper type implements <code>Send</code> and <code>Sync</code> to allow
+passing references through Tauri’s command system. However, all actual panel
+operations must be performed on the main thread.</p>
+<h3 id="sections"><a class="doc-anchor" href="#sections">§</a>Sections:</h3>
+<ul>
+<li><code>config</code>: Override NSPanel methods that return boolean values</li>
+<li><code>with</code>: Optional configurations (tracking_area, etc.)</li>
+</ul>
+<h3 id="mouse-tracking"><a class="doc-anchor" href="#mouse-tracking">§</a>Mouse Tracking:</h3>
+<p>When you enable tracking_area in the <code>with</code> section, mouse event callbacks become available
+on your event handler. You can set callbacks for:</p>
+<ul>
+<li><code>on_mouse_entered()</code> - Called when mouse enters the panel</li>
+<li><code>on_mouse_exited()</code> - Called when mouse exits the panel</li>
+<li><code>on_mouse_moved()</code> - Called when mouse moves within the panel</li>
+<li><code>on_cursor_update()</code> - Called when cursor needs to be updated</li>
+</ul>
+<h3 id="usage"><a class="doc-anchor" href="#usage">§</a>Usage:</h3>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>tauri_nspanel::{panel, panel_event};
+<span class="kw">use </span>tauri_nspanel::event::EventReturn;
+
+<span class="comment">// Define your custom panel class
+</span><span class="macro">panel!</span>(MyCustomPanel {
+    <span class="comment">// Config overrides - these affect compile-time behavior
+    </span>config: {
+        canBecomeKeyWindow: <span class="bool-val">true</span>,
+        canBecomeMainWindow: <span class="bool-val">false</span>,
+    },
+    <span class="comment">// Optional configurations
+    </span>with: {
+        tracking_area: {
+            options: NSTrackingAreaOptions::NSTrackingActiveAlways
+                   | NSTrackingAreaOptions::NSTrackingMouseEnteredAndExited
+                   | NSTrackingAreaOptions::NSTrackingMouseMoved,
+            auto_resize: <span class="bool-val">true</span>,
+        }
+    }
+});
+
+<span class="comment">// In your Tauri app:
+</span><span class="kw">fn </span>create_panel(window: tauri::WebviewWindow) -&gt; <span class="prelude-ty">Result</span>&lt;(), Box&lt;<span class="kw">dyn </span>std::error::Error&gt;&gt; {
+    <span class="comment">// Convert existing Tauri window to your custom panel
+    </span><span class="kw">let </span>panel = MyCustomPanel::from_window(window)<span class="question-mark">?</span>;
+     
+    <span class="comment">// Use control methods
+    </span>panel.show();
+    panel.set_level(<span class="number">5i64</span>); <span class="comment">// NSStatusWindowLevel
+    </span>panel.set_floating_panel(<span class="bool-val">true</span>);
+     
+    <span class="comment">// Create and attach an event handler
+    </span><span class="kw">let </span>handler = MyPanelEventHandler::new();
+    handler.window_did_become_key(|args| {
+        <span class="macro">println!</span>(<span class="string">"Panel became key window"</span>);
+        <span class="prelude-val">None
+    </span>});
+     
+    <span class="comment">// If tracking_area is enabled, you can set mouse event callbacks
+    </span>handler.on_mouse_entered(|event| {
+        <span class="macro">println!</span>(<span class="string">"Mouse entered the panel"</span>);
+    });
+     
+    handler.on_mouse_moved(|event| {
+        <span class="kw">let </span>location = <span class="kw">unsafe </span>{ event.locationInWindow() };
+        <span class="macro">println!</span>(<span class="string">"Mouse moved to: x={}, y={}"</span>, location.x, location.y);
+    });
+     
+    panel.set_event_handler(<span class="prelude-val">Some</span>(handler.as_protocol_object()));
+     
+    <span class="prelude-val">Ok</span>(())
+}</code></pre></div>
+<h3 id="available-methods"><a class="doc-anchor" href="#available-methods">§</a>Available Methods:</h3>
+<ul>
+<li><code>show()</code>, <code>hide()</code>, <code>close()</code></li>
+<li><code>make_key_window()</code>, <code>resign_key_window()</code></li>
+<li><code>set_level()</code>, <code>set_alpha_value()</code>, <code>set_content_size()</code></li>
+<li><code>set_floating_panel()</code>, <code>set_has_shadow()</code>, <code>set_opaque()</code></li>
+<li><code>set_accepts_mouse_moved_events()</code>, <code>set_ignores_mouse_events()</code></li>
+<li>And many more…</li>
+</ul>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code></code></pre></div>
+</div></details></section></div></main></body></html>

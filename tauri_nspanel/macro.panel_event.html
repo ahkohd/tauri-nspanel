@@ -1,0 +1,92 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Macro to create a custom event handler for panels"><title>panel_event in tauri_nspanel - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../static.files/rustdoc-1a91846b.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="tauri_nspanel" data-themes="" data-resource-suffix="" data-rustdoc-version="1.88.0 (6b00bc388 2025-06-23)" data-channel="1.88.0" data-search-js="search-f7877310.js" data-settings-js="settings-5514c975.js" ><script src="../static.files/storage-4e99c027.js"></script><script defer src="sidebar-items.js"></script><script defer src="../static.files/main-7ef8a74a.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-044be391.svg"></head><body class="rustdoc macro"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../tauri_nspanel/index.html">tauri_<wbr>nspanel</a><span class="version">2.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">panel_<wbr>event</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#references" title="References">References</a></li><li><a href="#selector-generation-rules" title="Selector Generation Rules">Selector Generation Rules</a></li><li><a href="#type-specification" title="Type Specification">Type Specification</a><ul><li><a href="#return-values" title="Return Values">Return Values</a></li></ul></li></ul></section><div id="rustdoc-modnav"><h2 class="in-crate"><a href="index.html">In crate tauri_<wbr>nspanel</a></h2></div></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="index.html">tauri_nspanel</a></div><h1>Macro <span class="macro">panel_event</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../src/tauri_nspanel/event.rs.html#84-265">Source</a> </span></div><pre class="rust item-decl"><code>macro_rules! panel_event {
+    (
+        $handler_name:ident {
+            $(
+                $method:ident ( $first_param:ident : $first_type:ty $(, $param:ident : $param_type:ty)* $(,)? ) -&gt; $return_type:ty
+            ),* $(,)?
+        }
+    ) =&gt; { ... };
+}</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Macro to create a custom event handler for panels</p>
+<p>This creates an NSWindowDelegate that responds to window events with type-safe callbacks.</p>
+<p>This macro generates a type-safe delegate class with strongly typed callbacks.
+Users specify parameter types directly in the macro, and callbacks receive
+properly typed arguments instead of raw pointers.</p>
+<h2 id="references"><a class="doc-anchor" href="#references">§</a>References</h2>
+<ul>
+<li><a href="https://docs.rs/objc2-app-kit/0.3.1/objc2_app_kit/trait.NSWindowDelegate.html">objc2 NSWindowDelegate trait documentation</a></li>
+<li><a href="https://developer.apple.com/documentation/appkit/nswindowdelegate">Apple NSWindowDelegate documentation</a></li>
+</ul>
+<h2 id="selector-generation-rules"><a class="doc-anchor" href="#selector-generation-rules">§</a>Selector Generation Rules</h2>
+<p>The macro generates Objective-C selectors based on how you declare the methods:</p>
+<ul>
+<li>
+<p><strong>Single parameter</strong>: <code>methodName(param: Type)</code> → <code>methodName:</code></p>
+<ul>
+<li>Example: <code>windowDidBecomeKey(notification: &amp;NSNotification)</code> → <code>windowDidBecomeKey:</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Multiple parameters</strong>: <code>methodName(first: Type1, second: Type2)</code> → <code>methodName:second:</code></p>
+<ul>
+<li>Example: <code>windowWillResize(window: &amp;NSWindow, to_size: &amp;NSSize)</code> → <code>windowWillResize:toSize:</code></li>
+<li>The first parameter is always anonymous (<code>:</code>) in the selector</li>
+<li>Subsequent parameters use their names as selector parts</li>
+</ul>
+</li>
+</ul>
+<p><strong>Parameter Naming</strong>: The macro automatically converts snake_case to camelCase:</p>
+<ul>
+<li><code>to_size</code> → <code>toSize</code></li>
+<li><code>to_object</code> → <code>toObject</code></li>
+<li><code>for_client</code> → <code>forClient</code></li>
+</ul>
+<p>You can use Rust’s conventional snake_case naming and the macro will generate
+the correct camelCase selectors to match Apple’s NSWindowDelegate signatures.</p>
+<p><strong>Important</strong>: Always check the references above to ensure your method names and
+parameter names match the exact NSWindowDelegate protocol signatures.</p>
+<p>Usage:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>tauri_nspanel::tauri_panel;
+
+<span class="macro">tauri_panel!</span> {
+    <span class="macro">panel_event!</span>(MyPanelEventHandler {
+        windowDidBecomeKey(notification: <span class="kw-2">&amp;</span>NSNotification) -&gt; (),
+        windowShouldClose(window: <span class="kw-2">&amp;</span>NSWindow) -&gt; Bool,
+        windowWillResize(window: <span class="kw-2">&amp;</span>NSWindow, to_size: <span class="kw-2">&amp;</span>NSSize) -&gt; NSSize,
+        windowWillReturnFieldEditor(sender: <span class="kw-2">&amp;</span>NSWindow, client: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>AnyObject&gt;) -&gt; <span class="prelude-ty">Option</span>&lt;Retained&lt;NSObject&gt;&gt;
+    })
+}
+
+<span class="kw">let </span>handler = MyPanelEventHandler::new();
+
+handler.window_did_become_key(|notification| {
+    <span class="comment">// notification is already typed as &amp;NSNotification
+    </span><span class="macro">println!</span>(<span class="string">"Window became key: {:?}"</span>, notification);
+});
+
+handler.window_should_close(|window| {
+    <span class="comment">// window is already typed as &amp;NSWindow
+    </span><span class="macro">println!</span>(<span class="string">"Should close window: {:?}?"</span>, window);
+    Bool::new(<span class="bool-val">true</span>) <span class="comment">// Allow closing
+</span>});</code></pre></div>
+<h2 id="type-specification"><a class="doc-anchor" href="#type-specification">§</a>Type Specification</h2>
+<p>You must specify the exact types for parameters, including references:</p>
+<ul>
+<li>Object types usually take references: <code>&amp;NSWindow</code>, <code>&amp;NSNotification</code></li>
+<li>Value types also take references: <code>&amp;NSSize</code>, <code>&amp;NSRect</code>, <code>&amp;NSPoint</code></li>
+<li>Optional parameters: <code>Option&lt;&amp;AnyObject&gt;</code></li>
+<li>The macro does NOT automatically add references</li>
+</ul>
+<h3 id="return-values"><a class="doc-anchor" href="#return-values">§</a>Return Values</h3>
+<p>Methods must specify their return type explicitly:</p>
+<ul>
+<li><code>-&gt; ()</code> for void methods (no return value)</li>
+<li><code>-&gt; Bool</code> for BOOL returns (objc2 Bool type)</li>
+<li><code>-&gt; Option&lt;Retained&lt;NSObject&gt;&gt;</code> for nullable object returns</li>
+<li><code>-&gt; NSSize</code> for NSSize value returns</li>
+<li><code>-&gt; NSRect</code> for NSRect value returns</li>
+<li><code>-&gt; NSPoint</code> for NSPoint value returns</li>
+<li>Other types as needed by the delegate method</li>
+</ul>
+<p>The macro handles conversion between Rust types and Objective-C types automatically.</p>
+</div></details></section></div></main></body></html>
