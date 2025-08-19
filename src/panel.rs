@@ -505,7 +505,7 @@ macro_rules! panel {
 
                     unsafe {
                         // Use object_setClass from the runtime
-                        extern "C" {
+                        unsafe extern "C" {
                             fn object_setClass(
                                 obj: *mut $crate::objc2_foundation::NSObject,
                                 cls: *const $crate::objc2::runtime::AnyClass,
@@ -528,6 +528,9 @@ macro_rules! panel {
                                 "Failed to retain panel",
                             ))
                         })?;
+
+                        // Initialize the ivars properly after class change
+                        (*panel).ivars().event_handler.set(std::ptr::null());
 
                         // Add tracking area if configured
                         $($(
