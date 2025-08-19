@@ -114,5 +114,7 @@ fn hide_panel(handle: AppHandle) {
 fn close_panel(handle: AppHandle) {
   let panel = handle.get_webview_panel("mini-panel").unwrap();
   panel.set_released_when_closed(true);
+  // release the event handler if any
+  panel.set_event_handler(None);
   panel.close();
 }

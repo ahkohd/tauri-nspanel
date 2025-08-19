@@ -384,6 +384,8 @@ Panels are not automatically released when closed. To ensure proper cleanup:
 
 ```rust
 panel.set_released_when_closed(true);
+// release the event handler if any
+panel.set_event_handler(None);
 panel.close();
 ```
 

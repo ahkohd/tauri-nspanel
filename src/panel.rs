@@ -558,19 +558,6 @@ macro_rules! panel {
                 }
             }
 
-            // Implement Drop to clean up the retained delegate
-            impl Drop for $class_name {
-                fn drop(&mut self) {
-                    unsafe {
-                        let ivars = (*self.panel).ivars();
-                        let delegate_ptr = ivars.event_handler.get();
-                        if !delegate_ptr.is_null() {
-                            let _: () = $crate::objc2::msg_send![delegate_ptr as *const $crate::objc2_foundation::NSObject, release];
-                        }
-                    }
-                }
-            }
-
             // Add tracking area helper
             impl $class_name {
                 #[allow(unused)]
