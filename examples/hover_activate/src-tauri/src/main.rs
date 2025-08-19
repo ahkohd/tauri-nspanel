@@ -123,9 +123,10 @@ fn hide_panel(handle: AppHandle) {
 
 #[tauri::command]
 fn close_panel(handle: AppHandle) {
-  let panel = handle.get_webview_panel("main").unwrap();
-
-  panel.set_released_when_closed(true);
-
-  panel.close();
+  if let Ok(panel) = handle.get_webview_panel("main") {
+    panel.set_released_when_closed(true);
+    // release the event handler if any
+    panel.set_event_handler(None);
+    panel.close(&handle);
+  }
 }

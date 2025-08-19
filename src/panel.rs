@@ -247,10 +247,14 @@ macro_rules! panel {
                     }
                 }
 
-                fn close(&self) {
+                fn close(&self, app_handle: &tauri::AppHandle) {
+                    use $crate::ManagerExt;
+
                     unsafe {
                         let _: () = $crate::objc2::msg_send![&*self.panel, close];
                     }
+
+                    app_handle.remove_webview_panel(self.label.as_str());
                 }
 
                 fn as_panel(&self) -> &$crate::objc2_app_kit::NSPanel {
@@ -505,7 +509,7 @@ macro_rules! panel {
 
                     unsafe {
                         // Use object_setClass from the runtime
-                        extern "C" {
+                        unsafe extern "C" {
                             fn object_setClass(
                                 obj: *mut $crate::objc2_foundation::NSObject,
                                 cls: *const $crate::objc2::runtime::AnyClass,
@@ -529,6 +533,9 @@ macro_rules! panel {
                             ))
                         })?;
 
+                        // Initialize the ivars properly after class change
+                        (*panel).ivars().event_handler.set(std::ptr::null());
+
                         // Add tracking area if configured
                         $($(
                             Self::add_tracking_area(&panel, $tracking_options, $auto_resize);
@@ -551,19 +558,6 @@ macro_rules! panel {
                         }
 
                         Ok($class_name::with_label(panel, label))
-                    }
-                }
-            }
-
-            // Implement Drop to clean up the retained delegate
-            impl Drop for $class_name {
-                fn drop(&mut self) {
-                    unsafe {
-                        let ivars = (*self.panel).ivars();
-                        let delegate_ptr = ivars.event_handler.get();
-                        if !delegate_ptr.is_null() {
-                            let _: () = $crate::objc2::msg_send![delegate_ptr as *const $crate::objc2_foundation::NSObject, release];
-                        }
                     }
                 }
             }
