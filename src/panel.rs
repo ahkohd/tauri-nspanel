@@ -247,10 +247,14 @@ macro_rules! panel {
                     }
                 }
 
-                fn close(&self) {
+                fn close(&self, app_handle: &tauri::AppHandle) {
+                    use $crate::ManagerExt;
+
                     unsafe {
                         let _: () = $crate::objc2::msg_send![&*self.panel, close];
                     }
+
+                    app_handle.remove_webview_panel(self.label.as_str());
                 }
 
                 fn as_panel(&self) -> &$crate::objc2_app_kit::NSPanel {
