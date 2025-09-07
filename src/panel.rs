@@ -86,7 +86,7 @@ pub use objc2_app_kit::{
 /// ```
 ///
 /// ## Available Methods:
-/// - `show()`, `hide()`, `close()`
+/// - `show()`, `hide()`, `to_window()`
 /// - `make_key_window()`, `resign_key_window()`
 /// - `set_level()`, `set_alpha_value()`, `set_content_size()`
 /// - `set_floating_panel()`, `set_has_shadow()`, `set_opaque()`
@@ -212,6 +212,7 @@ macro_rules! panel {
             pub struct $class_name {
                 panel: $crate::objc2::rc::Retained<[<Raw $class_name>]>,
                 label: String,
+                original_class: *const $crate::objc2::runtime::AnyClass,
             }
 
             // SAFETY: While NSPanel must only be used on the main thread, we implement Send + Sync
@@ -221,8 +222,8 @@ macro_rules! panel {
             unsafe impl Sync for $class_name {}
 
             impl $class_name {
-                fn with_label(panel: $crate::objc2::rc::Retained<[<Raw $class_name>]>, label: String) -> Self {
-                    Self { panel, label }
+                fn with_label(panel: $crate::objc2::rc::Retained<[<Raw $class_name>]>, label: String, original_class: *const $crate::objc2::runtime::AnyClass) -> Self {
+                    Self { panel, label, original_class }
                 }
 
                 /// Convert a Tauri window to this panel type (convenience method)
@@ -247,14 +248,38 @@ macro_rules! panel {
                     }
                 }
 
-                fn close(&self, app_handle: &tauri::AppHandle) {
+                /// Convert panel back to a regular Tauri window
+                fn to_window(&self, app_handle: &tauri::AppHandle) -> Option<tauri::WebviewWindow> {
+                    use tauri::Manager;
                     use $crate::ManagerExt;
 
-                    unsafe {
-                        let _: () = $crate::objc2::msg_send![&*self.panel, close];
+                    unsafe extern "C" {
+                        fn object_setClass(
+                            obj: *mut $crate::objc2_foundation::NSObject,
+                            cls: *const $crate::objc2::runtime::AnyClass,
+                        ) -> *const $crate::objc2::runtime::AnyClass;
                     }
 
-                    app_handle.remove_webview_panel(self.label.as_str());
+                    if let Some(_) = app_handle.remove_webview_panel(self.label.as_str()) {
+                        self.set_released_when_closed(true);
+
+                        unsafe {
+                            let target_class = if !self.original_class.is_null() {
+                                self.original_class
+                            } else {
+                                $crate::objc2_app_kit::NSWindow::class()
+                            };
+
+                            object_setClass(
+                                &*self.panel as *const [<Raw $class_name>] as *mut $crate::objc2_foundation::NSObject,
+                                target_class,
+                            );
+                        }
+
+                        app_handle.get_webview_window(&self.label)
+                    } else {
+                        None
+                    }
                 }
 
                 fn as_panel(&self) -> &$crate::objc2_app_kit::NSPanel {
@@ -514,7 +539,13 @@ macro_rules! panel {
                                 obj: *mut $crate::objc2_foundation::NSObject,
                                 cls: *const $crate::objc2::runtime::AnyClass,
                             ) -> *const $crate::objc2::runtime::AnyClass;
+
+                            fn object_getClass(
+                                obj: *mut $crate::objc2_foundation::NSObject,
+                            ) -> *const $crate::objc2::runtime::AnyClass;
                         }
+
+                        let original_class = object_getClass(ns_window as *mut $crate::objc2_foundation::NSObject);
 
                         // Change the window class to our custom panel class
                         object_setClass(
@@ -557,7 +588,7 @@ macro_rules! panel {
                             let _: () = $crate::objc2::msg_send![&view, setAutoresizingMask: resize_mask];
                         }
 
-                        Ok($class_name::with_label(panel, label))
+                        Ok($class_name::with_label(panel, label, original_class))
                     }
                 }
             }

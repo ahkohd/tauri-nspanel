@@ -47,8 +47,8 @@ pub trait Panel: Send + Sync {
     /// Hide the panel
     fn hide(&self);
 
-    /// Close the panel
-    fn close(&self, app_handle: &tauri::AppHandle);
+    /// Convert panel back to a regular Tauri window
+    fn to_window(&self, app_handle: &tauri::AppHandle) -> Option<tauri::WebviewWindow>;
 
     /// Get a reference to the underlying NSPanel
     fn as_panel(&self) -> &objc2_app_kit::NSPanel;
@@ -175,7 +175,7 @@ impl Default for WebviewPanelManager {
 
 pub trait ManagerExt<R: Runtime> {
     fn get_webview_panel(&self, label: &str) -> Result<Arc<dyn Panel>, Error>;
-    fn remove_webview_panel(&self, label: &str);
+    fn remove_webview_panel(&self, label: &str) -> Option<Arc<dyn Panel>>;
 }
 
 #[derive(Debug)]
@@ -194,13 +194,13 @@ impl<R: Runtime, T: Manager<R>> ManagerExt<R> for T {
         }
     }
 
-    fn remove_webview_panel(&self, label: &str) {
-        let manager = self.state::<self::WebviewPanelManager>();
-        let has_panel = manager.0.lock().unwrap().panels.contains_key(label);
-
-        if has_panel {
-            manager.0.lock().unwrap().panels.remove(label);
-        }
+    fn remove_webview_panel(&self, label: &str) -> Option<Arc<dyn Panel>> {
+        self.state::<self::WebviewPanelManager>()
+            .0
+            .lock()
+            .unwrap()
+            .panels
+            .remove(label)
     }
 }
 
