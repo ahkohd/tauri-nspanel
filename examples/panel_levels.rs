@@ -1,4 +1,4 @@
-use tauri::AppHandle;
+use tauri::{AppHandle, Manager};
 use tauri_nspanel::{tauri_panel, PanelBuilder, PanelLevel};
 
 // Define a simple panel class
@@ -12,15 +12,15 @@ tauri_panel! {
 
 /// Example demonstrating different panel levels
 #[allow(dead_code)]
-fn create_panels_with_levels<R: tauri::Runtime>(
-    app: &AppHandle<R>,
-) -> Result<(), Box<dyn std::error::Error>> {
+fn create_panels_with_levels(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
     // Normal level panel (behind other panels)
     let normal_panel = PanelBuilder::<_, DemoPanel>::new(app, "normal-panel")
         .title("Normal Level Panel")
         .level(PanelLevel::Normal)
         .size(tauri::Size::Logical(tauri::LogicalSize::new(300.0, 200.0)))
-        .position(tauri::Position::Logical(tauri::LogicalPosition::new(100.0, 100.0)))
+        .position(tauri::Position::Logical(tauri::LogicalPosition::new(
+            100.0, 100.0,
+        )))
         .build()?;
 
     // Floating level panel (above normal windows)
@@ -28,7 +28,9 @@ fn create_panels_with_levels<R: tauri::Runtime>(
         .title("Floating Panel")
         .level(PanelLevel::Floating)
         .size(tauri::Size::Logical(tauri::LogicalSize::new(300.0, 200.0)))
-        .position(tauri::Position::Logical(tauri::LogicalPosition::new(150.0, 150.0)))
+        .position(tauri::Position::Logical(tauri::LogicalPosition::new(
+            150.0, 150.0,
+        )))
         .build()?;
 
     // Status level panel (above floating panels)
@@ -36,7 +38,9 @@ fn create_panels_with_levels<R: tauri::Runtime>(
         .title("Status Panel")
         .level(PanelLevel::Status)
         .size(tauri::Size::Logical(tauri::LogicalSize::new(300.0, 200.0)))
-        .position(tauri::Position::Logical(tauri::LogicalPosition::new(200.0, 200.0)))
+        .position(tauri::Position::Logical(tauri::LogicalPosition::new(
+            200.0, 200.0,
+        )))
         .build()?;
 
     // Custom level panel
@@ -44,7 +48,9 @@ fn create_panels_with_levels<R: tauri::Runtime>(
         .title("Custom Level Panel")
         .level(PanelLevel::Custom(100))
         .size(tauri::Size::Logical(tauri::LogicalSize::new(300.0, 200.0)))
-        .position(tauri::Position::Logical(tauri::LogicalPosition::new(250.0, 250.0)))
+        .position(tauri::Position::Logical(tauri::LogicalPosition::new(
+            250.0, 250.0,
+        )))
         .build()?;
 
     // Show all panels to demonstrate layering
@@ -66,3 +72,4 @@ fn main() {
     println!("This example demonstrates different panel levels.");
     println!("To run this in a real app, use the create_panels_with_levels function in your Tauri setup.");
 }
+

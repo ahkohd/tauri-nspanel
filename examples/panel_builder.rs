@@ -1,4 +1,4 @@
-use tauri::WebviewUrl;
+use tauri::{AppHandle, Manager, WebviewUrl};
 use tauri_nspanel::{tauri_panel, PanelBuilder, WebviewWindowExt};
 
 // Define custom panel class and event handler together
@@ -18,9 +18,7 @@ tauri_panel! {
 }
 
 #[allow(dead_code)]
-fn create_panels_example<R: tauri::Runtime>(
-    app: &tauri::AppHandle<R>,
-) -> Result<(), Box<dyn std::error::Error>> {
+fn create_panels_example(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
     // Method 1: Using PanelBuilder (recommended)
     let panel = PanelBuilder::<_, MyFloatingPanel>::new(app, "my-panel")
         .url(WebviewUrl::App("panel.html".into()))
@@ -60,7 +58,7 @@ fn create_panels_example<R: tauri::Runtime>(
     });
 
     // Create another panel
-    let panel_with_events = PanelBuilder::<_, MyFloatingPanel>::new(app, "panel-with-events")
+    let panel_with_events = PanelBuilder::<_, MyFloatingPanel>::new(&app, "panel-with-events")
         .url(WebviewUrl::App("panel.html".into()))
         .title("Panel with Events")
         .size(tauri::Size::Logical(tauri::LogicalSize::new(400.0, 300.0)))

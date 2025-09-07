@@ -1,3 +1,4 @@
+use tauri::Manager;
 use tauri_nspanel::{tauri_panel, TrackingAreaOptions};
 
 tauri_panel! {

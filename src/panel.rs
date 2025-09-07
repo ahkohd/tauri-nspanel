@@ -209,25 +209,26 @@ macro_rules! panel {
             );
 
             #[doc = " A public wrapper for `Raw" $class_name "` "]
-            pub struct $class_name {
+            pub struct $class_name<R: tauri::Runtime = tauri::Wry> {
                 panel: $crate::objc2::rc::Retained<[<Raw $class_name>]>,
                 label: String,
                 original_class: *const $crate::objc2::runtime::AnyClass,
+                app_handle: tauri::AppHandle<R>,
             }
 
             // SAFETY: While NSPanel must only be used on the main thread, we implement Send + Sync
             // to allow passing references through Tauri's command system. Users must ensure
             // actual panel operations happen on the main thread.
-            unsafe impl Send for $class_name {}
-            unsafe impl Sync for $class_name {}
+            unsafe impl<R: tauri::Runtime> Send for $class_name<R> {}
+            unsafe impl<R: tauri::Runtime> Sync for $class_name<R> {}
 
-            impl $class_name {
-                fn with_label(panel: $crate::objc2::rc::Retained<[<Raw $class_name>]>, label: String, original_class: *const $crate::objc2::runtime::AnyClass) -> Self {
-                    Self { panel, label, original_class }
+            impl<R: tauri::Runtime> $class_name<R> where $class_name<R>: $crate::Panel<R> {
+                fn with_label(panel: $crate::objc2::rc::Retained<[<Raw $class_name>]>, label: String, original_class: *const $crate::objc2::runtime::AnyClass, app_handle: tauri::AppHandle<R>) -> Self {
+                    Self { panel, label, original_class, app_handle }
                 }
 
                 /// Convert a Tauri window to this panel type (convenience method)
-                pub fn from_window<R: tauri::Runtime>(window: &tauri::WebviewWindow<R>) -> tauri::Result<Self> {
+                pub fn from_window(window: &tauri::WebviewWindow<R>) -> tauri::Result<Self> {
                     let label = window.label().to_string();
                     <Self as $crate::FromWindow<R>>::from_window(window.clone(), label)
                 }
@@ -235,7 +236,7 @@ macro_rules! panel {
             }
 
             // Implement Panel trait
-            impl $crate::Panel for $class_name {
+            impl<R: tauri::Runtime> $crate::Panel<R> for $class_name<R> {
                 fn show(&self) {
                     unsafe {
                         let _: () = $crate::objc2::msg_send![&*self.panel, orderFrontRegardless];
@@ -248,8 +249,8 @@ macro_rules! panel {
                     }
                 }
 
-                /// Convert panel back to a regular Tauri window
-                fn to_window(&self, app_handle: &tauri::AppHandle) -> Option<tauri::WebviewWindow> {
+                /// Convert panel back to a regular Tauri window  
+                fn to_window(&self) -> Option<tauri::WebviewWindow<R>> {
                     use tauri::Manager;
                     use $crate::ManagerExt;
 
@@ -260,7 +261,7 @@ macro_rules! panel {
                         ) -> *const $crate::objc2::runtime::AnyClass;
                     }
 
-                    if let Some(_) = app_handle.remove_webview_panel(self.label.as_str()) {
+                    if let Some(_) = self.app_handle.remove_webview_panel(self.label.as_str()) {
                         self.set_released_when_closed(true);
 
                         unsafe {
@@ -276,7 +277,7 @@ macro_rules! panel {
                             );
                         }
 
-                        app_handle.get_webview_window(&self.label)
+                        self.app_handle.get_webview_window(&self.label)
                     } else {
                         None
                     }
@@ -523,7 +524,7 @@ macro_rules! panel {
             }
 
             // Implement FromWindow trait
-            impl<R: tauri::Runtime> $crate::FromWindow<R> for $class_name {
+            impl<R: tauri::Runtime> $crate::FromWindow<R> for $class_name<R> {
                 fn from_window(window: tauri::WebviewWindow<R>, label: String) -> tauri::Result<Self> {
                     let ns_window = window.ns_window().map_err(|e| {
                         tauri::Error::Io(std::io::Error::new(
@@ -588,13 +589,13 @@ macro_rules! panel {
                             let _: () = $crate::objc2::msg_send![&view, setAutoresizingMask: resize_mask];
                         }
 
-                        Ok($class_name::with_label(panel, label, original_class))
+                        Ok($class_name::with_label(panel, label, original_class, window.app_handle().clone()))
                     }
                 }
             }
 
             // Add tracking area helper
-            impl $class_name {
+            impl<R: tauri::Runtime> $class_name<R> where $class_name<R>: $crate::Panel<R> {
                 #[allow(unused)]
                 fn add_tracking_area(panel: &$crate::objc2_app_kit::NSPanel, options: impl Into<$crate::objc2_app_kit::NSTrackingAreaOptions>, auto_resize: bool) {
                     unsafe {

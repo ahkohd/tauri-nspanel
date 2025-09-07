@@ -1,4 +1,4 @@
-use tauri::{AppHandle, WebviewUrl};
+use tauri::{AppHandle, Manager, WebviewUrl};
 use tauri_nspanel::{tauri_panel, CollectionBehavior, PanelBuilder};
 
 // Define a demo panel class
@@ -12,9 +12,7 @@ tauri_panel! {
 
 /// Example demonstrating collection behavior combinations
 #[allow(dead_code)]
-fn create_panels_with_behaviors<R: tauri::Runtime>(
-    app: &AppHandle<R>,
-) -> Result<(), Box<dyn std::error::Error>> {
+fn create_panels_with_behaviors(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
     // Panel that appears on all spaces
     let all_spaces_panel = PanelBuilder::<_, DemoPanel>::new(app, "all-spaces")
         .url(WebviewUrl::App("index.html".into()))
@@ -79,4 +77,3 @@ fn main() {
     println!("This example demonstrates different collection behaviors.");
     println!("To run this in a real app, use the create_panels_with_behaviors function in your Tauri setup.");
 }
-

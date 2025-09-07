@@ -1,4 +1,4 @@
-use tauri::{AppHandle, Runtime, WebviewUrl};
+use tauri::{AppHandle, Manager, WebviewUrl};
 use tauri_nspanel::{
     tauri_panel, CollectionBehavior, PanelBuilder, PanelLevel, TrackingAreaOptions,
 };
@@ -38,9 +38,9 @@ tauri_panel! {
 }
 
 #[allow(dead_code)]
-fn create_custom_panels<R: Runtime>(app: &AppHandle<R>) -> Result<(), Box<dyn std::error::Error>> {
+fn create_custom_panels(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
     // Create a panel using MyCustomPanel class with additional builder configuration
-    let custom_panel = PanelBuilder::<R, MyCustomPanel>::new(app, "custom-panel")
+    let custom_panel = PanelBuilder::<_, MyCustomPanel>::new(app, "custom-panel")
         .url(WebviewUrl::App("index.html".into()))
         .title("My Custom Panel")
         .level(PanelLevel::Floating)
@@ -53,7 +53,7 @@ fn create_custom_panels<R: Runtime>(app: &AppHandle<R>) -> Result<(), Box<dyn st
         .build()?;
 
     // Create a notification-style panel
-    let notification = PanelBuilder::<R, NotificationPanel>::new(app, "notification")
+    let notification = PanelBuilder::<_, NotificationPanel>::new(app, "notification")
         .url(WebviewUrl::App("notification.html".into()))
         .title("Notification")
         .level(PanelLevel::Status) // High level for notifications
@@ -68,7 +68,7 @@ fn create_custom_panels<R: Runtime>(app: &AppHandle<R>) -> Result<(), Box<dyn st
         .build()?;
 
     // Create an interactive panel with tracking already configured
-    let interactive = PanelBuilder::<R, InteractivePanel>::new(app, "interactive")
+    let interactive = PanelBuilder::<_, InteractivePanel>::new(app, "interactive")
         .url(WebviewUrl::App("interactive.html".into()))
         .title("Interactive Panel")
         .level(PanelLevel::Utility)

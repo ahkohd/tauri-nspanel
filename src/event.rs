@@ -122,6 +122,7 @@ macro_rules! panel_event {
                     unsafe impl NSWindowDelegate for $handler_name {
                         $(
                             #[doc = concat!(" Objective-C delegate method: ", stringify!($method), ":", $(stringify!([<$param:lower_camel>]), ":"),*)]
+                            #[allow(non_snake_case)]
                             #[unsafe(method($method:$([<$param:lower_camel>]:)*))]
                             fn [<__ $method:snake>](&self, [<$first_param:lower_camel>]: $first_type $(, [<$param:lower_camel>]: $param_type )* ) -> $return_type {
                                 // Take the callback from the cell temporarily

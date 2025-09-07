@@ -40,7 +40,7 @@ pub trait EventHandler {
 }
 
 /// Common trait for all panel types
-pub trait Panel: Send + Sync {
+pub trait Panel<R: tauri::Runtime = tauri::Wry>: Send + Sync {
     /// Show the panel
     fn show(&self);
 
@@ -48,7 +48,7 @@ pub trait Panel: Send + Sync {
     fn hide(&self);
 
     /// Convert panel back to a regular Tauri window
-    fn to_window(&self, app_handle: &tauri::AppHandle) -> Option<tauri::WebviewWindow>;
+    fn to_window(&self) -> Option<tauri::WebviewWindow<R>>;
 
     /// Get a reference to the underlying NSPanel
     fn as_panel(&self) -> &objc2_app_kit::NSPanel;
@@ -155,27 +155,34 @@ pub trait Panel: Send + Sync {
 }
 
 /// Trait for panels that can be created from a window
-pub trait FromWindow<R: Runtime>: Panel + Sized {
+pub trait FromWindow<R: Runtime>: Panel<R> + Sized {
     /// Create panel from a Tauri window
     fn from_window(window: WebviewWindow<R>, label: String) -> tauri::Result<Self>;
 }
 
-#[derive(Default)]
-pub struct Store {
-    panels: HashMap<String, Arc<dyn Panel>>,
+pub struct Store<R: Runtime> {
+    panels: HashMap<String, Arc<dyn Panel<R>>>,
 }
 
-pub struct WebviewPanelManager(pub Mutex<Store>);
+impl<R: Runtime> Default for Store<R> {
+    fn default() -> Self {
+        Self {
+            panels: HashMap::new(),
+        }
+    }
+}
 
-impl Default for WebviewPanelManager {
+pub struct WebviewPanelManager<R: Runtime>(pub Mutex<Store<R>>);
+
+impl<R: Runtime> Default for WebviewPanelManager<R> {
     fn default() -> Self {
         Self(Mutex::new(Store::default()))
     }
 }
 
 pub trait ManagerExt<R: Runtime> {
-    fn get_webview_panel(&self, label: &str) -> Result<Arc<dyn Panel>, Error>;
-    fn remove_webview_panel(&self, label: &str) -> Option<Arc<dyn Panel>>;
+    fn get_webview_panel(&self, label: &str) -> Result<Arc<dyn Panel<R>>, Error>;
+    fn remove_webview_panel(&self, label: &str) -> Option<Arc<dyn Panel<R>>>;
 }
 
 #[derive(Debug)]
@@ -184,8 +191,8 @@ pub enum Error {
 }
 
 impl<R: Runtime, T: Manager<R>> ManagerExt<R> for T {
-    fn get_webview_panel(&self, label: &str) -> Result<Arc<dyn Panel>, Error> {
-        let manager = self.state::<self::WebviewPanelManager>();
+    fn get_webview_panel(&self, label: &str) -> Result<Arc<dyn Panel<R>>, Error> {
+        let manager = self.state::<self::WebviewPanelManager<R>>();
         let manager = manager.0.lock().unwrap();
 
         match manager.panels.get(label) {
@@ -194,8 +201,8 @@ impl<R: Runtime, T: Manager<R>> ManagerExt<R> for T {
         }
     }
 
-    fn remove_webview_panel(&self, label: &str) -> Option<Arc<dyn Panel>> {
-        self.state::<self::WebviewPanelManager>()
+    fn remove_webview_panel(&self, label: &str) -> Option<Arc<dyn Panel<R>>> {
+        self.state::<self::WebviewPanelManager<R>>()
             .0
             .lock()
             .unwrap()
@@ -206,16 +213,16 @@ impl<R: Runtime, T: Manager<R>> ManagerExt<R> for T {
 
 pub trait WebviewWindowExt<R: Runtime> {
     /// Convert window to specific panel type
-    fn to_panel<P: FromWindow<R> + 'static>(&self) -> tauri::Result<Arc<dyn Panel>>;
+    fn to_panel<P: FromWindow<R> + 'static>(&self) -> tauri::Result<Arc<dyn Panel<R>>>;
 }
 
 impl<R: Runtime> WebviewWindowExt<R> for WebviewWindow<R> {
-    fn to_panel<P: FromWindow<R> + 'static>(&self) -> tauri::Result<Arc<dyn Panel>> {
+    fn to_panel<P: FromWindow<R> + 'static>(&self) -> tauri::Result<Arc<dyn Panel<R>>> {
         let label = self.label().to_string();
         let panel = P::from_window(self.clone(), label.clone())?;
-        let arc_panel = Arc::new(panel) as Arc<dyn Panel>;
+        let arc_panel = Arc::new(panel) as Arc<dyn Panel<R>>;
 
-        let manager = self.state::<WebviewPanelManager>();
+        let manager = self.state::<WebviewPanelManager<R>>();
         manager
             .0
             .lock()
@@ -231,7 +238,7 @@ impl<R: Runtime> WebviewWindowExt<R> for WebviewWindow<R> {
 pub fn init<R: Runtime>() -> TauriPlugin<R> {
     Builder::new("nspanel")
         .setup(|app, _api| {
-            app.manage(self::WebviewPanelManager::default());
+            app.manage(self::WebviewPanelManager::<R>::default());
 
             Ok(())
         })
