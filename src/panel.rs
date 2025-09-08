@@ -207,7 +207,7 @@ macro_rules! panel {
                 panel: $crate::objc2::rc::Retained<[<Raw $class_name>]>,
                 label: String,
                 original_class: *const $crate::objc2::runtime::AnyClass,
-                original_delegate: std::cell::RefCell<Option<$crate::objc2::rc::Retained<$crate::objc2::runtime::ProtocolObject<dyn $crate::objc2_app_kit::NSWindowDelegate>>>>,
+                original_delegate: std::cell::OnceCell<$crate::objc2::rc::Retained<$crate::objc2::runtime::ProtocolObject<dyn $crate::objc2_app_kit::NSWindowDelegate>>>,
                 app_handle: tauri::AppHandle<R>,
                 event_handler: std::cell::RefCell<Option<$crate::objc2::rc::Retained<$crate::objc2::runtime::ProtocolObject<dyn $crate::objc2_app_kit::NSWindowDelegate>>>>,
             }
@@ -224,7 +224,7 @@ macro_rules! panel {
                         panel,
                         label,
                         original_class,
-                        original_delegate: std::cell::RefCell::new(None),
+                        original_delegate: std::cell::OnceCell::new(),
                         app_handle,
                         event_handler: std::cell::RefCell::new(None),
                     }
@@ -309,9 +309,10 @@ macro_rules! panel {
                         match handler {
                             Some(h) => {
                                 // Store original delegate if this is the first time we're setting a custom one
-                                if self.event_handler.borrow().is_none() && self.original_delegate.borrow().is_none() {
-                                    let current_delegate = unsafe { self.panel.delegate() };
-                                    *self.original_delegate.borrow_mut() = current_delegate;
+                                if self.event_handler.borrow().is_none() && self.original_delegate.get().is_none() {
+                                    if let Some(current_delegate) = unsafe { self.panel.delegate() } {
+                                        let _ = self.original_delegate.set(current_delegate);
+                                    }
                                 }
 
                                 // Store the retained handler
@@ -326,9 +327,8 @@ macro_rules! panel {
                                 *self.event_handler.borrow_mut() = None;
 
                                 // Restore original delegate
-                                let original_delegate = self.original_delegate.borrow().clone();
-                                match original_delegate {
-                                    Some(ref orig_delegate) => {
+                                match self.original_delegate.get() {
+                                    Some(orig_delegate) => {
                                         let _: () = $crate::objc2::msg_send![&*self.panel, setDelegate: &**orig_delegate];
                                     }
                                     None => {
