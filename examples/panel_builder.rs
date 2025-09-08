@@ -1,3 +1,5 @@
+#![allow(clippy::unused_unit)]
+
 use tauri::{AppHandle, Manager, WebviewUrl};
 use tauri_nspanel::{tauri_panel, PanelBuilder, WebviewWindowExt};
 
@@ -58,7 +60,7 @@ fn create_panels_example(app: &AppHandle) -> Result<(), Box<dyn std::error::Erro
     });
 
     // Create another panel
-    let panel_with_events = PanelBuilder::<_, MyFloatingPanel>::new(&app, "panel-with-events")
+    let panel_with_events = PanelBuilder::<_, MyFloatingPanel>::new(app, "panel-with-events")
         .url(WebviewUrl::App("panel.html".into()))
         .title("Panel with Events")
         .size(tauri::Size::Logical(tauri::LogicalSize::new(400.0, 300.0)))

@@ -1,3 +1,5 @@
+#![allow(clippy::unused_unit)]
+
 use tauri_nspanel::tauri_panel;
 
 tauri_panel! {

@@ -22,7 +22,7 @@ These examples demonstrate various features and use cases of [tauri-nspanel](htt
 
 ## Running the Examples
 
-### Full Tauri Applications
+### Full Tauri applications
 
 ```bash
 # For any of the full Tauri app examples:
@@ -31,7 +31,7 @@ npm install
 npm run tauri dev
 ```
 
-### Standalone Rust Examples
+### Standalone Rust examples
 
 ```bash
 # From the root directory:

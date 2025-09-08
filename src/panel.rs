@@ -32,7 +32,6 @@ pub use objc2_app_kit::{
 /// ## Usage:
 /// ```rust
 /// use tauri_nspanel::{panel, panel_event};
-/// use tauri_nspanel::event::EventReturn;
 ///
 /// // Define your custom panel class
 /// panel!(MyCustomPanel {

@@ -88,7 +88,7 @@ impl From<i64> for PanelLevel {
 ///
 /// # Example
 /// ```rust
-/// use tauri_nspanel::CollectionBehavior;
+/// use tauri_nspanel::{CollectionBehavior, PanelBuilder};
 ///
 /// // Create a panel that appears on all spaces and ignores Cmd+Tab cycling
 /// let behavior = CollectionBehavior::new()
@@ -217,7 +217,7 @@ impl From<objc2_app_kit::NSWindowCollectionBehavior> for CollectionBehavior {
 ///
 /// # Example
 /// ```rust
-/// use tauri_nspanel::TrackingAreaOptions;
+/// use tauri_nspanel::{TrackingAreaOptions, PanelBuilder};
 ///
 /// // Track mouse movement and enter/exit events, active in any application state
 /// let options = TrackingAreaOptions::new()
@@ -339,7 +339,7 @@ impl From<objc2_app_kit::NSTrackingAreaOptions> for TrackingAreaOptions {
 ///
 /// # Example
 /// ```rust
-/// use tauri_nspanel::StyleMask;
+/// use tauri_nspanel::{StyleMask, PanelBuilder};
 ///
 /// // Create a borderless panel that doesn't activate the app
 /// let style = StyleMask::new()
@@ -579,6 +579,7 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
     ///
     /// # Example
     /// ```rust
+    /// use tauri_nspanel::{PanelBuilder, PanelLevel};
     /// // Create a panel that floats above normal windows
     /// PanelBuilder::new(&app, "floating")
     ///     .level(PanelLevel::Floating)
@@ -666,6 +667,7 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
     ///
     /// # Example
     /// ```rust
+    /// use tauri_nspanel::{PanelBuilder, StyleMask};
     /// // Create a borderless panel
     /// PanelBuilder::new(&app, "borderless")
     ///     .style_mask(StyleMask::empty().borderless())
@@ -693,6 +695,7 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
     ///
     /// # Example
     /// ```rust
+    /// use tauri_nspanel::{CollectionBehavior, PanelBuilder};
     /// // Create a panel that appears on all spaces and doesn't participate in cycling
     /// PanelBuilder::new(&app, "tool-panel")
     ///     .collection_behavior(
@@ -719,6 +722,8 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
     ///
     /// # Example
     /// ```rust
+    /// use tauri_nspanel::{PanelBuilder, PanelLevel};
+    /// use tauri::WebviewUrl;
     /// // Create a utility panel that doesn't steal focus
     /// PanelBuilder::new(&app, "utility")
     ///     .url(WebviewUrl::App("utility.html".into()))
@@ -738,6 +743,8 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
     ///
     /// # Example
     /// ```rust
+    /// use tauri_nspanel::PanelBuilder;
+    /// use tauri::WebviewUrl;
     /// PanelBuilder::new(&app, "rounded-panel")
     ///     .url(WebviewUrl::App("index.html".into()))
     ///     .corner_radius(10.0)  // 10pt corner radius
@@ -755,6 +762,8 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
     ///
     /// # Example
     /// ```rust
+    /// use tauri_nspanel::PanelBuilder;
+    /// use tauri::WebviewUrl;
     /// PanelBuilder::new(&app, "transparent-panel")
     ///     .url(WebviewUrl::App("index.html".into()))
     ///     .transparent(true)  // Transparent background
@@ -773,6 +782,8 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
     ///
     /// # Example
     /// ```rust
+    /// use tauri_nspanel::PanelBuilder;
+    /// use tauri::WebviewUrl;
     /// PanelBuilder::new(&app, "my-panel")
     ///     .url(WebviewUrl::App("index.html".into()))
     ///     .with_window(|window| {

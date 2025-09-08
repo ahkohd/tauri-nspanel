@@ -72,4 +72,3 @@ fn main() {
     println!("This example demonstrates different panel levels.");
     println!("To run this in a real app, use the create_panels_with_levels function in your Tauri setup.");
 }
-

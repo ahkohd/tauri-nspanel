@@ -108,7 +108,6 @@ macro_rules! panel_event {
                    cursor_update_callback: std::cell::Cell<Option<Box<dyn Fn(&$crate::objc2_app_kit::NSEvent)>>>,
                 }
 
-                #[allow(clippy::unused_unit)]
                 define_class!(
                     #[unsafe(super(NSObject))]
                     #[name = stringify!($handler_name)]
