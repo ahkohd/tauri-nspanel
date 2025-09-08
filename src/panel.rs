@@ -56,31 +56,31 @@ pub use objc2_app_kit::{
 /// fn create_panel(window: tauri::WebviewWindow) -> Result<(), Box<dyn std::error::Error>> {
 ///     // Convert existing Tauri window to your custom panel
 ///     let panel = MyCustomPanel::from_window(window)?;
-///     
+///
 ///     // Use control methods
 ///     panel.show();
 ///     panel.set_level(5i64); // NSStatusWindowLevel
 ///     panel.set_floating_panel(true);
-///     
+///
 ///     // Create and attach an event handler
 ///     let handler = MyPanelEventHandler::new();
 ///     handler.window_did_become_key(|args| {
 ///         println!("Panel became key window");
 ///         None
 ///     });
-///     
+///
 ///     // If tracking_area is enabled, you can set mouse event callbacks
 ///     handler.on_mouse_entered(|event| {
 ///         println!("Mouse entered the panel");
 ///     });
-///     
+///
 ///     handler.on_mouse_moved(|event| {
 ///         let location = unsafe { event.locationInWindow() };
 ///         println!("Mouse moved to: x={}, y={}", location.x, location.y);
 ///     });
-///     
+///
 ///     panel.set_event_handler(Some(handler.as_protocol_object()));
-///     
+///
 ///     Ok(())
 /// }
 /// ```
@@ -109,9 +109,7 @@ macro_rules! panel {
         }
     ) => {
         $crate::pastey::paste! {
-            struct [<$class_name Ivars>] {
-                event_handler: std::cell::Cell<*const std::ffi::c_void>,
-            }
+            struct [<$class_name Ivars>];
 
             $crate::objc2::define_class!(
                 #[unsafe(super = $crate::objc2_app_kit::NSPanel)]
@@ -141,15 +139,14 @@ macro_rules! panel {
                     #[unsafe(method(mouseEntered:))]
                     fn __mouse_entered(&self, event: &$crate::objc2_app_kit::NSEvent) {
                         unsafe {
-                            let ivars = self.ivars();
-                            let delegate_ptr = ivars.event_handler.get();
-                            if !delegate_ptr.is_null() {
-                                let delegate = delegate_ptr as *const $crate::objc2_foundation::NSObject;
+                            // Get the delegate directly from the window
+                            let delegate: Option<$crate::objc2::rc::Retained<$crate::objc2::runtime::ProtocolObject<dyn $crate::objc2_app_kit::NSWindowDelegate>>> = $crate::objc2::msg_send![self, delegate];
+                            if let Some(ref d) = delegate {
                                 // Check if delegate responds to selector before calling
                                 let selector = $crate::objc2::sel!(mouseEntered:);
-                                let responds: bool = $crate::objc2::msg_send![delegate, respondsToSelector: selector];
+                                let responds: bool = $crate::objc2::msg_send![&**d, respondsToSelector: selector];
                                 if responds {
-                                    let _: () = $crate::objc2::msg_send![delegate, mouseEntered: event];
+                                    let _: () = $crate::objc2::msg_send![&**d, mouseEntered: event];
                                 }
                             }
                         }
@@ -158,15 +155,14 @@ macro_rules! panel {
                     #[unsafe(method(mouseExited:))]
                     fn __mouse_exited(&self, event: &$crate::objc2_app_kit::NSEvent) {
                         unsafe {
-                            let ivars = self.ivars();
-                            let delegate_ptr = ivars.event_handler.get();
-                            if !delegate_ptr.is_null() {
-                                let delegate = delegate_ptr as *const $crate::objc2_foundation::NSObject;
+                            // Get the delegate directly from the window
+                            let delegate: Option<$crate::objc2::rc::Retained<$crate::objc2::runtime::ProtocolObject<dyn $crate::objc2_app_kit::NSWindowDelegate>>> = $crate::objc2::msg_send![self, delegate];
+                            if let Some(ref d) = delegate {
                                 // Check if delegate responds to selector before calling
                                 let selector = $crate::objc2::sel!(mouseExited:);
-                                let responds: bool = $crate::objc2::msg_send![delegate, respondsToSelector: selector];
+                                let responds: bool = $crate::objc2::msg_send![&**d, respondsToSelector: selector];
                                 if responds {
-                                    let _: () = $crate::objc2::msg_send![delegate, mouseExited: event];
+                                    let _: () = $crate::objc2::msg_send![&**d, mouseExited: event];
                                 }
                             }
                         }
@@ -175,15 +171,14 @@ macro_rules! panel {
                     #[unsafe(method(mouseMoved:))]
                     fn __mouse_moved(&self, event: &$crate::objc2_app_kit::NSEvent) {
                         unsafe {
-                            let ivars = self.ivars();
-                            let delegate_ptr = ivars.event_handler.get();
-                            if !delegate_ptr.is_null() {
-                                let delegate = delegate_ptr as *const $crate::objc2_foundation::NSObject;
+                            // Get the delegate directly from the window
+                            let delegate: Option<$crate::objc2::rc::Retained<$crate::objc2::runtime::ProtocolObject<dyn $crate::objc2_app_kit::NSWindowDelegate>>> = $crate::objc2::msg_send![self, delegate];
+                            if let Some(ref d) = delegate {
                                 // Check if delegate responds to selector before calling
                                 let selector = $crate::objc2::sel!(mouseMoved:);
-                                let responds: bool = $crate::objc2::msg_send![delegate, respondsToSelector: selector];
+                                let responds: bool = $crate::objc2::msg_send![&**d, respondsToSelector: selector];
                                 if responds {
-                                    let _: () = $crate::objc2::msg_send![delegate, mouseMoved: event];
+                                    let _: () = $crate::objc2::msg_send![&**d, mouseMoved: event];
                                 }
                             }
                         }
@@ -192,15 +187,14 @@ macro_rules! panel {
                     #[unsafe(method(cursorUpdate:))]
                     fn __cursor_update(&self, event: &$crate::objc2_app_kit::NSEvent) {
                         unsafe {
-                            let ivars = self.ivars();
-                            let delegate_ptr = ivars.event_handler.get();
-                            if !delegate_ptr.is_null() {
-                                let delegate = delegate_ptr as *const $crate::objc2_foundation::NSObject;
+                            // Get the delegate directly from the window
+                            let delegate: Option<$crate::objc2::rc::Retained<$crate::objc2::runtime::ProtocolObject<dyn $crate::objc2_app_kit::NSWindowDelegate>>> = $crate::objc2::msg_send![self, delegate];
+                            if let Some(ref d) = delegate {
                                 // Check if delegate responds to selector before calling
                                 let selector = $crate::objc2::sel!(cursorUpdate:);
-                                let responds: bool = $crate::objc2::msg_send![delegate, respondsToSelector: selector];
+                                let responds: bool = $crate::objc2::msg_send![&**d, respondsToSelector: selector];
                                 if responds {
-                                    let _: () = $crate::objc2::msg_send![delegate, cursorUpdate: event];
+                                    let _: () = $crate::objc2::msg_send![&**d, cursorUpdate: event];
                                 }
                             }
                         }
@@ -213,7 +207,9 @@ macro_rules! panel {
                 panel: $crate::objc2::rc::Retained<[<Raw $class_name>]>,
                 label: String,
                 original_class: *const $crate::objc2::runtime::AnyClass,
+                original_delegate: std::cell::RefCell<Option<$crate::objc2::rc::Retained<$crate::objc2::runtime::ProtocolObject<dyn $crate::objc2_app_kit::NSWindowDelegate>>>>,
                 app_handle: tauri::AppHandle<R>,
+                event_handler: std::cell::RefCell<Option<$crate::objc2::rc::Retained<$crate::objc2::runtime::ProtocolObject<dyn $crate::objc2_app_kit::NSWindowDelegate>>>>,
             }
 
             // SAFETY: While NSPanel must only be used on the main thread, we implement Send + Sync
@@ -224,7 +220,14 @@ macro_rules! panel {
 
             impl<R: tauri::Runtime> $class_name<R> where $class_name<R>: $crate::Panel<R> {
                 fn with_label(panel: $crate::objc2::rc::Retained<[<Raw $class_name>]>, label: String, original_class: *const $crate::objc2::runtime::AnyClass, app_handle: tauri::AppHandle<R>) -> Self {
-                    Self { panel, label, original_class, app_handle }
+                    Self {
+                        panel,
+                        label,
+                        original_class,
+                        original_delegate: std::cell::RefCell::new(None),
+                        app_handle,
+                        event_handler: std::cell::RefCell::new(None),
+                    }
                 }
 
                 /// Convert a Tauri window to this panel type (convenience method)
@@ -249,7 +252,7 @@ macro_rules! panel {
                     }
                 }
 
-                /// Convert panel back to a regular Tauri window  
+                /// Convert panel back to a regular Tauri window
                 fn to_window(&self) -> Option<tauri::WebviewWindow<R>> {
                     use tauri::Manager;
                     use $crate::ManagerExt;
@@ -262,6 +265,7 @@ macro_rules! panel {
                     }
 
                     if let Some(_) = self.app_handle.remove_webview_panel(self.label.as_str()) {
+                        self.set_event_handler(None);
                         self.set_released_when_closed(true);
 
                         unsafe {
@@ -302,35 +306,35 @@ macro_rules! panel {
                     handler: Option<&$crate::objc2::runtime::ProtocolObject<dyn $crate::objc2_app_kit::NSWindowDelegate>>,
                 ) {
                     unsafe {
-                        let ivars = (*self.panel).ivars();
-
-                        // Release old event handler if any
-                        let old_ptr = ivars.event_handler.get();
-                        if !old_ptr.is_null() {
-                            let _: () = $crate::objc2::msg_send![old_ptr as *const $crate::objc2_foundation::NSObject, release];
-                        }
-
                         match handler {
                             Some(h) => {
-                                // Retain the new event handler
-                                let retained = h.retain();
-                                let obj_ptr = &*retained as *const _ as *const std::ffi::c_void;
+                                // Store original delegate if this is the first time we're setting a custom one
+                                if self.event_handler.borrow().is_none() && self.original_delegate.borrow().is_none() {
+                                    let current_delegate = unsafe { self.panel.delegate() };
+                                    *self.original_delegate.borrow_mut() = current_delegate;
+                                }
 
-                                // Store the retained event handler pointer
-                                ivars.event_handler.set(obj_ptr);
-
-                                // Forget the retained object so it won't be dropped
-                                std::mem::forget(retained);
+                                // Store the retained handler
+                                let retained_handler = h.retain();
+                                *self.event_handler.borrow_mut() = Some(retained_handler);
 
                                 // Set as window delegate
                                 let _: () = $crate::objc2::msg_send![&*self.panel, setDelegate: h];
                             }
                             None => {
-                                // Clear stored delegate
-                                ivars.event_handler.set(std::ptr::null());
+                                // Clear stored handler (automatic cleanup when Option becomes None)
+                                *self.event_handler.borrow_mut() = None;
 
-                                // Remove window delegate
-                                let _: () = $crate::objc2::msg_send![&*self.panel, setDelegate: $crate::objc2::ffi::nil];
+                                // Restore original delegate
+                                let original_delegate = self.original_delegate.borrow().clone();
+                                match original_delegate {
+                                    Some(ref orig_delegate) => {
+                                        let _: () = $crate::objc2::msg_send![&*self.panel, setDelegate: &**orig_delegate];
+                                    }
+                                    None => {
+                                        let _: () = $crate::objc2::msg_send![&*self.panel, setDelegate: $crate::objc2::ffi::nil];
+                                    }
+                                }
                             }
                         }
                     }
@@ -534,7 +538,6 @@ macro_rules! panel {
                     })?;
 
                     unsafe {
-                        // Use object_setClass from the runtime
                         unsafe extern "C" {
                             fn object_setClass(
                                 obj: *mut $crate::objc2_foundation::NSObject,
@@ -564,9 +567,6 @@ macro_rules! panel {
                                 "Failed to retain panel",
                             ))
                         })?;
-
-                        // Initialize the ivars properly after class change
-                        (*panel).ivars().event_handler.set(std::ptr::null());
 
                         // Add tracking area if configured
                         $($(
