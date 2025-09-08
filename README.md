@@ -380,19 +380,23 @@ panel.show(); // or `panel.show_and_make_key();`
 
 ### 8. Panel cleanup
 
-Panels are not automatically released when closed. To ensure proper cleanup:
+To close a panel properly, convert it back to a window and call close:
 
 ```rust
-panel.set_released_when_closed(true);
-// release the event handler if any
-panel.set_event_handler(None);
-panel.close(&app_handle);
+#[tauri::command]
+fn close_panel(app_handle: AppHandle) {
+    app_handle
+        .get_webview_panel("panel_label")
+        .ok()
+        .and_then(|panel| panel.to_window())
+        .map(|window| window.close());
+}
 ```
 
 ## Available Panel Methods
 
 Common panel control methods:
-- Window visibility: `show()`, `hide()`, `close()`
+- Window visibility: `show()`, `hide()`, `to_window()`
 - Window state: `make_key_window()`, `resign_key_window()`, `make_main_window()`
 - Window level: `set_level()` (accepts `PanelLevel` enum or `i32`)
 - Appearance: `set_alpha_value()`, `set_has_shadow()`, `set_opaque()`
