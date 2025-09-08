@@ -60,11 +60,20 @@ fn init(app_handle: &AppHandle) {
     .level(PanelLevel::Floating)
     .has_shadow(true)
     .corner_radius(12.0)
-    .transparent(true)
     .collection_behavior(CollectionBehavior::new().can_join_all_spaces().stationary())
     .hides_on_deactivate(false)
     .works_when_modal(true)
-    .with_window(|w| w.decorations(false))
+    .with_window(|w| {
+      w.decorations(false)
+        .transparent(true)
+        .background_color(tauri::window::Color(0, 0, 0, 0))
+        .effects(
+          tauri::window::EffectsBuilder::new()
+            .effects(vec![tauri::window::Effect::HudWindow])
+            .state(tauri::window::EffectState::Active)
+            .build(),
+        )
+    })
     .style_mask(StyleMask::empty().nonactivating_panel().resizable())
     // Prevent the panel from stealing focus when created (works especially well with Accessory policy)
     .no_activate(true)
