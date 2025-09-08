@@ -559,11 +559,15 @@ The panel types implement `Send` and `Sync` to work with Tauri's command system.
 ## Showcase
 
 Projects using `tauri-nspanel`:
-- [Cap](https://github.com/CapSoftware/Cap)
-- [EcoPaste](https://github.com/EcoPasteHub/EcoPaste)
-- [Overlayed](https://github.com/overlayeddev/overlayed)
-- [Lume](https://github.com/lumehq/lume)
+- [Cap](https://github.com/CapSoftware/Cap/blob/790c89f501b814f71c6e9bc54e4723d4185b9376/apps/desktop/src-tauri/Cargo.toml#L117)
+- [Screenpipe](https://github.com/mediar-ai/screenpipe/blob/dfa37a288eb3e23c694ca461d2e57622b609306b/screenpipe-app-tauri/src-tauri/Cargo.toml#L108)
+- [EcoPaste](https://github.com/EcoPasteHub/EcoPaste/blob/69f394a7927aada83141193141eb72626dad3cde/src-tauri/Cargo.toml#L48)
+- [Hyprnote](https://github.com/fastrepl/hyprnote/blob/253e2717a89f8899412a7f0805246a30537d2bc8/Cargo.toml#L88)
+- [BongoCat](https://github.com/ayangweb/BongoCat/blob/7a997a4bfdc8b21c84350715b102a68e3ed4e971/src-tauri/Cargo.toml#L44)
+- [Coco](https://github.com/infinilabs/coco-app/blob/fd8d5819b8be55ead5333478c69d31cf34a2a41b/src-tauri/Cargo.toml#L114)
+- [Overlayed](https://github.com/overlayeddev/overlayed/blob/7bc496a453898e6ea8b88e0e743bcf318ef50274/apps/desktop/src-tauri/Cargo.toml#L46)
 - [Verve](https://github.com/ParthJadhav/verve)
+- [JET Pilot](https://github.com/unxsist/jet-pilot/blob/8da102ff8b926a9584490ad52bded8f28caab86a/src-tauri/Cargo.toml#L44)
 - [Buffer](https://buffer.md)
 
 ## Contributing
