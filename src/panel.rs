@@ -323,17 +323,16 @@ macro_rules! panel {
                                 let _: () = $crate::objc2::msg_send![&*self.panel, setDelegate: h];
                             }
                             None => {
+                                if self.original_delegate.get().is_none() {
+                                    return;
+                                }
+
                                 // Clear stored handler (automatic cleanup when Option becomes None)
                                 *self.event_handler.borrow_mut() = None;
 
                                 // Restore original delegate
-                                match self.original_delegate.get() {
-                                    Some(orig_delegate) => {
-                                        let _: () = $crate::objc2::msg_send![&*self.panel, setDelegate: &**orig_delegate];
-                                    }
-                                    None => {
-                                        let _: () = $crate::objc2::msg_send![&*self.panel, setDelegate: $crate::objc2::ffi::nil];
-                                    }
+                                if let Some(orig_delegate) = self.original_delegate.get() {
+                                    let _: () = $crate::objc2::msg_send![&*self.panel, setDelegate: &**orig_delegate];
                                 }
                             }
                         }
