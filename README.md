@@ -215,6 +215,10 @@ tauri_panel! {
 let panel = PanelBuilder::<_, MyFloatingPanel>::new(app.handle(), "my-panel")
     .url(WebviewUrl::App("panel.html".into()))
     .level(PanelLevel::Floating)
+    .has_shadow(false)
+    .corner_radius(12.0)
+    .with_window(|w| w.decorations(false))
+    .transparent(true)    
     .build()?;
 
 // Or convert existing window to custom panel type
@@ -399,7 +403,7 @@ Common panel control methods:
 - Window visibility: `show()`, `hide()`, `to_window()`
 - Window state: `make_key_window()`, `resign_key_window()`, `make_main_window()`
 - Window level: `set_level()` (accepts `PanelLevel` enum or `i32`)
-- Appearance: `set_alpha_value()`, `set_has_shadow()`, `set_opaque()`
+- Appearance: `set_alpha_value()`, `set_has_shadow()`, `set_opaque()`, `set_corner_radius()`, `set_transparent()`
 - Size: `set_content_size()`
 - Behavior: `set_floating_panel()`, `set_hides_on_deactivate()`, `set_works_when_modal()`
 - Mouse events: `set_accepts_mouse_moved_events()`, `set_ignores_mouse_events()`

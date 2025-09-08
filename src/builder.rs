@@ -477,6 +477,8 @@ pub(crate) struct PanelConfig {
     pub style_mask: Option<StyleMask>,
     pub collection_behavior: Option<CollectionBehavior>,
     pub no_activate: Option<bool>,
+    pub corner_radius: Option<f64>,
+    pub transparent: Option<bool>,
 }
 
 /// Builder for creating panels with Tauri-like API
@@ -729,6 +731,40 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
         self
     }
 
+    /// Set the corner radius for rounded corners
+    ///
+    /// This enables the layer-backed view and sets the corner radius on the panel's layer,
+    /// giving the panel rounded corners with the specified radius.
+    ///
+    /// # Example
+    /// ```rust
+    /// PanelBuilder::new(&app, "rounded-panel")
+    ///     .url(WebviewUrl::App("index.html".into()))
+    ///     .corner_radius(10.0)  // 10pt corner radius
+    ///     .build();
+    /// ```
+    pub fn corner_radius(mut self, radius: f64) -> Self {
+        self.panel_config.corner_radius = Some(radius);
+        self
+    }
+
+    /// Set the panel background to be transparent
+    ///
+    /// This sets the window background color to clear and makes the panel non-opaque,
+    /// allowing content behind the panel to show through.
+    ///
+    /// # Example
+    /// ```rust
+    /// PanelBuilder::new(&app, "transparent-panel")
+    ///     .url(WebviewUrl::App("index.html".into()))
+    ///     .transparent(true)  // Transparent background
+    ///     .build();
+    /// ```
+    pub fn transparent(mut self, transparent: bool) -> Self {
+        self.panel_config.transparent = Some(transparent);
+        self
+    }
+
     /// Apply a custom configuration function to the WebviewWindowBuilder
     ///
     /// This allows access to any Tauri window configuration not exposed by the panel builder.
@@ -864,6 +900,12 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
         }
         if let Some(behavior) = self.panel_config.collection_behavior {
             panel.set_collection_behavior(behavior.0);
+        }
+        if let Some(radius) = self.panel_config.corner_radius {
+            panel.set_corner_radius(radius);
+        }
+        if let Some(transparent) = self.panel_config.transparent {
+            panel.set_transparent(transparent);
         }
 
         // Restore original activation policy if we changed it

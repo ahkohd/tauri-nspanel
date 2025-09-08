@@ -59,6 +59,8 @@ fn init(app_handle: &AppHandle) {
     }))
     .level(PanelLevel::Floating)
     .has_shadow(true)
+    .corner_radius(12.0)
+    .transparent(true)
     .collection_behavior(CollectionBehavior::new().can_join_all_spaces().stationary())
     .hides_on_deactivate(false)
     .works_when_modal(true)
@@ -112,9 +114,9 @@ fn hide_panel(handle: AppHandle) {
 
 #[tauri::command]
 fn close_panel(app_handle: AppHandle) {
-    app_handle
-        .get_webview_panel("mini-panel")
-        .ok()
-        .and_then(|panel| panel.to_window())
-        .map(|window| window.close());
+  app_handle
+    .get_webview_panel("mini-panel")
+    .ok()
+    .and_then(|panel| panel.to_window())
+    .map(|window| window.close());
 }

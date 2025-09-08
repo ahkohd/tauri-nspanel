@@ -524,6 +524,30 @@ macro_rules! panel {
                         result
                     }
                 }
+
+                fn set_corner_radius(&self, radius: f64) {
+                    unsafe {
+                        let content_view: $crate::objc2::rc::Retained<$crate::objc2_app_kit::NSView> = $crate::objc2::msg_send![&*self.panel, contentView];
+                        let _: () = $crate::objc2::msg_send![&*content_view, setWantsLayer: true];
+                        let content_layer: $crate::objc2::rc::Retained<$crate::objc2_foundation::NSObject> = $crate::objc2::msg_send![&*content_view, layer];
+                        let _: () = $crate::objc2::msg_send![&*content_layer, setCornerRadius: radius];
+                    }
+                }
+
+                fn set_transparent(&self, transparent: bool) {
+                    unsafe {
+                        if transparent {
+                            let clear_color: $crate::objc2::rc::Retained<$crate::objc2_foundation::NSObject> = $crate::objc2::msg_send![$crate::objc2::class!(NSColor), clearColor];
+                            let _: () = $crate::objc2::msg_send![&*self.panel, setBackgroundColor: &*clear_color];
+                            let _: () = $crate::objc2::msg_send![&*self.panel, setOpaque: false];
+                        } else {
+                            let default_color: $crate::objc2::rc::Retained<$crate::objc2_foundation::NSObject> = $crate::objc2::msg_send![$crate::objc2::class!(NSColor), windowBackgroundColor];
+                            let _: () = $crate::objc2::msg_send![&*self.panel, setBackgroundColor: &*default_color];
+                            let _: () = $crate::objc2::msg_send![&*self.panel, setOpaque: true];
+                        }
+                    }
+                }
+
             }
 
             // Implement FromWindow trait

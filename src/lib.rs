@@ -152,6 +152,12 @@ pub trait Panel<R: tauri::Runtime = tauri::Wry>: Send + Sync {
 
     /// Make a view the first responder
     fn make_first_responder(&self, responder: Option<&objc2_app_kit::NSResponder>) -> bool;
+
+    /// Set the corner radius for the panel
+    fn set_corner_radius(&self, radius: f64);
+
+    /// Set the panel background to be transparent
+    fn set_transparent(&self, transparent: bool);
 }
 
 /// Trait for panels that can be created from a window
