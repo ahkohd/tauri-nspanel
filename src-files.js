@@ -1,3 +1,2 @@
-var srcIndex = new Map(JSON.parse('[["tauri_nspanel",["",[],["builder.rs","common.rs","event.rs","lib.rs","panel.rs"]]]]'));
-createSrcSidebar();
-//{"start":36,"fragment_lengths":[83]}
+createSrcSidebar('[["tauri_nspanel",["",[],["builder.rs","common.rs","event.rs","lib.rs","panel.rs"]]]]');
+//{"start":19,"fragment_lengths":[83]}
