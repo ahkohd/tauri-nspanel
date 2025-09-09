@@ -1,16 +1,20 @@
 # Panel Builder Example
 
 This example demonstrates how to use the `PanelBuilder` API to create NSPanel windows programmatically in a Tauri application.
+
+---
+
 ![A panel create using PanelBuilder](./demo.png)
+
 
 ## Features Demonstrated
 
-- **Creating panels programmatically** using `PanelBuilder::new()`
-- **Configuring panel properties** with the builder pattern
-- **Adding drag regions** for window movement
-- **Setting up event handlers** for panel lifecycle events
-- **Managing multiple windows** (main window + floating panel)
-- **Preventing focus stealing** - The app uses `ActivationPolicy::Accessory` (no dock icon) and `no_activate(true)` to ensure panels appear without stealing focus
+- Creating panels programmatically using `PanelBuilder::new()`
+- Configuring panel properties with the builder pattern
+- Adding drag regions for window movement
+- Setting up event handlers for panel lifecycle events
+- Managing multiple windows (main window + floating panel)
+- Preventing focus stealing - The app uses `ActivationPolicy::Accessory` (no dock icon) and `no_activate(true)` to ensure panels appear without stealing focus
 
 ## Running the Example
 
@@ -130,72 +134,3 @@ panel.set_event_handler(Some(handler.as_protocol_object()));
 panel.show_and_make_key();
 ```
 
-## PanelBuilder API Reference
-
-PanelBuilder creates a window via Tauri's WebviewWindowBuilder, converts it to a panel, and applies all configurations.
-
-### Builder Methods
-
-#### Basic Configuration
-- `new(handle, label)` - Create a new builder
-- `url(WebviewUrl)` - Set the webview URL
-- `title(String)` - Set the window title
-- `position(Position)` - Set initial position
-- `size(Size)` - Set initial size
-- `content_size(Size)` - Set content size (excluding window decorations)
-
-#### Panel-Specific Properties
-- `floating(bool)` - Set whether panel floats above other windows
-- `level(PanelLevel)` - Set window level (Floating, Status, etc.)
-- `has_shadow(bool)` - Enable/disable window shadow
-- `opaque(bool)` - Set panel opacity
-- `alpha_value(f64)` - Set transparency (0.0 to 1.0)
-- `hides_on_deactivate(bool)` - Hide panel when app deactivates
-- `becomes_key_only_if_needed(bool)` - Panel becomes key window only if needed
-- `accepts_mouse_moved_events(bool)` - Accept mouse moved events
-- `ignores_mouse_events(bool)` - Ignore all mouse events
-- `movable_by_window_background(bool)` - Allow dragging by background
-- `released_when_closed(bool)` - Release panel when closed
-- `works_when_modal(bool)` - Work with modal dialogs
-- `no_activate(bool)` - Prevent panel from stealing focus when created
-
-#### Advanced Configuration
-- `style_mask(StyleMask)` - Set window style mask
-- `collection_behavior(CollectionBehavior)` - Set collection behavior
-- `with_window(fn)` - Apply custom configuration to WebviewWindowBuilder
-
-#### Build
-- `build()` - Create the panel (returns `Result<Arc<dyn Panel>>`)
-
-### Panel Levels
-
-- `PanelLevel::Normal` - Standard window level
-- `PanelLevel::Floating` - Floats above normal windows
-- `PanelLevel::Status` - Status bar level (very high)
-- `PanelLevel::MainMenu` - Main menu level
-- `PanelLevel::PopUpMenu` - Pop-up menu level
-- `PanelLevel::ScreenSaver` - Screen saver level
-
-### Style Masks
-
-- `nonactivating_panel()` - Panel doesn't activate the app
-- `resizable()` - Allow window resizing
-- `titled()` - Show title bar
-- `closable()` - Show close button
-- `miniaturizable()` - Show minimize button
-- `borderless()` - Remove window chrome
-
-### Collection Behaviors
-
-- `can_join_all_spaces()` - Panel appears on all spaces
-- `stationary()` - Panel doesn't move with spaces
-- `full_screen_auxiliary()` - Can appear over fullscreen windows
-- `ignores_cycle()` - Excluded from Cmd+Tab cycling
-
-## Notes
-
-- PanelBuilder is ideal for creating auxiliary windows like tool palettes, floating inspectors, or utility panels
-- The panel is created during app initialization and persists throughout the app lifecycle
-- Commands allow showing/hiding/closing the panel from the frontend
-- The main window remains a standard window while the panel floats above it
-- Mouse tracking areas can only be configured via the `panel!` macro's `with` section, not through PanelBuilder methods

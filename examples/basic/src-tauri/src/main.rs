@@ -81,9 +81,9 @@ fn hide_panel(handle: AppHandle) {
 
 #[tauri::command]
 fn close_panel(app_handle: AppHandle) {
-    app_handle
-        .get_webview_panel("main")
-        .ok()
-        .and_then(|panel| panel.to_window())
-        .map(|window| window.close());
+  app_handle
+    .get_webview_panel("main")
+    .ok()
+    .and_then(|panel| panel.to_window())
+    .map(|window| window.close());
 }
