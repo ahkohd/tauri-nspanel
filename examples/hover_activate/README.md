@@ -6,11 +6,11 @@ This example demonstrates an advanced panel behavior where the panel automatical
 
 ## Features Demonstrated
 
-- **Automatic Key Window Management**: Panel becomes key on mouse enter, resigns on mouse exit
-- **Mouse Tracking with Actions**: Using mouse events to trigger window state changes
-- **Non-Activating Panel**: Panel doesn't activate the app when clicked
-- **Floating Panel Behavior**: Always stays above other windows
-- **Cross-Space Display**: Shows on all spaces and over fullscreen windows
+- Automatic Key Window Management: Panel becomes key on mouse enter, resigns on mouse exit
+- Mouse Tracking with Actions: Using mouse events to trigger window state changes
+- Non-Activating Panel: Panel doesn't activate the app when clicked
+- Floating Panel Behavior: Always stays above other windows
+- Cross-Space Display: Shows on all spaces and over fullscreen windows
 
 ## Running the Example
 
@@ -106,21 +106,10 @@ panel.set_event_handler(Some(handler.as_protocol_object()));
 
 ## How It Works
 
-1. **Mouse Enter**: When the mouse enters the panel bounds, the `on_mouse_entered` callback fires and calls `panel.make_key_window()`
-2. **Panel Becomes Key**: The panel receives keyboard focus and the `window_did_become_key` callback logs the state
-3. **Mouse Exit**: When the mouse leaves the panel bounds, the `on_mouse_exited` callback fires and calls `panel.resign_key_window()`
-4. **Panel Resigns Key**: The panel loses keyboard focus and the previous window regains it
-
-## Use Cases
-
-This hover activation pattern is particularly useful for:
-
-- **AI Chat/Audio Widget**: Activate when you hover, take actions quickly
-- **Floating Calculators**: Activate when you need to type numbers
-- **Quick Note Panels**: Gain focus for text input on hover
-- **Media Controls**: Keyboard shortcuts activate when hovering
-- **Developer Tools**: Debug panels that become active when inspected
-- **Emoji Pickers**: Type to search when hovering over the panel
+1. Mouse Enter: When the mouse enters the panel bounds, the `on_mouse_entered` callback fires and calls `panel.make_key_window()`
+2. Panel Becomes Key: The panel receives keyboard focus and the `window_did_become_key` callback logs the state
+3. Mouse Exit: When the mouse leaves the panel bounds, the `on_mouse_exited` callback fires and calls `panel.resign_key_window()`
+4. Panel Resigns Key: The panel loses keyboard focus and the previous window regains it
 
 ## Behavior Notes
 
