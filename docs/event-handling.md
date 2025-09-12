@@ -16,9 +16,9 @@ tauri_panel! {
     })
     
     panel_event!(MyPanelEventHandler {
-        windowDidBecomeKey(notification: &NSNotification) -> (),
-        windowDidResignKey(notification: &NSNotification) -> (),
-        windowShouldClose(window: &NSWindow) -> Bool
+        window_did_become_key(notification: &NSNotification) -> (),
+        window_did_resign_key(notification: &NSNotification) -> (),
+        window_should_close(window: &NSWindow) -> Bool
     })
 }
 ```
@@ -40,7 +40,7 @@ handler.window_should_close(|window| {
 });
 
 // Attach to panel
-panel.set_event_handler(Some(handler.as_protocol_object()));
+panel.set_event_handler(Some(handler.as_ref()));
 ```
 
 ## Mouse tracking events
@@ -66,7 +66,7 @@ tauri_panel! {
     })
     
     panel_event!(MouseTrackingPanelEventHandler {
-        windowDidBecomeKey(notification: &NSNotification) -> ()
+        window_did_become_key(notification: &NSNotification) -> ()
     })
 }
 ```
@@ -96,16 +96,17 @@ handler.on_cursor_update(|event| {
     // Change cursor based on hover state
 });
 
-panel.set_event_handler(Some(handler.as_protocol_object()));
+panel.set_event_handler(Some(handler.as_ref()));
 ```
 
 ## Selector generation rules
 
 The macro automatically converts method signatures to Objective-C selectors:
 
-- Single parameter: `methodName(param)` → `methodName:`
-- Multiple parameters: `methodName(first, second)` → `methodName:second:`
-- Snake_case converts to camelCase: `to_size` → `toSize`
+- Single parameter: `method_name(param)` → `methodName:`
+- Multiple parameters: `method_name(first, second)` → `methodName:second:`
+- Parameter names convert from `snake_case` to `camelCase`: `to_size` → `toSize`
+  - Example: `method_name(foo: Type1, bar_baz: Type2)` → `methodName:barBaz:`
 
 ## Return types
 
@@ -114,19 +115,19 @@ Methods must specify their return type explicitly:
 ```rust
 panel_event!(CompleteEventHandler {
     // Void methods
-    windowDidBecomeKey(notification: &NSNotification) -> (),
-    windowWillClose(notification: &NSNotification) -> (),
+    window_did_become_key(notification: &NSNotification) -> (),
+    window_will_close(notification: &NSNotification) -> (),
     
     // Boolean returns
-    windowShouldClose(window: &NSWindow) -> Bool,
-    windowShouldZoom(window: &NSWindow, to_frame: &NSRect) -> Bool,
+    window_should_close(window: &NSWindow) -> Bool,
+    window_should_zoom(window: &NSWindow, to_frame: &NSRect) -> Bool,
     
     // Value returns
-    windowWillResize(sender: &NSWindow, to_size: &NSSize) -> NSSize,
-    windowWillUseStandardFrame(window: &NSWindow, default_frame: &NSRect) -> NSRect,
+    window_will_resize(sender: &NSWindow, to_size: &NSSize) -> NSSize,
+    window_will_use_standard_frame(window: &NSWindow, default_frame: &NSRect) -> NSRect,
     
     // Optional object returns
-    windowWillReturnFieldEditor(sender: &NSWindow, to_object: Option<&NSObject>) -> Option<&'static NSObject>
+    window_will_return_field_editor(sender: &NSWindow, to_object: Option<&NSObject>) -> Option<&'static NSObject>
 })
 ```
 
@@ -135,11 +136,11 @@ panel_event!(CompleteEventHandler {
 ### Window lifecycle
 ```rust
 panel_event!(LifecycleEventHandler {
-    windowDidBecomeKey(notification: &NSNotification) -> (),
-    windowDidResignKey(notification: &NSNotification) -> (),
-    windowWillClose(notification: &NSNotification) -> (),
-    windowDidMiniaturize(notification: &NSNotification) -> (),
-    windowDidDeminiaturize(notification: &NSNotification) -> ()
+    window_did_become_key(notification: &NSNotification) -> (),
+    window_did_resign_key(notification: &NSNotification) -> (),
+    window_will_close(notification: &NSNotification) -> (),
+    window_did_miniaturize(notification: &NSNotification) -> (),
+    window_did_deminiaturize(notification: &NSNotification) -> ()
 })
 
 let handler = LifecycleEventHandler::new();
@@ -156,8 +157,8 @@ handler.window_will_close(|_| {
 ### Window resizing
 ```rust
 panel_event!(ResizeEventHandler {
-    windowWillResize(sender: &NSWindow, to_size: &NSSize) -> NSSize,
-    windowDidResize(notification: &NSNotification) -> ()
+    window_will_resize(sender: &NSWindow, to_size: &NSSize) -> NSSize,
+    window_did_resize(notification: &NSNotification) -> ()
 })
 
 let handler = ResizeEventHandler::new();
@@ -178,7 +179,7 @@ handler.window_did_resize(|_| {
 ### Close confirmation
 ```rust
 panel_event!(CloseEventHandler {
-    windowShouldClose(window: &NSWindow) -> Bool
+    window_should_close(window: &NSWindow) -> Bool
 })
 
 let handler = CloseEventHandler::new();
@@ -208,11 +209,11 @@ tauri_panel! {
     })
     
     panel_event!(MainPanelEventHandler {
-        windowDidBecomeKey(notification: &NSNotification) -> ()
+        window_did_become_key(notification: &NSNotification) -> ()
     })
     
     panel_event!(UtilityPanelEventHandler {
-        windowDidBecomeKey(notification: &NSNotification) -> ()
+        window_did_become_key(notification: &NSNotification) -> ()
     })
 }
 

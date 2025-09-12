@@ -99,8 +99,8 @@ Learn how to:
 
 tauri_panel! {
     panel_event!(PanelEventHandler {
-        windowDidBecomeKey(notification: &NSNotification) -> (),
-        windowShouldClose(window: &NSWindow) -> Bool
+        window_did_become_key(notification: &NSNotification) -> (),
+        window_should_close(window: &NSWindow) -> Bool
     })
 }
 
@@ -282,7 +282,7 @@ panel.show();
 ```rust
 // 1. Define handler in tauri_panel! block
 panel_event!(MyHandler {
-    windowDidBecomeKey(notification: &NSNotification) -> ()
+    window_did_become_key(notification: &NSNotification) -> ()
 })
 
 // 2. Create and configure handler
@@ -290,7 +290,7 @@ let handler = MyHandler::new();
 handler.window_did_become_key(|_| { /* callback */ });
 
 // 3. Attach to panel
-panel.set_event_handler(Some(handler.as_protocol_object()));
+panel.set_event_handler(Some(handler.as_ref()));
 ```
 
 ### Cleanup pattern

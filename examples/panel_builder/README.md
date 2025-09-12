@@ -128,7 +128,7 @@ handler.window_did_resign_key(|_notification| {
     println!("Mini panel resigned from key window!");
 });
 
-panel.set_event_handler(Some(handler.as_protocol_object()));
+panel.set_event_handler(Some(handler.as_ref()));
 
 // Show the panel and make it key window
 panel.show_and_make_key();

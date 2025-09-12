@@ -15,11 +15,11 @@
 ///
 /// The macro generates Objective-C selectors based on how you declare the methods:
 ///
-/// - **Single parameter**: `methodName(param: Type)` → `methodName:`
-///   - Example: `windowDidBecomeKey(notification: &NSNotification)` → `windowDidBecomeKey:`
+/// - **Single parameter**: `method_name(param: Type)` → `methodName:`
+///   - Example: `window_did_become_key(notification: &NSNotification)` → `windowDidBecomeKey:`
 ///
-/// - **Multiple parameters**: `methodName(first: Type1, second: Type2)` → `methodName:second:`
-///   - Example: `windowWillResize(window: &NSWindow, to_size: &NSSize)` → `windowWillResize:toSize:`
+/// - **Multiple parameters**: `method_name(first: Type1, second: Type2)` → `methodName:second:`
+///   - Example: `window_will_resize(window: &NSWindow, to_size: &NSSize)` → `windowWillResize:toSize:`
 ///   - The first parameter is always anonymous (`:`) in the selector
 ///   - Subsequent parameters use their names as selector parts
 ///
@@ -40,10 +40,10 @@
 ///
 /// tauri_panel! {
 ///     panel_event!(MyPanelEventHandler {
-///         windowDidBecomeKey(notification: &NSNotification) -> (),
-///         windowShouldClose(window: &NSWindow) -> Bool,
-///         windowWillResize(window: &NSWindow, to_size: &NSSize) -> NSSize,
-///         windowWillReturnFieldEditor(sender: &NSWindow, client: Option<&AnyObject>) -> Option<Retained<NSObject>>
+///         window_did_become_key(notification: &NSNotification) -> (),
+///         window_should_close(window: &NSWindow) -> Bool,
+///         window_will_resize(window: &NSWindow, to_size: &NSSize) -> NSSize,
+///         window_will_return_field_editor(sender: &NSWindow, client: Option<&AnyObject>) -> Option<Retained<NSObject>>
 ///     })
 /// }
 ///
@@ -92,14 +92,14 @@ macro_rules! panel_event {
         $crate::pastey::paste! {
                 // Generate typed callback signatures for each method
                 $(
-                    pub type [<$handler_name $method Callback>] = std::boxed::Box<
+                    pub type [<$handler_name $method:camel Callback>] = std::boxed::Box<
                         dyn Fn($first_type $(, $param_type)*) -> $return_type
                     >;
                 )*
 
                 struct [<$handler_name Ivars>] {
                    $(
-                       [<$method:snake>]: std::cell::Cell<Option<[<$handler_name $method Callback>]>>,
+                       [<$method:snake>]: std::cell::Cell<Option<[<$handler_name $method:camel Callback>]>>,
                    )*
                    // Mouse event callbacks
                    mouse_entered_callback: std::cell::Cell<Option<Box<dyn Fn(&$crate::objc2_app_kit::NSEvent)>>>,
@@ -120,9 +120,9 @@ macro_rules! panel_event {
 
                     unsafe impl NSWindowDelegate for $handler_name {
                         $(
-                            #[doc = concat!(" Objective-C delegate method: ", stringify!($method), ":", $(stringify!([<$param:lower_camel>]), ":"),*)]
+                            #[doc = concat!(" Objective-C delegate method: ", stringify!($method), "_:", $(stringify!([<$param:lower_camel>]), ":"),*)]
                             #[allow(non_snake_case)]
-                            #[unsafe(method($method:$([<$param:lower_camel>]:)*))]
+                            #[unsafe(method([<$method:lower_camel>]:$([<$param:lower_camel>]:)*))]
                             fn [<__ $method:snake>](&self, [<$first_param:lower_camel>]: $first_type $(, [<$param:lower_camel>]: $param_type )* ) -> $return_type {
                                 // Take the callback from the cell temporarily
                                 let callback = self.ivars().[<$method:snake>].take();
@@ -212,7 +212,7 @@ macro_rules! panel_event {
                         where
                             F: Fn($first_type $(, $param_type)*) -> $return_type + 'static
                         {
-                            let boxed_callback: [<$handler_name $method Callback>] = std::boxed::Box::new(callback);
+                            let boxed_callback: [<$handler_name $method:camel Callback>] = std::boxed::Box::new(callback);
 
                             // Store new callback
                             self.ivars().[<$method:snake>].set(Some(boxed_callback));
@@ -251,15 +251,16 @@ macro_rules! panel_event {
                     {
                         self.ivars().cursor_update_callback.set(Some(Box::new(callback)));
                     }
+                }
 
-                    /// Convert to a ProtocolObject for use with NSWindow
-                    pub fn as_protocol_object(&self) -> &ProtocolObject<dyn NSWindowDelegate> {
+                /// Implement AsRef for idiomatic conversion to ProtocolObject
+                impl std::convert::AsRef<ProtocolObject<dyn NSWindowDelegate>> for $handler_name {
+                    fn as_ref(&self) -> &ProtocolObject<dyn NSWindowDelegate> {
                         unsafe {
                             ProtocolObject::from_ref(self)
                         }
                     }
                 }
-
         }
     };
 }
@@ -270,27 +271,27 @@ macro_rules! panel_event {
 //
 // tauri_panel! {
 //     panel_event!(MyPanelEventHandler {
-//         windowDidBecomeKey(notification: &NSNotification) -> (),
-//         windowWillClose(window: &NSWindow) -> (),
-//         windowShouldClose(window: &NSWindow) -> Bool,
-//         windowWillResize(window: &NSWindow, to_size: &NSSize) -> NSSize
+//         window_did_become_key(notification: &NSNotification) -> (),
+//         window_will_close(window: &NSWindow) -> (),
+//         window_should_close(window: &NSWindow) -> Bool,
+//         window_will_resize(window: &NSWindow, to_size: &NSSize) -> NSSize
 //     })
 // }
 //
 // let handler = MyPanelEventHandler::new();
 //
-// // Example: Handle windowDidBecomeKey notification
+// // Example: Handle window_did_become_key notification
 // handler.window_did_become_key(|notification| {
 //     println!("Window became key with notification: {:?}", notification);
 // });
 //
-// // Example: Handle windowShouldClose with bool return
+// // Example: Handle window_should_close with bool return
 // handler.window_should_close(|window| {
 //     println!("Should close window?");
 //     Bool::new(true) // Allow closing
 // });
 //
-// // Example: Handle windowWillResize with NSSize return
+// // Example: Handle window_will_resize with NSSize return
 // handler.window_will_resize(|window, proposed_size| {
 //     // Enforce minimum size
 //     NSSize {
@@ -300,4 +301,4 @@ macro_rules! panel_event {
 // });
 //
 // // Use with panel
-// panel.set_event_handler(Some(handler.as_protocol_object()));
+// panel.set_event_handler(Some(handler.as_ref()));

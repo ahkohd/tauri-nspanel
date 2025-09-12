@@ -78,7 +78,7 @@ pub use objc2_app_kit::{
 ///         println!("Mouse moved to: x={}, y={}", location.x, location.y);
 ///     });
 ///
-///     panel.set_event_handler(Some(handler.as_protocol_object()));
+///     panel.set_event_handler(Some(handler.as_ref()));
 ///
 ///     Ok(())
 /// }

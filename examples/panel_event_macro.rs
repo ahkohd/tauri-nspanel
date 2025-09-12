@@ -4,13 +4,13 @@ use tauri_nspanel::tauri_panel;
 
 tauri_panel! {
     panel_event!(MyPanelEventHandler {
-        windowDidBecomeKey(notification: &NSNotification) -> (),
-        windowWillReturnFieldEditor(sender: &NSWindow, to_object: Option<&AnyObject>) -> Option<&'static AnyObject>
+        window_did_become_key(notification: &NSNotification) -> (),
+        window_will_return_field_editor(sender: &NSWindow, to_object: Option<&AnyObject>) -> Option<&'static AnyObject>
     })
 
     panel_event!(MyOtherPanelEventHandler {
-        windowShouldClose(window: &NSWindow) -> Bool,
-        windowWillResize(window: &NSWindow, to_size: &NSSize) -> NSSize
+        window_should_close(window: &NSWindow) -> Bool,
+        window_will_resize(window: &NSWindow, to_size: &NSSize) -> NSSize
     })
 }
 
@@ -48,5 +48,5 @@ fn main() {
 
     println!("Event handlers created and configured!");
 
-    // Use with panel: panel.set_event_handler(Some(handler1.as_protocol_object()));
+    // Use with panel: panel.set_event_handler(Some(handler1.as_ref()));
 }

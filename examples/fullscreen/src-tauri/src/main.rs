@@ -29,8 +29,8 @@ tauri_panel! {
     })
 
     panel_event!(MyPanelEventHandler {
-        windowDidBecomeKey(notification: &NSNotification) -> (),
-        windowDidResignKey(notification: &NSNotification) -> ()
+        window_did_become_key(notification: &NSNotification) -> (),
+        window_did_resign_key(notification: &NSNotification) -> ()
     })
 }
 
@@ -88,7 +88,7 @@ fn init(app_handle: &AppHandle) {
       .into(),
   );
 
-  panel.set_event_handler(Some(handler.as_protocol_object()));
+  panel.set_event_handler(Some(handler.as_ref()));
 
   // Note: The tracking area is configured in the panel definition above.
   // Mouse events (mouseEntered, mouseExited, mouseMoved) will be sent to the

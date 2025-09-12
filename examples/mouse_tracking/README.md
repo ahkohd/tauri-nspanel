@@ -47,8 +47,8 @@ tauri_panel! {
     })
     
     panel_event!(MyPanelEventHandler {
-        windowDidBecomeKey(notification: &NSNotification) -> (),
-        windowDidResignKey(notification: &NSNotification) -> ()
+        window_did_become_key(notification: &NSNotification) -> (),
+        window_did_resign_key(notification: &NSNotification) -> ()
     })
 }
 ```
@@ -84,7 +84,7 @@ handler.on_cursor_update(|event| {
 });
 
 // Attach the handler to the panel
-panel.set_event_handler(Some(handler.as_protocol_object()));
+panel.set_event_handler(Some(handler.as_ref()));
 ```
 
 ### 3. Tracking Area Options

@@ -101,7 +101,7 @@ panel.set_hides_on_deactivate(false);
 panel.set_works_when_modal(true);
 
 // Attach the event handler
-panel.set_event_handler(Some(handler.as_protocol_object()));
+panel.set_event_handler(Some(handler.as_ref()));
 ```
 
 ## How It Works

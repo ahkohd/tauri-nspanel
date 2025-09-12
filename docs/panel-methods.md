@@ -112,7 +112,7 @@ panel.set_collection_behavior(behavior.into());
 
 ```rust
 // Set event handler
-panel.set_event_handler(Some(handler.as_protocol_object()));
+panel.set_event_handler(Some(handler.as_ref()));
 
 // Clear event handler
 panel.set_event_handler(None);

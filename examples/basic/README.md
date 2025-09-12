@@ -16,7 +16,7 @@ This example demonstrates the basic usage of tauri-nspanel: converting a standar
 
 - Using `tauri_panel!` macro to define custom panel class
 - Converting WebviewWindow to custom Panel type
-- Setting up event handlers for `windowDidBecomeKey` and `windowDidResignKey`
+- Setting up event handlers for `window_did_become_key` and `window_did_resign_key`
 - Querying panel properties (class name, can become key/main)
 - Frontend commands for panel control
 
@@ -42,8 +42,8 @@ tauri_panel! {
     })
     
     panel_event!(PanelEventHandler {
-        windowDidBecomeKey(notification: &NSNotification) -> (),
-        windowDidResignKey(notification: &NSNotification) -> ()
+        window_did_become_key(notification: &NSNotification) -> (),
+        window_did_resign_key(notification: &NSNotification) -> ()
     })
 }
 
@@ -55,7 +55,7 @@ let handler = PanelEventHandler::new();
 handler.window_did_become_key(|notification| {
     println!("Panel became key window!");
 });
-panel.set_event_handler(Some(handler.as_protocol_object()));
+panel.set_event_handler(Some(handler.as_ref()));
 ```
 
 ## Available Commands

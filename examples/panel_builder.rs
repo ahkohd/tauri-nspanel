@@ -14,8 +14,8 @@ tauri_panel! {
     })
 
     panel_event!(MyPanelEventHandler {
-        windowDidBecomeKey(notification: &NSNotification) -> (),
-        windowShouldClose(window: &NSWindow) -> Bool
+        window_did_become_key(notification: &NSNotification) -> (),
+        window_should_close(window: &NSWindow) -> Bool
     })
 }
 
@@ -72,9 +72,9 @@ fn create_panels_example(app: &AppHandle) -> Result<(), Box<dyn std::error::Erro
     panel_with_events.show();
 
     // Set event handler on panels
-    // Note: The event handler needs to be passed as a protocol object wrapped in Some()
-    panel_with_events.set_event_handler(Some(handler.as_protocol_object()));
-    panel2.set_event_handler(Some(handler.as_protocol_object()));
+    // Note: The event handler needs to be passed as reference wrapped in Some()
+    panel_with_events.set_event_handler(Some(handler.as_ref()));
+    panel2.set_event_handler(Some(handler.as_ref()));
 
     Ok(())
 }

@@ -19,8 +19,8 @@ tauri_panel! {
     })
 
     panel_event!(MiniPanelEventHandler {
-        windowDidBecomeKey(notification: &NSNotification) -> (),
-        windowDidResignKey(notification: &NSNotification) -> ()
+        window_did_become_key(notification: &NSNotification) -> (),
+        window_did_resign_key(notification: &NSNotification) -> ()
     })
 }
 
@@ -103,7 +103,7 @@ fn init(app_handle: &AppHandle) {
     println!("[info]: mini panel resigned from key window!");
   });
 
-  panel.set_event_handler(Some(handler.as_protocol_object()));
+  panel.set_event_handler(Some(handler.as_ref()));
 
   // Show the panel
   panel.show_and_make_key();

@@ -104,7 +104,7 @@ fn init(app_handle: &AppHandle) {
   // when another window in the application is running modally
   panel.set_works_when_modal(true);
 
-  panel.set_event_handler(Some(handler.as_protocol_object()));
+  panel.set_event_handler(Some(handler.as_ref()));
 }
 
 #[tauri::command]
