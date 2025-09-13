@@ -596,6 +596,12 @@ macro_rules! panel {
                             ))
                         })?;
 
+                        // Sync instance properties with class-level config after swizzling
+                        // Only for properties that have setter methods available
+                        $($(
+                            Self::sync_instance_property(&panel, stringify!($method), $value);
+                        )*)?
+
                         // Add tracking area if configured
                         $($(
                             Self::add_tracking_area(&panel, $tracking_options, $auto_resize);
@@ -622,8 +628,33 @@ macro_rules! panel {
                 }
             }
 
-            // Add tracking area helper
+            // Helper methods
             impl<R: tauri::Runtime> $class_name<R> where $class_name<R>: $crate::Panel<R> {
+                #[allow(unused)]
+                fn sync_instance_property(panel: &$crate::objc2_app_kit::NSPanel, method: &str, value: bool) {
+                    unsafe {
+                        match method {
+                            "hides_on_deactivate" | "hidesOnDeactivate" => {
+                                let _: () = $crate::objc2::msg_send![panel, setHidesOnDeactivate: value];
+                            },
+                            "becomes_key_only_if_needed" | "becomesKeyOnlyIfNeeded" => {
+                                let _: () = $crate::objc2::msg_send![panel, setBecomesKeyOnlyIfNeeded: value];
+                            },
+                            "works_when_modal" | "worksWhenModal" => {
+                                let _: () = $crate::objc2::msg_send![panel, setWorksWhenModal: value];
+                            },
+                            "is_floating_panel" | "isFloatingPanel" => {
+                                let _: () = $crate::objc2::msg_send![panel, setFloatingPanel: value];
+                            },
+                            // Properties like can_become_key_window, can_become_main_window don't have setters
+                            // They are read-only and only affect behavior through method overrides
+                            _ => {
+                                // Skip properties without setters
+                            }
+                        }
+                    }
+                }
+
                 #[allow(unused)]
                 fn add_tracking_area(panel: &$crate::objc2_app_kit::NSPanel, options: impl Into<$crate::objc2_app_kit::NSTrackingAreaOptions>, auto_resize: bool) {
                     unsafe {
