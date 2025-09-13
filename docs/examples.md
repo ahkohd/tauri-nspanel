@@ -59,8 +59,8 @@ Learn how to:
 tauri_panel! {
     panel!(BasicPanel {
         config: {
-            canBecomeKeyWindow: true,
-            canBecomeMainWindow: false
+            can_become_key_window: true,
+            can_become_main_window: false
         }
     })
 }
@@ -120,7 +120,7 @@ Learn how to:
 
 ```rust
 panel!(TrackingPanel {
-    config: { canBecomeKeyWindow: true }
+    config: { can_become_key_window: true }
     with: {
         tracking_area: {
             options: TrackingAreaOptions::new()
@@ -185,14 +185,14 @@ Learn how to:
 tauri_panel! {
     panel!(FloatingPanel {
         config: {
-            isFloatingPanel: true,
-            canBecomeKeyWindow: false
+            is_floating_panel: true,
+            can_become_key_window: false
         }
     })
     
     panel!(UtilityPanel {
         config: {
-            canBecomeKeyWindow: true
+            can_become_key_window: true
         }
     })
 }
@@ -266,7 +266,7 @@ done
 ```rust
 // 1. Define panel class
 tauri_panel! {
-    panel!(MyPanel { config: { canBecomeKeyWindow: true } })
+    panel!(MyPanel { config: { can_become_key_window: true } })
 }
 
 // 2. Create panel

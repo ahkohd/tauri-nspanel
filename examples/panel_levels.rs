@@ -5,7 +5,7 @@ use tauri_nspanel::{tauri_panel, PanelBuilder, PanelLevel};
 tauri_panel! {
     panel!(DemoPanel {
         config: {
-            canBecomeKeyWindow: true
+            can_become_key_window: true
         }
     })
 }

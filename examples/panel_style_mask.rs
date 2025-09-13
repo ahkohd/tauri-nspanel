@@ -8,39 +8,39 @@ tauri_panel! {
     // Default panel with standard window chrome
     panel!(StandardPanel {
         config: {
-            canBecomeKeyWindow: true
+            can_become_key_window: true
         }
     })
 
     // Borderless panel (no title bar)
     panel!(BorderlessPanel {
         config: {
-            canBecomeKeyWindow: true,
-            isFloatingPanel: true
+            can_become_key_window: true,
+            is_floating_panel: true
         }
     })
 
     // HUD-style panel
     panel!(HUDPanel {
         config: {
-            canBecomeKeyWindow: false,
-            isFloatingPanel: true
+            can_become_key_window: false,
+            is_floating_panel: true
         }
     })
 
     // Utility panel with small title bar
     panel!(UtilityPanel {
         config: {
-            canBecomeKeyWindow: true,
-            becomesKeyOnlyIfNeeded: true
+            can_become_key_window: true,
+            becomes_key_only_if_needed: true
         }
     })
 
     // Non-activating panel
     panel!(NonActivatingPanel {
         config: {
-            canBecomeKeyWindow: false,
-            isFloatingPanel: true
+            can_become_key_window: false,
+            is_floating_panel: true
         }
     })
 }

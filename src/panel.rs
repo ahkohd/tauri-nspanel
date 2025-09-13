@@ -18,7 +18,7 @@ pub use objc2_app_kit::{
 /// operations must be performed on the main thread.
 ///
 /// ## Sections:
-/// - `config`: Override NSPanel methods that return boolean values
+/// - `config`: Override NSPanel methods that return boolean values (use snake_case names)
 /// - `with`: Optional configurations (tracking_area, etc.)
 ///
 /// ## Mouse Tracking:
@@ -37,8 +37,8 @@ pub use objc2_app_kit::{
 /// panel!(MyCustomPanel {
 ///     // Config overrides - these affect compile-time behavior
 ///     config: {
-///         canBecomeKeyWindow: true,
-///         canBecomeMainWindow: false,
+///         can_become_key_window: true,
+///         can_become_main_window: false,
 ///     },
 ///     // Optional configurations
 ///     with: {
@@ -121,14 +121,14 @@ macro_rules! panel {
 
                 impl [<Raw $class_name>] {
                     $($(
-                        #[doc = " Returns whether panels of this class " $method]
-                        #[unsafe(method($method))]
+                        #[doc = concat!(" Returns whether panels of this class ", stringify!([<$method:lower_camel>]))]
+                        #[unsafe(method([<$method:lower_camel>]))]
                         fn [<__ $method:snake>]() -> bool {
                             $value
                         }
 
-                        #[doc = " Returns whether this specific panel instance " $method]
-                        #[unsafe(method($method))]
+                        #[doc = concat!(" Returns whether this specific panel instance ", stringify!([<$method:lower_camel>]))]
+                        #[unsafe(method([<$method:lower_camel>]))]
                         fn [<__ $method:snake _instance>](&self) -> bool {
                             $value
                         }
@@ -366,6 +366,12 @@ macro_rules! panel {
                 fn can_become_main_window(&self) -> bool {
                     unsafe {
                         $crate::objc2::msg_send![&*self.panel, canBecomeMainWindow]
+                    }
+                }
+
+                fn hides_on_deactivate(&self) -> bool {
+                    unsafe {
+                        $crate::objc2::msg_send![&*self.panel, hidesOnDeactivate]
                     }
                 }
 

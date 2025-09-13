@@ -197,7 +197,7 @@ use tauri_nspanel::TrackingAreaOptions;
 panel! {
     MyTrackingPanel {
         config: {
-            canBecomeKeyWindow: true
+            can_become_key_window: true
         }
         with: {
             tracking_area: {

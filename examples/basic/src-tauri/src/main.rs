@@ -10,8 +10,8 @@ use tauri_nspanel::{tauri_panel, ManagerExt, WebviewWindowExt};
 tauri_panel! {
     panel!(Panel {
         config: {
-            canBecomeKeyWindow: true,
-            canBecomeMainWindow: false
+            can_become_key_window: true,
+            can_become_main_window: false
         }
     })
 

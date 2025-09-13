@@ -506,7 +506,7 @@ pub(crate) struct PanelConfig {
 /// // Using custom panel type
 /// panel!(CustomPanel {
 ///     config: {
-///         canBecomeKeyWindow: false
+///         can_become_key_window: false
 ///     }
 /// });
 ///

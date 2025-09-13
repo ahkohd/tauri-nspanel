@@ -11,7 +11,7 @@ use tauri_nspanel::tauri_panel;
 tauri_panel! {
     panel!(MyPanel {
         config: {
-            canBecomeKeyWindow: true
+            can_become_key_window: true
         }
     })
     
@@ -51,7 +51,7 @@ Enable mouse tracking in your panel configuration:
 tauri_panel! {
     panel!(MouseTrackingPanel {
         config: {
-            canBecomeKeyWindow: true
+            can_become_key_window: true
         }
         with: {
             tracking_area: {
@@ -198,13 +198,13 @@ You can have different event handlers for different panels:
 ```rust
 tauri_panel! {
     panel!(MainPanel {
-        config: { canBecomeKeyWindow: true }
+        config: { can_become_key_window: true }
     })
     
     panel!(UtilityPanel {
         config: { 
-            isFloatingPanel: true,
-            canBecomeKeyWindow: false 
+            is_floating_panel: true,
+            can_become_key_window: false 
         }
     })
     

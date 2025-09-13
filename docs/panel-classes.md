@@ -10,9 +10,9 @@ use tauri_nspanel::tauri_panel;
 tauri_panel! {
     panel!(MyPanel {
         config: {
-            canBecomeKeyWindow: true,
-            canBecomeMainWindow: false,
-            isFloatingPanel: true
+            can_become_key_window: true,
+            can_become_main_window: false,
+            is_floating_panel: true
         }
     })
 }
@@ -29,12 +29,12 @@ The `config` block allows you to override NSPanel methods that return boolean va
 ```rust
 panel!(AdvancedPanel {
     config: {
-        canBecomeKeyWindow: true,        // Can receive keyboard input
-        canBecomeMainWindow: false,      // Can't be the main window
-        becomesKeyOnlyIfNeeded: true,    // Only becomes key when needed
-        isFloatingPanel: true,           // Floats above other windows
-        worksWhenModal: true,            // Works with modal dialogs
-        hidesOnDeactivate: false         // Doesn't hide when app deactivates
+        can_become_key_window: true,        // Can receive keyboard input
+        can_become_main_window: false,      // Can't be the main window
+        becomes_key_only_if_needed: true,    // Only becomes key when needed
+        is_floating_panel: true,           // Floats above other windows
+        works_when_modal: true,            // Works with modal dialogs
+        hides_on_deactivate: false         // Doesn't hide when app deactivates
     }
 })
 ```
@@ -46,7 +46,7 @@ The `with` block provides additional configurations like mouse tracking:
 ```rust
 panel!(InteractivePanel {
     config: {
-        canBecomeKeyWindow: true
+        can_become_key_window: true
     }
     with: {
         tracking_area: {
@@ -70,15 +70,15 @@ You can define multiple panel classes and event handlers together:
 tauri_panel! {
     panel!(MainPanel {
         config: {
-            canBecomeKeyWindow: true,
-            canBecomeMainWindow: false
+            can_become_key_window: true,
+            can_become_main_window: false
         }
     })
     
     panel!(FloatingPanel {
         config: {
-            isFloatingPanel: true,
-            canBecomeKeyWindow: false
+            is_floating_panel: true,
+            can_become_key_window: false
         }
     })
     
@@ -109,10 +109,10 @@ panel.show();
 ```rust
 panel!(ToolPalette {
     config: {
-        canBecomeKeyWindow: false,
-        isFloatingPanel: true,
-        becomesKeyOnlyIfNeeded: true,
-        hidesOnDeactivate: false
+        can_become_key_window: false,
+        is_floating_panel: true,
+        becomes_key_only_if_needed: true,
+        hides_on_deactivate: false
     }
 })
 ```
@@ -121,10 +121,10 @@ panel!(ToolPalette {
 ```rust
 panel!(Inspector {
     config: {
-        canBecomeKeyWindow: true,
-        canBecomeMainWindow: false,
-        isFloatingPanel: false,
-        worksWhenModal: true
+        can_become_key_window: true,
+        can_become_main_window: false,
+        is_floating_panel: false,
+        works_when_modal: true
     }
 })
 ```
@@ -133,10 +133,10 @@ panel!(Inspector {
 ```rust
 panel!(HUD {
     config: {
-        canBecomeKeyWindow: false,
-        canBecomeMainWindow: false,
-        isFloatingPanel: true,
-        hidesOnDeactivate: false
+        can_become_key_window: false,
+        can_become_main_window: false,
+        is_floating_panel: true,
+        hides_on_deactivate: false
     }
 })
 ```

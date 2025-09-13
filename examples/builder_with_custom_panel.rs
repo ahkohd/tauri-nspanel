@@ -7,23 +7,23 @@ use tauri_nspanel::{
 tauri_panel! {
     panel!(MyCustomPanel {
         config: {
-            canBecomeKeyWindow: true,
-            canBecomeMainWindow: false,
-            becomesKeyOnlyIfNeeded: true
+            can_become_key_window: true,
+            can_become_main_window: false,
+            becomes_key_only_if_needed: true
         }
     })
 
     panel!(NotificationPanel {
         config: {
-            canBecomeKeyWindow: false,
-            canBecomeMainWindow: false,
-            isFloatingPanel: true
+            can_become_key_window: false,
+            can_become_main_window: false,
+            is_floating_panel: true
         }
     })
 
     panel!(InteractivePanel {
         config: {
-            canBecomeKeyWindow: true
+            can_become_key_window: true
         }
         with: {
             tracking_area: {

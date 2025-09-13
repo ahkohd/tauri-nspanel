@@ -31,10 +31,10 @@ The panel is configured with specific behaviors for hover activation:
 tauri_panel! {
     panel!(HoverActivatePanel {
         config: {
-            canBecomeMainWindow: false,     // But not main window
-            canBecomeKeyWindow: true,      // Can become key window
-            becomesKeyOnlyIfNeeded: true, // Always becomes key when requested
-            isFloatingPanel: true         // A floating panel
+            can_become_main_window: false,     // But not main window
+            can_become_key_window: true,      // Can become key window
+            becomes_key_only_if_needed: true, // Always becomes key when requested
+            is_floating_panel: true         // A floating panel
         }
         with: {
             tracking_area: {
@@ -113,7 +113,7 @@ panel.set_event_handler(Some(handler.as_ref()));
 
 ## Behavior Notes
 
-- The panel only accepts key status when `canBecomeKeyWindow` is true
+- The panel only accepts key status when `can_become_key_window` is true
 - The `nonactivating_panel` style prevents the app from coming to the foreground
 - Mouse tracking works even when the app is not active due to `active_always()`
 - The panel maintains its floating position across all spaces

@@ -79,6 +79,9 @@ pub trait Panel<R: tauri::Runtime = tauri::Wry>: Send + Sync {
     /// Check if panel can become main window
     fn can_become_main_window(&self) -> bool;
 
+    /// Check if panel hides on deactivate
+    fn hides_on_deactivate(&self) -> bool;
+
     // Window state methods
     /// Make the panel key window
     fn make_key_window(&self);

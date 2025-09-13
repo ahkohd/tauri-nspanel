@@ -19,8 +19,8 @@ use tauri_nspanel::tauri_panel;
 tauri_panel! {
     panel!(MyPanel {
         config: {
-            canBecomeKeyWindow: true,
-            isFloatingPanel: true
+            can_become_key_window: true,
+            is_floating_panel: true
         }
     })
 }

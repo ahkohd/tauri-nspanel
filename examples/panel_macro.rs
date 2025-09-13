@@ -5,17 +5,17 @@ tauri_panel! {
     // Define a basic panel
     panel!(MyPanel {
         config: {
-            canBecomeKeyWindow: true,
-            canBecomeMainWindow: false,
-            becomeKeyIfOnlyNeeded: true,
-            isFloatingPanel: true
+            can_become_key_window: true,
+            can_become_main_window: false,
+            become_key_if_only_needed: true,
+            is_floating_panel: true
         }
     })
     // Define a panel with tracking area
     panel!(TrackingPanel {
         config: {
-            canBecomeKeyWindow: true,
-            canBecomeMainWindow: false
+            can_become_key_window: true,
+            can_become_main_window: false
         }
         with: {
             tracking_area: {

@@ -7,9 +7,9 @@ use tauri_nspanel::{tauri_panel, PanelBuilder, WebviewWindowExt};
 tauri_panel! {
     panel!(MyFloatingPanel {
         config: {
-            canBecomeKeyWindow: true,
-            canBecomeMainWindow: false,
-            isFloatingPanel: true
+            can_become_key_window: true,
+            can_become_main_window: false,
+            is_floating_panel: true
         }
     })
 

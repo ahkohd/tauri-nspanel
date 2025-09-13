@@ -12,8 +12,8 @@ use tauri_nspanel::{
 tauri_panel! {
     panel!(BasicPanel {
         config: {
-            canBecomeKeyWindow: true,
-            isFloatingPanel: true
+            can_become_key_window: true,
+            is_floating_panel: true
         }
         with: {
             // Enable mouse tracking for the panel's content view

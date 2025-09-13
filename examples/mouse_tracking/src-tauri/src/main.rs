@@ -12,9 +12,9 @@ use tauri_nspanel::{
 tauri_panel! {
     panel!(MouseTrackingPanel {
         config: {
-            canBecomeKeyWindow: true,
-            canBecomeMainWindow: false,
-            isFloatingPanel: true
+            can_become_key_window: true,
+            can_become_main_window: false,
+            is_floating_panel: true
         }
         with: {
             // Enable mouse tracking for the panel

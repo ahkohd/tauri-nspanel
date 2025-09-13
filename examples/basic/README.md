@@ -8,7 +8,7 @@ This example demonstrates the basic usage of tauri-nspanel: converting a standar
 
 - Creates a standard Tauri application window
 - Converts it to a custom NSPanel using `window.to_panel::<Panel>()`
-- Configures panel with `canBecomeKeyWindow: true` and `canBecomeMainWindow: false`
+- Configures panel with `can_become_key_window: true` and `can_become_main_window: false`
 - Sets up event handlers for window focus events
 - Provides commands to show/hide/close the panel from JavaScript
 
@@ -36,8 +36,8 @@ The main logic in `src-tauri/src/main.rs`:
 tauri_panel! {
     panel!(Panel {
         config: {
-            canBecomeKeyWindow: true,
-            canBecomeMainWindow: false
+            can_become_key_window: true,
+            can_become_main_window: false
         }
     })
     
