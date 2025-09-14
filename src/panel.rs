@@ -596,10 +596,10 @@ macro_rules! panel {
                             ))
                         })?;
 
-                        // Sync instance properties with class-level config after swizzling
+                        // Apply instance properties with class-level config after swizzling
                         // Only for properties that have setter methods available
                         $($(
-                            Self::sync_instance_property(&panel, stringify!($method), $value);
+                            Self::apply_instance_property(&panel, stringify!($method), $value);
                         )*)?
 
                         // Add tracking area if configured
@@ -631,7 +631,7 @@ macro_rules! panel {
             // Helper methods
             impl<R: tauri::Runtime> $class_name<R> where $class_name<R>: $crate::Panel<R> {
                 #[allow(unused)]
-                fn sync_instance_property(panel: &$crate::objc2_app_kit::NSPanel, method: &str, value: bool) {
+                fn apply_instance_property(panel: &$crate::objc2_app_kit::NSPanel, method: &str, value: bool) {
                     unsafe {
                         match method {
                             "hides_on_deactivate" | "hidesOnDeactivate" => {
