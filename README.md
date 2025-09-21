@@ -29,7 +29,8 @@ fn main() {
 ### 2. Define and create a panel
 
 ```rust
-use tauri_nspanel::{tauri_panel, Manager, PanelBuilder, PanelLevel, WebviewUrl};
+use tauri::{Manager, WebviewUrl};
+use tauri_nspanel::{tauri_panel, ManagerExt, PanelBuilder, PanelLevel};
 
 // Define panel class
 tauri_panel! {
