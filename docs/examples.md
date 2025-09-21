@@ -23,6 +23,8 @@ Located in `/examples/*/` - These are full Tauri applications you can run:
 - [`fullscreen/`](/examples/fullscreen/) - Panel behavior with fullscreen windows
 - [`mouse_tracking/`](/examples/mouse_tracking/) - Mouse tracking events
 - [`hover_activate/`](/examples/hover_activate/) - Auto-activate on hover
+- [`spotlight-app`](https://github.com/ahkohd/tauri-macos-spotlight-example) - An example macOS Spotlight app built with Tauri
+- [`menubar-app`](https://github.com/ahkohd/tauri-macos-menubar-app-example) - An example macOS Menubar app built with Tauri 
 
 ## Running examples
 

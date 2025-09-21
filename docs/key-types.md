@@ -9,14 +9,18 @@ Predefined window levels for panels. Higher levels appear above lower levels.
 ```rust
 use tauri_nspanel::PanelLevel;
 
-panel.set_level(PanelLevel::Normal);      // Standard window level
-panel.set_level(PanelLevel::Floating);    // Floating above normal windows
-panel.set_level(PanelLevel::ModalPanel);  // Modal panel level
-panel.set_level(PanelLevel::Utility);     // Utility window level
-panel.set_level(PanelLevel::Status);      // Status/menu bar level
-panel.set_level(PanelLevel::PopUpMenu);   // Pop-up menu level
-panel.set_level(PanelLevel::ScreenSaver); // Screen saver level
-panel.set_level(PanelLevel::Custom(25));  // Custom level value
+// Available levels:
+// PanelLevel::Normal - Standard window level
+// PanelLevel::Floating - Floating above normal windows
+// PanelLevel::ModalPanel - Modal panel level
+// PanelLevel::Utility - Utility window level
+// PanelLevel::Status - Status/menu bar level
+// PanelLevel::PopUpMenu - Pop-up menu level
+// PanelLevel::ScreenSaver - Screen saver level
+panel.set_level(PanelLevel::Floating.value());
+
+// Custom level value
+panel.set_level(PanelLevel::Custom(25).value());
 ```
 
 ### Level Hierarchy (Lowest to Highest)
@@ -41,7 +45,7 @@ let behavior = CollectionBehavior::new()
     .stationary()               // Don't move between Spaces
     .ignores_cycle();           // Skip in Cmd+Tab cycling
 
-panel.set_collection_behavior(behavior);
+panel.set_collection_behavior(behavior.value());
 ```
 
 ### Available Behaviors
@@ -125,7 +129,7 @@ let style = StyleMask::empty()
     .utility_window()
     .nonactivating_panel();
 
-panel.set_style_mask(style);
+panel.set_style_mask(style.into());
 ```
 
 ### Basic Styles
@@ -269,15 +273,15 @@ TrackingAreaOptions::new()
 All builder types implement `Into` traits for seamless conversion:
 
 ```rust
-// These are equivalent
-panel.set_level(PanelLevel::Floating);
-panel.set_level(PanelLevel::Floating.into());
-panel.set_level(3i32);  // Raw NSWindowLevel value
+// These are all equivalent
+panel.set_level(PanelLevel::Floating.value());
+panel.set_level(3i64);  // Raw NSWindowLevel value
+panel.set_level(3i32);  // Also works via Into
 
-// These are equivalent  
+// These are equivalent
 let style = StyleMask::empty().titled();
-panel.set_style_mask(style);
-panel.set_style_mask(style.into());
+panel.set_style_mask(style.value());
+panel.set_collection_behavior(CollectionBehavior::new().can_join_all_spaces().value());
 ```
 
 ## Next Steps

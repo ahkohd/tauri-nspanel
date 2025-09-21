@@ -9,6 +9,8 @@ These examples demonstrate various features and use cases of [tauri-nspanel](htt
 - [fullscreen](./fullscreen/): Panel that displays over fullscreen windows
 - [mouse_tracking](./mouse_tracking/): Mouse tracking events with enter/exit/move callbacks
 - [hover_activate](./hover_activate/): Auto-activate panel on mouse hover
+- [`spotlight-app`](https://github.com/ahkohd/tauri-macos-spotlight-example) - An example macOS Spotlight app built with Tauri
+- [`menubar-app`](https://github.com/ahkohd/tauri-macos-menubar-app-example) - An example macOS Menubar app built with Tauri 
 
 ## Standalone Rust Examples
 
