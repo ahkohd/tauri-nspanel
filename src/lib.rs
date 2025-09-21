@@ -169,8 +169,11 @@ pub trait FromWindow<R: Runtime>: Panel<R> + Sized {
     fn from_window(window: WebviewWindow<R>, label: String) -> tauri::Result<Self>;
 }
 
+/// Type alias for shared panel references
+pub type PanelHandle<R> = Arc<dyn Panel<R>>;
+
 pub struct Store<R: Runtime> {
-    panels: HashMap<String, Arc<dyn Panel<R>>>,
+    panels: HashMap<String, PanelHandle<R>>,
 }
 
 impl<R: Runtime> Default for Store<R> {
@@ -190,8 +193,8 @@ impl<R: Runtime> Default for WebviewPanelManager<R> {
 }
 
 pub trait ManagerExt<R: Runtime> {
-    fn get_webview_panel(&self, label: &str) -> Result<Arc<dyn Panel<R>>, Error>;
-    fn remove_webview_panel(&self, label: &str) -> Option<Arc<dyn Panel<R>>>;
+    fn get_webview_panel(&self, label: &str) -> Result<PanelHandle<R>, Error>;
+    fn remove_webview_panel(&self, label: &str) -> Option<PanelHandle<R>>;
 }
 
 #[derive(Debug)]
@@ -200,7 +203,7 @@ pub enum Error {
 }
 
 impl<R: Runtime, T: Manager<R>> ManagerExt<R> for T {
-    fn get_webview_panel(&self, label: &str) -> Result<Arc<dyn Panel<R>>, Error> {
+    fn get_webview_panel(&self, label: &str) -> Result<PanelHandle<R>, Error> {
         let manager = self.state::<self::WebviewPanelManager<R>>();
         let manager = manager.0.lock().unwrap();
 
@@ -210,7 +213,7 @@ impl<R: Runtime, T: Manager<R>> ManagerExt<R> for T {
         }
     }
 
-    fn remove_webview_panel(&self, label: &str) -> Option<Arc<dyn Panel<R>>> {
+    fn remove_webview_panel(&self, label: &str) -> Option<PanelHandle<R>> {
         self.state::<self::WebviewPanelManager<R>>()
             .0
             .lock()
@@ -222,14 +225,14 @@ impl<R: Runtime, T: Manager<R>> ManagerExt<R> for T {
 
 pub trait WebviewWindowExt<R: Runtime> {
     /// Convert window to specific panel type
-    fn to_panel<P: FromWindow<R> + 'static>(&self) -> tauri::Result<Arc<dyn Panel<R>>>;
+    fn to_panel<P: FromWindow<R> + 'static>(&self) -> tauri::Result<PanelHandle<R>>;
 }
 
 impl<R: Runtime> WebviewWindowExt<R> for WebviewWindow<R> {
-    fn to_panel<P: FromWindow<R> + 'static>(&self) -> tauri::Result<Arc<dyn Panel<R>>> {
+    fn to_panel<P: FromWindow<R> + 'static>(&self) -> tauri::Result<PanelHandle<R>> {
         let label = self.label().to_string();
         let panel = P::from_window(self.clone(), label.clone())?;
-        let arc_panel = Arc::new(panel) as Arc<dyn Panel<R>>;
+        let arc_panel = Arc::new(panel) as PanelHandle<R>;
 
         let manager = self.state::<WebviewPanelManager<R>>();
         manager
