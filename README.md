@@ -103,6 +103,7 @@ Some projects using `tauri-nspanel`:
 - [Verve](https://github.com/ParthJadhav/verve) - Launcher
 - [JET Pilot](https://github.com/unxsist/jet-pilot) - Kubernetes manager
 - [Buffer](https://buffer.md) - AI-powered Markdown note app
+- [Asyar](https://github.com/Xoshbin/asyar-launcher) - Cross platform alternative to Raycast
 
 ## Contributing
 
