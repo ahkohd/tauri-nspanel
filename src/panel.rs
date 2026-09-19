@@ -15,6 +15,97 @@ pub fn resolve_tracking_area_options(
     options
 }
 
+/// Teach elevated WebKit text input clients to report their containing window's level.
+///
+/// AppKit uses the optional `NSTextInputClient::windowLevel` method to place input-method UI
+/// above text clients whose windows are higher than `NSFloatingWindowLevel`. `WKWebView` does
+/// not currently implement that method, so candidate windows can otherwise appear behind an
+/// elevated panel.
+#[doc(hidden)]
+pub fn install_text_input_client_window_level(root: &objc2_app_kit::NSView) {
+    use std::ffi::CStr;
+
+    use objc2::runtime::AnyProtocol;
+
+    let protocol_name = CStr::from_bytes_with_nul(b"NSTextInputClient\0")
+        .expect("NSTextInputClient protocol name must be NUL-terminated");
+    let Some(text_input_client) = AnyProtocol::get(protocol_name) else {
+        return;
+    };
+
+    install_text_input_client_window_level_in_subtree(root, text_input_client);
+}
+
+fn install_text_input_client_window_level_in_subtree(
+    root: &objc2_app_kit::NSView,
+    text_input_client: &objc2::runtime::AnyProtocol,
+) {
+    use objc2_foundation::NSObjectProtocol;
+
+    if root.conformsToProtocol(text_input_client) {
+        let _ = install_window_level_method(stable_text_input_client_class(root.class()));
+    }
+
+    let subviews = root.subviews();
+    for subview in subviews.iter() {
+        install_text_input_client_window_level_in_subtree(&subview, text_input_client);
+    }
+}
+
+fn stable_text_input_client_class(
+    runtime_class: &objc2::runtime::AnyClass,
+) -> &objc2::runtime::AnyClass {
+    let mut candidate = runtime_class;
+
+    while let Some(superclass) = candidate.superclass() {
+        if superclass.name().to_bytes() == b"WKWebView" {
+            return candidate;
+        }
+        candidate = superclass;
+    }
+
+    runtime_class
+}
+
+fn install_window_level_method(class: &objc2::runtime::AnyClass) -> bool {
+    use objc2::runtime::{Imp, Sel};
+
+    let selector = objc2::sel!(windowLevel);
+    if class.instance_method(selector).is_some() {
+        return false;
+    }
+
+    unsafe extern "C-unwind" fn window_level(
+        view: &objc2_app_kit::NSView,
+        _selector: Sel,
+    ) -> objc2::ffi::NSInteger {
+        view.window().map_or(0, |window| window.level())
+    }
+
+    let implementation: unsafe extern "C-unwind" fn(
+        &objc2_app_kit::NSView,
+        Sel,
+    ) -> objc2::ffi::NSInteger = window_level;
+
+    // SAFETY: Objective-C method implementations erase their concrete function signature to
+    // `Imp`. The `q@:` encoding below matches `(id, SEL) -> NSInteger` on 64-bit macOS.
+    let implementation: Imp = unsafe { std::mem::transmute(implementation) };
+    let type_encoding = b"q@:\0";
+
+    // SAFETY: `class` is a registered Objective-C class, the selector has no explicit arguments,
+    // and the implementation and type encoding agree. Adding a method is safe for the lifetime of
+    // the process because Objective-C classes are never deallocated.
+    unsafe {
+        objc2::ffi::class_addMethod(
+            class as *const _ as *mut _,
+            selector,
+            implementation,
+            type_encoding.as_ptr().cast(),
+        )
+        .as_bool()
+    }
+}
+
 /// Macro to create a custom NSPanel class
 ///
 /// This macro generates a custom NSPanel subclass with the specified configuration.
@@ -631,6 +722,7 @@ macro_rules! panel {
                         // Enable auto-resizing for all subviews
                         let content_view: $crate::objc2::rc::Retained<$crate::objc2_app_kit::NSView> =
                             $crate::objc2::msg_send![&panel, contentView];
+                        $crate::panel::install_text_input_client_window_level(&content_view);
                         let subviews: $crate::objc2::rc::Retained<$crate::objc2_foundation::NSArray<$crate::objc2_app_kit::NSView>> =
                             $crate::objc2::msg_send![&content_view, subviews];
                         let count: usize = $crate::objc2::msg_send![&subviews, count];
@@ -720,8 +812,15 @@ macro_rules! panel {
 
 #[cfg(test)]
 mod tests {
-    use super::resolve_tracking_area_options;
-    use objc2_app_kit::NSTrackingAreaOptions;
+    use std::ffi::CStr;
+    use std::sync::OnceLock;
+
+    use objc2::{runtime::ClassBuilder, ClassType};
+    use objc2_app_kit::{NSTrackingAreaOptions, NSView};
+
+    use super::{
+        install_window_level_method, resolve_tracking_area_options, stable_text_input_client_class,
+    };
 
     #[test]
     fn auto_resize_tracks_the_visible_view_rect() {
@@ -742,5 +841,48 @@ mod tests {
             | NSTrackingAreaOptions::MouseMoved;
 
         assert_eq!(resolve_tracking_area_options(base, false), base);
+    }
+
+    #[test]
+    fn window_level_method_is_installed_once() {
+        static CLASS: OnceLock<&'static objc2::runtime::AnyClass> = OnceLock::new();
+        let class = CLASS.get_or_init(|| {
+            let name = CStr::from_bytes_with_nul(b"TauriNSPanelTextInputClientTest\0")
+                .expect("test class name must be NUL-terminated");
+            ClassBuilder::new(name, NSView::class())
+                .expect("test class should only be registered once")
+                .register()
+        });
+
+        assert!(install_window_level_method(class));
+        assert!(class.instance_method(objc2::sel!(windowLevel)).is_some());
+        assert!(!install_window_level_method(class));
+    }
+
+    #[test]
+    fn window_level_method_targets_the_stable_webview_subclass() {
+        static CLASSES: OnceLock<(
+            &'static objc2::runtime::AnyClass,
+            &'static objc2::runtime::AnyClass,
+        )> = OnceLock::new();
+        let (webview, notifying_webview) = CLASSES.get_or_init(|| {
+            let wk_webview_name = CStr::from_bytes_with_nul(b"WKWebView\0").unwrap();
+            let wk_webview = objc2::runtime::AnyClass::get(wk_webview_name)
+                .expect("WebKit should be loaded by Tauri");
+            let webview_name =
+                CStr::from_bytes_with_nul(b"TauriNSPanelStableWebViewTest\0").unwrap();
+            let webview = ClassBuilder::new(webview_name, wk_webview)
+                .expect("stable test webview class should only be registered once")
+                .register();
+            let notifying_name =
+                CStr::from_bytes_with_nul(b"TauriNSPanelNotifyingWebViewTest\0").unwrap();
+            let notifying_webview = ClassBuilder::new(notifying_name, webview)
+                .expect("notifying test webview class should only be registered once")
+                .register();
+
+            (webview, notifying_webview)
+        });
+
+        assert_eq!(stable_text_input_client_class(notifying_webview), *webview);
     }
 }
