@@ -26,7 +26,9 @@ use tauri::{
     Manager, Runtime, WebviewWindow,
 };
 
-pub use builder::{CollectionBehavior, PanelBuilder, PanelLevel, StyleMask, TrackingAreaOptions};
+pub use builder::{
+    CollectionBehavior, PanelBuilder, PanelLevel, ResizeDirection, StyleMask, TrackingAreaOptions,
+};
 
 // Re-export commonly used types for convenience
 pub use objc2::runtime::AnyObject;

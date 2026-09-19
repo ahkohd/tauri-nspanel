@@ -81,6 +81,7 @@ See the [documentation](docs/) & [API Reference](https://docs.aremu.dev/tauri-ns
 ## Features
 
 - Create panels with PanelBuilder API or convert existing windows
+- Constrain panel sizes and resize horizontally, vertically, or on both axes
 - Mouse tracking with enter, exit, and move events
 - Handle panel events
 - Works with existing Tauri windows and commands
