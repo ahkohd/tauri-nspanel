@@ -18,14 +18,9 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Install clippy with stable toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
-          toolchain: stable
-          override: true
           components: clippy
-      - uses: actions-rs/clippy-check@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: --manifest-path=Cargo.toml --all-targets --all-features -- -D warnings
-          name: clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: Run Clippy
+        run: cargo clippy --manifest-path=Cargo.toml --all-targets --all-features -- -D warnings

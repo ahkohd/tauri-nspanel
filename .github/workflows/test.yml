@@ -28,15 +28,14 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
+        uses: dtolnay/rust-toolchain@stable
 
       - uses: Swatinem/rust-cache@v2
 
       - name: Run tests
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --manifest-path=Cargo.toml --release --lib --bins
+        run: cargo test --manifest-path=Cargo.toml --release --lib --bins
+
+      - name: Run doctests
+        env:
+          RUSTDOCFLAGS: -D warnings
+        run: cargo test --manifest-path=Cargo.toml --release --doc

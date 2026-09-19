@@ -143,8 +143,15 @@ impl From<i64> for PanelLevel {
 /// Collection behaviors control how a window participates in Spaces, Exposé, and fullscreen mode.
 ///
 /// # Example
-/// ```rust
-/// use tauri_nspanel::{CollectionBehavior, PanelBuilder};
+/// ```no_run
+/// use tauri::AppHandle;
+/// use tauri_nspanel::{tauri_panel, CollectionBehavior, PanelBuilder};
+///
+/// tauri_panel! {
+///     panel!(SpacesPanel {})
+/// }
+///
+/// # fn create_panel(app: &AppHandle) -> tauri::Result<()> {
 ///
 /// // Create a panel that appears on all spaces and ignores Cmd+Tab cycling
 /// let behavior = CollectionBehavior::new()
@@ -152,9 +159,11 @@ impl From<i64> for PanelLevel {
 ///     .ignores_cycle();
 ///
 /// // Use with PanelBuilder
-/// PanelBuilder::new(&app, "my-panel")
+/// let _panel = PanelBuilder::<_, SpacesPanel>::new(app, "my-panel")
 ///     .collection_behavior(behavior)
-///     .build();
+///     .build()?;
+/// # Ok(())
+/// # }
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct CollectionBehavior(objc2_app_kit::NSWindowCollectionBehavior);
@@ -272,29 +281,22 @@ impl From<objc2_app_kit::NSWindowCollectionBehavior> for CollectionBehavior {
 /// Tracking areas enable mouse event tracking within a specific region of a view.
 ///
 /// # Example
-/// ```rust
-/// use tauri_nspanel::{TrackingAreaOptions, PanelBuilder};
+/// ```
+/// use tauri_nspanel::{tauri_panel, TrackingAreaOptions};
 ///
-/// // Track mouse movement and enter/exit events, active in any application state
-/// let options = TrackingAreaOptions::new()
-///     .active_always()
-///     .mouse_entered_and_exited()
-///     .mouse_moved();
-///
-/// // Use with panel macro
-/// panel!(MyPanel {
-///     with: {
-///         tracking_area: {
-///             options: options,
-///             auto_resize: true
+/// tauri_panel! {
+///     panel!(TrackingPanel {
+///         with: {
+///             tracking_area: {
+///                 options: TrackingAreaOptions::new()
+///                     .active_always()
+///                     .mouse_entered_and_exited()
+///                     .mouse_moved(),
+///                 auto_resize: true
+///             }
 ///         }
-///     }
-/// });
-///
-/// // Or use with PanelBuilder
-/// PanelBuilder::new(&app, "my-panel")
-///     .tracking_area(options, true)
-///     .build();
+///     })
+/// }
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct TrackingAreaOptions(objc2_app_kit::NSTrackingAreaOptions);
@@ -394,8 +396,15 @@ impl From<objc2_app_kit::NSTrackingAreaOptions> for TrackingAreaOptions {
 /// Style masks control the appearance and behavior of the window frame.
 ///
 /// # Example
-/// ```rust
-/// use tauri_nspanel::{StyleMask, PanelBuilder};
+/// ```no_run
+/// use tauri::AppHandle;
+/// use tauri_nspanel::{tauri_panel, PanelBuilder, StyleMask};
+///
+/// tauri_panel! {
+///     panel!(BorderlessPanel {})
+/// }
+///
+/// # fn create_panel(app: &AppHandle) -> tauri::Result<()> {
 ///
 /// // Create a borderless panel that doesn't activate the app
 /// let style = StyleMask::new()
@@ -403,9 +412,11 @@ impl From<objc2_app_kit::NSTrackingAreaOptions> for TrackingAreaOptions {
 ///     .nonactivating_panel();
 ///
 /// // Use with PanelBuilder
-/// PanelBuilder::new(&app, "my-panel")
+/// let _panel = PanelBuilder::<_, BorderlessPanel>::new(app, "my-panel")
 ///     .style_mask(style)
-///     .build();
+///     .build()?;
+/// # Ok(())
+/// # }
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct StyleMask(objc2_app_kit::NSWindowStyleMask);
@@ -541,34 +552,33 @@ pub(crate) struct PanelConfig {
 ///
 /// PanelBuilder provides a fluent interface that creates a Tauri window,
 /// converts it to an NSPanel, and applies panel-specific configurations.
-/// It can work with both the default panel type or custom panel classes
-/// created with the `panel!` macro.
+/// It works with custom panel classes created with the `panel!` macro.
 ///
 /// # Type Parameters
 /// - `R`: The Tauri runtime type
 /// - `T`: The panel type (must implement `FromWindow<R>`)
 ///
 /// # Example
-/// ```rust
-/// use tauri_nspanel::{panel, PanelBuilder, PanelLevel};
+/// ```no_run
+/// use tauri::{AppHandle, WebviewUrl};
+/// use tauri_nspanel::{tauri_panel, PanelBuilder, PanelLevel};
 ///
-/// // Using default panel type
-/// let panel = PanelBuilder::new(&app, "my-panel")
+/// tauri_panel! {
+///     panel!(ToolPanel {
+///         config: {
+///             can_become_key_window: false
+///         }
+///     })
+/// }
+///
+/// # fn create_panel(app: &AppHandle) -> tauri::Result<()> {
+/// let _panel = PanelBuilder::<_, ToolPanel>::new(app, "my-panel")
 ///     .url(WebviewUrl::App("panel.html".into()))
 ///     .title("Tool Panel")
 ///     .level(PanelLevel::Floating)
 ///     .build()?;
-///
-/// // Using custom panel type
-/// panel!(CustomPanel {
-///     config: {
-///         can_become_key_window: false
-///     }
-/// });
-///
-/// let custom = PanelBuilder::<_, CustomPanel>::new(&app, "custom")
-///     .url(WebviewUrl::App("custom.html".into()))
-///     .build()?;
+/// # Ok(())
+/// # }
 /// ```
 pub struct PanelBuilder<'a, R: Runtime, T: FromWindow<R> + 'static> {
     handle: &'a AppHandle<R>,
@@ -669,17 +679,26 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
     /// Higher levels appear above lower levels.
     ///
     /// # Example
-    /// ```rust
-    /// use tauri_nspanel::{PanelBuilder, PanelLevel};
+    /// ```no_run
+    /// use tauri::AppHandle;
+    /// use tauri_nspanel::{tauri_panel, PanelBuilder, PanelLevel};
+    ///
+    /// tauri_panel! {
+    ///     panel!(LevelPanel {})
+    /// }
+    ///
+    /// # fn create_panels(app: &AppHandle) -> tauri::Result<()> {
     /// // Create a panel that floats above normal windows
-    /// PanelBuilder::new(&app, "floating")
+    /// let _floating = PanelBuilder::<_, LevelPanel>::new(app, "floating")
     ///     .level(PanelLevel::Floating)
-    ///     .build();
+    ///     .build()?;
     ///
     /// // Create a status-level panel (appears above floating panels)
-    /// PanelBuilder::new(&app, "status")
+    /// let _status = PanelBuilder::<_, LevelPanel>::new(app, "status")
     ///     .level(PanelLevel::Status)
-    ///     .build();
+    ///     .build()?;
+    /// # Ok(())
+    /// # }
     /// ```
     pub fn level(mut self, level: PanelLevel) -> Self {
         self.panel_config.level = Some(level);
@@ -757,22 +776,31 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
     /// Style masks control the appearance and behavior of the window frame.
     ///
     /// # Example
-    /// ```rust
-    /// use tauri_nspanel::{PanelBuilder, StyleMask};
+    /// ```no_run
+    /// use tauri::AppHandle;
+    /// use tauri_nspanel::{tauri_panel, PanelBuilder, StyleMask};
+    ///
+    /// tauri_panel! {
+    ///     panel!(StyledPanel {})
+    /// }
+    ///
+    /// # fn create_panels(app: &AppHandle) -> tauri::Result<()> {
     /// // Create a borderless panel
-    /// PanelBuilder::new(&app, "borderless")
+    /// let _borderless = PanelBuilder::<_, StyledPanel>::new(app, "borderless")
     ///     .style_mask(StyleMask::empty().borderless())
-    ///     .build();
+    ///     .build()?;
     ///
     /// // Create a HUD-style panel
-    /// PanelBuilder::new(&app, "hud")
+    /// let _hud = PanelBuilder::<_, StyledPanel>::new(app, "hud")
     ///     .style_mask(
     ///         StyleMask::empty()
     ///             .hud_window()
     ///             .titled()
     ///             .closable()
     ///     )
-    ///     .build();
+    ///     .build()?;
+    /// # Ok(())
+    /// # }
     /// ```
     pub fn style_mask(mut self, style_mask: StyleMask) -> Self {
         self.panel_config.style_mask = Some(style_mask);
@@ -785,16 +813,25 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
     /// and fullscreen mode on macOS.
     ///
     /// # Example
-    /// ```rust
-    /// use tauri_nspanel::{CollectionBehavior, PanelBuilder};
+    /// ```no_run
+    /// use tauri::AppHandle;
+    /// use tauri_nspanel::{tauri_panel, CollectionBehavior, PanelBuilder};
+    ///
+    /// tauri_panel! {
+    ///     panel!(SpacesPanel {})
+    /// }
+    ///
+    /// # fn create_panel(app: &AppHandle) -> tauri::Result<()> {
     /// // Create a panel that appears on all spaces and doesn't participate in cycling
-    /// PanelBuilder::new(&app, "tool-panel")
+    /// let _panel = PanelBuilder::<_, SpacesPanel>::new(app, "tool-panel")
     ///     .collection_behavior(
     ///         CollectionBehavior::new()
     ///             .can_join_all_spaces()
     ///             .ignores_cycle()
     ///     )
-    ///     .build();
+    ///     .build()?;
+    /// # Ok(())
+    /// # }
     /// ```
     pub fn collection_behavior(mut self, behavior: CollectionBehavior) -> Self {
         self.panel_config.collection_behavior = Some(behavior);
@@ -812,15 +849,23 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
     /// ensuring the window is created silently before being converted to a panel.
     ///
     /// # Example
-    /// ```rust
-    /// use tauri_nspanel::{PanelBuilder, PanelLevel};
-    /// use tauri::WebviewUrl;
+    /// ```no_run
+    /// use tauri::{AppHandle, WebviewUrl};
+    /// use tauri_nspanel::{tauri_panel, PanelBuilder, PanelLevel};
+    ///
+    /// tauri_panel! {
+    ///     panel!(UtilityPanel {})
+    /// }
+    ///
+    /// # fn create_panel(app: &AppHandle) -> tauri::Result<()> {
     /// // Create a utility panel that doesn't steal focus
-    /// PanelBuilder::new(&app, "utility")
+    /// let _panel = PanelBuilder::<_, UtilityPanel>::new(app, "utility")
     ///     .url(WebviewUrl::App("utility.html".into()))
     ///     .no_activate(true)
     ///     .level(PanelLevel::Floating)
-    ///     .build();
+    ///     .build()?;
+    /// # Ok(())
+    /// # }
     /// ```
     pub fn no_activate(mut self, no_activate: bool) -> Self {
         self.panel_config.no_activate = Some(no_activate);
@@ -833,13 +878,21 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
     /// giving the panel rounded corners with the specified radius.
     ///
     /// # Example
-    /// ```rust
-    /// use tauri_nspanel::PanelBuilder;
-    /// use tauri::WebviewUrl;
-    /// PanelBuilder::new(&app, "rounded-panel")
+    /// ```no_run
+    /// use tauri::{AppHandle, WebviewUrl};
+    /// use tauri_nspanel::{tauri_panel, PanelBuilder};
+    ///
+    /// tauri_panel! {
+    ///     panel!(RoundedPanel {})
+    /// }
+    ///
+    /// # fn create_panel(app: &AppHandle) -> tauri::Result<()> {
+    /// let _panel = PanelBuilder::<_, RoundedPanel>::new(app, "rounded-panel")
     ///     .url(WebviewUrl::App("index.html".into()))
     ///     .corner_radius(10.0)  // 10pt corner radius
-    ///     .build();
+    ///     .build()?;
+    /// # Ok(())
+    /// # }
     /// ```
     pub fn corner_radius(mut self, radius: f64) -> Self {
         self.panel_config.corner_radius = Some(radius);
@@ -852,13 +905,21 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
     /// allowing content behind the panel to show through.
     ///
     /// # Example
-    /// ```rust
-    /// use tauri_nspanel::PanelBuilder;
-    /// use tauri::WebviewUrl;
-    /// PanelBuilder::new(&app, "transparent-panel")
+    /// ```no_run
+    /// use tauri::{AppHandle, WebviewUrl};
+    /// use tauri_nspanel::{tauri_panel, PanelBuilder};
+    ///
+    /// tauri_panel! {
+    ///     panel!(TransparentPanel {})
+    /// }
+    ///
+    /// # fn create_panel(app: &AppHandle) -> tauri::Result<()> {
+    /// let _panel = PanelBuilder::<_, TransparentPanel>::new(app, "transparent-panel")
     ///     .url(WebviewUrl::App("index.html".into()))
     ///     .transparent(true)  // Transparent background
-    ///     .build();
+    ///     .build()?;
+    /// # Ok(())
+    /// # }
     /// ```
     pub fn transparent(mut self, transparent: bool) -> Self {
         self.panel_config.transparent = Some(transparent);
@@ -872,10 +933,16 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
     /// any desired configurations.
     ///
     /// # Example
-    /// ```rust
-    /// use tauri_nspanel::PanelBuilder;
-    /// use tauri::WebviewUrl;
-    /// PanelBuilder::new(&app, "my-panel")
+    /// ```no_run
+    /// use tauri::{AppHandle, WebviewUrl};
+    /// use tauri_nspanel::{tauri_panel, PanelBuilder};
+    ///
+    /// tauri_panel! {
+    ///     panel!(ConfiguredPanel {})
+    /// }
+    ///
+    /// # fn create_panel(app: &AppHandle) -> tauri::Result<()> {
+    /// let _panel = PanelBuilder::<_, ConfiguredPanel>::new(app, "my-panel")
     ///     .url(WebviewUrl::App("index.html".into()))
     ///     .with_window(|window| {
     ///         window
@@ -886,7 +953,9 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
     ///             .always_on_top(true)
     ///             .skip_taskbar(true)
     ///     })
-    ///     .build()
+    ///     .build()?;
+    /// # Ok(())
+    /// # }
     /// ```
     pub fn with_window<F>(mut self, f: F) -> Self
     where
@@ -906,7 +975,7 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
     pub fn build(self) -> tauri::Result<Arc<dyn Panel<R>>> {
         // Handle no_activate option by temporarily changing activation policy
         let original_policy = if self.panel_config.no_activate.unwrap_or(false) {
-            MainThreadMarker::new().map(|mtm| unsafe {
+            MainThreadMarker::new().map(|mtm| {
                 let app = NSApplication::sharedApplication(mtm);
                 let current_policy = app.activationPolicy();
                 let _success = app.setActivationPolicy(NSApplicationActivationPolicy::Prohibited);

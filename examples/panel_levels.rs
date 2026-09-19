@@ -1,4 +1,4 @@
-use tauri::{AppHandle, Manager};
+use tauri::AppHandle;
 use tauri_nspanel::{tauri_panel, PanelBuilder, PanelLevel};
 
 // Define a simple panel class

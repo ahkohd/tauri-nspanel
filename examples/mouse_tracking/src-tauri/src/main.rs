@@ -74,7 +74,7 @@ fn init(app_handle: &AppHandle) {
 
   handler.on_mouse_moved(|event| {
     // Get the mouse location relative to the window
-    let location = unsafe { event.locationInWindow() };
+    let location = event.locationInWindow();
     println!("🏃 Mouse moved to: x={}, y={}", location.x, location.y);
   });
 

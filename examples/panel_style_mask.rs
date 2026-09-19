@@ -1,7 +1,6 @@
 // Example: Panel Style Masks
 // This example demonstrates different NSWindowStyleMask configurations for panels
 
-use tauri::Manager;
 use tauri_nspanel::{tauri_panel, StyleMask};
 
 tauri_panel! {
