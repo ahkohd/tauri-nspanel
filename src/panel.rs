@@ -530,10 +530,15 @@ macro_rules! panel {
                     }
                 }
 
-                fn set_style_mask(&self, style_mask: $crate::objc2_app_kit::NSWindowStyleMask) {
-                    unsafe {
-                        let _: () = $crate::objc2::msg_send![&*self.panel, setStyleMask: style_mask];
-                    }
+                fn set_style_mask(
+                    &self,
+                    style_mask: $crate::objc2_app_kit::NSWindowStyleMask,
+                ) -> Result<(), $crate::StyleMaskError> {
+                    $crate::catch_style_mask_exception(|| {
+                        unsafe {
+                            let _: () = $crate::objc2::msg_send![&*self.panel, setStyleMask: style_mask];
+                        }
+                    })
                 }
 
                 fn make_first_responder(&self, responder: Option<&$crate::objc2_app_kit::NSResponder>) -> bool {

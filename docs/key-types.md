@@ -129,7 +129,14 @@ let style = StyleMask::empty()
     .utility_window()
     .nonactivating_panel();
 
-panel.set_style_mask(style.into());
+panel
+    .set_style_mask(style.into())
+    .expect("AppKit rejected the replacement style mask");
+
+// Prefer additive updates when enabling behavior on an existing Tauri window.
+panel
+    .add_style_mask(StyleMask::empty().nonactivating_panel().into())
+    .expect("AppKit rejected the additional style mask");
 ```
 
 ### Basic Styles
@@ -280,7 +287,9 @@ panel.set_level(3i32);  // Also works via Into
 
 // These are equivalent
 let style = StyleMask::empty().titled();
-panel.set_style_mask(style.value());
+panel
+    .set_style_mask(style.value())
+    .expect("AppKit rejected the replacement style mask");
 panel.set_collection_behavior(CollectionBehavior::new().can_join_all_spaces().value());
 ```
 

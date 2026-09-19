@@ -78,7 +78,7 @@ fn init(app_handle: &AppHandle) {
             .build(),
         )
     })
-    .style_mask(StyleMask::empty().nonactivating_panel().resizable())
+    .add_style_mask(StyleMask::empty().nonactivating_panel().resizable())
     // Prevent the panel from stealing focus when created (works especially well with Accessory policy)
     .no_activate(true)
     .build()
