@@ -69,7 +69,7 @@ let panel = PanelBuilder::<_, MiniPanel>::new(app_handle, "mini-panel")
     .hides_on_deactivate(false)
     .works_when_modal(true)
     .with_window(|w| w.decorations(false))
-    .style_mask(StyleMask::empty().nonactivating_panel().resizable().into())
+    .add_style_mask(StyleMask::empty().nonactivating_panel().resizable())
     .no_activate(true)  // Prevent focus stealing when created
     .build()
     .expect("Failed to create mini panel");
@@ -133,4 +133,3 @@ panel.set_event_handler(Some(handler.as_ref()));
 // Show the panel and make it key window
 panel.show_and_make_key();
 ```
-

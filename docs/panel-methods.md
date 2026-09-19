@@ -105,7 +105,14 @@ use tauri_nspanel::{StyleMask, CollectionBehavior};
 
 // Set style mask
 let style = StyleMask::empty().titled().closable();
-panel.set_style_mask(style.into());
+panel
+    .set_style_mask(style.into())
+    .expect("AppKit rejected the replacement style mask");
+
+// Add behavior without removing Tauri's existing structural styles
+panel
+    .add_style_mask(StyleMask::empty().nonactivating_panel().into())
+    .expect("AppKit rejected the additional style mask");
 
 // Set collection behavior
 let behavior = CollectionBehavior::new().can_join_all_spaces();
@@ -199,7 +206,8 @@ unsafe {
 
 ### Collection behavior
 - `set_collection_behavior()` (accepts `CollectionBehavior` or raw flags)
-- `set_style_mask()` (accepts `StyleMask` or raw flags)
+- `set_style_mask()` (replaces flags and returns an error if AppKit rejects the change)
+- `add_style_mask()` (adds flags while preserving Tauri's existing window styles)
 
 ### Advanced
 - `set_event_handler()`, `make_first_responder()`

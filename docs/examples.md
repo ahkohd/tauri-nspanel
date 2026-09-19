@@ -157,7 +157,9 @@ panel.set_level(PanelLevel::Status);     // Menu bar level
 let style = StyleMask::empty()
     .utility_window()
     .nonactivating_panel();
-panel.set_style_mask(style);
+panel
+    .add_style_mask(style.value())
+    .expect("AppKit rejected the additional style mask");
 ```
 
 ### Collection behaviors

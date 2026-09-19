@@ -82,8 +82,10 @@ Additional panel behaviors are configured to create the desired floating utility
 // Set floating level - stays above other windows
 panel.set_level(PanelLevel::Floating.value());
 
-// Prevent app activation when clicked
-panel.set_style_mask(StyleMask::empty().nonactivating_panel().into());
+// Prevent app activation when clicked without replacing Tauri's structural styles
+panel
+    .add_style_mask(StyleMask::empty().nonactivating_panel().into())
+    .expect("failed to update panel style");
 
 // Allow display over fullscreen windows and on all spaces
 panel.set_collection_behavior(

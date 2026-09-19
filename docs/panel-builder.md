@@ -66,12 +66,10 @@ use tauri_nspanel::StyleMask;
 
 let panel = PanelBuilder::<_, MyPanel>::new(app.handle(), "styled-panel")
     .url(WebviewUrl::App("panel.html".into()))
-    .style_mask(
+    .add_style_mask(
         StyleMask::empty()
             .nonactivating_panel()  // Doesn't activate app
             .utility_window()       // Smaller title bar
-            .titled()
-            .closable()
     )
     .build()?;
 ```
@@ -130,12 +128,10 @@ let panel = PanelBuilder::<_, AdvancedPanel>::new(app.handle(), "complete-panel"
     .transparent(true)
     .alpha_value(0.95)
     .has_shadow(true)
-    .style_mask(
+    .add_style_mask(
         StyleMask::empty()
             .nonactivating_panel()
             .utility_window()
-            .titled()
-            .closable()
     )
     .collection_behavior(
         CollectionBehavior::new()

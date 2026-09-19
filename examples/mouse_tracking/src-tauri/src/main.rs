@@ -97,8 +97,10 @@ fn init(app_handle: &AppHandle) {
   // Set the window to float level
   panel.set_level(PanelLevel::Floating.value());
 
-  // Ensures the panel cannot activate the app
-  panel.set_style_mask(StyleMask::empty().nonactivating_panel().into());
+  // Ensures the panel cannot activate the app without replacing Tauri's structural styles
+  panel
+    .add_style_mask(StyleMask::empty().nonactivating_panel().into())
+    .expect("failed to make panel non-activating");
 
   // Allows the panel to:
   // - display on the same space as the full screen window

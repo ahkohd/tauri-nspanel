@@ -16,6 +16,7 @@ pub use pastey;
 use std::{
     any::Any,
     collections::HashMap,
+    fmt,
     sync::{Arc, Mutex},
 };
 
@@ -34,6 +35,40 @@ pub use builder::{
 pub use objc2::runtime::AnyObject;
 pub use objc2_app_kit::{NSPanel, NSResponder, NSView, NSWindow};
 pub use objc2_foundation::{NSNotification, NSObject, NSPoint, NSRect, NSSize};
+
+/// An error raised by AppKit while changing a panel's style mask.
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum StyleMaskError {
+    /// AppKit rejected the requested style mask with an Objective-C exception.
+    ObjectiveCException(String),
+    /// AppKit raised an Objective-C exception without an exception object.
+    UnknownObjectiveCException,
+}
+
+impl fmt::Display for StyleMaskError {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::ObjectiveCException(reason) => {
+                write!(formatter, "AppKit rejected the panel style mask: {reason}")
+            }
+            Self::UnknownObjectiveCException => {
+                formatter.write_str("AppKit rejected the panel style mask")
+            }
+        }
+    }
+}
+
+impl std::error::Error for StyleMaskError {}
+
+#[doc(hidden)]
+pub fn catch_style_mask_exception(operation: impl FnOnce()) -> Result<(), StyleMaskError> {
+    match objc2::exception::catch(std::panic::AssertUnwindSafe(operation)) {
+        Ok(()) => Ok(()),
+        Err(Some(exception)) => Err(StyleMaskError::ObjectiveCException(exception.to_string())),
+        Err(None) => Err(StyleMaskError::UnknownObjectiveCException),
+    }
+}
 
 /// Trait for event handlers that can be used with panels
 pub trait EventHandler {
@@ -163,8 +198,26 @@ pub trait Panel<R: tauri::Runtime = tauri::Wry>: Send + Sync {
     /// Resign main window status
     fn resign_main_window(&self);
 
-    /// Set the style mask
-    fn set_style_mask(&self, style_mask: objc2_app_kit::NSWindowStyleMask);
+    /// Replace the panel's style mask.
+    ///
+    /// AppKit may reject structural changes to a live window. Such Objective-C exceptions are
+    /// caught and returned instead of crossing into Rust and aborting the process.
+    fn set_style_mask(
+        &self,
+        style_mask: objc2_app_kit::NSWindowStyleMask,
+    ) -> Result<(), StyleMaskError>;
+
+    /// Add flags to the panel's current style mask.
+    ///
+    /// Prefer this when enabling behavior such as
+    /// [`NSWindowStyleMask::NonactivatingPanel`](objc2_app_kit::NSWindowStyleMask::NonactivatingPanel)
+    /// without removing Tauri's existing structural window styles.
+    fn add_style_mask(
+        &self,
+        style_mask: objc2_app_kit::NSWindowStyleMask,
+    ) -> Result<(), StyleMaskError> {
+        self.set_style_mask(self.as_panel().styleMask() | style_mask)
+    }
 
     /// Make a view the first responder
     fn make_first_responder(&self, responder: Option<&objc2_app_kit::NSResponder>) -> bool;
@@ -268,4 +321,34 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             Ok(())
         })
         .build()
+}
+
+#[cfg(test)]
+mod tests {
+    use objc2::rc::Retained;
+    use objc2_foundation::{NSException, NSInternalInconsistencyException, NSString};
+
+    use super::{catch_style_mask_exception, StyleMaskError};
+
+    #[test]
+    fn objective_c_exceptions_become_style_mask_errors() {
+        let reason = NSString::from_str("invalid test style mask");
+        let exception = unsafe {
+            NSException::exceptionWithName_reason_userInfo(
+                NSInternalInconsistencyException,
+                Some(&reason),
+                None,
+            )
+        };
+        let exception =
+            unsafe { Retained::cast_unchecked::<objc2::exception::Exception>(exception) };
+
+        let error = catch_style_mask_exception(|| objc2::exception::throw(exception))
+            .expect_err("the Objective-C exception should be returned as an error");
+
+        assert_eq!(
+            error,
+            StyleMaskError::ObjectiveCException("invalid test style mask".into())
+        );
+    }
 }

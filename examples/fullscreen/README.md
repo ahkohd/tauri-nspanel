@@ -56,13 +56,13 @@ use tauri_nspanel::{PanelLevel, StyleMask, CollectionBehavior};
 // Set floating window level
 panel.set_level(PanelLevel::Floating.value());
 
-// Prevent panel from activating the app (required for fullscreen display)
-panel.set_style_mask(
+// Prevent panel from activating the app without replacing Tauri's structural styles
+panel.add_style_mask(
     StyleMask::empty()
         .nonactivating_panel()
         .resizable()  // Optional: make panel resizable
         .into()
-);
+).expect("failed to update panel style");
 
 // Allow panel to display over fullscreen windows and join all spaces
 panel.set_collection_behavior(

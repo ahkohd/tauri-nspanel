@@ -406,14 +406,10 @@ impl From<objc2_app_kit::NSTrackingAreaOptions> for TrackingAreaOptions {
 ///
 /// # fn create_panel(app: &AppHandle) -> tauri::Result<()> {
 ///
-/// // Create a borderless panel that doesn't activate the app
-/// let style = StyleMask::new()
-///     .borderless()
-///     .nonactivating_panel();
-///
-/// // Use with PanelBuilder
+/// // Create the borderless window through Tauri, then add non-activating panel behavior.
 /// let _panel = PanelBuilder::<_, BorderlessPanel>::new(app, "my-panel")
-///     .style_mask(style)
+///     .with_window(|window| window.decorations(false))
+///     .add_style_mask(StyleMask::empty().nonactivating_panel())
 ///     .build()?;
 /// # Ok(())
 /// # }
@@ -541,11 +537,16 @@ pub(crate) struct PanelConfig {
     pub released_when_closed: Option<bool>,
     pub works_when_modal: Option<bool>,
     pub content_size: Option<Size>,
-    pub style_mask: Option<StyleMask>,
+    pub style_mask: Option<StyleMaskConfig>,
     pub collection_behavior: Option<CollectionBehavior>,
     pub no_activate: Option<bool>,
     pub corner_radius: Option<f64>,
     pub transparent: Option<bool>,
+}
+
+pub(crate) enum StyleMaskConfig {
+    Replace(StyleMask),
+    Add(StyleMask),
 }
 
 /// Builder for creating panels with Tauri-like API
@@ -774,9 +775,11 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
         self
     }
 
-    /// Set the window style mask
+    /// Replace the window style mask.
     ///
-    /// Style masks control the appearance and behavior of the window frame.
+    /// Style masks control the appearance and behavior of the window frame. AppKit may reject
+    /// structural changes to a live window; [`Self::build`] returns that error instead of aborting
+    /// the process. Prefer [`Self::add_style_mask`] when only enabling additional behavior.
     ///
     /// # Example
     /// ```no_run
@@ -788,25 +791,25 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
     /// }
     ///
     /// # fn create_panels(app: &AppHandle) -> tauri::Result<()> {
-    /// // Create a borderless panel
+    /// // Create the native window without decorations before applying the exact mask.
     /// let _borderless = PanelBuilder::<_, StyledPanel>::new(app, "borderless")
-    ///     .style_mask(StyleMask::empty().borderless())
-    ///     .build()?;
-    ///
-    /// // Create a HUD-style panel
-    /// let _hud = PanelBuilder::<_, StyledPanel>::new(app, "hud")
-    ///     .style_mask(
-    ///         StyleMask::empty()
-    ///             .hud_window()
-    ///             .titled()
-    ///             .closable()
-    ///     )
+    ///     .with_window(|window| window.decorations(false))
+    ///     .style_mask(StyleMask::empty().nonactivating_panel())
     ///     .build()?;
     /// # Ok(())
     /// # }
     /// ```
     pub fn style_mask(mut self, style_mask: StyleMask) -> Self {
-        self.panel_config.style_mask = Some(style_mask);
+        self.panel_config.style_mask = Some(StyleMaskConfig::Replace(style_mask));
+        self
+    }
+
+    /// Add flags to the window's existing style mask.
+    ///
+    /// This preserves the structural styles selected by Tauri and is the preferred way to enable
+    /// panel behavior such as [`StyleMask::nonactivating_panel`].
+    pub fn add_style_mask(mut self, style_mask: StyleMask) -> Self {
+        self.panel_config.style_mask = Some(StyleMaskConfig::Add(style_mask));
         self
     }
 
@@ -1030,8 +1033,19 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
             window_builder = window_fn(window_builder);
         }
 
-        // Build the window
-        let window = window_builder.build()?;
+        // Build the window while the temporary activation policy is in effect.
+        let window = window_builder.build();
+
+        // The temporary policy is only needed while Tauri creates the native window. Restore it
+        // before applying fallible panel configuration so errors cannot leave the app prohibited.
+        if let Some(policy) = original_policy {
+            if let Some(mtm) = MainThreadMarker::new() {
+                let app = NSApplication::sharedApplication(mtm);
+                let _success = app.setActivationPolicy(policy);
+            }
+        }
+
+        let window = window?;
 
         // Convert to panel
         let panel = window.to_panel::<T>().unwrap();
@@ -1074,7 +1088,18 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
             panel.set_works_when_modal(value);
         }
         if let Some(style_mask) = self.panel_config.style_mask {
-            panel.set_style_mask(style_mask.0);
+            let result = match style_mask {
+                StyleMaskConfig::Replace(style_mask) => panel.set_style_mask(style_mask.0),
+                StyleMaskConfig::Add(style_mask) => panel.add_style_mask(style_mask.0),
+            };
+
+            if let Err(error) = result {
+                if let Some(window) = panel.to_window() {
+                    let _ = window.close();
+                }
+
+                return Err(tauri::Error::Anyhow(error.into()));
+            }
         }
         if let Some(behavior) = self.panel_config.collection_behavior {
             panel.set_collection_behavior(behavior.0);
@@ -1095,14 +1120,6 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
             window.set_max_size(Some(max_size))?;
         }
         self.resize_direction.apply(panel.as_panel());
-
-        // Restore original activation policy if we changed it
-        if let Some(policy) = original_policy {
-            if let Some(mtm) = MainThreadMarker::new() {
-                let app = NSApplication::sharedApplication(mtm);
-                let _success = app.setActivationPolicy(policy);
-            }
-        }
 
         Ok(panel)
     }
