@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["PanelLevel"],"struct":["CollectionBehavior","PanelBuilder","StyleMask","TrackingAreaOptions"]};
+window.SIDEBAR_ITEMS = {"enum":["PanelLevel","ResizeDirection"],"struct":["CollectionBehavior","PanelBuilder","StyleMask","TrackingAreaOptions"]};
