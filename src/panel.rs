@@ -3,6 +3,18 @@ pub use objc2_app_kit::{
     NSAutoresizingMaskOptions, NSTrackingAreaOptions, NSWindowCollectionBehavior, NSWindowStyleMask,
 };
 
+#[doc(hidden)]
+pub fn resolve_tracking_area_options(
+    mut options: objc2_app_kit::NSTrackingAreaOptions,
+    auto_resize: bool,
+) -> objc2_app_kit::NSTrackingAreaOptions {
+    if auto_resize {
+        options |= objc2_app_kit::NSTrackingAreaOptions::InVisibleRect;
+    }
+
+    options
+}
+
 /// Macro to create a custom NSPanel class
 ///
 /// This macro generates a custom NSPanel subclass with the specified configuration.
@@ -669,6 +681,10 @@ macro_rules! panel {
                             $crate::objc2::msg_send![panel, contentView];
                         let bounds: $crate::objc2_foundation::NSRect =
                             $crate::objc2::msg_send![&content_view, bounds];
+                        let options = $crate::panel::resolve_tracking_area_options(
+                            options.into(),
+                            auto_resize,
+                        );
 
                         // Create tracking area
                         let tracking_area: $crate::objc2::rc::Retained<$crate::objc2_app_kit::NSTrackingArea> = {
@@ -679,19 +695,12 @@ macro_rules! panel {
                             let area: *mut $crate::objc2_app_kit::NSTrackingArea = $crate::objc2::msg_send![
                                 alloc,
                                 initWithRect: bounds,
-                                options: options.into(),
+                                options: options,
                                 owner: &*content_view,
                                 userInfo: $crate::objc2::ffi::nil
                             ];
                             $crate::objc2::rc::Retained::from_raw(area).unwrap()
                         };
-
-                        // Set auto-resizing if requested
-                        if auto_resize {
-                            let resize_mask = $crate::objc2_app_kit::NSAutoresizingMaskOptions::ViewWidthSizable
-                                | $crate::objc2_app_kit::NSAutoresizingMaskOptions::ViewHeightSizable;
-                            let _: () = $crate::objc2::msg_send![&content_view, setAutoresizingMask: resize_mask];
-                        }
 
                         // Add tracking area
                         let _: () = $crate::objc2::msg_send![&content_view, addTrackingArea: &*tracking_area];
@@ -700,4 +709,31 @@ macro_rules! panel {
             }
         }
     };
+}
+
+#[cfg(test)]
+mod tests {
+    use super::resolve_tracking_area_options;
+    use objc2_app_kit::NSTrackingAreaOptions;
+
+    #[test]
+    fn auto_resize_tracks_the_visible_view_rect() {
+        let base = NSTrackingAreaOptions::ActiveAlways
+            | NSTrackingAreaOptions::MouseEnteredAndExited
+            | NSTrackingAreaOptions::MouseMoved;
+
+        let options = resolve_tracking_area_options(base, true);
+
+        assert!(options.contains(NSTrackingAreaOptions::InVisibleRect));
+        assert!(options.contains(base));
+    }
+
+    #[test]
+    fn fixed_tracking_area_preserves_the_requested_options() {
+        let base = NSTrackingAreaOptions::ActiveAlways
+            | NSTrackingAreaOptions::MouseEnteredAndExited
+            | NSTrackingAreaOptions::MouseMoved;
+
+        assert_eq!(resolve_tracking_area_options(base, false), base);
+    }
 }
