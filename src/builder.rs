@@ -349,7 +349,7 @@ impl TrackingAreaOptions {
         self
     }
 
-    /// Tracking area is in visibleRect coordinates
+    /// Keep the tracking area synchronized with the view's visible rectangle.
     pub fn in_visible_rect(mut self) -> Self {
         self.0 |= objc2_app_kit::NSTrackingAreaOptions::InVisibleRect;
         self
