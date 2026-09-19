@@ -30,29 +30,33 @@ pub use objc2_app_kit::{
 /// - `on_cursor_update()` - Called when cursor needs to be updated
 ///
 /// ## Usage:
-/// ```rust
-/// use tauri_nspanel::{panel, panel_event};
+/// ```no_run
+/// use tauri_nspanel::{tauri_panel, Panel, TrackingAreaOptions};
 ///
-/// // Define your custom panel class
-/// panel!(MyCustomPanel {
-///     // Config overrides - these affect compile-time behavior
-///     config: {
-///         can_become_key_window: true,
-///         can_become_main_window: false,
-///     },
-///     // Optional configurations
-///     with: {
-///         tracking_area: {
-///             options: NSTrackingAreaOptions::NSTrackingActiveAlways
-///                    | NSTrackingAreaOptions::NSTrackingMouseEnteredAndExited
-///                    | NSTrackingAreaOptions::NSTrackingMouseMoved,
-///             auto_resize: true,
+/// tauri_panel! {
+///     panel!(MyCustomPanel {
+///         config: {
+///             can_become_key_window: true,
+///             can_become_main_window: false
 ///         }
-///     }
-/// });
+///         with: {
+///             tracking_area: {
+///                 options: TrackingAreaOptions::new()
+///                     .active_always()
+///                     .mouse_entered_and_exited()
+///                     .mouse_moved(),
+///                 auto_resize: true
+///             }
+///         }
+///     })
+///
+///     panel_event!(MyPanelEventHandler {
+///         window_did_become_key(notification: &NSNotification) -> ()
+///     })
+/// }
 ///
 /// // In your Tauri app:
-/// fn create_panel(window: tauri::WebviewWindow) -> Result<(), Box<dyn std::error::Error>> {
+/// fn create_panel(window: &tauri::WebviewWindow) -> tauri::Result<()> {
 ///     // Convert existing Tauri window to your custom panel
 ///     let panel = MyCustomPanel::from_window(window)?;
 ///
@@ -63,18 +67,17 @@ pub use objc2_app_kit::{
 ///
 ///     // Create and attach an event handler
 ///     let handler = MyPanelEventHandler::new();
-///     handler.window_did_become_key(|args| {
+///     handler.window_did_become_key(|_notification| {
 ///         println!("Panel became key window");
-///         None
 ///     });
 ///
 ///     // If tracking_area is enabled, you can set mouse event callbacks
-///     handler.on_mouse_entered(|event| {
+///     handler.on_mouse_entered(|_event| {
 ///         println!("Mouse entered the panel");
 ///     });
 ///
 ///     handler.on_mouse_moved(|event| {
-///         let location = unsafe { event.locationInWindow() };
+///         let location = event.locationInWindow();
 ///         println!("Mouse moved to: x={}, y={}", location.x, location.y);
 ///     });
 ///
@@ -91,7 +94,6 @@ pub use objc2_app_kit::{
 /// - `set_floating_panel()`, `set_has_shadow()`, `set_opaque()`
 /// - `set_accepts_mouse_moved_events()`, `set_ignores_mouse_events()`
 /// - And many more...
-/// ```
 #[macro_export]
 macro_rules! panel {
     (
@@ -623,7 +625,12 @@ macro_rules! panel {
                             let _: () = $crate::objc2::msg_send![&view, setAutoresizingMask: resize_mask];
                         }
 
-                        Ok($class_name::with_label(panel, label, original_class, window.app_handle().clone()))
+                        Ok($class_name::with_label(
+                            panel,
+                            label,
+                            original_class,
+                            tauri::Manager::app_handle(&window).clone(),
+                        ))
                     }
                 }
             }

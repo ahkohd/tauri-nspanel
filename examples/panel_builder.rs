@@ -1,6 +1,6 @@
 #![allow(clippy::unused_unit)]
 
-use tauri::{AppHandle, Manager, WebviewUrl};
+use tauri::{AppHandle, WebviewUrl};
 use tauri_nspanel::{tauri_panel, PanelBuilder, WebviewWindowExt};
 
 // Define custom panel class and event handler together

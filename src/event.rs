@@ -35,7 +35,7 @@
 /// parameter names match the exact NSWindowDelegate protocol signatures.
 ///
 /// Usage:
-/// ```
+/// ```no_run
 /// use tauri_nspanel::tauri_panel;
 ///
 /// tauri_panel! {
@@ -43,7 +43,7 @@
 ///         window_did_become_key(notification: &NSNotification) -> (),
 ///         window_should_close(window: &NSWindow) -> Bool,
 ///         window_will_resize(window: &NSWindow, to_size: &NSSize) -> NSSize,
-///         window_will_return_field_editor(sender: &NSWindow, client: Option<&AnyObject>) -> Option<Retained<NSObject>>
+///         window_will_return_field_editor(sender: &NSWindow, to_object: Option<&AnyObject>) -> Option<&'static AnyObject>
 ///     })
 /// }
 ///
@@ -73,7 +73,7 @@
 /// Methods must specify their return type explicitly:
 /// - `-> ()` for void methods (no return value)
 /// - `-> Bool` for BOOL returns (objc2 Bool type)
-/// - `-> Option<Retained<NSObject>>` for nullable object returns
+/// - `-> Option<&'static AnyObject>` for nullable object returns
 /// - `-> NSSize` for NSSize value returns
 /// - `-> NSRect` for NSRect value returns
 /// - `-> NSPoint` for NSPoint value returns

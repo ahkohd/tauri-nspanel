@@ -54,7 +54,7 @@ fn init(app_handle: &AppHandle) {
   handler.window_did_become_key(move |notification| {
     let app_name = handle.package_info().name.to_owned();
 
-    unsafe { println!("[info]: Notification name: {:?}", notification.name()) };
+    println!("[info]: Notification name: {:?}", notification.name());
     println!("[info]: {:?} panel becomes key window!", app_name);
   });
 

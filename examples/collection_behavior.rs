@@ -1,4 +1,4 @@
-use tauri::{AppHandle, Manager, WebviewUrl};
+use tauri::{AppHandle, WebviewUrl};
 use tauri_nspanel::{tauri_panel, CollectionBehavior, PanelBuilder};
 
 // Define a demo panel class

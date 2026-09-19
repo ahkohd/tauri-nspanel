@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - v2.1
-      - v1
+      - v2
       - v1
   pull_request:
     branches:
@@ -19,15 +19,10 @@ jobs:
       fail-fast: false
 
     steps:
-    - uses: actions/checkout@v6
-    - name: Install rustfmt with stable toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-          profile: minimal
-          toolchain: stable
-          override: true
+      - uses: actions/checkout@v6
+      - name: Install rustfmt with stable toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
           components: rustfmt
-    - uses: actions-rs/cargo@v1
-      with:
-        command: fmt
-        args: --manifest-path=Cargo.toml --all -- --check
+      - name: Check formatting
+        run: cargo fmt --manifest-path=Cargo.toml --all -- --check
