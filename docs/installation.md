@@ -4,7 +4,7 @@
 
 - Tauri v2.0+
 - macOS 10.15+
-- Rust 1.70+
+- Rust 1.75+
 
 ## Adding the plugin
 
@@ -12,6 +12,13 @@ Add the plugin to your `Cargo.toml`:
 
 ```toml
 [dependencies]
+tauri-nspanel = "2.1"
+```
+
+You can also install directly from the maintained `v2.1` branch. This follows the latest commit on
+the branch rather than a published crates.io release:
+
+```toml
 tauri-nspanel = { git = "https://github.com/ahkohd/tauri-nspanel", branch = "v2.1" }
 ```
 
