@@ -98,17 +98,22 @@ Check out the [examples](examples/) directory.
 ## Showcase
 
 Some projects using `tauri-nspanel`:
-- [Cap](https://github.com/CapSoftware/Cap) - Screen recording
-- [Screenpipe](https://github.com/mediar-ai/screenpipe) - AI screen recording
-- [EcoPaste](https://github.com/EcoPasteHub/EcoPaste) - Clipboard manager
-- [Hyprnote](https://github.com/fastrepl/hyprnote) - Note-taking
-- [BongoCat](https://github.com/ayangweb/BongoCat) - Desktop pet
+
+- [Handy](https://github.com/cjpais/Handy) - Offline speech-to-text
+- [BongoCat](https://github.com/ayangweb/BongoCat) - Cross-platform desktop pet
+- [Cap](https://github.com/CapSoftware/Cap) - Open-source screen recording
+- [screenpipe](https://github.com/screenpipe/screenpipe) - Local screen recording and AI context
+- [Anarlog](https://github.com/fastrepl/anarlog) - Open-source AI meeting notes
+- [Vibe](https://github.com/thewh1teagle/vibe) - Local transcription
+- [EcoPaste](https://github.com/EcoPasteHub/EcoPaste) - Cross-platform clipboard manager
+- [Epicenter](https://github.com/EpicenterHQ/epicenter) - Local-first applications
+- [Openless](https://github.com/Open-Less/openless) - AI-assisted voice input
 - [Coco](https://github.com/infinilabs/coco-app) - AI Search and Assistant
 - [Overlayed](https://github.com/overlayeddev/overlayed) - Screen overlay
 - [Verve](https://github.com/ParthJadhav/verve) - Launcher
 - [JET Pilot](https://github.com/unxsist/jet-pilot) - Kubernetes manager
 - [Buffer](https://buffer.md) - AI-powered Markdown note app
-- [Asyar](https://github.com/Xoshbin/asyar-launcher) - Cross platform alternative to Raycast
+- [Asyar](https://github.com/Xoshbin/asyar) - Cross-platform alternative to Raycast
 
 ## Contributing
 
