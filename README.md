@@ -2,8 +2,6 @@
 
 Create macOS panels for your Tauri app. Convert a regular window into a panel, or configure a new window with the panel builder.
 
-> **Note**: For the previous version, see the [v2 branch](https://github.com/ahkohd/tauri-nspanel/tree/v2).
-
 ## What are panels?
 
 Panels are a special type of window on macOS ([`NSPanel`](https://developer.apple.com/documentation/appkit/nspanel)) that float above other windows and provide auxiliary controls or information. They're commonly used for tool palettes, inspectors, floating controls, and HUD displays.
@@ -81,7 +79,6 @@ See the [documentation](docs/) & [API Reference](https://docs.aremu.dev/tauri-ns
 ## Features
 
 - Create panels with PanelBuilder API or convert existing windows
-- Constrain panel sizes and resize horizontally, vertically, or on both axes
 - Mouse tracking with enter, exit, and move events
 - Handle panel events
 - Works with existing Tauri windows and commands
