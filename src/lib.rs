@@ -49,7 +49,9 @@ pub trait Panel<R: tauri::Runtime = tauri::Wry>: Send + Sync {
     /// Hide the panel
     fn hide(&self);
 
-    /// Convert panel back to a regular Tauri window
+    /// Convert the panel back to a regular Tauri window.
+    ///
+    /// This restores Tauri-compatible native window ownership before returning the window.
     fn to_window(&self) -> Option<tauri::WebviewWindow<R>>;
 
     /// Get a reference to the underlying NSPanel
@@ -128,7 +130,10 @@ pub trait Panel<R: tauri::Runtime = tauri::Wry>: Send + Sync {
     /// Set the alpha value
     fn set_alpha_value(&self, value: f64);
 
-    /// Set whether the panel should be released when closed
+    /// Set whether AppKit should release the panel when it closes.
+    ///
+    /// Keep this `false` when Tauri owns the window. [`Panel::to_window`] resets it to `false`
+    /// before returning ownership to Tauri.
     fn set_released_when_closed(&self, released: bool);
 
     /// Set the content size

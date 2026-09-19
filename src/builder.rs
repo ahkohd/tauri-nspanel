@@ -753,7 +753,10 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
         self
     }
 
-    /// Set whether the panel is released when closed
+    /// Set whether AppKit releases the panel when it closes.
+    ///
+    /// This should normally remain `false` for Tauri-managed panels. [`Panel::to_window`]
+    /// restores it to `false` before returning ownership to Tauri.
     pub fn released_when_closed(mut self, value: bool) -> Self {
         self.panel_config.released_when_closed = Some(value);
         self

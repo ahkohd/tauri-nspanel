@@ -90,9 +90,13 @@ panel.set_movable_by_window_background(true); // Allow dragging by background
 ## Window management
 
 ```rust
-panel.set_released_when_closed(true);       // Release when closed
+panel.set_released_when_closed(false);      // Let Tauri manage the native window lifetime
 panel.make_first_responder(Some(&responder)); // Set first responder
 ```
+
+Keep `released_when_closed` disabled when closing through Tauri. `panel.to_window()` restores this
+setting to `false` before handing the native window back to Tauri, preventing AppKit and Tauri from
+both releasing the same window.
 
 ## Style and collection behavior
 

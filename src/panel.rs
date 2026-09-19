@@ -279,7 +279,9 @@ macro_rules! panel {
 
                     if let Some(_) = self.app_handle.remove_webview_panel(self.label.as_str()) {
                         self.set_event_handler(None);
-                        self.set_released_when_closed(true);
+                        // Tauri/Tao retains the native window and releases it during close.
+                        // AppKit must not release the same window independently.
+                        self.set_released_when_closed(false);
 
                         unsafe {
                             let target_class = if !self.original_class.is_null() {
