@@ -61,8 +61,14 @@ pub trait Panel<R: tauri::Runtime = tauri::Wry>: Send + Sync {
     /// Downcast to concrete type
     fn as_any(&self) -> &dyn Any;
 
-    /// Set the event handler (window delegate)
-    /// Pass `None` to remove the current delegate
+    /// Set the event handler (window delegate).
+    ///
+    /// The panel retains the handler until it is replaced or cleared, so the caller does not
+    /// need to keep its own `Retained` handle alive. Pass `None` to restore the original Tauri
+    /// window delegate.
+    ///
+    /// For behavior that changes at runtime, prefer installing one handler whose callbacks read
+    /// shared state instead of repeatedly replacing the delegate.
     fn set_event_handler(&self, handler: Option<&ProtocolObject<dyn NSWindowDelegate>>);
 
     // Query methods

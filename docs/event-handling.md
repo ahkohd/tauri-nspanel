@@ -225,6 +225,68 @@ let utility_handler = UtilityPanelEventHandler::new();
 utility_handler.window_did_become_key(|_| println!("Utility panel active"));
 ```
 
+## Runtime behavior: pinning a panel
+
+Install an event handler once and let its callbacks read shared state when behavior must change at
+runtime. For example, an unpinned panel can hide when it resigns key-window status, while a pinned
+panel remains visible:
+
+```rust
+use std::sync::{
+    atomic::{AtomicBool, Ordering},
+    Arc,
+};
+
+use tauri::{AppHandle, Manager, State};
+use tauri_nspanel::{tauri_panel, ManagerExt};
+
+const PANEL_LABEL: &str = "main";
+
+#[derive(Clone, Default)]
+struct PanelPinState(Arc<AtomicBool>);
+
+tauri_panel! {
+    panel_event!(PinPanelEventHandler {
+        window_did_resign_key(notification: &NSNotification) -> ()
+    })
+}
+
+fn configure_pin_behavior(app: &AppHandle) {
+    let pin_state = PanelPinState::default();
+    app.manage(pin_state.clone());
+
+    let panel = app.get_webview_panel(PANEL_LABEL).unwrap();
+    let weak_panel = Arc::downgrade(&panel);
+    let handler = PinPanelEventHandler::new();
+
+    handler.window_did_resign_key(move |_| {
+        if !pin_state.0.load(Ordering::Relaxed) {
+            if let Some(panel) = weak_panel.upgrade() {
+                panel.hide();
+            }
+        }
+    });
+
+    panel.set_event_handler(Some(handler.as_ref()));
+}
+
+#[tauri::command]
+fn pin_panel(state: State<'_, PanelPinState>) {
+    state.0.store(true, Ordering::Relaxed);
+}
+
+#[tauri::command]
+fn unpin_panel(state: State<'_, PanelPinState>) {
+    state.0.store(false, Ordering::Relaxed);
+}
+```
+
+Call `configure_pin_behavior` during Tauri setup and register both commands with
+`tauri::generate_handler!`. The panel retains the handler after setup, while the commands only
+change the shared pin state. Capturing a weak panel handle prevents a panel-handler retain cycle.
+
+See the compile-checked [`pin_panel.rs`](/examples/pin_panel.rs) example.
+
 ## Event handler cleanup
 
 Event handlers are automatically cleaned up when panels are closed or converted back to windows:
