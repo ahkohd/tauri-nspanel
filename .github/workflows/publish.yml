@@ -1,0 +1,55 @@
+name: Publish crate
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version from Cargo.toml, without the v prefix
+        required: true
+        type: string
+      publish:
+        description: Publish to crates.io after the dry run succeeds
+        required: true
+        default: false
+        type: boolean
+
+jobs:
+  publish:
+    runs-on: macos-latest
+    environment: crates-io
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install stable toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Verify release version and ref
+        env:
+          EXPECTED_VERSION: ${{ inputs.version }}
+          PUBLISH: ${{ inputs.publish }}
+        run: |
+          actual_version="$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[] | select(.name == "tauri-nspanel") | .version')"
+          test "$actual_version" = "$EXPECTED_VERSION"
+
+          if [[ "$PUBLISH" == "true" ]]; then
+            test "$GITHUB_REF_TYPE" = "tag"
+            test "$GITHUB_REF_NAME" = "v$actual_version"
+          fi
+
+      - name: Verify package
+        run: cargo publish --locked --dry-run
+
+      - name: Authenticate with crates.io
+        if: inputs.publish
+        uses: rust-lang/crates-io-auth-action@v1
+        id: auth
+
+      - name: Publish crate
+        if: inputs.publish
+        run: cargo publish --locked
