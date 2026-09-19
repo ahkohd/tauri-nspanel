@@ -5,7 +5,7 @@
 
 use tauri::{AppHandle, LogicalPosition, LogicalSize, Manager, Position, Size, WebviewUrl};
 use tauri_nspanel::{
-  tauri_panel, CollectionBehavior, ManagerExt, PanelBuilder, PanelLevel, StyleMask,
+  tauri_panel, CollectionBehavior, ManagerExt, PanelBuilder, PanelLevel, ResizeDirection, StyleMask,
 };
 
 // Define custom panel class and event handler
@@ -57,6 +57,10 @@ fn init(app_handle: &AppHandle) {
       width: 350.0,
       height: 350.0,
     }))
+    .min_size(Size::Logical(LogicalSize::new(300.0, 200.0)))
+    .max_size(Size::Logical(LogicalSize::new(600.0, 500.0)))
+    .resizable(true)
+    .resize_direction(ResizeDirection::Horizontal)
     .level(PanelLevel::Floating)
     .has_shadow(true)
     .corner_radius(12.0)

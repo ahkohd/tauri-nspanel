@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
-use objc2_app_kit::{NSApplication, NSApplicationActivationPolicy};
-use objc2_foundation::MainThreadMarker;
+use objc2_app_kit::{NSApplication, NSApplicationActivationPolicy, NSPanel};
+use objc2_foundation::{MainThreadMarker, NSSize};
 use tauri::{AppHandle, Position, Runtime, Size, WebviewUrl, WebviewWindowBuilder};
 
 use crate::{FromWindow, Panel, WebviewWindowExt};
@@ -12,6 +12,62 @@ type WindowConfigFn<'a, R> = Box<
         WebviewWindowBuilder<'a, R, AppHandle<R>>,
     ) -> WebviewWindowBuilder<'a, R, AppHandle<R>>,
 >;
+
+/// Axes along which a resizable panel may be resized.
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+pub enum ResizeDirection {
+    /// Allow the panel to be resized horizontally and vertically.
+    #[default]
+    Both,
+    /// Allow the panel width to change while keeping its current height fixed.
+    Horizontal,
+    /// Allow the panel height to change while keeping its current width fixed.
+    Vertical,
+}
+
+impl ResizeDirection {
+    fn apply(self, panel: &NSPanel) {
+        if self == Self::Both {
+            return;
+        }
+
+        let Some(content_view) = panel.contentView() else {
+            return;
+        };
+
+        let current_size = content_view.frame().size;
+        let (min_size, max_size) = resize_constraints(
+            self,
+            current_size,
+            panel.contentMinSize(),
+            panel.contentMaxSize(),
+        );
+
+        panel.setContentMinSize(min_size);
+        panel.setContentMaxSize(max_size);
+    }
+}
+
+fn resize_constraints(
+    direction: ResizeDirection,
+    current_size: NSSize,
+    mut min_size: NSSize,
+    mut max_size: NSSize,
+) -> (NSSize, NSSize) {
+    match direction {
+        ResizeDirection::Both => {}
+        ResizeDirection::Horizontal => {
+            min_size.height = current_size.height;
+            max_size.height = current_size.height;
+        }
+        ResizeDirection::Vertical => {
+            min_size.width = current_size.width;
+            max_size.width = current_size.width;
+        }
+    }
+
+    (min_size, max_size)
+}
 
 /// Window level constants for NSPanel
 /// Based on NSWindow.Level constants from macOS
@@ -521,6 +577,10 @@ pub struct PanelBuilder<'a, R: Runtime, T: FromWindow<R> + 'static> {
     title: Option<String>,
     position: Option<Position>,
     size: Option<Size>,
+    min_size: Option<Size>,
+    max_size: Option<Size>,
+    resizable: Option<bool>,
+    resize_direction: ResizeDirection,
     pub(crate) panel_config: PanelConfig,
     window_fn: Option<WindowConfigFn<'a, R>>,
     _phantom: std::marker::PhantomData<T>,
@@ -536,6 +596,10 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
             title: None,
             position: None,
             size: None,
+            min_size: None,
+            max_size: None,
+            resizable: None,
+            resize_direction: ResizeDirection::Both,
             panel_config: PanelConfig::default(),
             window_fn: None,
             _phantom: std::marker::PhantomData,
@@ -563,6 +627,33 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
     /// Set the window size
     pub fn size(mut self, size: Size) -> Self {
         self.size = Some(size);
+        self
+    }
+
+    /// Set the minimum content size of the panel.
+    pub fn min_size(mut self, size: Size) -> Self {
+        self.min_size = Some(size);
+        self
+    }
+
+    /// Set the maximum content size of the panel.
+    pub fn max_size(mut self, size: Size) -> Self {
+        self.max_size = Some(size);
+        self
+    }
+
+    /// Set whether the panel can be resized by the user.
+    pub fn resizable(mut self, resizable: bool) -> Self {
+        self.resizable = Some(resizable);
+        self
+    }
+
+    /// Limit resizing to one axis.
+    ///
+    /// The dimension on the disabled axis is fixed to the panel's content size
+    /// after its minimum and maximum size constraints have been applied.
+    pub fn resize_direction(mut self, direction: ResizeDirection) -> Self {
+        self.resize_direction = direction;
         self
     }
 
@@ -858,6 +949,10 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
             }
         }
 
+        if let Some(resizable) = self.resizable {
+            window_builder = window_builder.resizable(resizable);
+        }
+
         // Apply custom configuration if provided
         if let Some(window_fn) = self.window_fn {
             window_builder = window_fn(window_builder);
@@ -919,6 +1014,16 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
             panel.set_transparent(transparent);
         }
 
+        // Apply size constraints after the final style mask so they describe
+        // the panel's final content area rather than its temporary window frame.
+        if let Some(min_size) = self.min_size {
+            window.set_min_size(Some(min_size))?;
+        }
+        if let Some(max_size) = self.max_size {
+            window.set_max_size(Some(max_size))?;
+        }
+        self.resize_direction.apply(panel.as_panel());
+
         // Restore original activation policy if we changed it
         if let Some(policy) = original_policy {
             if let Some(mtm) = MainThreadMarker::new() {
@@ -928,5 +1033,48 @@ impl<'a, R: Runtime + 'a, T: FromWindow<R> + 'static> PanelBuilder<'a, R, T> {
         }
 
         Ok(panel)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{resize_constraints, ResizeDirection};
+    use objc2_foundation::NSSize;
+
+    #[test]
+    fn horizontal_resize_fixes_only_the_height() {
+        let (min_size, max_size) = resize_constraints(
+            ResizeDirection::Horizontal,
+            NSSize::new(500.0, 300.0),
+            NSSize::new(200.0, 100.0),
+            NSSize::new(800.0, 600.0),
+        );
+
+        assert_eq!(min_size, NSSize::new(200.0, 300.0));
+        assert_eq!(max_size, NSSize::new(800.0, 300.0));
+    }
+
+    #[test]
+    fn vertical_resize_fixes_only_the_width() {
+        let (min_size, max_size) = resize_constraints(
+            ResizeDirection::Vertical,
+            NSSize::new(500.0, 300.0),
+            NSSize::new(200.0, 100.0),
+            NSSize::new(800.0, 600.0),
+        );
+
+        assert_eq!(min_size, NSSize::new(500.0, 100.0));
+        assert_eq!(max_size, NSSize::new(500.0, 600.0));
+    }
+
+    #[test]
+    fn both_resize_axes_preserve_existing_constraints() {
+        let min = NSSize::new(200.0, 100.0);
+        let max = NSSize::new(800.0, 600.0);
+
+        let constraints =
+            resize_constraints(ResizeDirection::Both, NSSize::new(500.0, 300.0), min, max);
+
+        assert_eq!(constraints, (min, max));
     }
 }

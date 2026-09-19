@@ -32,13 +32,21 @@ let panel = PanelBuilder::<_, MyPanel>::new(app.handle(), "styled-panel")
 ### Window positioning and size
 ```rust
 use tauri::{Manager, LogicalPosition, LogicalSize, Position, Size};
+use tauri_nspanel::ResizeDirection;
 
 let panel = PanelBuilder::<_, MyPanel>::new(app.handle(), "positioned-panel")
     .url(WebviewUrl::App("panel.html".into()))
     .position(Position::Logical(LogicalPosition::new(100.0, 100.0)))
     .size(Size::Logical(LogicalSize::new(400.0, 300.0)))
+    .min_size(Size::Logical(LogicalSize::new(300.0, 200.0)))
+    .max_size(Size::Logical(LogicalSize::new(800.0, 600.0)))
+    .resizable(true)
+    .resize_direction(ResizeDirection::Horizontal)
     .build()?;
 ```
+
+`Horizontal` keeps the panel's height fixed, while `Vertical` keeps its width fixed.
+Use `ResizeDirection::Both` (the default) to resize on both axes.
 
 ### Panel behavior
 ```rust
@@ -91,9 +99,6 @@ let panel = PanelBuilder::<_, MyPanel>::new(app.handle(), "advanced-panel")
         // Access any Tauri window configuration
         window
             .decorations(false)
-            .min_inner_size(300.0, 200.0)
-            .max_inner_size(800.0, 600.0)
-            .resizable(false)
             .always_on_top(true)
     })
     .build()?;
@@ -162,6 +167,8 @@ panel.show_and_make_key();
 ### Positioning
 - `position(Position)` - Set initial position
 - `size(Size)` - Set initial size
+- `min_size(Size)` - Set the minimum content size
+- `max_size(Size)` - Set the maximum content size
 - `content_size(Size)` - Set content area size
 
 ### Behavior
@@ -170,6 +177,8 @@ panel.show_and_make_key();
 - `hides_on_deactivate(bool)` - Hide when app deactivates
 - `works_when_modal(bool)` - Work with modal dialogs
 - `no_activate(bool)` - Prevent focus stealing
+- `resizable(bool)` - Enable or disable user resizing
+- `resize_direction(ResizeDirection)` - Limit resizing to one axis
 
 ### Style and collection
 - `style_mask(StyleMask)` - Set window style

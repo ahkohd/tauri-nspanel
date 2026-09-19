@@ -1,6 +1,6 @@
 use tauri::{AppHandle, Manager, WebviewUrl};
 use tauri_nspanel::{
-    tauri_panel, CollectionBehavior, PanelBuilder, PanelLevel, TrackingAreaOptions,
+    tauri_panel, CollectionBehavior, PanelBuilder, PanelLevel, ResizeDirection, TrackingAreaOptions,
 };
 
 // Define all custom panel classes in a single tauri_panel! block
@@ -73,12 +73,10 @@ fn create_custom_panels(app: &AppHandle) -> Result<(), Box<dyn std::error::Error
         .title("Interactive Panel")
         .level(PanelLevel::Utility)
         .size(tauri::Size::Logical(tauri::LogicalSize::new(500.0, 400.0)))
-        .with_window(|window| {
-            window
-                .min_inner_size(300.0, 200.0)
-                .max_inner_size(800.0, 600.0)
-                .resizable(true)
-        })
+        .min_size(tauri::Size::Logical(tauri::LogicalSize::new(300.0, 200.0)))
+        .max_size(tauri::Size::Logical(tauri::LogicalSize::new(800.0, 600.0)))
+        .resizable(true)
+        .resize_direction(ResizeDirection::Horizontal)
         .build()?;
 
     // The panels have their custom configurations from the macro
