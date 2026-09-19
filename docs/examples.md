@@ -14,6 +14,7 @@ Located in `/examples/*.rs` - These are simple Rust examples showing specific fe
 - [`collection_behavior.rs`](/examples/collection_behavior.rs) - Collection behaviors
 - [`builder_with_custom_panel.rs`](/examples/builder_with_custom_panel.rs) - Custom panel classes with PanelBuilder
 - [`panel_event_macro.rs`](/examples/panel_event_macro.rs) - Event handling with delegates
+- [`pin_panel.rs`](/examples/pin_panel.rs) - Runtime pin/unpin behavior with a persistent event handler
 
 ### Complete applications
 Located in `/examples/*/` - These are full Tauri applications you can run:
@@ -89,7 +90,7 @@ let panel = PanelBuilder::<_, CustomPanel>::new(app.handle(), "panel")
 ```
 
 ### Event handling
-**Examples**: `panel_event_macro.rs`, `mouse_tracking/`
+**Examples**: `panel_event_macro.rs`, `pin_panel.rs`, `mouse_tracking/`
 
 Learn how to:
 - Create event handlers with `panel_event!`
