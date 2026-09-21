@@ -9,6 +9,7 @@ on:
       - v2
       - v1
     paths:
+      - ".github/workflows/audit.yml"
       - "**/Cargo.lock"
       - "**/Cargo.toml"
   pull_request:
@@ -17,6 +18,7 @@ on:
       - v2
       - v1
     paths:
+      - ".github/workflows/audit.yml"
       - "**/Cargo.lock"
       - "**/Cargo.toml"
 
@@ -34,3 +36,6 @@ jobs:
       - uses: rustsec/audit-check@v2.0.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          # Tauri 2's Linux GTK3 backend pins glib 0.18. tauri-nspanel is
+          # macOS-only, so this dependency is never compiled or shipped.
+          ignore: RUSTSEC-2024-0429
