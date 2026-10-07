@@ -119,6 +119,11 @@ let behavior = CollectionBehavior::new().can_join_all_spaces();
 panel.set_collection_behavior(behavior.into());
 ```
 
+The style-mask methods also synchronize application activation prevention with the
+`nonactivating_panel` flag. Adding it lets the panel receive keyboard input while the other
+application keeps its menu bar. Removing it restores normal activation when the panel is clicked.
+This synchronization uses AppKit's private `_setPreventsActivation:` selector when available.
+
 ## Event handlers
 
 ```rust

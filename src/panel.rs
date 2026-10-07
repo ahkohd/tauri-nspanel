@@ -628,6 +628,17 @@ macro_rules! panel {
                     $crate::catch_style_mask_exception(|| {
                         unsafe {
                             let _: () = $crate::objc2::msg_send![&*self.panel, setStyleMask: style_mask];
+
+                            // Class conversion skips NSPanel initialization, and setStyleMask:
+                            // does not synchronize WindowServer's activation-prevention tag.
+                            let selector = $crate::objc2::sel!(_setPreventsActivation:);
+                            let responds: bool = $crate::objc2::msg_send![&*self.panel, respondsToSelector: selector];
+                            if responds {
+                                let nonactivating = self.panel.styleMask().contains(
+                                    $crate::objc2_app_kit::NSWindowStyleMask::NonactivatingPanel,
+                                );
+                                let _: () = $crate::objc2::msg_send![&*self.panel, _setPreventsActivation: nonactivating];
+                            }
                         }
                     })
                 }

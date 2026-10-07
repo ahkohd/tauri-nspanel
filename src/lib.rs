@@ -200,6 +200,9 @@ pub trait Panel<R: tauri::Runtime = tauri::Wry>: Send + Sync {
 
     /// Replace the panel's style mask.
     ///
+    /// Synchronizes application activation prevention with the nonactivating panel flag when
+    /// AppKit provides the corresponding selector. Removing the flag restores normal activation.
+    ///
     /// AppKit may reject structural changes to a live window. Such Objective-C exceptions are
     /// caught and returned instead of crossing into Rust and aborting the process.
     fn set_style_mask(
