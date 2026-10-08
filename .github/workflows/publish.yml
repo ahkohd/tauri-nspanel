@@ -3,18 +3,134 @@ name: Publish crate
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: Version from Cargo.toml, without the v prefix
+      bump:
+        description: Version bump
         required: true
-        type: string
-      publish:
-        description: Publish to crates.io after the dry run succeeds
-        required: true
-        default: false
-        type: boolean
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+concurrency:
+  group: crates-io-release
+  cancel-in-progress: false
 
 jobs:
+  prepare:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+      sha: ${{ steps.commit.outputs.sha }}
+
+    steps:
+      - name: Verify release branch
+        run: |
+          if [[ "$GITHUB_REF" != "refs/heads/v2.1" ]]; then
+            echo "::error::Run this workflow from the v2.1 branch."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v6
+        with:
+          ref: v2.1
+
+      - name: Install stable toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Bump release version
+        id: version
+        env:
+          BUMP: ${{ inputs.bump }}
+        run: |
+          python3 <<'PY'
+          import json
+          import os
+          import re
+          import subprocess
+          from pathlib import Path
+
+          metadata = json.loads(subprocess.check_output([
+              "cargo", "metadata", "--no-deps", "--format-version", "1"
+          ]))
+          current = next(p["version"] for p in metadata["packages"] if p["name"] == "tauri-nspanel")
+          if not re.fullmatch(r"\d+\.\d+\.\d+", current):
+              raise SystemExit("Releases require a stable major.minor.patch version")
+
+          package_path = Path("package.json")
+          package = json.loads(package_path.read_text())
+          if package["version"] != current:
+              raise SystemExit("Cargo.toml and package.json versions must match")
+
+          major, minor, patch = map(int, current.split("."))
+          bump = os.environ["BUMP"]
+          if bump == "patch":
+              patch += 1
+          elif bump == "minor":
+              minor, patch = minor + 1, 0
+          elif bump == "major":
+              major, minor, patch = major + 1, 0, 0
+          else:
+              raise SystemExit(f"Unknown version bump: {bump}")
+          version = f"{major}.{minor}.{patch}"
+
+          manifest_path = Path("Cargo.toml")
+          manifest = manifest_path.read_text()
+          manifest, count = re.subn(
+              rf'(?m)^version = "{re.escape(current)}"$',
+              f'version = "{version}"', manifest, count=1
+          )
+          if count != 1:
+              raise SystemExit("Could not update the crate version in Cargo.toml")
+          manifest_path.write_text(manifest)
+          package["version"] = version
+          package_path.write_text(json.dumps(package, indent=2) + "\n")
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as output:
+              output.write(f"version={version}\ntag=v{version}\n")
+          print(f"Release version: {current} -> {version}")
+          PY
+
+      - name: Commit release version
+        id: commit
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Cargo.toml package.json
+          git -c commit.gpgsign=false commit -m "chore: release v$RELEASE_VERSION"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Generate workspace lockfile
+        run: cargo generate-lockfile
+
+      - name: Verify package
+        run: cargo publish --locked --dry-run
+
+      - name: Save verified lockfile
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-lockfile
+          path: Cargo.lock
+          if-no-files-found: error
+          overwrite: true
+
+      - name: Push release commit and tag
+        env:
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          git -c tag.gpgsign=false tag "$RELEASE_TAG"
+          git push --atomic origin HEAD:refs/heads/v2.1 "refs/tags/$RELEASE_TAG"
+
   publish:
+    needs: prepare
     runs-on: macos-latest
     environment: crates-io
     permissions:
@@ -23,33 +139,33 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare.outputs.tag }}
 
       - name: Install stable toolchain
         uses: dtolnay/rust-toolchain@stable
 
       - uses: Swatinem/rust-cache@v2
 
-      - name: Verify release version and ref
+      - name: Restore verified lockfile
+        uses: actions/download-artifact@v4
+        with:
+          name: release-lockfile
+
+      - name: Verify release commit and version
         env:
-          EXPECTED_VERSION: ${{ inputs.version }}
-          PUBLISH: ${{ inputs.publish }}
+          RELEASE_SHA: ${{ needs.prepare.outputs.sha }}
+          RELEASE_VERSION: ${{ needs.prepare.outputs.version }}
         run: |
+          test "$(git rev-parse HEAD)" = "$RELEASE_SHA"
           actual_version="$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[] | select(.name == "tauri-nspanel") | .version')"
-          test "$actual_version" = "$EXPECTED_VERSION"
-
-          if [[ "$PUBLISH" == "true" ]]; then
-            test "$GITHUB_REF_TYPE" = "tag"
-            test "$GITHUB_REF_NAME" = "v$actual_version"
-          fi
-
-      - name: Verify package
-        run: cargo publish --locked --dry-run
+          test "$actual_version" = "$RELEASE_VERSION"
 
       - name: Authenticate with crates.io
-        if: inputs.publish
         uses: rust-lang/crates-io-auth-action@v1
         id: auth
 
       - name: Publish crate
-        if: inputs.publish
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
         run: cargo publish --locked
