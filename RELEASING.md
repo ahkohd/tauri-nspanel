@@ -1,31 +1,19 @@
 # Releasing
 
-Crate releases are published to [crates.io](https://crates.io/crates/tauri-nspanel)
-from an exact `vX.Y.Z` tag. GitHub releases use the same tag.
+Run the **Publish crate** workflow from `v2.1` and select **patch**, **minor** or **major**.
+The workflow calculates the next version, updates `Cargo.toml` and `package.json`, verifies
+the crate, then pushes the release commit and its `vX.Y.Z` tag before publishing to crates.io.
 
-## Initial crates.io release
-
-Trusted Publishing can only be configured after the crate exists. Publish `2.1.0` once from a
-clean checkout of the merged `v2.1` branch using a crates.io owner account:
+For example, to publish the next patch release:
 
 ```sh
-cargo publish --locked --dry-run
-cargo login
-cargo publish --locked
+gh workflow run publish.yml --ref v2.1 -f bump=patch
 ```
 
-After crates.io has indexed the crate, tag the same merged commit and create its GitHub release:
+A minor release resets the patch number to zero. A major release resets both minor and patch
+numbers to zero. Both manifests must contain the same stable `X.Y.Z` version before releasing.
 
-```sh
-git tag -s v2.1.0 -m "v2.1.0"
-git push origin v2.1.0
-gh release create v2.1.0 --verify-tag --generate-notes
-```
-
-Publishing is permanent: an uploaded version cannot be overwritten or deleted. Confirm the
-package contents with `cargo package --list` before the non-dry-run command.
-
-## Configure Trusted Publishing
+## Trusted Publishing setup
 
 In the `tauri-nspanel` crate settings on crates.io, add a GitHub Actions trusted publisher with:
 
@@ -34,15 +22,18 @@ In the `tauri-nspanel` crate settings on crates.io, add a GitHub Actions trusted
 - Workflow: `publish.yml`
 - Environment: `crates-io`
 
-Create a `crates-io` environment in the GitHub repository settings and protect it with required
-reviewers. No long-lived crates.io token or repository secret is needed.
+The GitHub `crates-io` environment must allow the `v2.1` branch, where the workflow is dispatched.
+No long-lived crates.io token or repository secret is needed. The workflow passes its temporary
+Trusted Publishing token to Cargo through `CARGO_REGISTRY_TOKEN`.
 
-## Later releases
+## Retry a failed publish
 
-1. Update the version in `Cargo.toml` and merge the release changes into `v2.1`.
-2. Create and push a signed `vX.Y.Z` tag for that merged commit.
-3. Run the **Publish crate** workflow on that tag. Enter `X.Y.Z` and enable **publish**.
-4. After the workflow succeeds, create the GitHub release from the same tag.
+Use **Re-run failed jobs** on the original workflow run. The publish job reuses the release tag
+and verified lockfile from the successful preparation job, so it does not bump the version again.
+Starting a new workflow run creates another version.
 
-The workflow always runs `cargo publish --locked --dry-run` first. A real publish is rejected
-unless the selected ref is the matching version tag.
+After publishing succeeds, a GitHub release can be created from the same tag:
+
+```sh
+gh release create vX.Y.Z --verify-tag --generate-notes
+```
