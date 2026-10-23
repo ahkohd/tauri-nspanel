@@ -1,44 +1,19 @@
 # Thread Safety
 
-Panel types implement `Send` and `Sync` for Tauri compatibility. All actual panel operations are automatically performed on the main thread.
+Panel wrappers implement `Send` and `Sync` for compatibility with Tauri's command and state types. These trait implementations do **not** make AppKit objects thread-safe and do not dispatch calls to the main thread.
 
-## How it works
+## Main-thread requirement
 
-The tauri-nspanel library ensures thread safety by:
+`NSPanel` and its related AppKit APIs must be used on the main thread. Panel methods call AppKit directly; callers must arrange for every operation to run on the main thread. Creating event handlers also requires the main thread. The `Send`/`Sync` implementations are an interoperability boundary, not permission to call panel APIs from arbitrary threads.
 
-1. **Trait Implementation**: All panel types implement `Send` and `Sync` traits, making them safe to pass between threads
-2. **Main Thread Execution**: Despite being thread-safe, all NSPanel operations are automatically dispatched to the main thread
-3. **Tauri Integration**: This design allows seamless integration with Tauri's multi-threaded architecture
+For example, a Tauri command or async task may run outside the main thread. Do not call a panel method there unless that code is already executing on the main thread. Use Tauri's main-thread dispatch mechanism to schedule the operation, and pass only the data needed by that closure.
 
 ## Usage implications
 
-You can safely:
-- Pass panels between threads
-- Store panels in static variables or global state
-- Use panels from async contexts and background tasks
-- Call panel methods from any thread
+- You may hold or pass a panel wrapper through APIs that require `Send` or `Sync`, but you must still respect AppKit's main-thread requirement when accessing it.
+- Do not call panel methods from a background thread or assume that async context is safe.
+- Keep event-handler creation, configuration, and panel operations on the main thread.
 
-The library handles the thread synchronization internally, so you don't need to worry about main thread dispatch or thread safety when using panel APIs.
+The library does not provide automatic main-thread dispatch or synchronization for panel APIs.
 
-## Example
-
-```rust
-use tauri_nspanel::ManagerExt;
-use std::sync::Arc;
-use tokio::task;
-
-#[tauri::command]
-async fn background_panel_operation(app: tauri::AppHandle) {
-    // Safe to use from async context
-    let panel = app.get_webview_panel("my-panel").unwrap();
-    
-    // Safe to move into async task
-    let panel_clone = Arc::clone(&panel);
-    task::spawn(async move {
-        // Panel operations automatically dispatch to main thread
-        panel_clone.show();
-    });
-}
-```
-
-This approach provides the safety and convenience of thread-safe APIs while maintaining the requirements of macOS's Cocoa framework.
+See [Tauri's `AppHandle::run_on_main_thread` API](https://docs.rs/tauri/latest/tauri/struct.AppHandle.html#method.run_on_main_thread) when an operation must be scheduled from another thread. Ensure any panel handle captured by the closure remains valid for the operation.
