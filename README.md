@@ -89,7 +89,7 @@ See the [documentation](docs/) & [API Reference](https://docs.aremu.dev/tauri-ns
 - Mouse tracking with enter, exit, and move events
 - Handle panel events
 - Works with existing Tauri windows and commands
-- Thread-safe operations handled on main thread
+- Explicit main-thread handling for AppKit panel operations
 
 ## Examples
 
